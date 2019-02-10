@@ -29,6 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20190209210804_Initial.cs" />
+    <Compile Remove="Migrations\20190209210804_Initial.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Models\Notifications\" />
   </ItemGroup>
 

@@ -35,7 +35,7 @@ namespace fantasy_hoops.Database
 
         private static void Extract(GameContext context)
         {
-            context.Database.ExecuteSqlCommand("DELETE FROM [fantasyhoops].[dbo].[Injuries]");
+            context.Database.ExecuteSqlCommand("DELETE FROM Injuries");
             JArray injuries = GetInjuries();
             foreach (JObject injury in injuries)
             {
