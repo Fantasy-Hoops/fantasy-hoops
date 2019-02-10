@@ -17,7 +17,7 @@ export class FriendList extends Component {
     if (prevProps == this.props)
       return;
 
-    fetch(`http://http://68.183.213.191:5001/api/user/friends/${this.props.user.id}`)
+    fetch(`http://68.183.213.191:5001/api/user/friends/${this.props.user.id}`)
       .then(res => {
         return res.json()
       })
