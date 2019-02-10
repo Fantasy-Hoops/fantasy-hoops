@@ -45,7 +45,10 @@ namespace fantasy_hoops.Database
                     player.Price = PRICE_FLOOR;
                     continue;
                 }
-
+                if (p["league"]["standard"] == null)
+                {
+                    continue;
+                }
                 JToken stats = p["league"]["standard"]["stats"]["latest"];
                 int gamesPlayed = (int)stats["gamesPlayed"];
                 player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["ppg"];
