@@ -18,7 +18,7 @@ export class PendingList extends Component {
     if (prevProps == this.props)
       return;
 
-    fetch(`https://localhost:5001/api/friendrequest/pending/${this.props.user.id}`)
+    fetch(`http://localhost:5001/api/friendrequest/pending/${this.props.user.id}`)
       .then(res => {
         return res.json()
       })

@@ -22,7 +22,7 @@ export class Notifications extends Component {
   }
 
   async componentDidMount() {
-    await fetch(`https://localhost:5001/api/lineup/nextGame`)
+    await fetch(`http://localhost:5001/api/lineup/nextGame`)
       .then(res => {
         return res.json()
       })
@@ -31,7 +31,7 @@ export class Notifications extends Component {
           serverTime: res.serverTime
         });
       })
-    await fetch(`https://localhost:5001/api/notification/${user.id}`)
+    await fetch(`http://localhost:5001/api/notification/${user.id}`)
       .then(res => {
         return res.json()
       })
@@ -50,7 +50,7 @@ export class Notifications extends Component {
       notificationID: notification.notificationID,
       userID: notification.userID
     }
-    await fetch('https://localhost:5001/api/notification/toggle', {
+    await fetch('http://localhost:5001/api/notification/toggle', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -62,7 +62,7 @@ export class Notifications extends Component {
       .catch(err => {
       });
 
-    await fetch(`https://localhost:5001/api/notification/${user.id}`)
+    await fetch(`http://localhost:5001/api/notification/${user.id}`)
       .then(res => {
         return res.json()
       })
@@ -75,7 +75,7 @@ export class Notifications extends Component {
   }
 
   async readAll() {
-    await fetch(`https://localhost:5001/api/notification/readall/${user.id}`, {
+    await fetch(`http://localhost:5001/api/notification/readall/${user.id}`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -86,7 +86,7 @@ export class Notifications extends Component {
       .catch(err => {
       });
 
-    fetch(`https://localhost:5001/api/notification/${user.id}`)
+    fetch(`http://localhost:5001/api/notification/${user.id}`)
       .then(res => {
         return res.json()
       })
