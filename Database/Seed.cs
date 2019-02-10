@@ -19,7 +19,9 @@ namespace fantasy_hoops.Database
                 return;
             }
 
-            HttpWebResponse webResponse = CommonFunctions.GetResponse("http://api.sportradar.us/nba/trial/v4/en/seasons/2017/REG/rankings.json?api_key=cm2ujj5ekzrt2r7wae5badha");
+            string apikey = "3hjjqjrembg54reu2w2e2577";
+
+            HttpWebResponse webResponse = CommonFunctions.GetResponse("http://api.sportradar.us/nba/trial/v4/en/seasons/2017/REG/rankings.json?api_key=" + apikey);
             if (webResponse == null)
                 return;
             string apiResponse = CommonFunctions.ResponseToString(webResponse);
@@ -44,7 +46,7 @@ namespace fantasy_hoops.Database
 
                         var key = teams[k].SelectToken("id");
                         string url = @"http://api.sportradar.us/nba/trial/v4/en/teams/" +
-                               key + "/profile.json?api_key=cm2ujj5ekzrt2r7wae5badha";
+                               key + "/profile.json?api_key="+apikey;
                         HttpWebResponse webPlayerResponse = CommonFunctions.GetResponse(url);
                         if (webResponse == null)
                             return;
@@ -74,7 +76,8 @@ namespace fantasy_hoops.Database
                                     STL = 0.0,
                                     BLK = 0.0,
                                     TeamID = team.TeamID,
-                                    Team = team
+                                    Team = team,
+                                    Status = "Active"
                                 };
                                 context.Players.Add(player);
                                 team.Players.Add(player);
