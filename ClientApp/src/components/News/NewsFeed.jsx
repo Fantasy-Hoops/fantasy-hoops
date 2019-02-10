@@ -23,7 +23,7 @@ export class NewsFeed extends Component {
     this.setState({
       newsLoader: true
     });
-    fetch(`https://localhost:5001/api/news`)
+    fetch(`http://localhost:5001/api/news`)
       .then(res => {
         return res.json()
       })
@@ -39,7 +39,7 @@ export class NewsFeed extends Component {
     this.setState({
       newsLoader: true
     });
-    fetch(`https://localhost:5001/api/news?start=${this.state.news.length}`)
+    fetch(`http://localhost:5001/api/news?start=${this.state.news.length}`)
       .then(res => {
         return res.json()
       })

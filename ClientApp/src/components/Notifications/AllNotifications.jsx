@@ -27,7 +27,7 @@ export class AllNotifications extends Component {
   }
 
   async componentWillMount() {
-    await fetch(`https://localhost:5001/api/lineup/nextGame`)
+    await fetch(`http://localhost:5001/api/lineup/nextGame`)
       .then(res => {
         return res.json()
       })
@@ -36,7 +36,7 @@ export class AllNotifications extends Component {
           serverTime: res.serverTime
         });
       })
-    await fetch(`https://localhost:5001/api/notification/${user.id}?count=10`)
+    await fetch(`http://localhost:5001/api/notification/${user.id}?count=10`)
       .then(res => {
         return res.json()
       })
@@ -55,7 +55,7 @@ export class AllNotifications extends Component {
       notificationID: notification.notificationID,
       userID: notification.userID
     }
-    await fetch('https://localhost:5001/api/notification/toggle', {
+    await fetch('http://localhost:5001/api/notification/toggle', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -67,7 +67,7 @@ export class AllNotifications extends Component {
       .catch(err => {
       });
 
-    await fetch(`https://localhost:5001/api/notification/${user.id}?count=${this.state.userNotifications.length}`)
+    await fetch(`http://localhost:5001/api/notification/${user.id}?count=${this.state.userNotifications.length}`)
       .then(res => {
         return res.json()
       })
@@ -83,7 +83,7 @@ export class AllNotifications extends Component {
       loader: true,
       loadCounter: this.state.loadCounter + 1
     });
-    await fetch(`https://localhost:5001/api/notification/${user.id}?start=${this.state.userNotifications.length}&count=${LOAD_COUNT}`)
+    await fetch(`http://localhost:5001/api/notification/${user.id}?start=${this.state.userNotifications.length}&count=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
