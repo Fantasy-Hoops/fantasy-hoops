@@ -62,7 +62,7 @@ export class ChangeAvatar extends Component {
       id: user.id,
       avatar: this.state.preview
     }
-    fetch('http://localhost:44307/api/user/uploadAvatar', {
+    fetch('https://localhost:5001/api/user/uploadAvatar', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -94,7 +94,7 @@ export class ChangeAvatar extends Component {
     const data = {
       id: user.id
     }
-    fetch('http://localhost:44307/api/user/clearAvatar', {
+    fetch('https://localhost:5001/api/user/clearAvatar', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
