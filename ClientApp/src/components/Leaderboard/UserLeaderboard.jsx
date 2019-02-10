@@ -42,7 +42,7 @@ export class UserLeaderboard extends Component {
   }
 
   async componentWillMount() {
-    await fetch(`http://localhost:5001/api/leaderboard/user?type=daily`)
+    await fetch(`http://http://68.183.213.191:5001/api/leaderboard/user?type=daily`)
       .then(res => {
         return res.json()
       })
@@ -51,7 +51,7 @@ export class UserLeaderboard extends Component {
           dailyUsers: res
         });
       })
-    await fetch(`http://localhost:5001/api/leaderboard/user?type=weekly`)
+    await fetch(`http://http://68.183.213.191:5001/api/leaderboard/user?type=weekly`)
       .then(res => {
         return res.json()
       })
@@ -60,7 +60,7 @@ export class UserLeaderboard extends Component {
           weeklyUsers: res
         });
       })
-    await fetch(`http://localhost:5001/api/leaderboard/user?type=monthly`)
+    await fetch(`http://http://68.183.213.191:5001/api/leaderboard/user?type=monthly`)
       .then(res => {
         return res.json()
       })
@@ -70,7 +70,7 @@ export class UserLeaderboard extends Component {
         });
       })
 
-    await fetch(`http://localhost:5001/api/leaderboard/user/${user.id}?type=daily`)
+    await fetch(`http://http://68.183.213.191:5001/api/leaderboard/user/${user.id}?type=daily`)
       .then(res => {
         return res.json()
       })
@@ -80,7 +80,7 @@ export class UserLeaderboard extends Component {
           dailyLoader: false
         });
       })
-    await fetch(`http://localhost:5001/api/leaderboard/user/${user.id}?type=weekly`)
+    await fetch(`http://http://68.183.213.191:5001/api/leaderboard/user/${user.id}?type=weekly`)
       .then(res => {
         return res.json()
       })
@@ -90,7 +90,7 @@ export class UserLeaderboard extends Component {
           weeklyLoader: false
         });
       })
-    await fetch(`http://localhost:5001/api/leaderboard/user/${user.id}?type=monthly`)
+    await fetch(`http://http://68.183.213.191:5001/api/leaderboard/user/${user.id}?type=monthly`)
       .then(res => {
         return res.json()
       })
@@ -111,8 +111,8 @@ export class UserLeaderboard extends Component {
       loader: true
     });
     const link = this.state.friendsOnly
-      ? `http://localhost:5001/api/leaderboard/user/${user.id}?type=daily&from=${this.state.friendsDailyUsers.length}&limit=${LOAD_COUNT}`
-      : `http://localhost:5001/api/leaderboard/user?type=daily&from=${this.state.dailyUsers.length}&limit=${LOAD_COUNT}`;
+      ? `http://http://68.183.213.191:5001/api/leaderboard/user/${user.id}?type=daily&from=${this.state.friendsDailyUsers.length}&limit=${LOAD_COUNT}`
+      : `http://http://68.183.213.191:5001/api/leaderboard/user?type=daily&from=${this.state.dailyUsers.length}&limit=${LOAD_COUNT}`;
     await fetch(link)
       .then(res => {
         return res.json()
@@ -141,8 +141,8 @@ export class UserLeaderboard extends Component {
       loader: true
     });
     const link = this.state.friendsOnly
-      ? `http://localhost:5001/api/leaderboard/user/${user.id}?type=weekly&from=${this.state.friendsWeeklyUsers.length}&limit=${LOAD_COUNT}`
-      : `http://localhost:5001/api/leaderboard/user?type=weekly&from=${this.state.weeklyUsers.length}&limit=${LOAD_COUNT}`;
+      ? `http://http://68.183.213.191:5001/api/leaderboard/user/${user.id}?type=weekly&from=${this.state.friendsWeeklyUsers.length}&limit=${LOAD_COUNT}`
+      : `http://http://68.183.213.191:5001/api/leaderboard/user?type=weekly&from=${this.state.weeklyUsers.length}&limit=${LOAD_COUNT}`;
     await fetch(link)
       .then(res => {
         return res.json()
@@ -170,8 +170,8 @@ export class UserLeaderboard extends Component {
       loader: true
     });
     const link = this.state.friendsOnly
-      ? `http://localhost:5001/api/leaderboard/user/${user.id}?type=monthly&from=${this.state.friendsMonthlyUsers.length}&limit=${LOAD_COUNT}`
-      : `http://localhost:5001/api/leaderboard/user?type=monthly&from=${this.state.monthlyUsers.length}&limit=${LOAD_COUNT}`;
+      ? `http://http://68.183.213.191:5001/api/leaderboard/user/${user.id}?type=monthly&from=${this.state.friendsMonthlyUsers.length}&limit=${LOAD_COUNT}`
+      : `http://http://68.183.213.191:5001/api/leaderboard/user?type=monthly&from=${this.state.monthlyUsers.length}&limit=${LOAD_COUNT}`;
     await fetch(link)
       .then(res => {
         return res.json()
