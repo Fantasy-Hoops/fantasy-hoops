@@ -15,7 +15,7 @@ namespace fantasy_hoops.Helpers
         public static DateTime UTCToEastern(DateTime time)
         {
             DateTime timeUTC = time;
-            TimeZoneInfo eastern = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+            TimeZoneInfo eastern = TimeZoneInfo.FindSystemTimeZoneById("EST");
             return TimeZoneInfo.ConvertTimeFromUtc(timeUTC, eastern);
         }
 
