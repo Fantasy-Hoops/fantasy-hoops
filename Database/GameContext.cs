@@ -21,21 +21,16 @@ namespace fantasy_hoops.Database
         public DbSet<InjuryNotification> InjuryNotifications { get; set; }
         public DbSet<FriendRequestNotification> FriendRequestNotifications { get; set; }
 
-        private static string connectionString = "Server=localhost;Database=fantasyhoops;Trusted_Connection=Yes;";
+        private static string connectionString = "Server=138.68.74.57;Database=fantasyhoops;User=fh;Password=bennekfhnaidze;";
 
-        public GameContext() : base((new DbContextOptionsBuilder<GameContext>())
-            .UseSqlServer(connectionString).Options)
+        public GameContext()
         {
         }
 
-        public GameContext(DbContextOptions<GameContext> options) : base(options)
-        {
-
-        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseMySql(connectionString);
         }
     }
 }

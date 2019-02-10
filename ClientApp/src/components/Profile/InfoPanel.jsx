@@ -32,7 +32,7 @@ export class InfoPanel extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true })
-    await fetch(`http://localhost:44307/api/stats/${player.nbaID}`)
+    await fetch(`https://localhost:5001/api/stats/${player.nbaID}`)
       .then(res => res.json())
       .then(res => {
         this.setState({
