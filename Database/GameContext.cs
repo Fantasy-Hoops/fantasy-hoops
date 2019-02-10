@@ -21,7 +21,7 @@ namespace fantasy_hoops.Database
         public DbSet<InjuryNotification> InjuryNotifications { get; set; }
         public DbSet<FriendRequestNotification> FriendRequestNotifications { get; set; }
 
-        private static string connectionString = "Server=138.68.74.57;Database=fantasyhoops;User=fh;Password=bennekfhnaidze;";
+        private static string connectionString = "Server=138.68.74.57;Database=fantasyhoops;User=fa;Password=bennekfhnaidze;";
 
         public GameContext()
         {

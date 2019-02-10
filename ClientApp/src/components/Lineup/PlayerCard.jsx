@@ -100,7 +100,7 @@ export class PlayerCard extends Component {
   getDisplayName(player) {
     if (!player)
       return;
-    if (player.firstName.length > 1)
+    if (player.firstName && player.firstName.length > 1)
       return `${player.firstName[0]}. ${player.lastName}`;
     else
       return player.lastName;

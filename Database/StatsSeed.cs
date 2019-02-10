@@ -71,17 +71,19 @@ namespace fantasy_hoops.Database
                             oppId = hTeam;
                             score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"];
                         }
+                        if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
+                            continue;
                         AddToDatabase(context, player, date, oppId, score);
                     }
                 }
                 days--;
+                context.SaveChanges();
             }
-            context.SaveChanges();
         }
 
         private static void AddToDatabase(GameContext context, JToken player, DateTime date, int oppId, string score)
         {
-            var statsObj = new Stats
+            Stats statsObj = new Stats
             {
                 Date = date,
                 OppID = oppId,
@@ -107,6 +109,7 @@ namespace fantasy_hoops.Database
                 PTS = (int)player["points"],
                 PlayerID = (int)player["personId"]
             };
+
             statsObj.Player = context.Players.Where(x => x.NbaID == statsObj.PlayerID).FirstOrDefault();
             bool shouldAdd = !context.Stats.Any(x => x.Date == date && x.Player.NbaID == statsObj.PlayerID);
 

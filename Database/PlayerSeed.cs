@@ -24,7 +24,7 @@ namespace fantasy_hoops.Database
 
         private static JObject GetPlayer(int id)
         {
-            string url = "http://data.nba.net/10s/prod/v1/2017/players/" + id + "_profile.json";
+            string url = "http://data.nba.net/10s/prod/v1/" + CommonFunctions.GetSeasonYear() + "/players/" + id + "_profile.json";
             HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
             if (webResponse == null)
                 return null;
@@ -104,12 +104,19 @@ namespace fantasy_hoops.Database
 
             try
             {
-                GSavg = context.Stats
+                double GSsum = context.Stats
                             .Where(x => x.Player.NbaID == p.NbaID)
                             .OrderByDescending(s => s.Date)
                             .Take(5)
                             .Select(s => s.GS)
-                            .Average();
+                            .Sum();
+
+                int GScount = context.Stats
+                            .Where(x => x.Player.NbaID == p.NbaID)
+                            .Take(5)
+                            .Count();
+
+                GSavg = GSsum / GScount;
             }
             catch { }
             int price = _scoreService.GetPrice(p.FPPG, GSavg);
