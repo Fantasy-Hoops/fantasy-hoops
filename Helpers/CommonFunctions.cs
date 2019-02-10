@@ -87,5 +87,16 @@ namespace fantasy_hoops.Helpers
             }
             return NextGame.PREVIOUS_GAME;
         }
+
+        public static string GetSeasonYear()
+        {
+            string url = "http://data.nba.net/10s/prod/v1/today.json";
+            HttpWebResponse webResponse = GetResponse(url);
+            if (webResponse == null)
+                return null;
+            string apiResponse = ResponseToString(webResponse);
+            JObject json = JObject.Parse(apiResponse);
+            return (string)json["seasonScheduleYear"];
+        }
     }
 }

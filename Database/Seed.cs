@@ -21,7 +21,7 @@ namespace fantasy_hoops.Database
 
             string apikey = "3hjjqjrembg54reu2w2e2577";
 
-            HttpWebResponse webResponse = CommonFunctions.GetResponse("http://api.sportradar.us/nba/trial/v4/en/seasons/2017/REG/rankings.json?api_key=" + apikey);
+            HttpWebResponse webResponse = CommonFunctions.GetResponse("http://api.sportradar.us/nba/trial/v4/en/seasons/" + CommonFunctions.GetSeasonYear() + "/REG/rankings.json?api_key=" + apikey);
             if (webResponse == null)
                 return;
             string apiResponse = CommonFunctions.ResponseToString(webResponse);
