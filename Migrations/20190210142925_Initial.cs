@@ -27,7 +27,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     NewsID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Title = table.Column<string>(nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
                     hTeamID = table.Column<int>(nullable: false),
@@ -43,7 +43,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     TeamID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     NbaID = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     City = table.Column<string>(nullable: true),
@@ -60,7 +60,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     RoleId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -81,7 +81,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     ParagraphID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Content = table.Column<string>(nullable: true),
                     NewsID = table.Column<int>(nullable: false)
                 },
@@ -135,7 +135,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     PlayerID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     NbaID = table.Column<int>(nullable: false),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
@@ -171,7 +171,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -256,7 +256,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Date = table.Column<DateTime>(nullable: false),
                     SenderID = table.Column<string>(nullable: true),
                     ReceiverID = table.Column<string>(nullable: true),
@@ -284,7 +284,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     InjuryID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     PlayerID = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Status = table.Column<string>(nullable: true),
@@ -309,7 +309,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Date = table.Column<DateTime>(nullable: false),
                     UserID = table.Column<string>(nullable: true),
                     PlayerID = table.Column<int>(nullable: false),
@@ -339,7 +339,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     NotificationID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserID = table.Column<string>(nullable: true),
                     ReadStatus = table.Column<bool>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
@@ -379,7 +379,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     StatsID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Date = table.Column<DateTime>(nullable: false),
                     Score = table.Column<string>(nullable: true),
                     MIN = table.Column<string>(nullable: true),
@@ -427,8 +427,7 @@ namespace fantasy_hoops.Migrations
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
-                unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -454,8 +453,7 @@ namespace fantasy_hoops.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_TeamID",

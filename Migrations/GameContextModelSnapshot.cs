@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
@@ -16,14 +15,12 @@ namespace fantasy_hoops.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("fantasy_hoops.Models.FriendRequest", b =>
                 {
                     b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("Date");
 
@@ -45,8 +42,7 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.Injuries", b =>
                 {
                     b.Property<int>("InjuryID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("Date");
 
@@ -72,8 +68,7 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.Lineup", b =>
                 {
                     b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<bool>("Calculated");
 
@@ -99,8 +94,7 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.News", b =>
                 {
                     b.Property<int>("NewsID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("Date");
 
@@ -118,8 +112,7 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.Notification", b =>
                 {
                     b.Property<int>("NotificationID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("DateCreated");
 
@@ -142,8 +135,7 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.Paragraph", b =>
                 {
                     b.Property<int>("ParagraphID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Content");
 
@@ -159,8 +151,7 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.Player", b =>
                 {
                     b.Property<int>("PlayerID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<double>("AST");
 
@@ -209,8 +200,7 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.Stats", b =>
                 {
                     b.Property<int>("StatsID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("AST");
 
@@ -274,8 +264,7 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.Team", b =>
                 {
                     b.Property<int>("TeamID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("Abbreviation");
 
@@ -343,8 +332,7 @@ namespace fantasy_hoops.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasName("UserNameIndex");
 
                     b.HasIndex("TeamID");
 
@@ -369,8 +357,7 @@ namespace fantasy_hoops.Migrations
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
                 });
@@ -378,8 +365,7 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ClaimType");
 
@@ -398,8 +384,7 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("ClaimType");
 
