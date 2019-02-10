@@ -34,7 +34,7 @@ export class InjuriesFeed extends Component {
   }
 
   async componentWillMount() {
-    await fetch(`http://localhost:5001/api/lineup/nextGame`)
+    await fetch(`http://http://68.183.213.191:5001/api/lineup/nextGame`)
       .then(res => {
         return res.json()
       })
@@ -43,7 +43,7 @@ export class InjuriesFeed extends Component {
           serverTime: res.serverTime
         });
       })
-    await fetch(`http://localhost:5001/api/injuries`)
+    await fetch(`http://http://68.183.213.191:5001/api/injuries`)
       .then(res => {
         return res.json()
       })
@@ -66,7 +66,7 @@ export class InjuriesFeed extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true })
-    await fetch(`http://localhost:5001/api/stats/${player.nbaID}`)
+    await fetch(`http://http://68.183.213.191:5001/api/stats/${player.nbaID}`)
       .then(res => res.json())
       .then(res => {
         this.setState({

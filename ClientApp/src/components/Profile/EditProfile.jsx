@@ -28,7 +28,7 @@ export class EditProfile extends Component {
   }
 
   componentDidMount() {
-    fetch(`http://localhost:5001/api/team`)
+    fetch(`http://http://68.183.213.191:5001/api/team`)
       .then(res => {
         return res.json()
       })
