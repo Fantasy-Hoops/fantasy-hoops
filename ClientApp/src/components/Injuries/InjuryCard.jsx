@@ -27,13 +27,18 @@ export class InjuryCard extends Component {
       status = 'injury-out';
     else
       status = 'injury-questionable';
-    const link = this.props.injury.link != ''
+    const link = this.props.injury.link !== ''
       ? (<span style={{ float: 'left' }} className='comments'>
         <i className='fa fa-comments'></i>
         <a target="_blank" href={this.props.injury.link}> Read more </a>
       </span>)
       : '';
-    const pos = this.props.injury.player.position.toLowerCase();
+    let image;
+    try {
+      image = require(`../../content/images/players/${this.props.injury.player.nbaID}.png`);
+    } catch (err) {
+      image = require(`../../content/images/positions/${this.props.injury.player.position.toLowerCase()}.png`);
+    }
     return (
       <div className='mx-auto' style={{ transform: 'scale(0.9, 0.9)' }}>
         <div className='column'>
@@ -42,8 +47,10 @@ export class InjuryCard extends Component {
               <div className='date'>
                 <div className='day badge badge-dark'>{this.props.injury.player.position}</div>
               </div>
-              <img src={this.props.image}
-                style={{ backgroundColor: this.props.injury.player.team.color }} />
+              <img src={image}
+                style={{ backgroundColor: this.props.injury.player.team.color }}
+                alt={`${this.props.injury.player.firstName} ${this.props.injury.player.lastName}`}
+              />
             </div>
             <div className='post-content'>
               <div className={'category ' + status}>{this.props.injury.status}</div>

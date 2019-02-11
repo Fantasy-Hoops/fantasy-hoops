@@ -12,7 +12,7 @@ export class FriendRequest extends Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (prevProps == this.props)
+    if (prevProps === this.props)
       return;
 
     const sender = parse();
@@ -20,7 +20,7 @@ export class FriendRequest extends Component {
       return;
 
     const receiver = this.props.user;
-    if (receiver.id == sender.id) {
+    if (receiver.id === sender.id) {
       this.setState({
         status: '-2'
       });

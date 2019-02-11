@@ -35,6 +35,7 @@ export class UserScoreCard extends Component {
             <img
               className="user-card-player"
               src={this.props.image}
+              alt={this.props.player.lastName}
             />
           </div>
           <p className="player-usertitle">{this.props.player.lastName}</p>

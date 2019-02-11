@@ -4,10 +4,6 @@ import shortid from 'shortid';
 import _ from 'lodash';
 
 export class UserScore extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     let players = '';
     if (this.props.activity != null) {

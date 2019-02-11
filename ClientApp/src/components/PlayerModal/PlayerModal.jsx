@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import _ from 'lodash';
 import { Loader } from '../Loader';
 import { Stats } from './Stats';
 import { Gamelog } from './Gamelog';
@@ -32,7 +31,6 @@ export class PlayerModal extends Component {
       );
     }
     else {
-      const stats = this.state.stats;
       return (
         <div>
           <Stats stats={this.state.stats} image={this.props.image} />

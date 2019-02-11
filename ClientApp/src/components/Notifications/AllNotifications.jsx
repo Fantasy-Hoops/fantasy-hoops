@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { isAuth, parse, logout } from '../../utils/auth';
+import { parse } from '../../utils/auth';
 import { handleErrors } from '../../utils/errors';
 import { GameScoreNotification } from './GameScoreNotification';
 import { InjuryNotification } from './InjuryNotification';
@@ -51,10 +51,6 @@ export class AllNotifications extends Component {
   async toggleNotification(notification) {
     if (notification.readStatus)
       return;
-    const data = {
-      notificationID: notification.notificationID,
-      userID: notification.userID
-    }
     await fetch('http://68.183.213.191:5001/api/notification/toggle', {
       method: 'POST',
       headers: {
@@ -129,6 +125,7 @@ export class AllNotifications extends Component {
             toggleNotification={this.toggleNotification}
             notification={notification}
           />;
+          else return <div></div>;
       });
   }
 

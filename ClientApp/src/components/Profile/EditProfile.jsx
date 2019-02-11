@@ -40,16 +40,16 @@ export class EditProfile extends Component {
   }
 
   componentDidUpdate(nextProps, nextState) {
-    if (this.props != nextProps) {
+    if (this.props !== nextProps) {
       this.setState({
         username: this.props.user.userName,
         email: this.props.user.email,
-        about: this.props.user.description,
+        about: this.props.user.description || '',
         team: this.props.user.favoriteTeamId
       })
     }
     const btn = document.getElementById('submit');
-    if (document.querySelectorAll('.is-invalid').length != 0) {
+    if (document.querySelectorAll('.is-invalid').length !== 0) {
       btn.className = 'btn btn-primary';
       btn.disabled = true;
       return;
@@ -112,7 +112,6 @@ export class EditProfile extends Component {
   }
 
   render() {
-    const user = parse();
     const teams = this.state.teams;
     const changingPassword =
       !(this.state.password.length > 0
@@ -121,7 +120,7 @@ export class EditProfile extends Component {
     return (
       <div className="tab-pane" id="edit">
         <Alert type={this.state.alertType} text={this.state.alertText} show={this.state.showAlert} />
-        <form role="form" onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit}>
           <label className="col-lg-3 col-form-label form-control-label"></label>
           <div className="col-lg-9">
             <label className="form-group row">PERSONAL INFO</label>
@@ -148,7 +147,7 @@ export class EditProfile extends Component {
                 id="email"
                 value={this.state.email}
                 onChange={this.handleChange}
-                regex={/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$|^$/i}
+                regex={/^(([^<>()\],;:\s@]+(\.]][^<>()\],;:\s@]+)*)|(.+))@(([^<>()[\],;:\s@]+)+[^<>()[\],;:\s@]{2,})$/i}
                 error="Invalid email"
               />
             </div>

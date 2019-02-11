@@ -31,6 +31,7 @@ export class InjuryNotification extends Component {
     catch (err) {
       photo = require(`../../content/images/positions/${this.props.notification.player.position.toLowerCase()}.png`)
     }
+
     return (
       <a onClick={this.select} className="card cursor-pointer link mx-auto" style={{ maxWidth: `${this.props.width}` }}>
         <div className={read} style={{ margin: '-0.6rem' }}>
@@ -42,6 +43,7 @@ export class InjuryNotification extends Component {
                 <img
                   className="notification-card-player"
                   src={photo}
+                  alt={`${this.props.notification.player.firstName} ${this.props.notification.player.lastName}`}
                 />
               </div>
             </div>

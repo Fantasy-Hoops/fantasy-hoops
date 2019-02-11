@@ -3,7 +3,6 @@ import { parse } from '../../../utils/auth';
 import { FriendList } from './FriendList';
 import { PendingList } from './PendingList';
 import { RequestList } from './RequestList';
-import { importAll } from '../../../utils/reusableFunctions';
 
 export class Friends extends Component {
   constructor(props) {
@@ -14,7 +13,7 @@ export class Friends extends Component {
   }
 
   render() {
-    const loggedInAsSameUser = (this.props.user.userName != null && parse().username.toLowerCase() == this.props.user.userName.toLowerCase());
+    const loggedInAsSameUser = (this.props.user.userName != null && parse().username.toLowerCase() === this.props.user.userName.toLowerCase());
     return (
       <div className="tab-pane" id="friends">
         <div className="container">
@@ -45,14 +44,5 @@ export class Friends extends Component {
         </div>
       </div>
     );
-  }
-
-  getUserImages() {
-    try {
-      return importAll(require.context('../../../content/images/avatars', false, /\.(png|jpe?g|svg)$/))
-    }
-    catch (err) {
-      return ''
-    }
   }
 }

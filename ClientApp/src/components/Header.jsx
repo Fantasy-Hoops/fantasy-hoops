@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import _ from 'lodash';
 import { isAuth, parse, logout } from '../utils/auth';
-import defaultPhoto from '../content/images/default.png';
+import defaultPhoto from '../content/images/avatars/default.png';
 import { Notifications } from './Notifications/Notifications';
 
 export class Header extends Component {
@@ -110,7 +109,6 @@ export class Header extends Component {
               <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle btn-no-outline"
-                  href="#"
                   id="navbarDropdownMenuLink"
                   data-toggle="dropdown"
                   aria-haspopup="true"

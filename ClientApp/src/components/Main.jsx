@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
 
 export class Main extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <div>
-        <div className>
+        <div>
           <p id="main-text" className="text-center title" style={{ marginTop: '15%' }}>
             Fantasy Hoops
           </p>

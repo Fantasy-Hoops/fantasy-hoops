@@ -13,6 +13,17 @@ export class NewsCard extends Component {
   }
 
   render() {
+    let hTeam, vTeam;
+    try {
+      hTeam = require(`../../content/images/logos/${this.props.news.hTeam}.svg`);
+    } catch (e) {
+      hTeam = require(`../../content/images/logos/defaultLogo.png`);
+    }
+    try {
+      vTeam = require(`../../content/images/logos/${this.props.news.vTeam}.svg`);
+    } catch (e) {
+      vTeam = require(`../../content/images/logos/defaultLogo.png`);
+    }
     const size = 2;
     let paragraphs = _.map(this.props.news.paragraphs,
       (paragraph) => {
@@ -28,7 +39,7 @@ export class NewsCard extends Component {
         </div>
         <span>
           <img
-            src={this.props.hTeam}
+            src={hTeam}
             alt=""
             width="50px"
             style={{ position: 'absolute' }}
@@ -36,7 +47,7 @@ export class NewsCard extends Component {
         </span>
         <span style={{ paddingLeft: '5rem' }}>
           <img
-            src={this.props.vTeam}
+            src={vTeam}
             alt=""
             width="50px"
             style={{ position: 'absolute' }}

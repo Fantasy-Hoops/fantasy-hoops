@@ -29,7 +29,7 @@ export class GameScoreNotification extends Component {
         <div className={read} style={{ margin: '-0.6rem' }}>
           <div className="row">
             <div className="col-1 mr-3">
-              <img className="pt-1" src={gameLogo} width="40rem" />
+              <img className="pt-1" src={gameLogo} width="40rem" alt="Fantasy Hoops"/>
             </div>
             <div className="col ml-1"> 
               <h5 className="card-title">The game has finished!</h5>

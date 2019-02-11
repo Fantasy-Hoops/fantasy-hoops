@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { parse } from '../../../utils/auth';
-import { UserCard } from './../UserCard';
 import { RequestCard } from './RequestCard';
 import shortid from 'shortid';
-import defaultPhoto from '../../../content/images/default.png';
+import defaultPhoto from '../../../content/images/avatars/default.png';
 import _ from 'lodash';
 
 export class PendingList extends Component {
@@ -15,7 +14,7 @@ export class PendingList extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps == this.props)
+    if (prevProps === this.props)
       return;
 
     fetch(`http://68.183.213.191:5001/api/friendrequest/pending/${this.props.user.id}`)

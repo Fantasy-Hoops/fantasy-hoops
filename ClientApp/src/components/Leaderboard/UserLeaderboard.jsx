@@ -4,8 +4,6 @@ import { UserLeaderboardCard as Card } from './UserLeaderboardCard';
 import leaderboardLogo from '../../content/images/leaderboard.png';
 import shortid from 'shortid';
 import _ from 'lodash';
-import defaultPhoto from '../../content/images/default.png';
-import { importAll } from '../../utils/reusableFunctions';
 import { Loader } from '../Loader';
 import { EmptyJordan } from '../EmptyJordan';
 const user = parse();
@@ -26,7 +24,6 @@ export class UserLeaderboard extends Component {
       friendsDailyUsers: [],
       friendsWeeklyUsers: [],
       friendsMonthlyUsers: [],
-      userIMG: this.getUserImages(),
       dailyLoader: true,
       weeklyLoader: true,
       monthlyLoader: true,
@@ -118,7 +115,6 @@ export class UserLeaderboard extends Component {
         return res.json()
       })
       .then(res => {
-        console.log(res);
         if (this.state.friendsOnly) {
           this.setState({
             friendsDailyLoadCounter: this.state.friendsDailyLoadCounter + 1,
@@ -308,28 +304,16 @@ export class UserLeaderboard extends Component {
     );
   }
 
-  getUserImages() {
-    try {
-      return importAll(require.context('../../content/images/avatars', false, /\.(png|jpe?g|svg)$/))
-    }
-    catch (err) {
-      return ''
-    }
-  }
-
   createUsers(users) {
     return _.map(
       users,
       (user, index) => {
-        {
-          return <Card
-            index={index}
-            key={shortid()}
-            avatar={this.state.userIMG[`${user.id}.png`] || defaultPhoto}
-            userName={user.userName}
-            fp={user.score}
-          />
-        }
+        return <Card
+          index={index}
+          key={shortid()}
+          userName={user.userName}
+          fp={user.score}
+        />
       }
     );
   }
