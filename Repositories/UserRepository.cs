@@ -37,7 +37,7 @@ namespace fantasy_hoops.Repositories
             var activity = GetRecentActivity(id).ToList()
                 .Where((x, index) => index % 5 == 0).ToList();
             int streak = GetStreak(id);
-            double totalScore = GetWeeklyScore(id);
+            decimal totalScore = GetWeeklyScore(id);
             int position = GetWeeklyRanking(id);
 
             var profile = _context.Users.Where(x => x.Id.Equals(id)).Select(x => new
@@ -55,8 +55,8 @@ namespace fantasy_hoops.Repositories
                     team.Color
                 },
                 RecentActivity = activity,
-                streak,
-                position,
+                Streak = streak,
+                Position = position,
                 TotalScore = totalScore
             });
             return profile;
@@ -184,11 +184,12 @@ namespace fantasy_hoops.Repositories
             return streak;
         }
 
-        private double GetWeeklyScore(string id)
+        private decimal GetWeeklyScore(string id)
         {
-            return _context.Lineups
+            double weekly = _context.Lineups
                     .Where(x => x.UserID.Equals(id) && x.Date >= date)
                     .Select(x => x.FP).Sum();
+            return Convert.ToDecimal(weekly);
         }
 
         private int GetWeeklyRanking(string id)
