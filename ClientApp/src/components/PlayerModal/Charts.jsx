@@ -72,7 +72,7 @@ export class Charts extends Component {
         />
         <div className='mt-3 mx-auto' style={{ maxWidth: '50rem', width: '100%' }} >
           {
-            this.state.criteria == 'ovr'
+            this.state.criteria === 'ovr'
               ? <div style={{ overflow: 'auto' }}><Radar data={this.getRadarData()} options={this.getRadarOptions()} /></div>
               : <div style={{ overflow: 'auto' }}><Line data={this.getChartData()} options={this.getChartOptions()} /></div>
           }
@@ -212,7 +212,7 @@ export class Charts extends Component {
     var c;
     if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
       c = hex.substring(1).split('');
-      if (c.length == 3) {
+      if (c.length === 3) {
         c = [c[0], c[0], c[1], c[1], c[2], c[2]];
       }
       c = '0x' + c.join('');

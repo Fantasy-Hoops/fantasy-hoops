@@ -10,7 +10,7 @@ export class EmptyJordan extends Component {
   render() {
     return (
       <div className="text-center">
-        <img className="text-center" src={require('../content/images/jordan-crying.png')} style={{ height: '12.5rem' }} />
+        <img className="text-center" src={require('../content/images/jordan-crying.png')} style={{ height: '12.5rem' }} alt="Sad Jordan" />
         <h5>{this.props.message}</h5>
       </div>
     );

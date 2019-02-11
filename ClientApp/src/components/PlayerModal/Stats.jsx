@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import defaultLogo from '../../content/images/defaultLogo.png';
 
 export class Stats extends Component {
   constructor(props) {
@@ -7,14 +6,14 @@ export class Stats extends Component {
     this.state = {
     }
   }
-  
+
   render() {
     const stats = this.props.stats;
     return (
       <div className="row">
         <div style={{ width: '16.25rem', height: '13.05rem' }}></div>
-        <img className="img-modal pt-4 mb-2" src={this.getLogo(stats.team.abbreviation)} />
-        <img className="ml-3 img-modal mb-2" src={this.props.image} style={{ zIndex: '1', paddingTop: '1.2rem' }} />
+        <img className="img-modal pt-4 mb-2" src={require(`../../content/images/logos/${stats.team.abbreviation}.svg`)} alt={stats.team.abbreviation} />
+        <img className="ml-3 img-modal mb-2" src={require(`../../content/images/players/${stats.nbaID}.png`)} style={{ zIndex: '1', paddingTop: '1.2rem' }} alt={`${stats.firstName} ${stats.lastName}`} />
         <div className="col">
           <h1 className="">{stats.firstName} {stats.lastName}</h1>
           <h5>{stats.position} | {stats.team.city + " " + stats.team.name}</h5>
@@ -37,14 +36,5 @@ export class Stats extends Component {
         </div>
       </div>
     );
-  }
-
-  getLogo(abbreviation) {
-    try {
-      return require(`../../content/images/logos/${abbreviation}.svg`);
-    }
-    catch (err) {
-      return defaultLogo;
-    }
   }
 }

@@ -4,8 +4,6 @@ import _ from 'lodash'
 import shortid from 'shortid';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Loader } from '../Loader';
-import defaultLogo from '../../content/images/defaultLogo.png';
-import { importAll } from '../../utils/reusableFunctions';
 
 export class NewsFeed extends Component {
   constructor(props) {
@@ -13,8 +11,7 @@ export class NewsFeed extends Component {
     this.state = {
       news: '',
       hasMore: true,
-      newsLoader: false,
-      logoIMG: this.getImages()
+      newsLoader: false
     }
     this.fetchData = this.fetchData.bind(this);
   }
@@ -46,27 +43,16 @@ export class NewsFeed extends Component {
       .then(res => {
         this.setState({
           news: this.state.news.concat(res),
-          hasMore: res.length == 6,
+          hasMore: res.length === 6,
           newsLoader: false
         });
       });
-  }
-
-  getImages() {
-    try {
-      return importAll(require.context('../../content/images/logos', false, /\.(png|jpe?g|svg)$/))
-    }
-    catch (err) {
-      return ''
-    }
   }
 
   render() {
     let news = _.map(this.state.news,
       (news) => {
         return <NewsCard
-          hTeam={this.state.logoIMG[`${news.hTeam}.svg`] || defaultLogo}
-          vTeam={this.state.logoIMG[`${news.vTeam}.svg`] || defaultLogo}
           key={shortid()}
           news={news} />
       }

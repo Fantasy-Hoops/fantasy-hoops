@@ -3,10 +3,6 @@ import shortid from 'shortid';
 import _ from 'lodash';
 
 export class Error extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     let status = _.map(this.props.status.split(''),
       (letter) => {
@@ -19,8 +15,8 @@ export class Error extends Component {
     );
 
     return (
-      <div className="letters text-center" style={{marginTop: '10%'}} >
-        <img src={require('../content/images/jordan-crying.png')} style={{height: '200px'}} />
+      <div className="letters text-center" style={{ marginTop: '10%' }} >
+        <img src={require('../content/images/jordan-crying.png')} style={{ height: '200px' }} alt="Sad Jordan" />
         <br />
         <span className="letter">E</span>
         <span className="letter">r</span>

@@ -13,7 +13,7 @@ export class PlayerPool extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.players == this.props.players) {
+    if (this.state.players === this.props.players) {
       return;
     }
     this.setState({
@@ -27,14 +27,19 @@ export class PlayerPool extends Component {
       (player) => {
         if (player.position === this.props.position
           || this.props.position === '') {
-          const pos = this.props.position.toLowerCase();
+          let image;
+          try {
+            image = require(`../../content/images/players/${player.id}.png`);
+          } catch (err) {
+            image = require(`../../content/images/positions/${player.position.toLowerCase()}.png`);
+          }
           return <div className="ml-3 mt-3" key={shortid()}>
             <PlayerCard
               key={player.id}
               id={player.id}
               status={1}
               player={player}
-              image={this.props.playerIMG[`${player.id}.png`] || this.props.posIMG[`${pos}.png`]}
+              image={image}
               selectPlayer={this.props.selectPlayer}
               handleSelect={this.handleSelect}
               showModal={this.props.showModal}
@@ -54,9 +59,9 @@ export class PlayerPool extends Component {
 
   handleSelect(id, position) {
     let players = this.state.players;
-    const p = _.map(players,
+    _.map(players,
       p => {
-        if (this.props.position == ''
+        if (this.props.position === ''
           || p.position === this.props.position) {
           if (p.position === position) {
             if (p.id === id)

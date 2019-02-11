@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import defaultPhoto from '../../content/images/default.png'
+import defaultPhoto from '../../content/images/avatars/default.png'
 
 export class FriendRequestNotification extends Component {
   constructor(props) {
@@ -35,7 +35,7 @@ export class FriendRequestNotification extends Component {
         <div className={read} style={{ margin: '-0.6rem' }}>
           <div className="row">
             <div className="col-1 mr-3">
-              <img className="mt-2" src={avatar} width="40rem" height="40rem" />
+              <img className="mt-2" src={avatar} width="40rem" height="40rem" alt={this.props.notification.friend.userName} />
             </div>
             <div className="col ml-1">
               <h5 className="card-title">{this.props.notification.friend.userName}</h5>

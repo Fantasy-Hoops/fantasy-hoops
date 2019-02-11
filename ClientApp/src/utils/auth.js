@@ -1,5 +1,4 @@
 import decode from 'jwt-decode'
-import { handleErrors } from './errors'
 
 export const isAuth = () => {
   const token = localStorage.getItem('accessToken');

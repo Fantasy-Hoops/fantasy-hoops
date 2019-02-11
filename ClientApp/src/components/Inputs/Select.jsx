@@ -11,7 +11,7 @@ export class Select extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.teams == this.props.options) {
+    if (this.state.teams === this.props.options) {
       return;
     }
     this.setState({

@@ -2,17 +2,14 @@ import React, { Component } from 'react';
 import { UserCard } from './Profile/UserCard';
 import shortid from 'shortid';
 import _ from 'lodash';
-import defaultPhoto from '../content/images/default.png';
 import { DebounceInput } from 'react-debounce-input';
-import { importAll } from '../utils/reusableFunctions';
 import { Loader } from './Loader';
 
 export class UserPool extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loader: true,
-      userIMG: this.getUserImages()
+      loader: true
     }
     this.filterList = this.filterList.bind(this);
   }
@@ -48,14 +45,11 @@ export class UserPool extends Component {
     const users = _.map(
       this.state.users,
       (user) => {
-        {
-          return <UserCard
-            key={shortid()}
-            avatar={this.state.userIMG[`${user.id}.png`] || defaultPhoto}
-            userName={user.userName}
-            color={user.color}
-          />
-        }
+        return <UserCard
+          key={shortid()}
+          user={user}
+          color={user.color}
+        />
       }
     );
 
@@ -75,14 +69,5 @@ export class UserPool extends Component {
         </div>
       </div >
     );
-  }
-
-  getUserImages() {
-    try {
-      return importAll(require.context('../content/images/avatars', false, /\.(png|jpe?g|svg)$/))
-    }
-    catch (err) {
-      return ''
-    }
   }
 }

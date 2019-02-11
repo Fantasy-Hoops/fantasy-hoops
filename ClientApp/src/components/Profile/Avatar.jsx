@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import { ChangeAvatar } from '../Inputs/ChangeAvatar';
-import defaultPhoto from '../../content/images/default.png';
+import defaultPhoto from '../../content/images/avatars/default.png';
 import { FriendRequest } from './FriendRequest';
 
 export class Avatar extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const user = this.props.user;
     let avatar = defaultPhoto;

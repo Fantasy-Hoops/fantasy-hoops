@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { isAuth, parse, logout } from '../../utils/auth';
+import { parse } from '../../utils/auth';
 import { handleErrors } from '../../utils/errors';
 import { GameScoreNotification } from './GameScoreNotification';
 import { InjuryNotification } from './InjuryNotification';
@@ -38,7 +38,7 @@ export class Notifications extends Component {
       .then(res => {
         this.setState({
           userNotifications: res,
-          unreadCount: res.filter(n => n.readStatus == false).length
+          unreadCount: res.filter(n => n.readStatus === false).length
         });
       })
   }
@@ -46,10 +46,6 @@ export class Notifications extends Component {
   async toggleNotification(notification) {
     if (notification.readStatus)
       return;
-    const data = {
-      notificationID: notification.notificationID,
-      userID: notification.userID
-    }
     await fetch('http://68.183.213.191:5001/api/notification/toggle', {
       method: 'POST',
       headers: {
@@ -69,12 +65,13 @@ export class Notifications extends Component {
       .then(res => {
         this.setState({
           userNotifications: res,
-          unreadCount: res.filter(n => n.readStatus == false).length
+          unreadCount: res.filter(n => n.readStatus === false).length
         });
       });
   }
 
-  async readAll() {
+  async readAll(e) {
+    e.preventDefault();
     await fetch(`http://68.183.213.191:5001/api/notification/readall/${user.id}`, {
       method: 'POST',
       headers: {
@@ -93,7 +90,7 @@ export class Notifications extends Component {
       .then(res => {
         this.setState({
           userNotifications: res,
-          unreadCount: res.filter(n => n.readStatus == false).length
+          unreadCount: res.filter(n => n.readStatus === false).length
         });
       })
   }
@@ -128,6 +125,7 @@ export class Notifications extends Component {
             toggleNotification={this.toggleNotification}
             notification={notification}
           />;
+        return <div></div>;
       });
   }
 
@@ -158,7 +156,7 @@ export class Notifications extends Component {
               onClick={this.readAll}
               className="position-absolute btn-no-outline"
               style={{ right: '1rem' }}
-              href="javascript:void(0);"
+              href=""
             >
               Mark All as Read
             </a>

@@ -27,7 +27,7 @@ export class Login extends Component {
     });
 
     const btn = document.getElementById('login');
-    if (document.querySelectorAll('.is-invalid').length != 0) {
+    if (document.querySelectorAll('.is-invalid').length !== 0) {
       btn.className = 'btn btn-outline-primary btn-block';
       btn.disabled = true;
       return;

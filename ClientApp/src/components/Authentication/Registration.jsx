@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Input } from '../Inputs/Input';
-import { Select } from '../Inputs/Select';
 import { handleErrors } from '../../utils/errors'
 import { Alert } from '../Alert';
 import { isAuth } from '../../utils/auth';
@@ -27,7 +26,7 @@ export class Registration extends Component {
     });
 
     const btn = document.getElementById('submit');
-    if (document.querySelectorAll('.is-invalid').length != 0) {
+    if (document.querySelectorAll('.is-invalid').length !== 0) {
       btn.className = 'btn btn-outline-primary btn-block';
       btn.disabled = true;
       return;
@@ -114,7 +113,7 @@ export class Registration extends Component {
               id="email"
               value={this.state.email}
               onChange={this.handleChange}
-              regex={/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i}
+              regex={/^(([^<>()\],;:\s@]+(\.]][^<>()\],;:\s@]+)*)|(.+))@(([^<>()[\],;:\s@]+)+[^<>()[\],;:\s@]{2,})$/i}
               error="Invalid email"
             />
           </div>

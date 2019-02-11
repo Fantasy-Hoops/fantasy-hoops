@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 
 export class RequestCard extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   render() {
     return (
@@ -11,14 +8,14 @@ export class RequestCard extends Component {
         <div className="card-body">
           <a href={`/profile/${this.props.userName}`}>
             <div className="d-inline-block position-absolute ml-3" style={{ top: '0.2rem' }}>
-              <img className="user-card-player" src={this.props.avatar} />
+              <img className="user-card-player" src={this.props.avatar} alt={this.props.userName}/>
             </div>
             <div className="d-inline-block">
               <p className="align-middle player-name" style={{ paddingLeft: '5rem', paddingTop: '0.3rem' }}>{this.props.userName}</p>
             </div>
           </a>
           <div className="d-inline-block float-right">
-            {this.props.type == 'pending' ?
+            {this.props.type === 'pending' ?
               <div className="row">
                 <div className="col">
                   <button type="button" onClick={e => this.props.decline(this.props.id)} className="btn btn-outline-danger mx-auto">Decline Request</button>

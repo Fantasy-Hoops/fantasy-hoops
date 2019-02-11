@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { PlayerLeaderboardCard as Card } from './PlayerLeaderboardCard';
 import leaderboardLogo from '../../content/images/leaderboard.png';
 import shortid from 'shortid';
-import { importAll } from '../../utils/reusableFunctions';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
 import { Loader } from '../Loader';
 import { EmptyJordan } from '../EmptyJordan';
@@ -18,8 +17,6 @@ export class PlayerLeaderboard extends Component {
       dailyPlayers: [],
       weeklyPlayers: [],
       monthlyPlayers: [],
-      playerIMG: this.getPlayerImages(),
-      posIMG: this.getPosImages(),
       stats: '',
       dailyLoader: true,
       weeklyLoader: true,
@@ -231,34 +228,13 @@ export class PlayerLeaderboard extends Component {
     return _.map(
       players,
       (player, index) => {
-        {
           return <Card
             index={index}
             key={shortid()}
             player={player}
-            avatar={this.state.playerIMG[`${player.nbaID}.png`] || this.state.posIMG[`${player.position.toLowerCase()}.png`]}
             showModal={this.showModal}
           />
-        }
       }
     );
-  }
-
-  getPlayerImages() {
-    try {
-      return importAll(require.context('../../content/images/players', false, /\.(png|jpe?g|svg)$/))
-    }
-    catch (err) {
-      return ''
-    }
-  }
-
-  getPosImages() {
-    try {
-      return importAll(require.context('../../content/images/positions', false, /\.(png|jpe?g|svg)$/))
-    }
-    catch (err) {
-      return ''
-    }
   }
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
 import moment from 'moment';
-import defaultLogo from '../../content/images/defaultLogo.png';
+import defaultLogo from '../../content/images/avatars/default.png';
 import { Loader } from '../Loader';
 const LOAD_COUNT = 10;
 
@@ -104,14 +104,13 @@ export class Gamelog extends Component {
     if (this.props.loader)
       return '';
 
-    const teamLogo = this.getLogo(this.props.stats.team.abbreviation);
     const rows = this.state.games.sort(this.compare).map((s) => {
       const abbreviation = s.opponent ? s.opponent.abbreviation : '';
       let score = '';
       if (!s.score)
-        return;
+        return <div></div>;
       var str = s.score.split('-');
-      if (parseInt(str[0]) > parseInt(str[1]))
+      if (parseInt(str[0], 10) > parseInt(str[1], 10))
         score = <span className="text-success">W</span>;
       else score = <span className="text-danger">L</span>;
       return <tr key={shortid()} >

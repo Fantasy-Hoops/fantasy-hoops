@@ -17,11 +17,10 @@ export class PlayerCard extends Component {
 
   render() {
     if (this.props.status > 0) {
-      const pos = this.props.player.position.toLowerCase();
       const innerHTML = this.props.player.selected
-        ? <a className="fa fa-times"></a>
+        ? <i className="fa fa-times"></i>
         : <i className="fa fa-plus"></i>;
-      const buttonState = this.props.status == 1
+      const buttonState = this.props.status === 1
         ? <div className="button">
           <button className={`btn-no-outline center btn-circle btn-lg ${this.props.player.selected ? 'btn-danger' : 'btn-primary'} text-center`}
             onClick={this.select}>
@@ -44,15 +43,15 @@ export class PlayerCard extends Component {
       return (
         <div>
           <div className="player-card card">
-            {this.props.status == 1 ? <div className="ppg">{this.props.player.fppg.toFixed(1)}</div> : ''}
-            {this.props.status == 1 ? <div className="ppg ppg-label">FPPG</div> : ''}
-            {this.props.status == 1 ? <div className="player-position">{this.props.player.position}</div> : ''}
+            {this.props.status === 1 ? <div className="ppg">{this.props.player.fppg.toFixed(1)}</div> : ''}
+            {this.props.status === 1 ? <div className="ppg ppg-label">FPPG</div> : ''}
+            {this.props.status === 1 ? <div className="player-position">{this.props.player.position}</div> : ''}
             {buttonState}
             <div className="price-badge">
               <span className="badge badge-dark">{this.props.player.price + 'K'}</span>
             </div>
             <img
-              onClick={this.props.status == 2 ? this.filter : ''}
+              onClick={this.props.status === 2 ? this.filter : undefined}
               className="player-card-img-top card-img-top"
               style={{ backgroundColor: `${this.props.player.teamColor}` }}
               src={this.props.image}
@@ -81,7 +80,6 @@ export class PlayerCard extends Component {
       );
     }
     else {
-      const pos = this.props.position.toLowerCase();
       return (
         <div onClick={this.filter} className="player-card card" tabIndex="1">
           <img className="player-card-img-top card-img-top"

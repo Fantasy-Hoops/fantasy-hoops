@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { UserScore } from './UserScore';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
 import shortid from 'shortid';
-import { importAll } from '../../utils/reusableFunctions';
 import { Loader } from '../Loader';
 import _ from 'lodash';
 const $ = window.$;
@@ -62,13 +61,11 @@ export class InfoPanel extends Component {
           });
         return <div>{recentActivity}</div>
       }
-      else {
-        return (
-          <div className="p-5">
-            <Loader show={this.props.loader} />
-          </div>
-        )
-      };
+      return (
+        <div className="p-5">
+          <Loader show={this.props.loader} />
+        </div>
+      )
     }
 
 
@@ -91,9 +88,9 @@ export class InfoPanel extends Component {
             <h5 style={{ paddingLeft: '0.8rem' }}>Favorite team</h5>
             <div className="team-badge">
               <h2><span className="badge badge-dark badge-pill"
-                style={{ backgroundColor: user != '' ? user.team.color : '' }}
+                style={{ backgroundColor: user !== '' ? user.team.color : '' }}
               >
-                {user != '' ? user.team.name : ''}
+                {user !== '' ? user.team.name : ''}
               </span></h2>
             </div>
           </div>
@@ -106,35 +103,8 @@ export class InfoPanel extends Component {
           renderChild={this.state.renderChild}
           loader={this.state.modalLoader}
           stats={this.state.stats}
-          image={this.state.stats
-            ? this.state.playerIMG[`${this.state.stats.nbaID}.png`] || this.state.posIMG[`${this.state.stats.position.toLowerCase()}.png`]
-            : ''}
         />
       </div>
     );
-  }
-
-  importAll(r) {
-    let images = {};
-    r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
-    return images;
-  }
-
-  getPosImages() {
-    try {
-      return importAll(require.context('../../content/images/positions', false, /\.(png|jpe?g|svg)$/))
-    }
-    catch (err) {
-      return ''
-    }
-  }
-
-  getPlayerImages() {
-    try {
-      return importAll(require.context('../../content/images/players', false, /\.(png|jpe?g|svg)$/))
-    }
-    catch (err) {
-      return ''
-    }
   }
 }

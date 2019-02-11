@@ -26,7 +26,7 @@ export class UserProfile extends Component {
   }
 
   async componentWillMount() {
-    const loggedInAsSameUser = (this.props.match.params.name != null && parse().username.toLowerCase() == this.props.match.params.name.toLowerCase());
+    const loggedInAsSameUser = (this.props.match.params.name != null && parse().username.toLowerCase() === this.props.match.params.name.toLowerCase());
     if (this.props.match.params.name == null || loggedInAsSameUser) {
       const user = parse();
       await fetch(`http://68.183.213.191:5001/api/user/${user.id}`)

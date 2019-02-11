@@ -6,11 +6,9 @@ import { parse } from '../../utils/auth';
 import { handleErrors } from '../../utils/errors';
 import { Alert } from '../Alert';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
-import moment from 'moment';
 import Countdown from 'react-countdown-now';
 import { InfoModal } from './InfoModal';
 import { Loader } from '../Loader';
-import { importAll } from '../../utils/reusableFunctions';
 import { EmptyJordan } from '../EmptyJordan'
 const $ = window.$;
 const budget = 300; // thousands
@@ -35,8 +33,6 @@ export class Lineup extends Component {
       showAlert: false,
       alertType: '',
       alertText: '',
-      posIMG: this.getPosImages(),
-      playerIMG: this.getPlayerImages(),
       nextGame: '',
       serverTime: '',
       playerLoader: false,
@@ -66,7 +62,7 @@ export class Lineup extends Component {
         return res.json()
       })
       .then(res => {
-        if (new Date(res.nextGame).getFullYear() != 1) {
+        if (new Date(res.nextGame).getFullYear() !== 1) {
           this.setState({
             nextGame: res.nextGame,
             serverTime: res.serverTime,
@@ -112,7 +108,7 @@ export class Lineup extends Component {
         .then(res => {
           res.forEach(selectedPlayer => {
             this.state.players.forEach(player => {
-              if (player.id == selectedPlayer.id) {
+              if (player.id === selectedPlayer.id) {
                 player.selected = true;
                 player.status = 2;
                 this.selectPlayer(player);
@@ -264,12 +260,18 @@ export class Lineup extends Component {
 
   selectPlayer(player) {
     const pos = player.position.toLowerCase();
+    let image;
+    try {
+      image = require(`../../content/images/players/${player.id}.png`);
+    } catch (err) {
+      image = require(`../../content/images/positions/${pos}.png`);
+    }
     const playerCard = player.selected
       ? <PlayerCard
         status={2}
         filter={this.filter}
         player={player}
-        image={this.state.playerIMG[`${player.id}.png`] || this.state.posIMG[`${pos}.png`]}
+        image={image}
         selectPlayer={this.selectPlayer}
         position={player.position}
         showModal={this.showModal}
@@ -278,7 +280,7 @@ export class Lineup extends Component {
         status={0}
         filter={this.filter}
         position={player.position}
-        image={this.state.posIMG[`${pos}.png`]}
+        image={require(`../../content/images/positions/${pos}.png`)}
       />;
     this.setState({
       [pos]: playerCard
@@ -309,8 +311,8 @@ export class Lineup extends Component {
   }
 
   price(player) {
-    const playerPrice = (player.props.status == 2
-      ? parseInt(player.props.player.price)
+    const playerPrice = (player.props.status === 2
+      ? parseInt(player.props.player.price, 10)
       : 0)
     return playerPrice;
   }
@@ -355,23 +357,5 @@ export class Lineup extends Component {
           alertText: err.message
         });
       });
-  }
-
-  getPosImages() {
-    try {
-      return importAll(require.context('../../content/images/positions', false, /\.(png|jpe?g|svg)$/))
-    }
-    catch (err) {
-      return ''
-    }
-  }
-
-  getPlayerImages() {
-    try {
-      return importAll(require.context('../../content/images/players', false, /\.(png|jpe?g|svg)$/))
-    }
-    catch (err) {
-      return ''
-    }
   }
 }
