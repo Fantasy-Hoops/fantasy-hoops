@@ -17,12 +17,12 @@ export class NewsCard extends Component {
     try {
       hTeam = require(`../../content/images/logos/${this.props.news.hTeam}.svg`);
     } catch (e) {
-      hTeam = require(`../../content/images/logos/defaultLogo.png`);
+      hTeam = require(`../../content/images/defaultLogo.png`);
     }
     try {
       vTeam = require(`../../content/images/logos/${this.props.news.vTeam}.svg`);
     } catch (e) {
-      vTeam = require(`../../content/images/logos/defaultLogo.png`);
+      vTeam = require(`../../content/images/defaultLogo.png`);
     }
     const size = 2;
     let paragraphs = _.map(this.props.news.paragraphs,

@@ -5,13 +5,6 @@ import { PendingList } from './PendingList';
 import { RequestList } from './RequestList';
 
 export class Friends extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      userImages: this.getUserImages()
-    }
-  }
-
   render() {
     const loggedInAsSameUser = (this.props.user.userName != null && parse().username.toLowerCase() === this.props.user.userName.toLowerCase());
     return (
@@ -32,13 +25,13 @@ export class Friends extends Component {
           }
           <div className="tab-content" id="pills-tabContent">
             <div className="tab-pane fade show active" id="pills-friends" role="tabpanel" aria-labelledby="pills-friends-tab">
-              <FriendList user={this.props.user} images={this.state.userImages} />
+              <FriendList user={this.props.user} />
             </div>
             <div className="tab-pane fade" id="pills-pending" role="tabpanel" aria-labelledby="pills-pending-tab">
-              <PendingList user={this.props.user} images={this.state.userImages} />
+              <PendingList user={this.props.user} />
             </div>
             <div className="tab-pane fade" id="pills-requests" role="tabpanel" aria-labelledby="pills-requests-tab">
-              <RequestList user={this.props.user} images={this.state.userImages} />
+              <RequestList user={this.props.user} />
             </div>
           </div>
         </div>

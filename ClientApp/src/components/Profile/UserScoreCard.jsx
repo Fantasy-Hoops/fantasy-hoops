@@ -19,6 +19,12 @@ export class UserScoreCard extends Component {
   }
 
   render() {
+    let image;
+    try {
+      image = require(`../../content/images/players/${this.props.player.nbaID}.png`);
+    } catch (err) {
+      image = require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`);
+    }
     return (
       <a
         data-toggle="tooltip"
@@ -34,7 +40,7 @@ export class UserScoreCard extends Component {
           >
             <img
               className="user-card-player"
-              src={this.props.image}
+              src={image}
               alt={this.props.player.lastName}
             />
           </div>

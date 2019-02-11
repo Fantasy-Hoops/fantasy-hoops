@@ -57,7 +57,7 @@ export class Lineup extends Component {
     this.setState({
       playerLoader: true
     });
-    await fetch(`http://68.183.213.191:5001/api/lineup/nextGame`)
+    await fetch(`http://68.183.213.191/api/lineup/nextGame`)
       .then(res => {
         return res.json()
       })
@@ -82,7 +82,7 @@ export class Lineup extends Component {
     if (!this.state.isGame)
       return;
 
-    await fetch(`http://68.183.213.191:5001/api/player`)
+    await fetch(`http://68.183.213.191/api/player`)
       .then(res => {
         return res.json()
       })
@@ -101,7 +101,7 @@ export class Lineup extends Component {
 
     if (!this.state.loadedPlayers && this.state.players) {
       const user = parse();
-      await fetch(`http://68.183.213.191:5001/api/lineup/${user.id}`)
+      await fetch(`http://68.183.213.191/api/lineup/${user.id}`)
         .then(res => {
           return res.json()
         })
@@ -193,6 +193,7 @@ export class Lineup extends Component {
       }
     };
 
+
     return (
       <div className="container bg-light pb-5" style={{ width: '100%' }}>
         <div className="bg-light sticky-top" style={{ top: '4rem', width: '100%' }}>
@@ -243,9 +244,7 @@ export class Lineup extends Component {
           renderChild={this.state.renderChild}
           loader={this.state.modalLoader}
           stats={this.state.stats}
-          image={this.state.stats
-            ? this.state.playerIMG[`${this.state.stats.nbaID}.png`] || this.state.posIMG[`${this.state.stats.position.toLowerCase()}.png`]
-            : ''}
+          image={this.state.statsImage}
         />
         <InfoModal />
       </div>
@@ -289,13 +288,22 @@ export class Lineup extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true })
-    await fetch(`http://68.183.213.191:5001/api/stats/${player.id}`)
+    await fetch(`http://68.183.213.191/api/stats/${player.id}`)
       .then(res => res.json())
       .then(res => {
         this.setState({
           stats: res,
           modalLoader: false,
           renderChild: true
+        });
+        let image;
+        try {
+          image = require(`../../content/images/players/${this.state.stats.nbaID}.png`);
+        } catch (err) {
+          image = require(`../../content/images/positions/${this.state.stats.position.toLowerCase()}.png`);
+        }
+        this.setState({
+          statsImage: image
         });
       });
   }

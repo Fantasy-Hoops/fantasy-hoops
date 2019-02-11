@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { parse } from '../../../utils/auth';
 import { RequestCard } from './RequestCard';
 import shortid from 'shortid';
-import defaultPhoto from '../../../content/images/avatars/default.png';
+import defaultPhoto from '../../../content/images/default.png';
 import _ from 'lodash';
 
 export class RequestList extends Component {
@@ -17,7 +17,7 @@ export class RequestList extends Component {
     if (prevProps === this.props)
       return;
 
-    fetch(`http://68.183.213.191:5001/api/friendrequest/requests/${this.props.user.id}`)
+    fetch(`http://68.183.213.191/api/friendrequest/requests/${this.props.user.id}`)
       .then(res => {
         return res.json()
       })

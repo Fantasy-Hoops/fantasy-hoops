@@ -29,7 +29,7 @@ export class UserProfile extends Component {
     const loggedInAsSameUser = (this.props.match.params.name != null && parse().username.toLowerCase() === this.props.match.params.name.toLowerCase());
     if (this.props.match.params.name == null || loggedInAsSameUser) {
       const user = parse();
-      await fetch(`http://68.183.213.191:5001/api/user/${user.id}`)
+      await fetch(`http://68.183.213.191/api/user/${user.id}`)
         .then(res => res.json())
         .then(res => {
           this.setState({
@@ -43,7 +43,7 @@ export class UserProfile extends Component {
       this.setState({
         readOnly: true
       });
-      await fetch(`http://68.183.213.191:5001/api/user/name/${userName}`)
+      await fetch(`http://68.183.213.191/api/user/name/${userName}`)
         .then(res => handleErrors(res))
         .then(res => res.json())
         .then(res => {
