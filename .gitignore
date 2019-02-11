@@ -25,6 +25,9 @@ bin/
 Bin/
 obj/
 Obj/
+ClientApp/src/content/images/players/
+ClientApp/src/content/images/avatars/
+ClientApp/src/content/images/logos/
 
 # Visual Studio 2015 cache/options directory
 .vs/
