@@ -25,7 +25,7 @@ export class UserPool extends Component {
   }
 
   async componentWillMount() {
-    await fetch(`http://68.183.213.191/api/user`)
+    await fetch(`http://68.183.213.191:5001/api/user`)
       .then(res => {
         return res.json()
       })
