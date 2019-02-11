@@ -12,7 +12,7 @@ export class UserCard extends Component {
     try {
       avatar = require(`../../content/images/avatars${this.props.user.id}.png`);
     } catch (err) {
-      avatar = require(`../../content/images/avatars/default.png`);
+      avatar = require(`../../content/images/default.png`);
     }
     return (
       <a href={`/profile/${this.props.user.userName}`} className="friend-card m-3" style={{ backgroundColor: `${this.props.user.color}`, width: '8rem' }}>

@@ -6,7 +6,7 @@ export class UserLeaderboardCard extends Component {
     try {
       image = require(`../../content/images/avatars/${this.props.injury.player.nbaID}.png`);
     } catch (err) {
-      image = require(`../../content/images/avatars/default.png`);
+      image = require(`../../content/images/default.png`);
     }
     return (
       <div className="card bg-white rounded mt-1 mx-auto" style={{ width: '20rem', height: '4.5rem' }}>

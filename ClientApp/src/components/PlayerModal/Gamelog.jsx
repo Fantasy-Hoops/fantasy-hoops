@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
 import moment from 'moment';
-import defaultLogo from '../../content/images/avatars/default.png';
+import defaultLogo from '../../content/images/default.png';
 import { Loader } from '../Loader';
 const LOAD_COUNT = 10;
 
@@ -24,7 +24,7 @@ export class Gamelog extends Component {
       loader: true,
       loadCounter: this.state.loadCounter + 1
     });
-    await fetch(`http://68.183.213.191:5001/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
+    await fetch(`http://68.183.213.191/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })

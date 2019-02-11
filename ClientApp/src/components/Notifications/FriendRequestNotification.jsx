@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import defaultPhoto from '../../content/images/avatars/default.png'
+import defaultPhoto from '../../content/images/default.png'
 
 export class FriendRequestNotification extends Component {
   constructor(props) {
