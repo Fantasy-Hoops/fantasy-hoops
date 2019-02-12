@@ -101,7 +101,7 @@ namespace fantasy_hoops.Services
 
         public bool UploadAvatar(AvatarViewModel model)
         {
-            string avatarDir = @"./ClientApp/content/images/avatars";
+            string avatarDir = @"./ClientApp/src/content/images/avatars";
             if (!Directory.Exists(avatarDir))
                 Directory.CreateDirectory(avatarDir);
             var filePath = avatarDir + "/" + model.Id + ".png";
@@ -120,7 +120,7 @@ namespace fantasy_hoops.Services
 
         public bool ClearAvatar(AvatarViewModel model)
         {
-            string avatarDir = @"./ClientApp/content/images/avatars";
+            string avatarDir = @"./ClientApp/src/content/images/avatars";
 
             if (Directory.Exists(avatarDir))
             {
