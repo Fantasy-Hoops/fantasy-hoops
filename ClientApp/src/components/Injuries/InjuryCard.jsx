@@ -35,7 +35,7 @@ export class InjuryCard extends Component {
       : '';
     let image;
     try {
-      image = require(`../../content/images/players/${this.props.injury.player.nbaID}.png`);
+      image = require(`../src/content/images/players/${this.props.injury.player.nbaID}.png`);
     } catch (err) {
       image = require(`../../content/images/positions/${this.props.injury.player.position.toLowerCase()}.png`);
     }
