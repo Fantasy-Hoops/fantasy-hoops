@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
 import moment from 'moment';
-import defaultLogo from '../../content/images/default.png';
+import defaultLogo from '../../content/images/defaultLogo.png';
 import { Loader } from '../Loader';
 const LOAD_COUNT = 10;
 
