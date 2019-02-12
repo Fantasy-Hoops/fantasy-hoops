@@ -13,7 +13,7 @@ export const PrivateRoute = ({ component: Component, ...rest }) => (
         pathname: '/login',
         state: {
           error: 'You must login to proceed!',
-          fallback: this ? this.props.location.pathname : '/'
+          fallback: this ? props.location.pathname : '/'
         }
       }}
       />
