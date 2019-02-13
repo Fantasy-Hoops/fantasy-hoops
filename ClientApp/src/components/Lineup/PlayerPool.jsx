@@ -29,7 +29,7 @@ export class PlayerPool extends Component {
           || this.props.position === '') {
           let image;
           try {
-            image = require(`/content/images/players/${player.id}.png`);
+            image = require(`content/images/players/${player.id}.png`);
           } catch (err) {
             image = require(`../../content/images/positions/${player.position.toLowerCase()}.png`);
           }

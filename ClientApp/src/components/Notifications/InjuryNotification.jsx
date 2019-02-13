@@ -26,7 +26,7 @@ export class InjuryNotification extends Component {
 
     let photo = '';
     try {
-      photo = require(`/content/images/players/${this.props.notification.player.nbaID}.png`)
+      photo = require(`content/images/players/${this.props.notification.player.nbaID}.png`)
     }
     catch (err) {
       photo = require(`../../content/images/positions/${this.props.notification.player.position.toLowerCase()}.png`)

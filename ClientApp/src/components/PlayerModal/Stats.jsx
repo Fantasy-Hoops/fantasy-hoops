@@ -11,12 +11,12 @@ export class Stats extends Component {
     const stats = this.props.stats;
     let playerImage, opponentLogo;
     try {
-      playerImage = require(`/content/images/players/${stats.nbaID}.png`);
+      playerImage = require(`content/images/players/${stats.nbaID}.png`);
     } catch (err) {
       playerImage = require(`../../content/images/positions/${stats.position.toLowerCase()}.png`);
     }
     try {
-      opponentLogo = require(`/content/images/logos/${stats.team.abbreviation}.svg`);
+      opponentLogo = require(`content/images/logos/${stats.team.abbreviation}.svg`);
     } catch (err) {
       opponentLogo = require(`../../content/images/defaultLogo.png`);
     }
