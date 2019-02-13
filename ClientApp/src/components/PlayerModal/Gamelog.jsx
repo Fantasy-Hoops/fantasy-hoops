@@ -24,7 +24,7 @@ export class Gamelog extends Component {
       loader: true,
       loadCounter: this.state.loadCounter + 1
     });
-    await fetch(`http://fantasyhoops.org:5001/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
+    await fetch(`http://fantasyhoops.org/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
