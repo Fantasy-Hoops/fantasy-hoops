@@ -30,7 +30,7 @@ export class Header extends Component {
     if (isAuth()) {
       const user = parse();
       try {
-        avatar = require(`./content/images/avatars/${user.id}.png`);
+        avatar = require(`/content/images/avatars/${user.id}.png`);
       }
       catch (err) {
       }
