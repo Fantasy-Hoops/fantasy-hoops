@@ -57,7 +57,7 @@ export class Lineup extends Component {
     this.setState({
       playerLoader: true
     });
-    await fetch(`http://68.183.213.191:5001/api/lineup/nextGame`)
+    await fetch(`http://fantasyhoops.org:5001/api/lineup/nextGame`)
       .then(res => {
         return res.json()
       })
@@ -82,7 +82,7 @@ export class Lineup extends Component {
     if (!this.state.isGame)
       return;
 
-    await fetch(`http://68.183.213.191:5001/api/player`)
+    await fetch(`http://fantasyhoops.org:5001/api/player`)
       .then(res => {
         return res.json()
       })
@@ -101,7 +101,7 @@ export class Lineup extends Component {
 
     if (!this.state.loadedPlayers && this.state.players) {
       const user = parse();
-      await fetch(`http://68.183.213.191:5001/api/lineup/${user.id}`)
+      await fetch(`http://fantasyhoops.org:5001/api/lineup/${user.id}`)
         .then(res => {
           return res.json()
         })
@@ -261,7 +261,7 @@ export class Lineup extends Component {
     const pos = player.position.toLowerCase();
     let image;
     try {
-      image = require(`../../content/images/players/${player.id}.png`);
+      image = require(`./content/images/players/${player.id}.png`);
     } catch (err) {
       image = require(`../../content/images/positions/${pos}.png`);
     }
@@ -288,7 +288,7 @@ export class Lineup extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true })
-    await fetch(`http://68.183.213.191:5001/api/stats/${player.id}`)
+    await fetch(`http://fantasyhoops.org:5001/api/stats/${player.id}`)
       .then(res => res.json())
       .then(res => {
         this.setState({
@@ -298,7 +298,7 @@ export class Lineup extends Component {
         });
         let image;
         try {
-          image = require(`../../content/images/players/${this.state.stats.nbaID}.png`);
+          image = require(`./content/images/players/${this.state.stats.nbaID}.png`);
         } catch (err) {
           image = require(`../../content/images/positions/${this.state.stats.position.toLowerCase()}.png`);
         }

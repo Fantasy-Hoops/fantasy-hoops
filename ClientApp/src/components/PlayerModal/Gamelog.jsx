@@ -24,7 +24,7 @@ export class Gamelog extends Component {
       loader: true,
       loadCounter: this.state.loadCounter + 1
     });
-    await fetch(`http://68.183.213.191:5001/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
+    await fetch(`http://fantasyhoops.org:5001/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
@@ -93,7 +93,7 @@ export class Gamelog extends Component {
 
   getLogo(abbreviation) {
     try {
-      return require(`../../content/images/logos/${abbreviation}.svg`);
+      return require(`./content/images/logos/${abbreviation}.svg`);
     }
     catch (err) {
       return defaultLogo;
