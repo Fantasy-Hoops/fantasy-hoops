@@ -11,8 +11,8 @@ namespace fantasy_hoops.Database
 {
     public class PhotosSeed
     {
-        const string photosDir = "./ClientApp/src/content/images/players/";
-        const string logosDir = "./ClientApp/src/content/images/logos/";
+        const string photosDir = "./ClientApp/build/content/images/players/";
+        const string logosDir = "./ClientApp/build/content/images/logos/";
 
         public static void Initialize(GameContext context)
         {
@@ -34,7 +34,7 @@ namespace fantasy_hoops.Database
                 string teamAbbr = team.Abbreviation;
                 string remoteFileUrl =
                     "http://i.cdn.turner.com/nba/nba/assets/logos/teams/secondary/web/" + teamAbbr + ".svg";
-                string localFileName = "./ClientApp/src/content/images/logos/" + teamAbbr + ".svg";
+                string localFileName = "./ClientApp/build/content/images/logos/" + teamAbbr + ".svg";
                 SavePhoto(localFileName, remoteFileUrl);
             }
         }
@@ -49,7 +49,7 @@ namespace fantasy_hoops.Database
                 int personId = player.NbaID;
                 string remoteFileUrl =
                     "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/" + personId + ".png";
-                string localFileName = "./ClientApp/src/content/images/players/" + personId + ".png";
+                string localFileName = "./ClientApp/build/content/images/players/" + personId + ".png";
                 SavePhoto(localFileName, remoteFileUrl);
             }
         }
