@@ -20,7 +20,7 @@ export class NewsFeed extends Component {
     this.setState({
       newsLoader: true
     });
-    fetch(`http://68.183.213.191:5001/api/news`)
+    fetch(`http://fantasyhoops.org:5001/api/news`)
       .then(res => {
         return res.json()
       })
@@ -36,7 +36,7 @@ export class NewsFeed extends Component {
     this.setState({
       newsLoader: true
     });
-    fetch(`http://68.183.213.191:5001/api/news?start=${this.state.news.length}`)
+    fetch(`http://fantasyhoops.org:5001/api/news?start=${this.state.news.length}`)
       .then(res => {
         return res.json()
       })

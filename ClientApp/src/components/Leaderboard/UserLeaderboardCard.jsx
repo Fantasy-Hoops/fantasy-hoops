@@ -4,7 +4,7 @@ export class UserLeaderboardCard extends Component {
   render() {
     let image;
     try {
-      image = require(`../../content/images/avatars/${this.props.injury.player.nbaID}.png`);
+      image = require(`./content/images/avatars/${this.props.injury.player.nbaID}.png`);
     } catch (err) {
       image = require(`../../content/images/default.png`);
     }

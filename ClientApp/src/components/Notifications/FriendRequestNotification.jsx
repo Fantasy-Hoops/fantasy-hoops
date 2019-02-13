@@ -26,7 +26,7 @@ export class FriendRequestNotification extends Component {
     if (this.props.notification.readStatus)
       read = "card-body text-muted";
     try {
-      avatar = require(`../../content/images/avatars/${this.props.notification.friendID}.png`);
+      avatar = require(`./content/images/avatars/${this.props.notification.friendID}.png`);
     }
     catch (err) {
     }
