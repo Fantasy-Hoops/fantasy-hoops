@@ -8,7 +8,7 @@ export class Avatar extends Component {
     const user = this.props.user;
     let avatar = defaultPhoto;
     try {
-      avatar = require(`./content/images/avatars/${user.id}.png`);
+      avatar = require(`/content/images/avatars/${user.id}.png`);
     }
     catch (err) {
     }

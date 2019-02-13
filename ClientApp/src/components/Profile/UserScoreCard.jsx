@@ -21,7 +21,7 @@ export class UserScoreCard extends Component {
   render() {
     let image;
     try {
-      image = require(`./content/images/players/${this.props.player.nbaID}.png`);
+      image = require(`/content/images/players/${this.props.player.nbaID}.png`);
     } catch (err) {
       image = require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`);
     }
