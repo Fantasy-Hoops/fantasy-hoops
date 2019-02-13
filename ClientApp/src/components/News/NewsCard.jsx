@@ -15,12 +15,12 @@ export class NewsCard extends Component {
   render() {
     let hTeam, vTeam;
     try {
-      hTeam = require(`/content/images/logos/${this.props.news.hTeam}.svg`);
+      hTeam = require(`content/images/logos/${this.props.news.hTeam}.svg`);
     } catch (e) {
       hTeam = require(`../../content/images/defaultLogo.png`);
     }
     try {
-      vTeam = require(`/content/images/logos/${this.props.news.vTeam}.svg`);
+      vTeam = require(`content/images/logos/${this.props.news.vTeam}.svg`);
     } catch (e) {
       vTeam = require(`../../content/images/defaultLogo.png`);
     }

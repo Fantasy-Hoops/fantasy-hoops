@@ -10,7 +10,7 @@ export class UserCard extends Component {
   render() {
     let avatar;
     try {
-      avatar = require(`/content/images/avatars/${this.props.user.id}.png`);
+      avatar = require(`content/images/avatars/${this.props.user.id}.png`);
     } catch (err) {
       avatar = require(`../../content/images/default.png`);
     }

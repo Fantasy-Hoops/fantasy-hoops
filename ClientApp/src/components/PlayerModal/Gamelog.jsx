@@ -93,7 +93,7 @@ export class Gamelog extends Component {
 
   getLogo(abbreviation) {
     try {
-      return require(`/content/images/logos/${abbreviation}.svg`);
+      return require(`content/images/logos/${abbreviation}.svg`);
     }
     catch (err) {
       return defaultLogo;

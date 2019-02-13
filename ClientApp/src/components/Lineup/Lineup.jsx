@@ -261,7 +261,7 @@ export class Lineup extends Component {
     const pos = player.position.toLowerCase();
     let image;
     try {
-      image = require(`/content/images/players/${player.id}.png`);
+      image = require(`content/images/players/${player.id}.png`);
     } catch (err) {
       image = require(`../../content/images/positions/${pos}.png`);
     }
@@ -298,7 +298,7 @@ export class Lineup extends Component {
         });
         let image;
         try {
-          image = require(`/content/images/players/${this.state.stats.nbaID}.png`);
+          image = require(`content/images/players/${this.state.stats.nbaID}.png`);
         } catch (err) {
           image = require(`../../content/images/positions/${this.state.stats.position.toLowerCase()}.png`);
         }
