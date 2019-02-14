@@ -139,9 +139,6 @@ export class Header extends Component {
               <li className="nav-item">
                 <a className="nav-link btn-no-outline" href="/users">Users</a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link btn-no-outline" href="/rules">Rules</a>
-              </li>
             </ul>
             {isAuth() ? profile : login}
           </div>
