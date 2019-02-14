@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import Img from 'react-image';
 
 export class InjuryNotification extends Component {
   constructor(props) {
@@ -24,14 +25,6 @@ export class InjuryNotification extends Component {
     if (this.props.notification.readStatus)
       read = "card-body text-muted";
 
-    let photo = '';
-    try {
-      photo = require(`content/images/players/${this.props.notification.player.nbaID}.png`)
-    }
-    catch (err) {
-      photo = require(`../../content/images/positions/${this.props.notification.player.position.toLowerCase()}.png`)
-    }
-
     return (
       <a onClick={this.select} className="card cursor-pointer link mx-auto" style={{ maxWidth: `${this.props.width}` }}>
         <div className={read} style={{ margin: '-0.6rem' }}>
@@ -40,10 +33,13 @@ export class InjuryNotification extends Component {
               <div
                 className="notification-circle position-absolute"
                 style={{ backgroundColor: this.props.notification.player.team.color }}>
-                <img
+                <Img
                   className="notification-card-player"
-                  src={photo}
                   alt={`${this.props.notification.player.firstName} ${this.props.notification.player.lastName}`}
+                  src={[
+                    `http://fantasyhoops.org/content/images/players/${this.props.notification.player.nbaID}.png`,
+                    require(`../../content/images/positions/${this.props.notification.player.position.toLowerCase()}.png`)
+                  ]}
                 />
               </div>
             </div>

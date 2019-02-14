@@ -313,6 +313,7 @@ export class UserLeaderboard extends Component {
           key={shortid()}
           userName={user.userName}
           fp={user.score}
+          userid={user.id}
         />
       }
     );

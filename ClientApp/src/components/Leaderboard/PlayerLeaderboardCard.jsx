@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Img from 'react-image';
 const $ = window.$;
 
 export class PlayerLeaderboardCard extends Component {
@@ -17,12 +18,6 @@ export class PlayerLeaderboardCard extends Component {
   }
 
   render() {
-    let image;
-    try {
-      image = require(`content/images/players/${this.props.player.nbaID}.png`);
-    } catch (err) {
-      image = require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`);
-    }
     return (
       <div className="card bg-white rounded mt-1 mx-auto" style={{ width: '25rem', height: '4.5rem' }}>
         <div className="card-body">
@@ -43,10 +38,14 @@ export class PlayerLeaderboardCard extends Component {
                 style={{ overflow: 'hidden', cursor: 'pointer' }}>
                 <div className="pl-1">
                   <div className="card-circle position-absolute" style={{ top: '0.45rem', backgroundColor: `${this.props.player.teamColor}` }}>
-                    <img
+                    <Img
                       className="user-card-player"
-                      src={image}
-                      alt={`${this.props.player.firstName} ${this.props.player.lastName}`} />
+                      alt={`${this.props.player.firstName} ${this.props.player.lastName}`}
+                      src={[
+                        `http://fantasyhoops.org/content/images/players/${this.props.player.nbaID}.png`,
+                        require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
+                      ]}
+                    />
                   </div>
                 </div>
                 <p className="player-name pt-1" style={{ paddingLeft: '5rem' }}>{this.props.player.firstName} {this.props.player.lastName}</p>

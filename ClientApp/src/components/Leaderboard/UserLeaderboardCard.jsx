@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
+import Img from 'react-image';
 
 export class UserLeaderboardCard extends Component {
   render() {
-    let image;
-    try {
-      image = require(`content/images/avatars/${this.props.injury.player.nbaID}.png`);
-    } catch (err) {
-      image = require(`../../content/images/default.png`);
-    }
     return (
       <div className="card bg-white rounded mt-1 mx-auto" style={{ width: '20rem', height: '4.5rem' }}>
         <div className="card-body">
@@ -16,10 +11,14 @@ export class UserLeaderboardCard extends Component {
           </div>
           <a href={`/profile/${this.props.userName}`} >
             <div className="d-inline-block position-absolute ml-3" style={{ top: '0.2rem' }}>
-              <img
+              <Img
                 className="user-card-player"
-                src={image}
-                alt={this.props.userName} />
+                alt={this.props.userName}
+                src={[
+                  `http://fantasyhoops.org/content/images/avatars/${this.props.userid}.png`,
+                  require(`../../content/images/default.png`)
+                ]}
+              />
             </div>
             <div className="d-inline-block">
               <p className="align-middle player-name" style={{ paddingLeft: '5rem', paddingTop: '0.3rem' }}>{this.props.userName}</p>
