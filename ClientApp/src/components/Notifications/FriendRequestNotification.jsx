@@ -39,6 +39,8 @@ export class FriendRequestNotification extends Component {
                   `http://fantasyhoops.org/content/images/avatars/${this.props.notification.friendID}.png`,
                   defaultPhoto
                 ]}
+                loader={<img width='40px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+                decode={false}
               />
             </div>
             <div className="col ml-1">

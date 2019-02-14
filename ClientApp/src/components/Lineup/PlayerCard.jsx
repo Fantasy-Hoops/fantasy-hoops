@@ -1,11 +1,25 @@
 ﻿import React, { Component } from 'react';
 import Scroll from 'react-scroll';
 import Img from 'react-image';
+import PG from '../../content/images/positions/pg.png';
+import SG from '../../content/images/positions/sg.png';
+import SF from '../../content/images/positions/sf.png';
+import PF from '../../content/images/positions/pf.png';
+import C from '../../content/images/positions/c.png';
 const $ = window.$;
 
 export class PlayerCard extends Component {
   constructor() {
     super();
+
+    this.state = {
+      PG: PG,
+      SG: SG,
+      SF: SF,
+      PF: PF,
+      C: C
+    };
+
     this.filter = this.filter.bind(this);
     this.select = this.select.bind(this);
     this.showModal = this.showModal.bind(this);
@@ -41,25 +55,18 @@ export class PlayerCard extends Component {
       if (!this.props.player.injuryStatus.toLowerCase().includes("active"))
         injuryBadge = <div className={"player-injury-badge " + injuryStatus}>{this.props.player.injuryStatus}</div>
 
-      const image = this.props.status === 1 || this.props.status === 2
-        ? <Img
-          onClick={this.props.status === 2 ? this.filter : undefined}
-          className="player-card-img-top card-img-top"
-          style={{ backgroundColor: `${this.props.player.teamColor}` }}
-          alt={this.getDisplayName(this.props.player)}
-          src={[
-            `http://fantasyhoops.org/content/images/players/${this.props.player.id}.png`,
-            require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
-          ]}
-        />
-        :
-        <img
-          onClick={this.props.status === 2 ? this.filter : undefined}
-          className="player-card-img-top card-img-top"
-          style={{ backgroundColor: `${this.props.player.teamColor}` }}
-          src={require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)}
-          alt={this.getDisplayName(this.props.player)}>
-        </img>;
+      const image = <Img
+        onClick={this.props.status === 2 ? this.filter : undefined}
+        className="player-card-img-top card-img-top"
+        style={{ backgroundColor: `${this.props.player.teamColor}` }}
+        alt={this.getDisplayName(this.props.player)}
+        src={[
+          `http://fantasyhoops.org/content/images/players/${this.props.player.id}.png`,
+          require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
+        ]}
+        loader={<img height='140px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+        decode={false}
+      />
       return (
         <div>
           <div className="player-card card">
@@ -96,11 +103,13 @@ export class PlayerCard extends Component {
     else {
       return (
         <div onClick={this.filter} className="player-card card" tabIndex="1">
-          <img className="player-card-img-top card-img-top"
-            style={{ backgroundColor: `` }}
-            src={this.props.image}
-            alt={this.props.position}>
-          </img>
+          <Img
+            className="player-card-img-top card-img-top"
+            alt={this.props.position}
+            src={this.state[this.props.position]}
+            loader={<img height='140px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+            decode={false}
+          />
           <div className="card-block" >
             <h2 className="player-card-title card-title">{this.props.position}</h2>
           </div>

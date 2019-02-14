@@ -43,8 +43,9 @@ export class PlayerLeaderboardCard extends Component {
                       alt={`${this.props.player.firstName} ${this.props.player.lastName}`}
                       src={[
                         `http://fantasyhoops.org/content/images/players/${this.props.player.nbaID}.png`,
-                        require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
+                        this.props.image
                       ]}
+                      decode={false}
                     />
                   </div>
                 </div>

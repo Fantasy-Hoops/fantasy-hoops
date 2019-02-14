@@ -27,7 +27,6 @@ export class Header extends Component {
 
     // Showing friend requests and profile when player has signed in
     let profile = '';
-    let avatar = defaultPhoto;
     if (isAuth()) {
       const user = parse();
       profile = (
@@ -41,7 +40,6 @@ export class Header extends Component {
               aria-haspopup="true"
               aria-expanded="false"
             >
-
               <Img
                 width="36rem"
                 alt={user.username}
@@ -58,7 +56,17 @@ export class Header extends Component {
                   <div className="row">
                     <div className="col-lg-4">
                       <p className="text-center">
-                        <a className="btn-no-outline" href='/profile'><img src={avatar} width="100" height="100" alt="" /></a>
+                        <a className="btn-no-outline" href='/profile'>
+                          <Img
+                            width="100rem"
+                            height="100rem"
+                            alt={user.username}
+                            src={[
+                              `http://fantasyhoops.org/content/images/avatars/${user.id}.png`,
+                              defaultPhoto
+                            ]}
+                          />
+                        </a>
                       </p>
                     </div>
                     <div className="col-lg-8">

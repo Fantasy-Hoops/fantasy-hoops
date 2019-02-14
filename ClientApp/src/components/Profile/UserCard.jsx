@@ -12,7 +12,7 @@ export class UserCard extends Component {
   render() {
     return (
       <a href={`/profile/${this.props.user.userName}`} className="friend-card m-3" style={{ backgroundColor: `${this.props.user.color}`, width: '8rem' }}>
-        <canvas className="header-bg" width="250" height="70" id="header-blur"></canvas>
+        <canvas className="header-bg"></canvas>
         <div className="avatar">
           <Img
             alt={this.props.user.userName}
@@ -20,6 +20,8 @@ export class UserCard extends Component {
               `http://fantasyhoops.org/content/images/avatars/${this.props.user.id}.png`,
               defaultPhoto
             ]}
+            loader={<img width='500px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+            decode={false}
           />
         </div>
         <div className="content badge badge-dark" style={{ marginTop: '1rem', marginBottom: '0.5rem', fontSize: '1rem' }}>
