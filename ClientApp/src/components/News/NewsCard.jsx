@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Scroll from 'react-scroll';
 import shortid from 'shortid';
 import _ from 'lodash';
+import Img from 'react-image';
+import defaultLogo from '../../content/images/defaultLogo.png';
 
 export class NewsCard extends Component {
   constructor(props) {
@@ -13,17 +15,6 @@ export class NewsCard extends Component {
   }
 
   render() {
-    let hTeam, vTeam;
-    try {
-      hTeam = require(`../../content/images/logos/${this.props.news.hTeam}.svg`);
-    } catch (e) {
-      hTeam = require(`../../content/images/defaultLogo.png`);
-    }
-    try {
-      vTeam = require(`../../content/images/logos/${this.props.news.vTeam}.svg`);
-    } catch (e) {
-      vTeam = require(`../../content/images/defaultLogo.png`);
-    }
     const size = 2;
     let paragraphs = _.map(this.props.news.paragraphs,
       (paragraph) => {
@@ -38,20 +29,30 @@ export class NewsCard extends Component {
           </h5>
         </div>
         <span>
-          <img
-            src={hTeam}
-            alt=""
-            width="50px"
-            style={{ position: 'absolute' }}
-          />
+          <div className='position-absolute'>
+            <Img
+              alt=""
+              width="50px"
+              src={[
+                `http://fantasyhoops.org/content/images/logos/${this.props.news.hTeam}.svg`,
+                defaultLogo
+              ]}
+              loader={<img height='50px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
+            />
+          </div>
         </span>
         <span style={{ paddingLeft: '5rem' }}>
-          <img
-            src={vTeam}
-            alt=""
-            width="50px"
-            style={{ position: 'absolute' }}
-          />
+          <div className='position-absolute' >
+            <Img
+              alt=""
+              width="50px"
+              src={[
+                `http://fantasyhoops.org/content/images/logos/${this.props.news.vTeam}.svg`,
+                defaultLogo
+              ]}
+              loader={<img height='50px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
+            />
+          </div>
         </span>
         <div className="card-header text-muted" style={{ height: '3rem', paddingLeft: '3.5rem' }}>
           vs.

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import defaultPhoto from '../../content/images/default.png'
+import defaultPhoto from '../../content/images/default.png';
+import Img from 'react-image';
 
 export class FriendRequestNotification extends Component {
   constructor(props) {
@@ -22,20 +23,25 @@ export class FriendRequestNotification extends Component {
 
   render() {
     let read = "card-body text-primary";
-    let avatar = defaultPhoto;
     if (this.props.notification.readStatus)
       read = "card-body text-muted";
-    try {
-      avatar = require(`../../content/images/avatars/${this.props.notification.friendID}.png`);
-    }
-    catch (err) {
-    }
     return (
       <a onClick={this.select} className="card cursor-pointer link mx-auto" style={{ maxWidth: `${this.props.width}` }}>
         <div className={read} style={{ margin: '-0.6rem' }}>
           <div className="row">
             <div className="col-1 mr-3">
-              <img className="mt-2" src={avatar} width="40rem" height="40rem" alt={this.props.notification.friend.userName} />
+              <Img
+                className="mt-2"
+                width="40rem"
+                height="40rem"
+                alt={this.props.notification.friend.userName}
+                src={[
+                  `http://fantasyhoops.org/content/images/avatars/${this.props.notification.friendID}.png`,
+                  defaultPhoto
+                ]}
+                loader={<img width='40px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+                decode={false}
+              />
             </div>
             <div className="col ml-1">
               <h5 className="card-title">{this.props.notification.friend.userName}</h5>

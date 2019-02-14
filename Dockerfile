@@ -1,5 +1,5 @@
-FROM microsoft/dotnet:2.1.301-sdk AS builder
-WORKDIR /source
+FROM microsoft/dotnet:sdk AS build
+WORKDIR /app
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x |  bash -
 RUN apt-get install -y nodejs
@@ -7,12 +7,10 @@ RUN apt-get install -y nodejs
 COPY *.csproj .
 RUN dotnet restore
 
-COPY ./ ./
+COPY . ./
+RUN dotnet publish -c Release -o out
 
-RUN dotnet publish "./fantasy_hoops.csproj" --output "./dist" --configuration Release --no-restore
-
-FROM microsoft/dotnet:2.1.1-aspnetcore-runtime
+FROM microsoft/dotnet:aspnetcore-runtime
 WORKDIR /app
-COPY --from=builder /source/dist .
-EXPOSE 80
+COPY --from=build /app/out .
 ENTRYPOINT ["dotnet", "fantasy_hoops.dll"]

@@ -27,19 +27,12 @@ export class PlayerPool extends Component {
       (player) => {
         if (player.position === this.props.position
           || this.props.position === '') {
-          let image;
-          try {
-            image = require(`../../content/images/players/${player.id}.png`);
-          } catch (err) {
-            image = require(`../../content/images/positions/${player.position.toLowerCase()}.png`);
-          }
           return <div className="ml-3 mt-3" key={shortid()}>
             <PlayerCard
               key={player.id}
               id={player.id}
               status={1}
               player={player}
-              image={image}
               selectPlayer={this.props.selectPlayer}
               handleSelect={this.handleSelect}
               showModal={this.props.showModal}

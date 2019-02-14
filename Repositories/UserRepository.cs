@@ -189,6 +189,10 @@ namespace fantasy_hoops.Repositories
             double weekly = _context.Lineups
                     .Where(x => x.UserID.Equals(id) && x.Date >= date)
                     .Select(x => x.FP).Sum();
+            if (weekly == 0)
+            {
+                return 0.0m;
+            }
             return Convert.ToDecimal(weekly);
         }
 

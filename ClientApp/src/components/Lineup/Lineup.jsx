@@ -24,11 +24,11 @@ export class Lineup extends Component {
 
     this.state = {
       position: '',
-      pg: <PlayerCard image={require('../../content/images/positions/pg.png')} filter={this.filter} status={0} position="PG" />,
-      sg: <PlayerCard image={require('../../content/images/positions/sg.png')} filter={this.filter} status={0} position="SG" />,
-      sf: <PlayerCard image={require('../../content/images/positions/sf.png')} filter={this.filter} status={0} position="SF" />,
-      pf: <PlayerCard image={require('../../content/images/positions/pf.png')} filter={this.filter} status={0} position="PF" />,
-      c: <PlayerCard image={require('../../content/images/positions/c.png')} filter={this.filter} status={0} position="C" />,
+      pg: <PlayerCard filter={this.filter} status={0} position="PG" />,
+      sg: <PlayerCard filter={this.filter} status={0} position="SG" />,
+      sf: <PlayerCard filter={this.filter} status={0} position="SF" />,
+      pf: <PlayerCard filter={this.filter} status={0} position="PF" />,
+      c: <PlayerCard filter={this.filter} status={0} position="C" />,
       loadedPlayers: false,
       showAlert: false,
       alertType: '',
@@ -57,7 +57,7 @@ export class Lineup extends Component {
     this.setState({
       playerLoader: true
     });
-    await fetch(`http://68.183.213.191:5001/api/lineup/nextGame`)
+    await fetch(`http://fantasyhoops.org/api/lineup/nextGame`)
       .then(res => {
         return res.json()
       })
@@ -82,7 +82,7 @@ export class Lineup extends Component {
     if (!this.state.isGame)
       return;
 
-    await fetch(`http://68.183.213.191:5001/api/player`)
+    await fetch(`http://fantasyhoops.org/api/player`)
       .then(res => {
         return res.json()
       })
@@ -101,7 +101,7 @@ export class Lineup extends Component {
 
     if (!this.state.loadedPlayers && this.state.players) {
       const user = parse();
-      await fetch(`http://68.183.213.191:5001/api/lineup/${user.id}`)
+      await fetch(`http://fantasyhoops.org/api/lineup/${user.id}`)
         .then(res => {
           return res.json()
         })
@@ -182,8 +182,6 @@ export class Lineup extends Component {
       } else {
         return (
           <PlayerPool
-            playerIMG={this.state.playerIMG}
-            posIMG={this.state.posIMG}
             position={this.state.position}
             players={this.state.players}
             selectPlayer={this.selectPlayer}
@@ -244,7 +242,6 @@ export class Lineup extends Component {
           renderChild={this.state.renderChild}
           loader={this.state.modalLoader}
           stats={this.state.stats}
-          image={this.state.statsImage}
         />
         <InfoModal />
       </div>
@@ -259,18 +256,11 @@ export class Lineup extends Component {
 
   selectPlayer(player) {
     const pos = player.position.toLowerCase();
-    let image;
-    try {
-      image = require(`../../content/images/players/${player.id}.png`);
-    } catch (err) {
-      image = require(`../../content/images/positions/${pos}.png`);
-    }
     const playerCard = player.selected
       ? <PlayerCard
         status={2}
         filter={this.filter}
         player={player}
-        image={image}
         selectPlayer={this.selectPlayer}
         position={player.position}
         showModal={this.showModal}
@@ -279,7 +269,6 @@ export class Lineup extends Component {
         status={0}
         filter={this.filter}
         position={player.position}
-        image={require(`../../content/images/positions/${pos}.png`)}
       />;
     this.setState({
       [pos]: playerCard
@@ -288,22 +277,13 @@ export class Lineup extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true })
-    await fetch(`http://68.183.213.191:5001/api/stats/${player.id}`)
+    await fetch(`http://fantasyhoops.org/api/stats/${player.id}`)
       .then(res => res.json())
       .then(res => {
         this.setState({
           stats: res,
           modalLoader: false,
           renderChild: true
-        });
-        let image;
-        try {
-          image = require(`../../content/images/players/${this.state.stats.nbaID}.png`);
-        } catch (err) {
-          image = require(`../../content/images/positions/${this.state.stats.position.toLowerCase()}.png`);
-        }
-        this.setState({
-          statsImage: image
         });
       });
   }

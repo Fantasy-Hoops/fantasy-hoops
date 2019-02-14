@@ -45,7 +45,7 @@ export class PlayerLeaderboard extends Component {
   }
 
   async componentWillMount() {
-    await fetch(`http://68.183.213.191:5001/api/leaderboard/player?type=daily`)
+    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=daily`)
       .then(res => {
         return res.json()
       })
@@ -55,7 +55,7 @@ export class PlayerLeaderboard extends Component {
           dailyLoader: false
         });
       })
-    await fetch(`http://68.183.213.191:5001/api/leaderboard/player?type=weekly`)
+    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=weekly`)
       .then(res => {
         return res.json()
       })
@@ -65,7 +65,7 @@ export class PlayerLeaderboard extends Component {
           weeklyLoader: false
         });
       })
-    await fetch(`http://68.183.213.191:5001/api/leaderboard/player?type=monthly`)
+    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=monthly`)
       .then(res => {
         return res.json()
       })
@@ -75,11 +75,18 @@ export class PlayerLeaderboard extends Component {
           monthlyLoader: false
         });
       })
+    await this.setState({
+      PG: require(`../../content/images/positions/pg.png`),
+      SG: require(`../../content/images/positions/sg.png`),
+      SF: require(`../../content/images/positions/sf.png`),
+      PF: require(`../../content/images/positions/pf.png`),
+      C: require(`../../content/images/positions/c.png`)
+    });
   }
 
   async showModal(player) {
     this.setState({ modalLoader: true })
-    await fetch(`http://68.183.213.191:5001/api/stats/${player.nbaID}`)
+    await fetch(`http://fantasyhoops.org/api/stats/${player.nbaID}`)
       .then(res => res.json())
       .then(res => {
         this.setState({
@@ -95,7 +102,7 @@ export class PlayerLeaderboard extends Component {
       loader: true,
       dailyLoadCounter: this.state.dailyLoadCounter + 1
     });
-    await fetch(`http://68.183.213.191:5001/api/leaderboard/player?type=daily&from=${this.state.dailyPlayers.length}&limit=${LOAD_COUNT}`)
+    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=daily&from=${this.state.dailyPlayers.length}&limit=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
@@ -112,7 +119,7 @@ export class PlayerLeaderboard extends Component {
       loader: true,
       weeklyLoadCounter: this.state.weeklyLoadCounter + 1
     });
-    await fetch(`http://68.183.213.191:5001/api/leaderboard/player?type=weekly&from=${this.state.weeklyPlayers.length}&limit=${LOAD_COUNT}`)
+    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=weekly&from=${this.state.weeklyPlayers.length}&limit=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
@@ -129,7 +136,7 @@ export class PlayerLeaderboard extends Component {
       loader: true,
       monthlyLoadCounter: this.state.monthlyLoadCounter + 1
     });
-    await fetch(`http://68.183.213.191:5001/api/leaderboard/player?type=monthly&from=${this.state.monthlyPlayers.length}&limit=${LOAD_COUNT}`)
+    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=monthly&from=${this.state.monthlyPlayers.length}&limit=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
@@ -230,6 +237,7 @@ export class PlayerLeaderboard extends Component {
           key={shortid()}
           player={player}
           showModal={this.showModal}
+          image={this.state[player.position]}
         />
       }
     );

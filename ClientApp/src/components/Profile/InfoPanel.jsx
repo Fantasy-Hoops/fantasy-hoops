@@ -29,7 +29,7 @@ export class InfoPanel extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true })
-    await fetch(`http://68.183.213.191:5001/api/stats/${player.nbaID}`)
+    await fetch(`http://fantasyhoops.org/api/stats/${player.nbaID}`)
       .then(res => res.json())
       .then(res => {
         this.setState({
