@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { isAuth, parse, logout } from '../utils/auth';
 import defaultPhoto from '../content/images/default.png';
 import { Notifications } from './Notifications/Notifications';
+import Img from 'react-image';
 
 export class Header extends Component {
   constructor(props) {
@@ -29,12 +30,6 @@ export class Header extends Component {
     let avatar = defaultPhoto;
     if (isAuth()) {
       const user = parse();
-      try {
-        avatar = require(`content/images/avatars/${user.id}.png`);
-      }
-      catch (err) {
-      }
-
       profile = (
         <ul className="nav navbar-nav ml-auto">
           <Notifications />
@@ -46,7 +41,15 @@ export class Header extends Component {
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <img src={avatar} alt={user.username} width="36rem" />
+
+              <Img
+                width="36rem"
+                alt={user.username}
+                src={[
+                  `http://fantasyhoops.org/content/images/avatars/${user.id}.png`,
+                  defaultPhoto
+                ]}
+              />
             </a>
             <ul className="dropdown-menu dropdown-menu-right">
               <h6 className="dropdown-header">Account</h6>

@@ -244,7 +244,6 @@ export class Lineup extends Component {
           renderChild={this.state.renderChild}
           loader={this.state.modalLoader}
           stats={this.state.stats}
-          image={this.state.statsImage}
         />
         <InfoModal />
       </div>
@@ -259,18 +258,11 @@ export class Lineup extends Component {
 
   selectPlayer(player) {
     const pos = player.position.toLowerCase();
-    let image;
-    try {
-      image = require(`content/images/players/${player.id}.png`);
-    } catch (err) {
-      image = require(`../../content/images/positions/${pos}.png`);
-    }
     const playerCard = player.selected
       ? <PlayerCard
         status={2}
         filter={this.filter}
         player={player}
-        image={image}
         selectPlayer={this.selectPlayer}
         position={player.position}
         showModal={this.showModal}
@@ -279,7 +271,6 @@ export class Lineup extends Component {
         status={0}
         filter={this.filter}
         position={player.position}
-        image={require(`../../content/images/positions/${pos}.png`)}
       />;
     this.setState({
       [pos]: playerCard
@@ -295,15 +286,6 @@ export class Lineup extends Component {
           stats: res,
           modalLoader: false,
           renderChild: true
-        });
-        let image;
-        try {
-          image = require(`content/images/players/${this.state.stats.nbaID}.png`);
-        } catch (err) {
-          image = require(`../../content/images/positions/${this.state.stats.position.toLowerCase()}.png`);
-        }
-        this.setState({
-          statsImage: image
         });
       });
   }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import Img from 'react-image';
 
 export class InjuryCard extends Component {
   constructor() {
@@ -33,12 +34,6 @@ export class InjuryCard extends Component {
         <a target="_blank" href={this.props.injury.link}> Read more </a>
       </span>)
       : '';
-    let image;
-    try {
-      image = require(`../src/content/images/players/${this.props.injury.player.nbaID}.png`);
-    } catch (err) {
-      image = require(`../../content/images/positions/${this.props.injury.player.position.toLowerCase()}.png`);
-    }
     return (
       <div className='mx-auto' style={{ transform: 'scale(0.9, 0.9)' }}>
         <div className='column'>
@@ -47,9 +42,13 @@ export class InjuryCard extends Component {
               <div className='date'>
                 <div className='day badge badge-dark'>{this.props.injury.player.position}</div>
               </div>
-              <img src={image}
+              <Img
                 style={{ backgroundColor: this.props.injury.player.team.color }}
                 alt={`${this.props.injury.player.firstName} ${this.props.injury.player.lastName}`}
+                src={[
+                  `http://fantasyhoops.org/content/images/players/${this.props.injury.player.nbaID}.png`,
+                  require(`../../content/images/positions/${this.props.injury.player.position.toLowerCase()}.png`)
+                ]}
               />
             </div>
             <div className='post-content'>

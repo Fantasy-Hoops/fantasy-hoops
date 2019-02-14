@@ -1,5 +1,6 @@
 ﻿import React, { Component } from 'react';
 import Scroll from 'react-scroll';
+import Img from 'react-image';
 const $ = window.$;
 
 export class PlayerCard extends Component {
@@ -40,6 +41,25 @@ export class PlayerCard extends Component {
       if (!this.props.player.injuryStatus.toLowerCase().includes("active"))
         injuryBadge = <div className={"player-injury-badge " + injuryStatus}>{this.props.player.injuryStatus}</div>
 
+      const image = this.props.status === 1 || this.props.status === 2
+        ? <Img
+          onClick={this.props.status === 2 ? this.filter : undefined}
+          className="player-card-img-top card-img-top"
+          style={{ backgroundColor: `${this.props.player.teamColor}` }}
+          alt={this.getDisplayName(this.props.player)}
+          src={[
+            `http://fantasyhoops.org/content/images/players/${this.props.player.id}.png`,
+            require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
+          ]}
+        />
+        :
+        <img
+          onClick={this.props.status === 2 ? this.filter : undefined}
+          className="player-card-img-top card-img-top"
+          style={{ backgroundColor: `${this.props.player.teamColor}` }}
+          src={require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)}
+          alt={this.getDisplayName(this.props.player)}>
+        </img>;
       return (
         <div>
           <div className="player-card card">
@@ -50,13 +70,7 @@ export class PlayerCard extends Component {
             <div className="price-badge">
               <span className="badge badge-dark">{this.props.player.price + 'K'}</span>
             </div>
-            <img
-              onClick={this.props.status === 2 ? this.filter : undefined}
-              className="player-card-img-top card-img-top"
-              style={{ backgroundColor: `${this.props.player.teamColor}` }}
-              src={this.props.image}
-              alt={this.getDisplayName(this.props.player)}>
-            </img>
+            {image}
             {injuryBadge}
             <div className="card-block" >
               <a
