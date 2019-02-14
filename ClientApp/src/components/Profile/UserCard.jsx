@@ -10,6 +10,24 @@ export class UserCard extends Component {
   }
 
   render() {
+    let image;
+    try {
+      image = require(`./content/images/avatars/${this.props.user.id}.png`)
+    } catch (err) {
+      console.log(err);
+    }
+    try {
+      image = require(`/content/images/avatars/${this.props.user.id}.png`)
+    } catch (err) {
+      console.log(err);
+
+    }
+    try {
+      image = require(`content/images/avatars/${this.props.user.id}.png`)
+    } catch (err) {
+      console.log(err);
+
+    }
     return (
       <a href={`/profile/${this.props.user.userName}`} className="friend-card m-3" style={{ backgroundColor: `${this.props.user.color}`, width: '8rem' }}>
         <canvas className="header-bg"></canvas>
@@ -17,7 +35,7 @@ export class UserCard extends Component {
           <Img
             alt={this.props.user.userName}
             src={[
-              `http://fantasyhoops.org/content/images/avatars/${this.props.user.id}.png`,
+              image,
               defaultPhoto
             ]}
             loader={<img width='500px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
