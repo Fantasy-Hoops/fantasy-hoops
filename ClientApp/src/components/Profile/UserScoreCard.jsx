@@ -40,7 +40,7 @@ export class UserScoreCard extends Component {
                 `http://fantasyhoops.org/content/images/players/${this.props.player.nbaID}.png`,
                 require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
               ]}
-              loader={<img width='48px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
+              loader={<img className='position-static' style={{ marginLeft: '-46px', marginTop: '-25px' }} width='150px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
               decode={false}
             />
           </div>

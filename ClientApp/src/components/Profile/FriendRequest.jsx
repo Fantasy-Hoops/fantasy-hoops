@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { parse } from '../../utils/auth';
 import { handleErrors } from '../../utils/errors';
-import { Loader } from '../Loader';
 
 export class FriendRequest extends Component {
   constructor(props) {
@@ -52,7 +51,6 @@ export class FriendRequest extends Component {
     let btn;
     switch (this.state.status) {
       case '-2':
-        btn = this.props.readOnly ? <Loader show={true} /> : '';
         break;
       case '0':
         btn = <button
