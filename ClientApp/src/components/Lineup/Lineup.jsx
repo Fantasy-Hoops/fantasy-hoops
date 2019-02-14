@@ -200,7 +200,7 @@ export class Lineup extends Component {
           </div>
           <button
             type="button"
-            className="btn btn-info absolute btn-circle btn-lg m-3"
+            className="btn btn-primary absolute btn-circle btn-lg m-3"
             data-toggle="modal" data-target="#infoModal"
             style={{ position: 'absolute', right: '0', fontSize: '1.2rem' }}>
             <i className="fa fa-info mx-auto" aria-hidden="true"></i>

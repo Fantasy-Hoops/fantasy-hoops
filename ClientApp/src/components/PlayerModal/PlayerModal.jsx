@@ -35,7 +35,7 @@ export class PlayerModal extends Component {
         <div>
           <Stats stats={this.state.stats} image={this.props.image} />
           <nav>
-            <div className="nav nav-tabs" id="nav-tab" role="tablist">
+            <div className="nav nav-pills mb-3" id="nav-tab" role="tablist">
               <a className="nav-item nav-link active tab-no-outline" id="nav-gamelog-tab" data-toggle="tab" href="#nav-gamelog" role="tab" aria-controls="nav-gamelog" aria-selected="false">Gamelog</a>
               <a className="nav-item nav-link tab-no-outline" id="nav-charts-tab" data-toggle="tab" href="#nav-charts" role="tab" aria-controls="nav-charts" aria-selected="false">Charts</a>
             </div>

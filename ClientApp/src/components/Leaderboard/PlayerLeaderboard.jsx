@@ -166,7 +166,7 @@ export class PlayerLeaderboard extends Component {
       : <button className="btn btn-primary mt-2" onClick={this.loadMonthly}>See more</button>;
 
     return (
-      <div className="container bg-light pt-2 pb-3">
+      <div className="container bg-light pb-3">
         <div className="text-center pb-3">
           <img src={leaderboardLogo}
             alt=""
@@ -174,7 +174,7 @@ export class PlayerLeaderboard extends Component {
           />
           <h3>Top NBA Players</h3>
         </div>
-        <ul className="nav nav-tabs justify-content-center mx-auto" id="myTab" role="tablist" style={{ width: '40%' }}>
+        <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist" style={{ width: '40%' }}>
           <li className="nav-item">
             <a className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" href="#daily" role="tab">Daily</a>
           </li>
@@ -185,7 +185,7 @@ export class PlayerLeaderboard extends Component {
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
-          <div className="pt-4 pb-1 tab-pane fade show active" id="daily" role="tabpanel">
+          <div className="pt-4 pb-1 tab-pane fade show active animated bounceInUp" id="daily" role="tabpanel">
             {!this.state.dailyLoader
               ? dailyPlayers.length > 0
                 ? dailyPlayers
@@ -196,7 +196,7 @@ export class PlayerLeaderboard extends Component {
             </div>
             <Loader show={this.state.loader} />
           </div>
-          <div className="pt-4 pb-1 tab-pane fade" id="weekly" role="tabpanel">
+          <div className="pt-4 pb-1 tab-pane fade animated bounceInUp" id="weekly" role="tabpanel">
             {!this.state.weeklyLoader
               ? weeklyPlayers.length > 0
                 ? weeklyPlayers
@@ -207,7 +207,7 @@ export class PlayerLeaderboard extends Component {
             </div>
             <Loader show={this.state.loader} />
           </div>
-          <div className="pt-4 pb-1 tab-pane fade" id="monthly" role="tabpanel">
+          <div className="pt-4 pb-1 tab-pane fade animated bounceInUp" id="monthly" role="tabpanel">
             {!this.state.monthlyLoader
               ? monthlyPlayers.length > 0
                 ? monthlyPlayers
