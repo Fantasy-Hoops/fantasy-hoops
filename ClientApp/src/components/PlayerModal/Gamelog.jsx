@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
 import moment from 'moment';
-import defaultLogo from '../../content/images/default.png';
+import defaultLogo from '../../content/images/defaultLogo.png';
 import { Loader } from '../Loader';
+import Img from 'react-image';
 const LOAD_COUNT = 10;
 
 export class Gamelog extends Component {
@@ -24,7 +25,7 @@ export class Gamelog extends Component {
       loader: true,
       loadCounter: this.state.loadCounter + 1
     });
-    await fetch(`http://68.183.213.191:5001/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
+    await fetch(`http://fantasyhoops.org/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
@@ -91,15 +92,6 @@ export class Gamelog extends Component {
     return 0;
   }
 
-  getLogo(abbreviation) {
-    try {
-      return require(`../../content/images/logos/${abbreviation}.svg`);
-    }
-    catch (err) {
-      return defaultLogo;
-    }
-  }
-
   getRows(btn) {
     if (this.props.loader)
       return '';
@@ -115,7 +107,18 @@ export class Gamelog extends Component {
       else score = <span className="text-danger">L</span>;
       return <tr key={shortid()} >
         <td style={{ width: '6rem' }}>{moment(s.date).format("ddd MM/DD")}</td>
-        <td style={{ width: '4rem' }}><img src={this.getLogo(abbreviation)} alt={abbreviation} width='40rem' style={{ right: '0' }} /></td>
+        <td style={{ width: '4rem' }}>
+          <Img
+            width='40rem'
+            style={{ right: '0' }}
+            alt={abbreviation}
+            src={[
+              `http://fantasyhoops.org/content/images/logos/${abbreviation}.svg`,
+              defaultLogo
+            ]}
+            loader={<img height='40px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+          />
+        </td>
         <td style={{ width: '6rem' }}>{score} {s.score}</td>
         <td style={{ width: '3rem' }}>{s.min}</td>
         <td style={{ width: '3rem' }}>{s.fgm}</td>

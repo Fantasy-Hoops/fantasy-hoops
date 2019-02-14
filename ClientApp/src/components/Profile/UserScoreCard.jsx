@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Img from 'react-image';
 const $ = window.$;
 
 export class UserScoreCard extends Component {
@@ -19,12 +20,6 @@ export class UserScoreCard extends Component {
   }
 
   render() {
-    let image;
-    try {
-      image = require(`../../content/images/players/${this.props.player.nbaID}.png`);
-    } catch (err) {
-      image = require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`);
-    }
     return (
       <a
         data-toggle="tooltip"
@@ -38,10 +33,15 @@ export class UserScoreCard extends Component {
           style={{ overflow: 'hidden', cursor: 'default' }}>
           <div className="card-circle" style={{ backgroundColor: this.props.player.color }}
           >
-            <img
+            <Img
               className="user-card-player"
-              src={image}
               alt={this.props.player.lastName}
+              src={[
+                `http://fantasyhoops.org/content/images/players/${this.props.player.nbaID}.png`,
+                require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
+              ]}
+              loader={<img className='position-static' style={{ marginLeft: '-46px', marginTop: '-25px' }} width='150px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
+              decode={false}
             />
           </div>
           <p className="player-usertitle">{this.props.player.lastName}</p>

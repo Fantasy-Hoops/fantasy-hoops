@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Img from 'react-image';
+import defaultLogo from '../../content/images/defaultLogo.png';
 
 export class Stats extends Component {
   constructor(props) {
@@ -9,22 +11,32 @@ export class Stats extends Component {
 
   render() {
     const stats = this.props.stats;
-    let playerImage, opponentLogo;
-    try {
-      playerImage = require(`../../content/images/players/${stats.nbaID}.png`);
-    } catch (err) {
-      playerImage = require(`../../content/images/positions/${stats.position.toLowerCase()}.png`);
-    }
-    try {
-      opponentLogo = require(`../../content/images/logos/${stats.team.abbreviation}.svg`);
-    } catch (err) {
-      opponentLogo = require(`../../content/images/defaultLogo.png`);
-    }
     return (
       <div className="row">
         <div style={{ width: '16.25rem', height: '13.05rem' }}></div>
-        <img className="img-modal pt-4 mb-2" src={opponentLogo} alt={stats.team.abbreviation} />
-        <img className="ml-3 img-modal mb-2" src={playerImage} style={{ zIndex: '1', paddingTop: '1.2rem' }} alt={`${stats.firstName} ${stats.lastName}`} />
+        <div className='position-absolute'>
+          <Img
+            className="img-modal pt-4 mb-2"
+            alt={stats.team.abbreviation}
+            src={[
+              `http://fantasyhoops.org/content/images/logos/${stats.team.abbreviation}.svg`,
+              defaultLogo
+            ]}
+            loader={<img height='150px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+          />
+        </div>
+        <div className="position-absolute">
+          <Img
+            className="ml-3 img-modal mb-2"
+            style={{ zIndex: '1', paddingTop: '1.2rem' }}
+            alt={`${stats.firstName} ${stats.lastName}`}
+            src={[
+              `http://fantasyhoops.org/content/images/players/${stats.nbaID}.png`,
+              `http://fantasyhoops.org/content/images/positions/${stats.position.toLowerCase()}.png`
+            ]}
+            loader={<img src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+          />
+        </div>
         <div className="col">
           <h1 className="">{stats.firstName} {stats.lastName}</h1>
           <h5>{stats.position} | {stats.team.city + " " + stats.team.name}</h5>
