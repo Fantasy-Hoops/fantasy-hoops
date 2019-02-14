@@ -23,7 +23,7 @@ export class NewsCard extends Component {
     );
     return (
       <div className="mb-5 mx-auto news-card card">
-        <div className="card-header bg-info text-white">
+        <div className="card-header bg-primary text-white">
           <h5 className="card-title" style={{ marginBottom: '0' }}>
             {this.props.news.title}
           </h5>

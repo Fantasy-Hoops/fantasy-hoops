@@ -64,7 +64,7 @@ export class PlayerCard extends Component {
           `http://fantasyhoops.org/content/images/players/${this.props.player.id}.png`,
           require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
         ]}
-        loader={<img height='140px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+        loader={<img height='151px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
         decode={false}
       />
       return (

@@ -76,7 +76,7 @@ export class UserProfile extends Component {
         <div className="row p-4">
           <Avatar user={this.state.user} readOnly={this.state.readOnly} />
           <div className="col-lg-8 order-lg-2 mt-5">
-            <ul className="nav nav-tabs">
+            <ul className="nav nav-pills">
               <li className="nav-item">
                 <a href="" data-target="#profile" data-toggle="tab" id="navLinkProfile" className="nav-link active tab-no-outline">Profile</a>
               </li>

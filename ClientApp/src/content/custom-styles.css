@@ -1,4 +1,18 @@
-﻿.background-image {
+﻿:root {
+  --primary-color: #2C3E50;
+  --secondary-color: #18BC9C;
+  --tertiary-color: #ECF0F1
+}
+
+body {
+  background-color: var(--tertiary-color);
+}
+
+.container {
+  padding-top: 24px;
+}
+
+.background-image {
   position: absolute;
   top: 0;
   left: 0;
@@ -18,10 +32,6 @@
   padding-top: 1rem;
   font-size: 1.25rem;
   height: 2.6rem;
-}
-
-.player-card-img-top {
-  height: 8.75rem;
 }
 
 .price-badge {
@@ -521,13 +531,13 @@ margin-bottom: 1.5rem;
   margin: 0 auto;
   border: none;
   font: normal 82px/normal "Anton", Helvetica, sans-serif;
-  color: #007BFF;
+  color: var(--primary-color);
   text-align: center;
   text-transform: uppercase;
   -o-text-overflow: clip;
   text-overflow: clip;
   letter-spacing: 10px;
-  text-shadow: 4px 4px 0 black , 6px 6px 0 #007BFF ;
+  text-shadow: 4px 4px 0 var(--secondary-color) , 6px 6px 0 var(--primary-color) ;
 }
 
 input[type=search] {
@@ -598,17 +608,17 @@ input[type=search]:focus {
   width: 26px;
   left: 4px;
   bottom: 4px;
-  background-color: white;
+  background-color: var(--tertiary-color);
   -webkit-transition: .4s;
   transition: .4s;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: var(--secondary-color);
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px var(--secondary-color);
 }
 
 input:checked + .slider:before {

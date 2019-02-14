@@ -49,7 +49,7 @@ export class Gamelog extends Component {
       <div className="table-responsive">
         <table className="table table-sm table-hover table-bordered text-right">
           <thead>
-            <tr className="bg-dark text-light">
+            <tr className="bg-primary text-light">
               <th scope="col" style={{ width: '6rem' }}>DATE</th>
               <th scope="col" style={{ width: '4rem' }}>OPP</th>
               <th scope="col" style={{ width: '6rem' }}>SCORE</th>
