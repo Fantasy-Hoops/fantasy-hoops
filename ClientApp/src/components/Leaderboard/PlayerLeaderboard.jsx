@@ -75,6 +75,13 @@ export class PlayerLeaderboard extends Component {
           monthlyLoader: false
         });
       })
+    await this.setState({
+      PG: require(`../../content/images/positions/pg.png`),
+      SG: require(`../../content/images/positions/sg.png`),
+      SF: require(`../../content/images/positions/sf.png`),
+      PF: require(`../../content/images/positions/pf.png`),
+      C: require(`../../content/images/positions/c.png`)
+    });
   }
 
   async showModal(player) {
@@ -230,6 +237,7 @@ export class PlayerLeaderboard extends Component {
           key={shortid()}
           player={player}
           showModal={this.showModal}
+          image={this.state[player.position]}
         />
       }
     );

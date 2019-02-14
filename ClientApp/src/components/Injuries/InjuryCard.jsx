@@ -49,6 +49,8 @@ export class InjuryCard extends Component {
                   `http://fantasyhoops.org/content/images/players/${this.props.injury.player.nbaID}.png`,
                   require(`../../content/images/positions/${this.props.injury.player.position.toLowerCase()}.png`)
                 ]}
+                loader={<img height='179.55px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+                decode={false}
               />
             </div>
             <div className='post-content'>

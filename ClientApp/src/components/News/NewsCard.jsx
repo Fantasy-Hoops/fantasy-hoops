@@ -3,7 +3,7 @@ import Scroll from 'react-scroll';
 import shortid from 'shortid';
 import _ from 'lodash';
 import Img from 'react-image';
-import defaultLogo from '../../content/images/default.png';
+import defaultLogo from '../../content/images/defaultLogo.png';
 
 export class NewsCard extends Component {
   constructor(props) {
@@ -29,26 +29,30 @@ export class NewsCard extends Component {
           </h5>
         </div>
         <span>
-          <Img
-            alt=""
-            width="50px"
-            style={{ position: 'absolute' }}
-            src={[
-              `http://fantasyhoops.org/content/images/logos/${this.props.news.hTeam}.svg`,
-              defaultLogo
-            ]}
-          />
+          <div className='position-absolute'>
+            <Img
+              alt=""
+              width="50px"
+              src={[
+                `http://fantasyhoops.org/content/images/logos/${this.props.news.hTeam}.svg`,
+                defaultLogo
+              ]}
+              loader={<img height='50px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
+            />
+          </div>
         </span>
         <span style={{ paddingLeft: '5rem' }}>
-          <Img
-            alt=""
-            width="50px"
-            style={{ position: 'absolute' }}
-            src={[
-              `http://fantasyhoops.org/content/images/logos/${this.props.news.vTeam}.svg`,
-              defaultLogo
-            ]}
-          />
+          <div className='position-absolute' >
+            <Img
+              alt=""
+              width="50px"
+              src={[
+                `http://fantasyhoops.org/content/images/logos/${this.props.news.vTeam}.svg`,
+                defaultLogo
+              ]}
+              loader={<img height='50px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
+            />
+          </div>
         </span>
         <div className="card-header text-muted" style={{ height: '3rem', paddingLeft: '3.5rem' }}>
           vs.

@@ -24,11 +24,11 @@ export class Lineup extends Component {
 
     this.state = {
       position: '',
-      pg: <PlayerCard image={require('../../content/images/positions/pg.png')} filter={this.filter} status={0} position="PG" />,
-      sg: <PlayerCard image={require('../../content/images/positions/sg.png')} filter={this.filter} status={0} position="SG" />,
-      sf: <PlayerCard image={require('../../content/images/positions/sf.png')} filter={this.filter} status={0} position="SF" />,
-      pf: <PlayerCard image={require('../../content/images/positions/pf.png')} filter={this.filter} status={0} position="PF" />,
-      c: <PlayerCard image={require('../../content/images/positions/c.png')} filter={this.filter} status={0} position="C" />,
+      pg: <PlayerCard filter={this.filter} status={0} position="PG" />,
+      sg: <PlayerCard filter={this.filter} status={0} position="SG" />,
+      sf: <PlayerCard filter={this.filter} status={0} position="SF" />,
+      pf: <PlayerCard filter={this.filter} status={0} position="PF" />,
+      c: <PlayerCard filter={this.filter} status={0} position="C" />,
       loadedPlayers: false,
       showAlert: false,
       alertType: '',
@@ -182,8 +182,6 @@ export class Lineup extends Component {
       } else {
         return (
           <PlayerPool
-            playerIMG={this.state.playerIMG}
-            posIMG={this.state.posIMG}
             position={this.state.position}
             players={this.state.players}
             selectPlayer={this.selectPlayer}

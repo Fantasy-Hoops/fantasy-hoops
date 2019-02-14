@@ -116,6 +116,7 @@ export class Gamelog extends Component {
               `http://fantasyhoops.org/content/images/logos/${abbreviation}.svg`,
               defaultLogo
             ]}
+            loader={<img height='40px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
           />
         </td>
         <td style={{ width: '6rem' }}>{score} {s.score}</td>

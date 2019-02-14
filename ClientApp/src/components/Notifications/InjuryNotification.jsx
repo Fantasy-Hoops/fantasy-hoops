@@ -40,6 +40,8 @@ export class InjuryNotification extends Component {
                     `http://fantasyhoops.org/content/images/players/${this.props.notification.player.nbaID}.png`,
                     require(`../../content/images/positions/${this.props.notification.player.position.toLowerCase()}.png`)
                   ]}
+                  loader={<img width='40px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+                  decode={false}
                 />
               </div>
             </div>

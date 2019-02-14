@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Img from 'react-image';
+import defaultPhoto from '../../content/images/default.png';
 
 export class UserLeaderboardCard extends Component {
   render() {
@@ -16,8 +17,9 @@ export class UserLeaderboardCard extends Component {
                 alt={this.props.userName}
                 src={[
                   `http://fantasyhoops.org/content/images/avatars/${this.props.userid}.png`,
-                  require(`../../content/images/default.png`)
+                  defaultPhoto
                 ]}
+                decode={false}
               />
             </div>
             <div className="d-inline-block">

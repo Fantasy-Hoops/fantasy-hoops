@@ -3,10 +3,15 @@ import { ChangeAvatar } from '../Inputs/ChangeAvatar';
 import defaultPhoto from '../../content/images/default.png';
 import { FriendRequest } from './FriendRequest';
 import Img from 'react-image';
+import { Loader } from '../Loader';
 
 export class Avatar extends Component {
   render() {
     const user = this.props.user;
+    if (!user)
+      return <div className="col-lg-4 order-lg-1"><div className="">
+        <Loader show={!user} />
+      </div> </div>;
     return (
       <div className="col-lg-4 order-lg-1">
         <div className="row">
@@ -20,6 +25,7 @@ export class Avatar extends Component {
             `http://fantasyhoops.org/content/images/avatars/${user.id}.png`,
             defaultPhoto
           ]}
+          loader={<img width='10rem' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
         />
         <FriendRequest user={user} readOnly={this.props.readOnly} />
         {!this.props.readOnly &&
