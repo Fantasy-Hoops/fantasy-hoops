@@ -98,6 +98,12 @@ namespace fantasy_hoops.Controllers
             return Ok(_repository.GetFriends(id).ToList());
         }
 
+        [HttpGet("team/{id}")]
+        public IActionResult GetTeam(String id)
+        {
+            return Ok(_repository.GetTeam(id));
+        }
+
         [HttpPut("editprofile")]
         public async Task<IActionResult> EditProfile([FromBody]EditProfileViewModel model)
         {

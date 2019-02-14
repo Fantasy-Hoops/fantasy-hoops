@@ -104,6 +104,16 @@ namespace fantasy_hoops.Repositories
             return friends;
         }
 
+        public IQueryable<Object> GetTeam(string id)
+        {
+            return _context.Users
+                .Where(usr => usr.Id.Equals(id))
+                .Select(x => new
+                {
+                    team = _context.Teams.Where(team => team.TeamID == x.FavoriteTeamId).FirstOrDefault()
+                });
+        }
+
         public IQueryable<Object> GetUserPool()
         {
             return _context.Users
