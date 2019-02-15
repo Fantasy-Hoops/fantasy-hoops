@@ -4,6 +4,12 @@ import defaultPhoto from '../../content/images/default.png';
 
 export class UserLeaderboardCard extends Component {
   render() {
+    const img = new Image();
+    let avatar;
+    if (this.props.userid) {
+      img.src = `http://fantasyhoops.org/content/images/avatars/${this.props.userid}.png`;
+      avatar = img.height !== 0 ? img.src : defaultPhoto;
+    }
     return (
       <div className="card bg-white rounded mt-1 mx-auto" style={{ width: '20rem', height: '4.5rem' }}>
         <div className="card-body">
@@ -15,10 +21,7 @@ export class UserLeaderboardCard extends Component {
               <Img
                 className="user-card-player"
                 alt={this.props.userName}
-                src={[
-                  `http://fantasyhoops.org/content/images/avatars/${this.props.userid}.png`,
-                  defaultPhoto
-                ]}
+                src={avatar}
                 decode={false}
               />
             </div>

@@ -1,14 +1,27 @@
 import React, { Component } from 'react';
+import Img from 'react-image';
+import defaultPhoto from '../../../content/images/default.png';
 
 export class RequestCard extends Component {
 
   render() {
+    const img = new Image();
+    let avatar;
+    if (this.props.id) {
+      img.src = `http://fantasyhoops.org/content/images/avatars/${this.props.id}.png`;
+      avatar = img.height !== 0 ? img.src : defaultPhoto;
+    }
     return (
       <div className="card bg-white rounded mt-1 mx-auto" style={{ width: '100%', height: '4.5rem' }}>
         <div className="card-body">
           <a href={`/profile/${this.props.userName}`}>
             <div className="d-inline-block position-absolute ml-3" style={{ top: '0.2rem' }}>
-              <img className="user-card-player" src={this.props.avatar} alt={this.props.userName}/>
+              <Img
+                className="user-card-player"
+                alt={this.props.userName}
+                src={avatar}
+                decode={false}
+              />
             </div>
             <div className="d-inline-block">
               <p className="align-middle player-name" style={{ paddingLeft: '5rem', paddingTop: '0.3rem' }}>{this.props.userName}</p>

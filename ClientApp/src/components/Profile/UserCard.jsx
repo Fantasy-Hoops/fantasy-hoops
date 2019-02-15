@@ -10,16 +10,19 @@ export class UserCard extends Component {
   }
 
   render() {
+    let img = new Image();
+    let avatar;
+    if (this.props.user) {
+      img.src = `http://fantasyhoops.org/content/images/avatars/${this.props.user.id}.png`;
+      avatar = img.height !== 0 ? img.src : defaultPhoto;
+    }
     return (
       <a href={`/profile/${this.props.user.userName}`} className="friend-card m-3" style={{ backgroundColor: `${this.props.user.color}`, width: '8rem' }}>
         <canvas className="header-bg"></canvas>
         <div className="avatar">
           <Img
             alt={this.props.user.userName}
-            src={[
-              `http://fantasyhoops.org/content/images/avatars/${this.props.user.id}.png`,
-              defaultPhoto
-            ]}
+            src={avatar}
             loader={<img width='500px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
             decode={false}
           />
