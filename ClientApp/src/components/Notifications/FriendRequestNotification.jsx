@@ -25,6 +25,12 @@ export class FriendRequestNotification extends Component {
     let read = "card-body text-primary";
     if (this.props.notification.readStatus)
       read = "card-body text-muted";
+    const img = new Image();
+    let avatar;
+    if (this.props.notification) {
+      img.src = `http://fantasyhoops.org/content/images/avatars/${this.props.notification.friendID}.png`;
+      avatar = img.height !== 0 ? img.src : defaultPhoto;
+    }
     return (
       <a onClick={this.select} className="card cursor-pointer link mx-auto" style={{ maxWidth: `${this.props.width}` }}>
         <div className={read} style={{ margin: '-0.6rem' }}>
@@ -35,10 +41,7 @@ export class FriendRequestNotification extends Component {
                 width="40rem"
                 height="40rem"
                 alt={this.props.notification.friend.userName}
-                src={[
-                  `http://fantasyhoops.org/content/images/avatars/${this.props.notification.friendID}.png`,
-                  defaultPhoto
-                ]}
+                src={avatar}
                 loader={<img width='40px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
                 decode={false}
               />

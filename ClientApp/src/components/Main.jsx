@@ -31,7 +31,9 @@ export class Main extends Component {
     if (this.state.team === '') {
       return <div></div>;
     }
-    const image = require(`../content/images/backgrounds/${this.state.team.abbreviation.toLowerCase()}.png`);
+    const image = this.state.team
+      ? require(`../content/images/backgrounds/${this.state.team.abbreviation.toLowerCase()}.png`)
+      : require(`../content/images/backgrounds/nba.png`);
     return (
       <div>
         <p id="main-text" className="text-center title" style={{ marginTop: '15%' }}>

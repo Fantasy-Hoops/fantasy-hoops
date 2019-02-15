@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { parse } from '../../../utils/auth';
 import { RequestCard } from './RequestCard';
 import shortid from 'shortid';
-import defaultPhoto from '../../../content/images/default.png';
 import _ from 'lodash';
 
 export class PendingList extends Component {
@@ -36,7 +35,6 @@ export class PendingList extends Component {
           key={shortid()}
           id={friend.id}
           userName={friend.userName}
-          avatar={this.props.images[`${friend.id}.png`] || defaultPhoto}
           accept={this.acceptRequest}
           decline={this.declineRequest}
           type="pending"

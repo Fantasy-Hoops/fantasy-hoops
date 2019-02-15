@@ -74,7 +74,9 @@ export class UserProfile extends Component {
     return (
       <div className="container bg-light pt-1">
         <div className="row p-4">
-          <Avatar user={this.state.user} readOnly={this.state.readOnly} />
+          <div className="col-lg-4 order-lg-1">
+            <Avatar user={this.state.user} readOnly={this.state.readOnly} />
+          </div>
           <div className="col-lg-8 order-lg-2 mt-5">
             <ul className="nav nav-pills">
               <li className="nav-item">
