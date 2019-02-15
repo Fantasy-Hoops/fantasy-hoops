@@ -33,7 +33,7 @@ namespace fantasy_hoops.Services
             else
             {
                 _repository.UpdatePlayer(model.UserID, "PG", model.PgID);
-                _repository.UpdatePlayer(model.UserID, "SF", model.SgID);
+                _repository.UpdatePlayer(model.UserID, "SG", model.SgID);
                 _repository.UpdatePlayer(model.UserID, "SF", model.SfID);
                 _repository.UpdatePlayer(model.UserID, "PF", model.PfID);
                 _repository.UpdatePlayer(model.UserID, "C", model.CID);
