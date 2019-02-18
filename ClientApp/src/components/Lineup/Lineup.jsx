@@ -169,7 +169,13 @@ export class Lineup extends Component {
         if (this.state.playerPoolDate !== this.state.nextGame)
           return <h5>Please wait a moment until player pool is updated!</h5>;
         this.state.submit = true;
-        return <span>Game starts in <strong>{days}:{hours}:{minutes}:{seconds}</strong></span>;
+        
+        days = this.getFormattedDateString(days, "day");
+        hours = this.getFormattedDateString(hours, "hour");
+        minutes = this.getFormattedDateString(minutes, "minute");
+        seconds = this.getFormattedDateString(seconds, "second");
+
+        return <span>Game starts in <strong>{days}{hours}{minutes}{seconds}</strong></span>;
       }
     };
     const playerPool = () => {
@@ -207,7 +213,7 @@ export class Lineup extends Component {
           </button>
           <div style={{ width: '100%' }}>
             <div className="text-center mb-3">
-              <Countdown date={this.getDate()} renderer={renderer} />
+              <Countdown date={this.getDate()} zeroPadTime={3} zeroPadDays={3} renderer={renderer} />
             </div>
             <div className="mx-auto" style={{ transform: 'scale(0.7, 0.7)', marginTop: '-2rem' }}>
               <div className="row justify-content-center">
@@ -345,5 +351,14 @@ export class Lineup extends Component {
           alertText: err.message
         });
       });
+  }
+
+  getFormattedDateString(value, word) {
+    if (value == 1) {
+      return `${value} ${word} `;
+    } else if (value > 1) {
+      return `${value} ${word}s `;
+    }
+    return '';
   }
 }
