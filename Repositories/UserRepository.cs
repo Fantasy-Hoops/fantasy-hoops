@@ -93,13 +93,13 @@ namespace fantasy_hoops.Repositories
                .Where(x => x.SenderID.Equals(id) && x.Status.Equals(RequestStatus.ACCEPTED))
                .Select(x => new
                {
-                  id = x.ReceiverID,
-                  x.Receiver.UserName,
-                  Color = _context.Teams
+                   id = x.ReceiverID,
+                   x.Receiver.UserName,
+                   Color = _context.Teams
                      .Where(t => t.TeamID == x.Receiver.FavoriteTeamId)
                      .Select(t => t.Color)
                      .FirstOrDefault()
-            }));
+               }));
 
             return friends;
         }
@@ -196,12 +196,12 @@ namespace fantasy_hoops.Repositories
 
         private decimal GetWeeklyScore(string id)
         {
-            double weekly = _context.Lineups
+            decimal weekly = Convert.ToDecimal(_context.Lineups
                     .Where(x => x.UserID.Equals(id) && x.Date >= date)
-                    .Select(x => x.FP).Sum();
-            if (weekly == 0)
+                    .Select(x => x.FP).Sum());
+            if ((weekly % 1) == 0)
             {
-                return 0.0m;
+                return 0.0m + weekly;
             }
             return Convert.ToDecimal(weekly);
         }
@@ -209,7 +209,8 @@ namespace fantasy_hoops.Repositories
         private int GetWeeklyRanking(string id)
         {
 
-            var ranking = _context.Users.Select(x => new {
+            var ranking = _context.Users.Select(x => new
+            {
                 x.Id,
                 Score = _context.Lineups
                     .Where(y => y.UserID.Equals(x.Id) && y.Date >= date)
