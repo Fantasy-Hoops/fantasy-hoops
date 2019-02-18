@@ -162,6 +162,8 @@ namespace fantasy_hoops.Repositories
                 })
                 .ToList();
 
+            var PlayersOrder = new[] { "PG", "SG", "SF", "PF", "C" };
+
             var activityQuery = _context.Lineups
                 .Where(x => x.Calculated && x.UserID.Equals(id))
                 .OrderByDescending(x => x.Date)
@@ -169,7 +171,7 @@ namespace fantasy_hoops.Repositories
                 {
                     x.Date,
                     Score = Math.Round(_context.Lineups.Where(y => y.Date.Equals(x.Date) && y.UserID.Equals(x.UserID)).Select(y => y.FP).Sum(), 1),
-                    players = players.Where(y => y.Date.Equals(x.Date)).ToList()
+                    players = players.Where(y => y.Date.Equals(x.Date)).OrderBy(p => Array.IndexOf(PlayersOrder, p.Position)).ToList()
                 })
                 .ToList()
                 .Where((x, index) => index % 5 == 0)
