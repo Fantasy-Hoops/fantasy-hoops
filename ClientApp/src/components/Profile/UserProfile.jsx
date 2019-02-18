@@ -6,6 +6,7 @@ import { InfoPanel } from './InfoPanel';
 import { Friends } from './Friends/Friends';
 import { Error } from '../Error';
 import { handleErrors } from '../../utils/errors';
+import { Loader } from '../Loader';
 
 export class UserProfile extends Component {
   constructor(props) {
@@ -13,7 +14,7 @@ export class UserProfile extends Component {
     this.state = {
       edit: this.props.match.params.edit || '',
       user: '',
-      readOnly: false,
+      readOnly: true,
       error: false,
       errorStatus: '200',
       errorMessage: '',
@@ -29,12 +30,13 @@ export class UserProfile extends Component {
     const loggedInAsSameUser = (this.props.match.params.name != null && parse().username.toLowerCase() === this.props.match.params.name.toLowerCase());
     if (this.props.match.params.name == null || loggedInAsSameUser) {
       const user = parse();
-      await fetch(`http://fantasyhoops.org/api/user/${user.id}`)
+      await fetch(`http://fantasyhoops.org/api/user/${user.id}?count=5`)
         .then(res => res.json())
         .then(res => {
           this.setState({
             user: res,
-            loader: false
+            loader: false,
+            readOnly: false
           });
         });
     }
@@ -43,13 +45,14 @@ export class UserProfile extends Component {
       this.setState({
         readOnly: true
       });
-      await fetch(`http://fantasyhoops.org/api/user/name/${userName}`)
+      await fetch(`http://fantasyhoops.org/api/user/name/${userName}?count=5`)
         .then(res => handleErrors(res))
         .then(res => res.json())
         .then(res => {
           this.setState({
             user: res,
-            loader: false
+            loader: false,
+            readOnly: true
           });
         })
         .catch(err => {
@@ -58,7 +61,8 @@ export class UserProfile extends Component {
           this.setState({
             error: true,
             errorStatus: status,
-            errorMessage: message
+            errorMessage: message,
+            loader: false
           });
         });
     }
@@ -71,6 +75,30 @@ export class UserProfile extends Component {
         <Error status={this.state.errorStatus} message={this.state.errorMessage} />
       );
     }
+
+    const content = () => {
+      if (this.state.loader)
+        return '';
+      else return (
+        <div className="tab-content py-4">
+          <InfoPanel user={this.state.user} />
+          <Friends user={this.state.user} />
+          <EditProfile user={this.state.user} />
+          {seeMore()}
+        </div>
+      );
+    }
+
+    const seeMore = () => {
+      if (this.state.readOnly)
+        return '';
+      else return (
+        <div className="pt-3">
+          <a className="btn btn-outline-primary" href="/history" role="button">History</a>
+        </div>
+      );
+    }
+
     return (
       <div className="container bg-light pt-1">
         <div className="row p-4">
@@ -91,11 +119,10 @@ export class UserProfile extends Component {
                 </li>
               }
             </ul>
-            <div className="tab-content py-4">
-              <InfoPanel user={this.state.user} loader={this.state.loader} />
-              <Friends user={this.state.user} />
-              <EditProfile user={this.state.user} />
+            <div className="mx-auto mt-5">
+              <Loader show={this.state.loader} />
             </div>
+            {content()}
           </div>
         </div>
       </div >

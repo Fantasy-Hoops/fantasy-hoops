@@ -19,7 +19,7 @@ namespace fantasy_hoops.Repositories
             _teamRepository = new TeamRepository(_context);
         }
 
-        public IQueryable<Object> GetProfile(string id)
+        public IQueryable<Object> GetProfile(string id, int start, int count)
         {
             User user = GetUser(id);
 
@@ -34,8 +34,7 @@ namespace fantasy_hoops.Repositories
                 };
             }
 
-            var activity = GetRecentActivity(id).ToList()
-                .Where((x, index) => index % 5 == 0).ToList();
+            var activity = GetRecentActivity(id, start, count).ToList();
             int streak = GetStreak(id);
             decimal totalScore = GetWeeklyScore(id);
             int position = GetWeeklyRanking(id);
@@ -54,7 +53,7 @@ namespace fantasy_hoops.Repositories
                     Name = team.City + " " + team.Name,
                     team.Color
                 },
-                RecentActivity = activity,
+                history = activity,
                 Streak = streak,
                 Position = position,
                 TotalScore = totalScore
@@ -143,11 +142,11 @@ namespace fantasy_hoops.Repositories
                 .Any();
         }
 
-        private IQueryable<Object> GetRecentActivity(string id)
+        private IQueryable<Object> GetRecentActivity(string id, int start, int count)
         {
             // Getting all players that user has selected in recent 5 games
             var players = _context.Lineups
-                .Where(x => x.UserID.Equals(id) && x.Date <= NextGame.PREVIOUS_GAME)
+                .Where(x => x.UserID.Equals(id) && x.Date < NextGame.NEXT_GAME)
                 .OrderByDescending(x => x.Date)
                 .Select(x => new
                 {
@@ -161,11 +160,9 @@ namespace fantasy_hoops.Repositories
                         .Select(y => y.FP)
                         .FirstOrDefault()
                 })
-                .Take(30)
                 .ToList();
 
-            // Getting 5 recent games
-            var activity = _context.Lineups
+            var activityQuery = _context.Lineups
                 .Where(x => x.Calculated && x.UserID.Equals(id))
                 .OrderByDescending(x => x.Date)
                 .Select(x => new
@@ -174,9 +171,17 @@ namespace fantasy_hoops.Repositories
                     Score = Math.Round(_context.Lineups.Where(y => y.Date.Equals(x.Date) && y.UserID.Equals(x.UserID)).Select(y => y.FP).Sum(), 1),
                     players = players.Where(y => y.Date.Equals(x.Date)).ToList()
                 })
-                .Take(25);
+                .ToList()
+                .Where((x, index) => index % 5 == 0)
+                .Skip(start);
 
-            return activity;
+            var activity = activityQuery;
+
+            if (count != 0)
+                activity = activityQuery.Take(count);
+
+
+            return activity.AsQueryable();
         }
 
         private int GetStreak(string id)
