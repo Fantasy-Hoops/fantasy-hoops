@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
 using fantasy_hoops;
+using dotenv.net;
 
 namespace react_app
 {
@@ -33,6 +34,13 @@ namespace react_app
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            #if DEBUG
+                DotEnv.Config(false, ".env.dev");
+            #else
+                DotEnv.Config(false, ".env");
+            #endif
+
 
             services.AddDbContext<GameContext>();
             services.AddScoped<GameContext>(); // 'scoped' in ASP.NET means "per HTTP request"
