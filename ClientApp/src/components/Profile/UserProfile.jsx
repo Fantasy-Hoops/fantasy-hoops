@@ -22,10 +22,6 @@ export class UserProfile extends Component {
     }
   }
 
-  componentDidMount() {
-    this.editProfile();
-  }
-
   async componentWillMount() {
     const loggedInAsSameUser = (this.props.match.params.name != null && parse().username.toLowerCase() === this.props.match.params.name.toLowerCase());
     if (this.props.match.params.name == null || loggedInAsSameUser) {
@@ -39,6 +35,7 @@ export class UserProfile extends Component {
             readOnly: false
           });
         });
+        this.editProfile();
     }
     else {
       const userName = this.props.match.params.name;
@@ -81,20 +78,9 @@ export class UserProfile extends Component {
         return '';
       else return (
         <div className="tab-content py-4">
-          <InfoPanel user={this.state.user} />
+          <InfoPanel user={this.state.user} readOnly={this.state.readOnly} />
           <Friends user={this.state.user} />
           <EditProfile user={this.state.user} />
-          {seeMore()}
-        </div>
-      );
-    }
-
-    const seeMore = () => {
-      if (this.state.readOnly)
-        return '';
-      else return (
-        <div className="pt-3">
-          <a className="btn btn-outline-primary" href="/history" role="button">History</a>
         </div>
       );
     }
@@ -103,7 +89,7 @@ export class UserProfile extends Component {
       <div className="container bg-light pt-1">
         <div className="row p-4">
           <div className="col-lg-4 order-lg-1">
-            <Avatar user={this.state.user} readOnly={this.state.readOnly} />
+            {this.state.user ? <Avatar user={this.state.user} readOnly={this.state.readOnly} /> : ''}
           </div>
           <div className="col-lg-8 order-lg-2 mt-5">
             <ul className="nav nav-pills">

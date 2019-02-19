@@ -11,11 +11,8 @@ export class FriendList extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps === this.props)
-      return;
-
-    fetch(`http://fantasyhoops.org/api/user/friends/${this.props.user.id}`)
+  async componentWillMount(prevProps) {
+    await fetch(`http://fantasyhoops.org/api/user/friends/${this.props.user.id}`)
       .then(res => {
         return res.json()
       })
@@ -24,7 +21,6 @@ export class FriendList extends Component {
           friends: res
         })
       });
-
   }
 
   render() {

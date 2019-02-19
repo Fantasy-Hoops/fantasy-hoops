@@ -121,7 +121,7 @@ export class Login extends Component {
             />
           </div>
           <button id="login" disabled className="btn btn-outline-primary btn-block">Log in</button>
-          <a href="/register" className="btn btn-info btn-block">Sign up</a>
+          <a href="/register" className="btn btn-success btn-block">Sign up</a>
         </form>
       </div>
     );

@@ -1,15 +1,22 @@
 import React, { Component } from 'react';
 import Img from 'react-image';
 import defaultPhoto from '../../content/images/default.png';
+import { loadImage } from '../../utils/loadImage';
 
 export class UserLeaderboardCard extends Component {
-  render() {
-    const img = new Image();
-    let avatar;
-    if (this.props.userid) {
-      img.src = `http://fantasyhoops.org/content/images/avatars/${this.props.userid}.png`;
-      avatar = img.height !== 0 ? img.src : defaultPhoto;
+  constructor(props) {
+    super(props);
+    this.state = {
     }
+  }
+
+  async componentWillMount() {
+    this.setState({
+      avatar: await loadImage(`http://fantasyhoops.org/content/images/avatars/${this.props.userid}.png`, defaultPhoto)
+    });
+  }
+
+  render() {
     return (
       <div className="card bg-white rounded mt-1 mx-auto" style={{ width: '20rem', height: '4.5rem' }}>
         <div className="card-body">
@@ -21,7 +28,7 @@ export class UserLeaderboardCard extends Component {
               <Img
                 className="user-card-player"
                 alt={this.props.userName}
-                src={avatar}
+                src={this.state.avatar}
                 decode={false}
               />
             </div>

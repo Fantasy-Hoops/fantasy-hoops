@@ -27,14 +27,18 @@ export class EditProfile extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentDidMount() {
-    fetch(`http://fantasyhoops.org/api/team`)
+  async componentWillMount() {
+    await fetch(`http://fantasyhoops.org/api/team`)
       .then(res => {
         return res.json()
       })
       .then(res => {
         this.setState({
-          teams: res
+          teams: res,
+          username: this.props.user.userName,
+          email: this.props.user.email,
+          about: this.props.user.description || '',
+          team: this.props.user.favoriteTeamId
         });
       });
   }
@@ -50,7 +54,7 @@ export class EditProfile extends Component {
     }
     const btn = document.getElementById('submit');
     if (document.querySelectorAll('.is-invalid').length !== 0) {
-      btn.className = 'btn btn-primary';
+      btn.className = 'btn btn-success';
       btn.disabled = true;
       return;
     }
@@ -60,13 +64,13 @@ export class EditProfile extends Component {
         if (!forms[i].required)
           continue;
         if (forms[i].value.length === 0) {
-          btn.className = 'btn btn-primary';
+          btn.className = 'btn btn-success';
           btn.disabled = true;
           return;
         }
       }
     }
-    btn.className = 'btn btn-primary';
+    btn.className = 'btn btn-success';
     btn.disabled = false;
   }
 
@@ -225,9 +229,7 @@ export class EditProfile extends Component {
           <div className="form-group row">
             <label className="col-lg-3 col-form-label form-control-label"></label>
             <div className="col-lg-9">
-              <button id="submit" disabled className="btn btn-primary">Save changes</button>
-{/*TODO cancel button needs implementation*/}
-              <button className="btn btn-secondary ml-2" onClick={(e) => { e.preventDefault(); }}>Cancel</button>
+              <button id="submit" disabled className="btn btn-secondary">Save changes</button>
             </div>
           </div>
         </form>

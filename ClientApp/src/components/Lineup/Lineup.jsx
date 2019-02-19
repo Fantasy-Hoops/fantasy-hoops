@@ -354,7 +354,7 @@ export class Lineup extends Component {
   }
 
   getFormattedDateString(value, word) {
-    if (value == 1) {
+    if (value === 1) {
       return `${value} ${word} `;
     } else if (value > 1) {
       return `${value} ${word}s `;

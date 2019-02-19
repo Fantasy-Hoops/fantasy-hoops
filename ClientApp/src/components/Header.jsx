@@ -3,6 +3,7 @@ import { isAuth, parse, logout } from '../utils/auth';
 import defaultPhoto from '../content/images/default.png';
 import { Notifications } from './Notifications/Notifications';
 import Img from 'react-image';
+import { loadImage } from '../utils/loadImage';
 
 export class Header extends Component {
   constructor(props) {
@@ -13,6 +14,13 @@ export class Header extends Component {
       userNotifications: '',
       unreadCount: 0
     };
+  }
+
+  async componentWillMount() {
+    if (isAuth())
+      this.setState({
+        avatar: await loadImage(`http://fantasyhoops.org/content/images/avatars/${parse().id}.png`, defaultPhoto)
+      });
   }
 
   render() {
@@ -29,10 +37,6 @@ export class Header extends Component {
     let profile = '';
     if (isAuth()) {
       const user = parse();
-      const img = new Image();
-      img.src = `http://fantasyhoops.org/content/images/avatars/${user.id}.png`;
-      let avatar;
-      avatar = img.height !== 0 ? img.src : defaultPhoto;
       profile = (
         <ul className="nav navbar-nav ml-auto">
           <Notifications />
@@ -47,7 +51,7 @@ export class Header extends Component {
               <Img
                 width="36rem"
                 alt={user.username}
-                src={avatar}
+                src={this.state.avatar}
               />
             </a>
             <ul className="dropdown-menu dropdown-menu-right">
@@ -62,7 +66,7 @@ export class Header extends Component {
                             width="100rem"
                             height="100rem"
                             alt={user.username}
-                            src={avatar}
+                            src={this.state.avatar}
                           />
                         </a>
                       </p>

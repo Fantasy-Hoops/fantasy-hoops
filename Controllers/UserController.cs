@@ -89,7 +89,7 @@ namespace fantasy_hoops.Controllers
             User user = _repository.GetUserByName(name);
             if (user == null)
                 return NotFound(String.Format("User with name {0} has not been found!", name));
-            return Get(user.Id);
+            return Get(user.Id, start, count);
         }
 
         [HttpGet("friends/{id}")]

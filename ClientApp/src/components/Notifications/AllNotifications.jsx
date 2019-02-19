@@ -135,7 +135,7 @@ export class AllNotifications extends Component {
       ? ''
       : <button className="btn btn-primary mt-2" onClick={this.loadMore}>See more</button>;
     return (
-      <div className="container bg-light p-4">
+      <div className="container bg-light p-5">
         <h3 className="text-center"><i className="fa fa-bell"></i> User notifications</h3>
         <div className="m-3">
           {notifications}
