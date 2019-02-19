@@ -66,6 +66,15 @@ export class InfoPanel extends Component {
       )
     }
 
+    const seeMore = () => {
+      if (this.props.readOnly)
+        return '';
+      else return (
+        <div className="pt-3">
+          <a className="btn btn-outline-primary" href="/history" role="button">History</a>
+        </div>
+      );
+    }
 
     return (
       <div className="tab-pane active" id="profile">
@@ -102,6 +111,7 @@ export class InfoPanel extends Component {
           loader={this.state.modalLoader}
           stats={this.state.stats}
         />
+        {seeMore()}
       </div>
     );
   }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import defaultPhoto from '../../content/images/default.png';
 import Img from 'react-image';
+import { loadImage } from '../../utils/loadImage';
 
 export class UserCard extends Component {
   constructor(props) {
@@ -9,20 +10,21 @@ export class UserCard extends Component {
     }
   }
 
+  async componentWillMount() {
+    const user = this.props.user;
+    this.setState({
+      avatar: await loadImage(`http://fantasyhoops.org/content/images/avatars/${user.id}.png`, defaultPhoto)
+    });
+  }
+
   render() {
-    let img = new Image();
-    let avatar;
-    if (this.props.user) {
-      img.src = `http://fantasyhoops.org/content/images/avatars/${this.props.user.id}.png`;
-      avatar = img.height !== 0 ? img.src : defaultPhoto;
-    }
     return (
       <a href={`/profile/${this.props.user.userName}`} className="friend-card m-3" style={{ backgroundColor: `${this.props.user.color}`, width: '8rem' }}>
         <canvas className="header-bg"></canvas>
         <div className="avatar">
           <Img
             alt={this.props.user.userName}
-            src={avatar}
+            src={this.state.avatar}
             loader={<img width='500px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
             decode={false}
           />

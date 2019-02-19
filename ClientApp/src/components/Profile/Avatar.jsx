@@ -3,15 +3,25 @@ import { ChangeAvatar } from '../Inputs/ChangeAvatar';
 import defaultPhoto from '../../content/images/default.png';
 import { FriendRequest } from './FriendRequest';
 import Img from 'react-image';
+import { loadImage } from '../../utils/loadImage';
 
 export class Avatar extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+    };
+  }
+
+  async componentWillMount() {
+    const user = this.props.user;
+    this.setState({
+      avatar: await loadImage(`http://fantasyhoops.org/content/images/avatars/${user.id}.png`, defaultPhoto)
+    });
+  }
+
   render() {
     const user = this.props.user;
-    const img = new Image();
-    img.src = `http://fantasyhoops.org/content/images/avatars/${user.id}.png`;
-    let avatar;
-    if (user)
-      avatar = img.height !== 0 ? img.src : defaultPhoto;
     return (
       <div>
         <div className="row">
@@ -21,7 +31,7 @@ export class Avatar extends Component {
           alt={user.userName}
           className="mx-auto img-fluid img-circle d-block round-img"
           style={{ width: '160px', height: '160px' }}
-          src={avatar}
+          src={this.state.avatar}
           loader={<img src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
         />
         <FriendRequest user={this.props.user} readOnly={this.props.readOnly} />
