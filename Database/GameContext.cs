@@ -2,7 +2,6 @@
 using fantasy_hoops.Models.Notifications;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace fantasy_hoops.Database
 {
@@ -22,6 +21,8 @@ namespace fantasy_hoops.Database
         public DbSet<InjuryNotification> InjuryNotifications { get; set; }
         public DbSet<FriendRequestNotification> FriendRequestNotifications { get; set; }
 
+        private static string connectionString = "Server=138.68.74.57;Database=fantasyhoops;User=fa;Password=bennekfhnaidze;";
+
         public GameContext()
         {
         }
@@ -29,7 +30,7 @@ namespace fantasy_hoops.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+            optionsBuilder.UseMySql(connectionString);
         }
     }
 }
