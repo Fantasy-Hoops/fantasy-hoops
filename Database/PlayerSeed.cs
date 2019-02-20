@@ -88,7 +88,7 @@ namespace fantasy_hoops.Database
 
         private static string GetDate()
         {
-            return CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).ToString("yyyyMMdd");
+            return NextGame.NEXT_GAME.ToString("yyyyMMdd");
         }
 
         private static double FPPG(Player p)

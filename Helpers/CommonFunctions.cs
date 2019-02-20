@@ -12,18 +12,6 @@ namespace fantasy_hoops.Helpers
 {
     public class CommonFunctions
     {
-        public static DateTime UTCToEastern(DateTime time)
-        {
-            DateTime timeUTC = time;
-            TimeZoneInfo eastern = null;
-            #if DEBUG
-                eastern = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
-            #else
-                eastern = TimeZoneInfo.FindSystemTimeZoneById("EST");
-            #endif
-            return TimeZoneInfo.ConvertTimeFromUtc(timeUTC, eastern);
-        }
-
         public static HttpWebResponse GetResponse(string url)
         {
             try
@@ -65,17 +53,17 @@ namespace fantasy_hoops.Helpers
 
         public static int DaysInMonth()
         {
-            int year = UTCToEastern(DateTime.UtcNow).Year;
-            int month = UTCToEastern(DateTime.UtcNow).Month;
+            int year = DateTime.UtcNow.Year;
+            int month = DateTime.UtcNow.Month;
             return DateTime.DaysInMonth(year, month);
         }
 
         // Leaderboards and weekly scores
         public static DateTime GetDate(string type)
         {
-            DateTime easternDate = UTCToEastern(DateTime.UtcNow);
-            int dayOfWeek = (int)UTCToEastern(DateTime.UtcNow).DayOfWeek;
-            int dayOfMonth = UTCToEastern(DateTime.UtcNow).Day;
+            DateTime easternDate = DateTime.UtcNow;
+            int dayOfWeek = (int)DateTime.UtcNow.DayOfWeek;
+            int dayOfMonth = DateTime.UtcNow.Day;
 
             if (type.Equals("weekly"))
             {
