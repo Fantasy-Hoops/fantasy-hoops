@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,14 +7,13 @@ using fantasy_hoops.Database;
 using fantasy_hoops.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
 using fantasy_hoops;
 
-namespace react_app
+namespace fantasy_hoops
 {
     public class Startup
     {
@@ -29,14 +26,23 @@ namespace react_app
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
 
-            services.AddDbContext<GameContext>();
-            services.AddScoped<GameContext>(); // 'scoped' in ASP.NET means "per HTTP request"
+            ConfigureAuth(services);
+            ConfigureDbContext(services);
+            StartJobs();
 
+            // In production, the React files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/build";
+            });
+        }
+
+        private void ConfigureAuth(IServiceCollection services)
+        {
             services.AddIdentity<User, IdentityRole>(config =>
             {
                 config.Password.RequireDigit = false;
@@ -46,8 +52,8 @@ namespace react_app
                 config.Password.RequiredLength = 8;
                 config.SignIn.RequireConfirmedEmail = false;
             })
-            .AddEntityFrameworkStores<GameContext>()
-            .AddDefaultTokenProviders();
+           .AddEntityFrameworkStores<GameContext>()
+           .AddDefaultTokenProviders();
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -75,23 +81,27 @@ namespace react_app
                 configureOptions.TokenValidationParameters = tokenValidationParameters;
                 configureOptions.SaveToken = true;
             });
+        }
+
+        private void ConfigureDbContext(IServiceCollection services)
+        {
+            services.AddDbContext<GameContext>();
+            // 'scoped' in ASP.NET means "per HTTP request"
+            services.AddScoped<GameContext>();
+
             services.AddMvc()
              .AddJsonOptions(
                    options => options.SerializerSettings.ReferenceLoopHandling
                        = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+        }
+
+        private void StartJobs()
+        {
             _context = new GameContext();
             _context.Database.Migrate();
-
             var task = Seed.InitializeAsync(_context);
-
             task.Wait();
             Scheduler.Run(_context);
-
-            // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,12 +110,6 @@ namespace react_app
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //TODO implement webpack
-                /*app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-                {
-                    HotModuleReplacement = true,
-                    ReactHotModuleReplacement = true
-                });*/
             }
             else
             {

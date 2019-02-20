@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace react_app
+namespace fantasy_hoops
 {
     public class Program
     {
