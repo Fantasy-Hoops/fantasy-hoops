@@ -91,7 +91,7 @@ export class UserProfile extends Component {
           <div className="col-lg-4 order-lg-1">
             {this.state.user ? <Avatar user={this.state.user} readOnly={this.state.readOnly} /> : ''}
           </div>
-          <div className="col-lg-8 order-lg-2">
+          <div className="col-lg-8 order-lg-2 mt-5">
             <ul className="nav nav-pills">
               <li className="nav-item">
                 <a href="" data-target="#profile" data-toggle="tab" id="navLinkProfile" className="nav-link active tab-no-outline">Profile</a>
@@ -105,7 +105,7 @@ export class UserProfile extends Component {
                 </li>
               }
             </ul>
-            <div className="mx-auto mt-5">
+            <div className="mx-auto">
               <Loader show={this.state.loader} />
             </div>
             {content()}

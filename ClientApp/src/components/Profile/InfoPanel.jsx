@@ -79,20 +79,23 @@ export class InfoPanel extends Component {
     return (
       <div className="tab-pane active" id="profile">
         <div className="row">
-          <div className="col-md-7">
-            <div className="mx-auto mb-3">
+          <div className="col-md-12">
+            <div className="mx-auto mb-2">
               <div className="m-1 badge badge-warning"><i className="fa fa-fire"></i> Streak: {user.streak}</div>
               <a href='/leaderboard/users' className="m-1 badge badge-danger"><i className="fa fa-trophy"></i> Weekly Ranking: {user.position}</a>
               <a href='/leaderboard/users' className="m-1 badge badge-info"><i className="fa fa-basketball-ball"></i> Weekly Score: {Math.round(user.totalScore * 100) / 100} FP</a>
             </div>
-            <h5>About</h5>
-            <p className='about-me'>
-              {user.description}
-            </p>
+            {user.description &&
+              <div>
+                <h5>About</h5>
+                <p className='about-me'>
+                  {user.description}
+                </p>
+              </div>
+            }
           </div>
-          <div className="col-md-4">
-            <br />
-            <h5 style={{ paddingLeft: '0.8rem' }}>Favorite team</h5>
+          <div className="col-md-12">
+            <h5>Favorite team</h5>
             <div className="team-badge">
               <h2><span className="badge badge-dark badge-pill"
                 style={{ backgroundColor: user !== '' ? user.team.color : '' }}
