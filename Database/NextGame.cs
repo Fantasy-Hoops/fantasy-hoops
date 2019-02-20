@@ -44,17 +44,17 @@ namespace fantasy_hoops.Database
                 if (DateTime.UtcNow < PREVIOUS_LAST_GAME.AddHours(5))
                     nextRun = PREVIOUS_LAST_GAME;
 
-                JobManager.AddJob(() => StatsSeed.Initialize(context),
-                    s => s.WithName("statsSeed_" + nextRun.ToLongDateString())
-                    .ToRunOnceAt(nextRun.AddHours(5)));
+                //JobManager.AddJob(() => StatsSeed.Initialize(context),
+                //    s => s.WithName("statsSeed_" + nextRun.ToLongDateString())
+                //    .ToRunOnceAt(nextRun.AddHours(5)));
 
-                JobManager.AddJob(() => NewsSeed.Initialize(context),
-                    s => s.WithName("news_" + nextRun.ToLongDateString())
-                    .ToRunOnceAt(nextRun.AddHours(9)));
+                //JobManager.AddJob(() => NewsSeed.Initialize(context),
+                //    s => s.WithName("news_" + nextRun.ToLongDateString())
+                //    .ToRunOnceAt(nextRun.AddHours(9)));
 
-                JobManager.AddJob(() => PlayerSeed.Initialize(context),
-                     s => s.WithName("playerSeed_" + nextRun.ToLongDateString())
-                     .ToRunNow());
+                //JobManager.AddJob(() => PlayerSeed.Initialize(context),
+                //     s => s.WithName("playerSeed_" + nextRun.ToLongDateString())
+                //     .ToRunNow());
             }
             else
             {
