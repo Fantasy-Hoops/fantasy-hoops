@@ -116,31 +116,37 @@ export class Header extends Component {
           </button>
           <div className="collapse navbar-collapse" id="navbarNavDropdown">
             <ul className="navbar-nav">
-              <li className="nav-item">
-                <a className="nav-link btn-no-outline" href="/lineup">Lineup</a>
-              </li>
-              <li className="nav-item dropdown">
-                <a
-                  className="nav-link dropdown-toggle btn-no-outline"
-                  id="navbarDropdownMenuLink"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false">
-                  Leaderboards</a>
-                <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                  <a className="dropdown-item" href="/leaderboard/users">Top Users</a>
-                  <a className="dropdown-item" href="/leaderboard/players">Top NBA Players</a>
-                </div>
-              </li>
+              {isAuth() &&
+                <li className="nav-item">
+                  <a className="nav-link btn-no-outline" href="/lineup">Lineup</a>
+                </li>
+              }
+              {isAuth() &&
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle btn-no-outline"
+                    id="navbarDropdownMenuLink"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+                    Leaderboards</a>
+                  <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a className="dropdown-item" href="/leaderboard/users">Top Users</a>
+                    <a className="dropdown-item" href="/leaderboard/players">Top NBA Players</a>
+                  </div>
+                </li>
+              }
               <li className="nav-item">
                 <a className="nav-link btn-no-outline" href="/injuries">Injuries</a>
               </li>
               <li className="nav-item">
                 <a className="nav-link btn-no-outline" href="/news">News</a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link btn-no-outline" href="/users">Users</a>
-              </li>
+              {isAuth() &&
+                <li className="nav-item">
+                  <a className="nav-link btn-no-outline" href="/users">Users</a>
+                </li>
+              }
             </ul>
             {isAuth() ? profile : login}
           </div>
