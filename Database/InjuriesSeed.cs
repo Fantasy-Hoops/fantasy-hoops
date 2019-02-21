@@ -35,7 +35,7 @@ namespace fantasy_hoops.Database
 
         private static void Extract(GameContext context)
         {
-            context.Database.ExecuteSqlCommand("TRUNCATE TABLE Injuries");
+            context.Injuries.ForEachAsync(inj => context.Injuries.Remove(inj));
             JArray injuries = GetInjuries();
             foreach (JObject injury in injuries)
             {
