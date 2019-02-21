@@ -19,13 +19,18 @@ namespace fantasy_hoops.Repositories
             return _context.Players.Where(x => x.IsPlaying)
                 .Select(x => new
                 {
+                    playerId = x.PlayerID,
+                    id = x.NbaID,
                     x.FirstName,
                     x.LastName,
-                    id = x.NbaID,
-                    playerId = x.PlayerID,
+                    team = new
+                    {
+                        x.Team.TeamID,
+                        x.Team.Abbreviation,
+                        TeamColor = x.Team.Color
+                    },
                     x.Price,
                     x.Position,
-                    TeamColor = x.Team.Color,
                     x.FPPG,
                     injuryStatus = x.Status
                 })

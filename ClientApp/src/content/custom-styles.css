@@ -70,11 +70,58 @@ body {
   border-radius: 1.375rem;
 }
 
-.button {
-  color: white;
-  padding-left: 9rem;
-  padding-top: 7rem;
+.card__player-attributes {
+  z-index: 2;
+}
+
+.card__image-backgound {
+  width: 100%;
+  min-height: 151px;
+}
+
+.card__player-img {
+  position: relative;
+  z-index: 2;
+  padding-top: 1px;
+}
+
+.card__team-logo--behind {
   position: absolute;
+  left: 0.1rem;
+  top: 0.8rem;
+}
+
+.card__button--select {
+  color: white;
+  position: absolute;
+  z-index: 10;
+  right: 0.5rem;
+  top: -1.8rem;
+}
+
+.card__injury-badge {
+  position: absolute;
+  top: 7.8rem;
+  font-size: 0.75rem;
+  padding: 0.3rem;
+  color: black;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  z-index: 3;
+}
+
+.injury-card__team-logo--behind {
+  position: absolute;
+  left: -2.5rem;
+  top: -1rem;
+  height: 12rem;
+}
+
+.injury-card__player-img {
+  position: relative;
+  z-index: 2;
+  padding-top: 1px;
 }
 
 .btn:focus, .btn:active {
@@ -177,7 +224,6 @@ body {
   -webkit-transform: scale(1.1);
   -moz-transform: scale(1.1);
   transform: scale(1.1);
-  opacity: .6;
 }
 .post-module:hover .post-content .description,
 .hover .post-content .description {
@@ -228,13 +274,14 @@ body {
   top: -2.125rem;
   left: 0;
   padding: 0.625rem 0.9375rem;
-  color: #FFFFFF;
   font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
+  color: black;
 }
 .injury-active {
   background: green;
+  color: white !important;
 }
 .injury-out {
   background: red;
@@ -563,17 +610,6 @@ input[type=search]:focus {
   top: 0.7rem;
   left: 0.5rem;
   font-size: 1rem;
-}
-
-.player-injury-badge {
-  position: absolute;
-  top: 7.8rem;
-  font-size: 0.75rem;
-  padding: 0.3rem;
-  color: black;
-  text-align: center;
-  font-weight: bold;
-  text-transform: uppercase;
 }
 
 .modal-lg {

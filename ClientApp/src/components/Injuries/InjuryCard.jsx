@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import Img from 'react-image';
 import { UTCNow } from "../../utils/UTCNow";
+import defaultLogo from '../../content/images/defaultLogo.png';
 
 export class InjuryCard extends Component {
   constructor() {
@@ -33,27 +34,35 @@ export class InjuryCard extends Component {
           </a>
         </span>
       ) : (
-        ""
-      );
+          ""
+        );
     const injuryDateUTC = new Date(this.props.injury.date).getTime();
+
+    const teamLogo = <Img
+      className="injury-card__team-logo--behind"
+      alt={this.props.injury.player.team.abbreviation}
+      src={[`http://fantasyhoops.org/content/images/logos/${this.props.injury.player.team.abbreviation}.svg`,
+        defaultLogo]}
+      decode={false}
+    />
     return (
       <div className="mx-auto" style={{ transform: "scale(0.9, 0.9)" }}>
         <div className="column">
           <div className="post-module">
-            <div className="thumbnail">
+            <div className="thumbnail" style={{ backgroundColor: this.props.injury.player.team.color, position: 'relative' }}>
               <div className="date">
                 <div className="day badge badge-dark">
                   {this.props.injury.player.position}
                 </div>
               </div>
               <Img
-                style={{ backgroundColor: this.props.injury.player.team.color }}
+                className="injury-card__player-img"
                 alt={`${this.props.injury.player.firstName} ${
                   this.props.injury.player.lastName
-                }`}
+                  }`}
                 src={[
                   `http://fantasyhoops.org/content/images/players/${
-                    this.props.injury.player.nbaID
+                  this.props.injury.player.nbaID
                   }.png`,
                   require(`../../content/images/positions/${this.props.injury.player.position.toLowerCase()}.png`)
                 ]}
@@ -66,8 +75,9 @@ export class InjuryCard extends Component {
                 }
                 decode={false}
               />
+              {teamLogo}
             </div>
-            <div className="post-content">
+            <div className="post-content" style={{ zIndex: 3 }}>
               <div className={"category " + status}>
                 {this.props.injury.status}
               </div>
