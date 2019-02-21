@@ -35,13 +35,13 @@ namespace fantasy_hoops.Database
 
         private static void Extract(GameContext context)
         {
-            context.Database.ExecuteSqlCommand("DELETE FROM Injuries");
+            context.Database.ExecuteSqlCommand("TRUNCATE TABLE Injuries");
             JArray injuries = GetInjuries();
             foreach (JObject injury in injuries)
             {
                 try
                 {
-                    if (dayFrom.CompareTo(DateTime.Parse(injury["CreatedDate"].ToString()).ToUniversalTime()) > 0)
+                    if (dayFrom.CompareTo(DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5)) > 0)
                         break;
                     AddToDatabase(context, injury);
                 }
@@ -61,7 +61,7 @@ namespace fantasy_hoops.Database
                 Status = (string)injury["PlayerStatus"],
                 Injury = (string)injury["Injury"],
                 Description = (string)injury["News"],
-                Date = DateTime.Parse(injury["CreatedDate"].ToString()).ToUniversalTime(),
+                Date = DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5),
                 Link = (string)injury["Link"]
             };
             injuryObj.Player = context.Players.Where(x => x.NbaID == (int)injury["PrimarySourceKey"]).FirstOrDefault();
@@ -76,7 +76,7 @@ namespace fantasy_hoops.Database
             context.Players
                 .Where(p => p.NbaID == injuryObj.Player.NbaID)
                 .FirstOrDefault()
-                .StatusDate = DateTime.Parse(injury["CreatedDate"].ToString()).ToUniversalTime();
+                .StatusDate = DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5);
             UpdateNotifications(context, injuryObj);
         }
 

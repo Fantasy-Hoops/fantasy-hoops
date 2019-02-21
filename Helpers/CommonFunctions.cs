@@ -23,7 +23,6 @@ namespace fantasy_hoops.Helpers
             #endif
             return TimeZoneInfo.ConvertTimeFromUtc(timeUTC, eastern);
         }
-
         public static HttpWebResponse GetResponse(string url)
         {
             try
