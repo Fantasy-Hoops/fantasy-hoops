@@ -104,7 +104,6 @@ export class Lineup extends Component {
         .then(res => {
           res.forEach(selectedPlayer => {
             this.state.players.forEach(player => {
-              console.log(player.id + " " + selectedPlayer.id);
               if (player.id == selectedPlayer.id) {
                 player.selected = true;
                 player.status = 2;
@@ -298,7 +297,6 @@ export class Lineup extends Component {
   }
 
   selectPlayer(player) {
-    console.log(player);
     const pos = player.position.toLowerCase();
     const playerCard = player.selected ? (
       <PlayerCard
