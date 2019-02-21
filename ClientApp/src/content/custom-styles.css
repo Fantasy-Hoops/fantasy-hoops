@@ -421,6 +421,9 @@ body {
 }
 
 .player-usertitle {
+  width: 81.59px;
+  white-space: nowrap;
+  overflow: hidden;
   text-align: center;
   font-size: 0.7rem;
   font-weight: 600;
