@@ -15,22 +15,12 @@ export class Notifications extends Component {
     this.readAll = this.readAll.bind(this);
 
     this.state = {
-      serverTime: '',
       userNotifications: '',
       unreadCount: 0
     };
   }
 
   async componentDidMount() {
-    await fetch(`http://fantasyhoops.org/api/lineup/nextGame`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        this.setState({
-          serverTime: res.serverTime
-        });
-      })
     await fetch(`http://fantasyhoops.org/api/notification/${user.id}`)
       .then(res => {
         return res.json()
@@ -105,7 +95,6 @@ export class Notifications extends Component {
           return <GameScoreNotification
             key={shortid()}
             width={`${cardWidth}rem`}
-            serverTime={this.state.serverTime}
             toggleNotification={this.toggleNotification}
             notification={notification}
           />;
@@ -113,7 +102,6 @@ export class Notifications extends Component {
           return <FriendRequestNotification
             key={shortid()}
             width={`${cardWidth}rem`}
-            serverTime={this.state.serverTime}
             toggleNotification={this.toggleNotification}
             notification={notification}
           />;
@@ -121,7 +109,6 @@ export class Notifications extends Component {
           return <InjuryNotification
             key={shortid()}
             width={`${cardWidth}rem`}
-            serverTime={this.state.serverTime}
             toggleNotification={this.toggleNotification}
             notification={notification}
           />;

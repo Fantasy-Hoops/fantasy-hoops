@@ -123,12 +123,12 @@ namespace fantasy_hoops.Database
 
         private static string Today()
         {
-            return NextGame.NEXT_GAME.ToString("yyyyMMdd");
+            return CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).ToString("yyyyMMdd");
         }
 
         private static string Yesterday()
         {
-            return NextGame.PREVIOUS_GAME.ToString("yyyyMMdd");
+            return CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
         }
     }
 }

@@ -18,8 +18,8 @@ export class InjuriesFeed extends Component {
       injuryLoader: true,
       modalLoader: true,
       renderChild: true
+    };
     }
-  }
 
   componentDidMount() {
     $("#playerModal").on("hidden.bs.modal", () => {
@@ -31,18 +31,9 @@ export class InjuriesFeed extends Component {
   }
 
   async componentWillMount() {
-    await fetch(`http://fantasyhoops.org/api/lineup/nextGame`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        this.setState({
-          serverTime: res.serverTime
-        });
-      })
     await fetch(`http://fantasyhoops.org/api/injuries`)
       .then(res => {
-        return res.json()
+        return res.json();
       })
       .then(res => {
         this.setState({
@@ -54,15 +45,17 @@ export class InjuriesFeed extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.injuries !== this.state.injuries
-      && this.state.injuries.length === 0)
+    if (
+      prevState.injuries !== this.state.injuries &&
+      this.state.injuries.length === 0
+    )
       this.setState({
         noInjuries: true
       });
   }
 
   async showModal(player) {
-    this.setState({ modalLoader: true })
+    this.setState({ modalLoader: true });
     await fetch(`http://fantasyhoops.org/api/stats/${player.nbaID}`)
       .then(res => res.json())
       .then(res => {
@@ -76,7 +69,11 @@ export class InjuriesFeed extends Component {
 
   render() {
     if (this.state.injuryLoader)
-      return <div className="m-5"><Loader show={this.state.injuryLoader} /></div>;
+      return (
+        <div className="m-5">
+          <Loader show={this.state.injuryLoader} />
+        </div>
+      );
 
     if (this.state.injuries.length === 0)
       return (
@@ -85,21 +82,18 @@ export class InjuriesFeed extends Component {
         </div>
       );
 
-    const injuries = _.map(this.state.injuries,
-      (injury) => {
-        return <InjuryCard
-          serverTime={this.state.serverTime}
+    const injuries = _.map(this.state.injuries, injury => {
+      return (
+        <InjuryCard
           key={shortid()}
           injury={injury}
           showModal={this.showModal}
         />
-      }
     );
+    });
     return (
       <div className="container bg-light">
-        <div className="row">
-          {injuries}
-        </div>
+        <div className="row">{injuries}</div>
         <PlayerModal
           renderChild={this.state.renderChild}
           loader={this.state.modalLoader}
