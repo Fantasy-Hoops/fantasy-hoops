@@ -8,6 +8,7 @@ namespace fantasy_hoops.Models
     public class Paragraph
     {
         public int ParagraphID { get; set; }
+        public int ParagraphNumber { get; set; }
         public string Content { get; set; }
         public int NewsID { get; set; }
 
