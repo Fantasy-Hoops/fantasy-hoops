@@ -21,7 +21,7 @@ namespace fantasy_hoops
             JobManager.AddJob(() => InjuriesSeed.Initialize(_context),
                 s => s.WithName("injuries")
                 .ToRunOnceAt(DateTime.UtcNow.AddSeconds(10))
-                .AndEvery(30)
+                .AndEvery(10)
                 .Minutes());
 
             JobManager.AddJob(() => PhotosSeed.Initialize(_context),
