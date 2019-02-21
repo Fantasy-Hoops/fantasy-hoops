@@ -6,40 +6,73 @@ using Newtonsoft.Json.Linq;
 using fantasy_hoops.Models;
 using System.Globalization;
 using fantasy_hoops.Helpers;
+using FluentScheduler;
+using System.Threading;
 
 namespace fantasy_hoops.Database
 {
     public class NewsSeed
     {
-        public static void Initialize(GameContext context)
+        public static void ExtractPreviews(GameContext context)
         {
-            Extract(context);
+            while (JobManager.RunningSchedules.Any(s => !s.Name.Contains("previews")))
+                Thread.Sleep(15000);
+
+            string today = Today();
+            JArray tGames = CommonFunctions.GetGames(today);
+            GetPreviews(context, today, tGames);
         }
 
-        private static void Extract(GameContext context)
+        public static void ExtractRecaps(GameContext context)
         {
-            string today = Today();
-            string yesterday = Yesterday();
-            JArray tGames = CommonFunctions.GetGames(today);
-            JArray yGames = CommonFunctions.GetGames(yesterday);
-            JArray news = new JArray();
-            GetPreviews(ref news, tGames, today);
-            GetRecaps(ref news, yGames, yesterday);
+            while (JobManager.RunningSchedules.Any(s => !s.Name.Contains("recaps")))
+                Thread.Sleep(15000);
 
-            foreach (JObject newsObj in news)
+            string yesterday = Yesterday();
+            JArray yGames = CommonFunctions.GetGames(yesterday);
+            GetRecaps(context, yesterday, yGames);
+        }
+
+        private static void GetPreviews(GameContext context, string date, JArray games)
+        {
+            JArray previews = new JArray();
+            foreach (JObject game in games)
             {
-                AddToDatabase(context, newsObj);
+                string preview = "http://data.nba.net/10s/prod/v1/" + date + "/" + game["gameId"] + "_preview_article.json";
+                JObject previewJson = null;
+                try
+                {
+                    HttpWebResponse previewResponse = CommonFunctions.GetResponse(preview);
+                    string apiPreviewResponse = CommonFunctions.ResponseToString(previewResponse);
+                    previewJson = JObject.Parse(apiPreviewResponse);
+                }
+
+                catch
+                {
+                    continue;
+                }
+
+                if (previewJson != null)
+                {
+                    previewJson.Add("hTeamID", game["hTeam"]["teamId"]);
+                    previewJson.Add("vTeamID", game["vTeam"]["teamId"]);
+                    previews.Add(previewJson);
+                }
             }
+
+            foreach (JObject previewObj in previews)
+                AddToDatabase(context, previewObj);
 
             context.SaveChanges();
         }
-        public static JArray GetRecaps(ref JArray news, JArray games, string date)
+
+        public static void GetRecaps(GameContext context, string date, JArray games)
         {
+            JArray news = new JArray();
             foreach (JObject game in games)
             {
                 string recap = "http://data.nba.net/10s/prod/v1/" + date + "/" + game["gameId"] + "_recap_article.json";
                 JObject recapJson = null;
-
                 try
                 {
                     HttpWebResponse recapResponse = CommonFunctions.GetResponse(recap);
@@ -58,37 +91,11 @@ namespace fantasy_hoops.Database
                     news.Add(recapJson);
                 }
             }
-            return news;
-        }
 
-        public static JArray GetPreviews(ref JArray news, JArray games, string date)
-        {
-            foreach (JObject game in games)
-            {
-                string preview = "http://data.nba.net/10s/prod/v1/" + date + "/" + game["gameId"] + "_preview_article.json";
+            foreach (JObject newsObj in news)
+                AddToDatabase(context, newsObj);
 
-                JObject previewJson = null;
-
-                try
-                {
-                    HttpWebResponse previewResponse = CommonFunctions.GetResponse(preview);
-                    string apiPreviewResponse = CommonFunctions.ResponseToString(previewResponse);
-                    previewJson = JObject.Parse(apiPreviewResponse);
-                }
-
-                catch
-                {
-                    continue;
-                }
-
-                if (previewJson != null)
-                {
-                    previewJson.Add("hTeamID", game["hTeam"]["teamId"]);
-                    previewJson.Add("vTeamID", game["vTeam"]["teamId"]);
-                    news.Add(previewJson);
-                }
-            }
-            return news;
+            context.SaveChanges();
         }
 
         private static void AddToDatabase(GameContext context, JToken newsObj)
@@ -109,16 +116,17 @@ namespace fantasy_hoops.Database
             context.News.Add(nObj);
 
             JArray paragraphs = (JArray)newsObj["paragraphs"];
+            int i = 0;
             foreach (var parObj in paragraphs)
             {
                 var paragraph = new Paragraph
                 {
                     NewsID = nObj.NewsID,
-                    Content = (string)parObj["paragraph"]
+                    Content = (string)parObj["paragraph"],
+                    ParagraphNumber = i++
                 };
                 context.Paragraphs.Add(paragraph);
             }
-            context.SaveChanges();
         }
 
         private static string Today()

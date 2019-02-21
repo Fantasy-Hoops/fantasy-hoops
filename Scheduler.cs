@@ -29,7 +29,7 @@ namespace fantasy_hoops
                 .ToRunOnceAt(DateTime.UtcNow.AddMinutes(5))
                 .AndEvery(1)
                 .Days()
-                .At(00, 00));   // 20p.m. Eastern Time
+                .At(00, 04));   // 20p.m. Eastern Time
         }
     }
 }

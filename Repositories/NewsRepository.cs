@@ -21,7 +21,9 @@ namespace fantasy_hoops.Repositories
                 {
                     id = x.NewsID,
                     x.Title,
-                    Paragraphs = x.Paragraphs.Select(y => y.Content).ToList(),
+                    Paragraphs = x.Paragraphs
+                                    .OrderBy(p => p.ParagraphNumber)
+                                    .Select(y => y.Content).ToList(),
                     date = x.Date.ToString("yyyy-MM-dd"),
                     hTeam = _context.Teams.Where(y => y.NbaID == x.hTeamID).FirstOrDefault().Abbreviation,
                     vTeam = _context.Teams.Where(y => y.NbaID == x.vTeamID).FirstOrDefault().Abbreviation

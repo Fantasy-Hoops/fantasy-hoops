@@ -48,9 +48,13 @@ namespace fantasy_hoops.Database
                     s => s.WithName("statsSeed_" + nextRun.ToLongDateString())
                     .ToRunOnceAt(nextRun.AddHours(5)));
 
-                JobManager.AddJob(() => NewsSeed.Initialize(context),
-                    s => s.WithName("news_" + nextRun.ToLongDateString())
-                    .ToRunOnceAt(nextRun.AddHours(9)));
+                JobManager.AddJob(() => NewsSeed.ExtractPreviews(context),
+                    s => s.WithName("previews_" + nextRun.ToLongDateString())
+                    .ToRunOnceAt(new DateTime(nextRun.Year, nextRun.Month, nextRun.Day + 1, 17, 02, 16, DateTimeKind.Utc)));
+
+                JobManager.AddJob(() => NewsSeed.ExtractRecaps(context),
+                    s => s.WithName("recaps_" + nextRun.ToLongDateString())
+                    .ToRunOnceAt(new DateTime(nextRun.Year, nextRun.Month, nextRun.Day + 1, 10, 01, 57, DateTimeKind.Utc)));
 
                 JobManager.AddJob(() => PlayerSeed.Initialize(context),
                      s => s.WithName("playerSeed_" + nextRun.ToLongDateString())
