@@ -30,6 +30,7 @@ namespace fantasy_hoops.Repositories
                             x.Player.Team.NbaID,
                             x.Player.Team.City,
                             x.Player.Team.Name,
+                            x.Player.Team.Abbreviation,
                             x.Player.Team.Color
                         }
                     },

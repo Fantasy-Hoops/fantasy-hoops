@@ -116,16 +116,16 @@ namespace fantasy_hoops.Database
                     return "#008248";
                 // 76ERS
                 case 1610612755:
-                    return "#006BB6";
+                    return "#002B5C";
                 // KNICKS
                 case 1610612752:
-                    return "#006BB6";
+                    return "#F58426";
                 // NETS
                 case 1610612751:
                     return "#000000";
                 // CAVALIERS
                 case 1610612739:
-                    return "#6F2633";
+                    return "##690031";
                 // PACERS
                 case 1610612754:
                     return "#002D62";
@@ -140,7 +140,7 @@ namespace fantasy_hoops.Database
                     return "#CE1141";
                 // WIZARDS
                 case 1610612764:
-                    return "#002B5C";
+                    return "#E31837";
                 // HEAT
                 case 1610612748:
                     return "#98002E";
@@ -161,7 +161,7 @@ namespace fantasy_hoops.Database
                     return "#002B5C";
                 // THUNDER
                 case 1610612760:
-                    return "#007AC1";
+                    return "#EF3B24";
                 // NUGGETS
                 case 1610612743:
                     return "#00285E";
@@ -185,10 +185,10 @@ namespace fantasy_hoops.Database
                     return "#E56020";
                 // ROCKETS
                 case 1610612745:
-                    return "#CE1141";
+                    return "##C21F32";
                 // PELICANS
                 case 1610612740:
-                    return "#0C2340";
+                    return "#85714D";
                 // SPURS
                 case 1610612759:
                     return "#C4CED4";
@@ -197,7 +197,7 @@ namespace fantasy_hoops.Database
                     return "#007DC5";
                 // GRIZZLIES
                 case 1610612763:
-                    return "#00285E";
+                    return "#12173F";
                 default:
                     return "#C4CED4";
             }

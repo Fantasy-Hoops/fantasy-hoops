@@ -6,6 +6,7 @@ import SG from '../../content/images/positions/sg.png';
 import SF from '../../content/images/positions/sf.png';
 import PF from '../../content/images/positions/pf.png';
 import C from '../../content/images/positions/c.png';
+import defaultLogo from '../../content/images/defaultLogo.png';
 const $ = window.$;
 
 export class PlayerCard extends Component {
@@ -36,7 +37,7 @@ export class PlayerCard extends Component {
         ? <i className="fa fa-times"></i>
         : <i className="fa fa-plus"></i>;
       const buttonState = this.props.status === 1
-        ? <div className="button">
+        ? <div className="card__button--select">
           <button className={`btn-no-outline center btn-circle btn-lg ${this.props.player.selected ? 'btn-danger' : 'btn-primary'} text-center`}
             onClick={this.select}>
             {innerHTML}
@@ -53,33 +54,41 @@ export class PlayerCard extends Component {
 
       let injuryBadge = '';
       if (!this.props.player.injuryStatus.toLowerCase().includes("active"))
-        injuryBadge = <div className={"player-injury-badge " + injuryStatus}>{this.props.player.injuryStatus}</div>
+        injuryBadge = <div className={"card__injury-badge " + injuryStatus}>{this.props.player.injuryStatus}</div>
 
       const image = <Img
         onClick={this.props.status === 2 ? this.filter : undefined}
-        className="player-card-img-top card-img-top"
-        style={{ backgroundColor: `${this.props.player.teamColor}` }}
+        className="card__player-img card-img-top"
         alt={this.getDisplayName(this.props.player)}
-        src={[
-          `http://fantasyhoops.org/content/images/players/${this.props.player.id}.png`,
-          require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
-        ]}
-        loader={<img height='151px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+        src={[`http://fantasyhoops.org/content/images/players/${this.props.player.id}.png`,
+        require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)]}
+        loader={<img height='151px' width='206px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+        decode={false}
+      />
+      const teamLogo = <Img
+        className="card__team-logo--behind"
+        alt={this.props.player.team.abbreviation}
+        src={[`http://fantasyhoops.org/content/images/logos/${this.props.player.team.abbreviation}.svg`,
+          defaultLogo]}
         decode={false}
       />
       return (
         <div>
           <div className="player-card card">
-            {this.props.status === 1 ? <div className="ppg">{this.props.player.fppg.toFixed(1)}</div> : ''}
-            {this.props.status === 1 ? <div className="ppg ppg-label">FPPG</div> : ''}
-            {this.props.status === 1 ? <div className="player-position">{this.props.player.position}</div> : ''}
-            {buttonState}
-            <div className="price-badge">
-              <span className="badge badge-dark">{this.props.player.price + 'K'}</span>
+            <div className="card__player-attributes">
+              {this.props.status === 1 ? <div className="ppg">{this.props.player.fppg.toFixed(1)}</div> : ''}
+              {this.props.status === 1 ? <div className="ppg ppg-label">FPPG</div> : ''}
+              {this.props.status === 1 ? <div className="player-position">{this.props.player.position}</div> : ''}
+              <div className="price-badge">
+                <span className="badge badge-dark">{this.props.player.price + 'K'}</span>
+              </div>
             </div>
-            {image}
+            <div className="card__image-backgound" style={{ backgroundColor: `${this.props.player.team.teamColor}` }}>
+              {image}
+              {teamLogo}
+            </div>
             {injuryBadge}
-            <div className="card-block" >
+            <div className="card-block position-relative" >
               <a
                 data-toggle="tooltip"
                 data-placement="top"
@@ -95,6 +104,7 @@ export class PlayerCard extends Component {
                   {this.getDisplayName(this.props.player)}
                 </h2>
               </a>
+              {buttonState}
             </div>
           </div>
         </div>
