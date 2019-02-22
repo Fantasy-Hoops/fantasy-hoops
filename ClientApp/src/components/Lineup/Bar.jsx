@@ -24,7 +24,7 @@ export class Bar extends Component {
 
   updateProgressBar() {
     const player = this.props.player;
-    this.state.color = player.props.status === 2 ? player.props.player.teamColor : this.state.color;
+    this.state.color = player.props.status === 2 ? player.props.player.team.teamColor : this.state.color;
     this.state.width = (player.props.status === 2 ? player.props.player.price : 0) / budget * 100;
   }
 }

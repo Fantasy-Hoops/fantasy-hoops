@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using fantasy_hoops.Models;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Services;
+using FluentScheduler;
 
 namespace fantasy_hoops.Database
 {
@@ -18,6 +19,15 @@ namespace fantasy_hoops.Database
 
         public static void Initialize(GameContext context)
         {
+            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("playerSeed")))
+            {
+                JobManager.AddJob(() => Initialize(context),
+                s => s.WithName("playerSeed")
+                .ToRunOnceIn(30)
+                .Seconds());
+                return;
+            }
+
             _scoreService = new ScoreService();
             Calculate(context);
         }

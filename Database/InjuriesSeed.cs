@@ -19,8 +19,14 @@ namespace fantasy_hoops.Database
 
         public static void Initialize(GameContext context)
         {
-            while (JobManager.RunningSchedules.Any(s => !s.Name.Equals("injuries")))
-                Thread.Sleep(15000);
+            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("injuries")))
+            {
+                JobManager.AddJob(() => Initialize(context),
+                s => s.WithName("injuries")
+                .ToRunOnceIn(30)
+                .Seconds());
+                return;
+            }
 
             Extract(context);
         }

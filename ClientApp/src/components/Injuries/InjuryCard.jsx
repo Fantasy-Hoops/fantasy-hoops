@@ -27,10 +27,9 @@ export class InjuryCard extends Component {
     const link =
       this.props.injury.link !== "" ? (
         <span style={{ float: "left" }} className="comments">
-          <i className="fa fa-comments" />
+          <i className="fa fa-external-link-alt" />
           <a target="_blank" href={this.props.injury.link}>
-            {" "}
-            Read more{" "}
+            {" "}Link
           </a>
         </span>
       ) : (
@@ -51,7 +50,7 @@ export class InjuryCard extends Component {
           <div className="post-module">
             <div className="thumbnail" style={{ backgroundColor: this.props.injury.player.team.color, position: 'relative' }}>
               <div className="date">
-                <div className="day badge badge-dark">
+                <div className="injury-card__position--badge badge">
                   {this.props.injury.player.position}
                 </div>
               </div>
