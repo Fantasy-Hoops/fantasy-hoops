@@ -16,8 +16,14 @@ namespace fantasy_hoops.Database
 
         public static void Initialize(GameContext context)
         {
-            while (JobManager.RunningSchedules.Any(s => !s.Name.Equals("photos")))
-                Thread.Sleep(15000);
+            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("photos")))
+            {
+                JobManager.AddJob(() => Initialize(context),
+                s => s.WithName("photos")
+                .ToRunOnceIn(30)
+                .Seconds());
+                return;
+            }
 
             ExtractLogos(context);
             ExtractPlayerPhotos(context);

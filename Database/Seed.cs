@@ -125,7 +125,7 @@ namespace fantasy_hoops.Database
                     return "#000000";
                 // CAVALIERS
                 case 1610612739:
-                    return "##690031";
+                    return "#690031";
                 // PACERS
                 case 1610612754:
                     return "#002D62";
@@ -185,13 +185,13 @@ namespace fantasy_hoops.Database
                     return "#E56020";
                 // ROCKETS
                 case 1610612745:
-                    return "##C21F32";
+                    return "#C21F32";
                 // PELICANS
                 case 1610612740:
                     return "#85714D";
                 // SPURS
                 case 1610612759:
-                    return "#C4CED4";
+                    return "#8A8D8F";
                 // MAVERICKS
                 case 1610612742:
                     return "#007DC5";

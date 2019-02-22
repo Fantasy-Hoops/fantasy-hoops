@@ -19,6 +19,15 @@ namespace fantasy_hoops.Database
 
         public static void Initialize(GameContext context)
         {
+            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("statsSeed")))
+            {
+                JobManager.AddJob(() => Initialize(context),
+                s => s.WithName("statsSeed")
+                .ToRunOnceIn(30)
+                .Seconds());
+                return;
+            }
+
             _scoreService = new ScoreService();
             // Gets each day's stats the number of days before today
             int daysFromToday = 5;

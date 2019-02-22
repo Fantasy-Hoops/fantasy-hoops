@@ -1,4 +1,5 @@
 ﻿using fantasy_hoops.Models;
+using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -10,6 +11,14 @@ namespace fantasy_hoops.Database
     {
         public static void Initialize(GameContext context)
         {
+            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("userScore")))
+            {
+                JobManager.AddJob(() => Initialize(context),
+                s => s.WithName("userScore")
+                .ToRunOnceIn(30)
+                .Seconds());
+                return;
+            }
             Update(context);
         }
 

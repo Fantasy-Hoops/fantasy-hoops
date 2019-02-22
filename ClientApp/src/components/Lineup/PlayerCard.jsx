@@ -76,11 +76,11 @@ export class PlayerCard extends Component {
         <div>
           <div className="player-card card">
             <div className="card__player-attributes">
+              {this.props.status === 1 ? <div className="card__player-position">{this.props.player.position}</div> : ''}
               {this.props.status === 1 ? <div className="ppg">{this.props.player.fppg.toFixed(1)}</div> : ''}
               {this.props.status === 1 ? <div className="ppg ppg-label">FPPG</div> : ''}
-              {this.props.status === 1 ? <div className="player-position">{this.props.player.position}</div> : ''}
-              <div className="price-badge">
-                <span className="badge badge-dark">{this.props.player.price + 'K'}</span>
+              <div className="card__player-price--badge badge badge-dark">
+                {this.props.player.price + 'K'}
               </div>
             </div>
             <div className="card__image-backgound" style={{ backgroundColor: `${this.props.player.team.teamColor}` }}>
@@ -88,8 +88,9 @@ export class PlayerCard extends Component {
               {teamLogo}
             </div>
             {injuryBadge}
-            <div className="card-block position-relative" >
+            <div className="card__title-block--bottom card-block position-relative" >
               <a
+                className="card__title-tooltip"
                 data-toggle="tooltip"
                 data-placement="top"
                 title="Click for stats"
@@ -97,7 +98,7 @@ export class PlayerCard extends Component {
                 <h2
                   data-toggle="modal"
                   data-target="#playerModal"
-                  className="player-card-title card-title"
+                  className="card__title-text--bottom card-title"
                   onClick={this.showModal}
                   style={{ cursor: 'pointer' }}
                 >

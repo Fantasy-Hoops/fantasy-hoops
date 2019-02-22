@@ -18,7 +18,7 @@ export class InjuryNotification extends Component {
     const notificationDateUTC = new Date(
       this.props.notification.dateCreated
     ).getTime();
-    let read = "card-body rounded text-primary";
+    let read = "card-body rounded text-success";
     if (this.props.notification.readStatus) read = "card-body text-muted";
     return (
       <a

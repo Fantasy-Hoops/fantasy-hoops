@@ -137,6 +137,13 @@ export class Lineup extends Component {
     }
   }
 
+  getDate() {
+    var dt = new Date();
+    var toDate = new Date(this.state.nextGame);
+    var tz = dt.getTimezoneOffset();
+    return toDate.setMinutes(toDate.getMinutes() - tz);
+  }
+
   render() {
     if (this.state.poolLoader)
       return (
@@ -230,8 +237,7 @@ export class Lineup extends Component {
           <div style={{ width: "100%" }}>
             <div className="text-center mb-3">
               <Countdown
-                now={UTCNow().Function}
-                date={new Date(this.state.nextGame)}
+                date={this.getDate()}
                 zeroPadTime={3}
                 zeroPadDays={3}
                 renderer={renderer}
@@ -308,8 +314,8 @@ export class Lineup extends Component {
         showModal={this.showModal}
       />
     ) : (
-      <PlayerCard status={0} filter={this.filter} position={player.position} />
-    );
+        <PlayerCard status={0} filter={this.filter} position={player.position} />
+      );
     this.setState({
       [pos]: playerCard
     });

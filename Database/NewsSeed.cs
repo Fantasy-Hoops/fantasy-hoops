@@ -15,8 +15,14 @@ namespace fantasy_hoops.Database
     {
         public static void ExtractPreviews(GameContext context)
         {
-            while (JobManager.RunningSchedules.Any(s => !s.Name.Contains("previews")))
-                Thread.Sleep(15000);
+            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("previews")))
+            {
+                JobManager.AddJob(() => ExtractPreviews(context),
+                s => s.WithName("previews")
+                .ToRunOnceIn(30)
+                .Seconds());
+                return;
+            }
 
             string today = Today();
             JArray tGames = CommonFunctions.GetGames(today);
@@ -25,8 +31,14 @@ namespace fantasy_hoops.Database
 
         public static void ExtractRecaps(GameContext context)
         {
-            while (JobManager.RunningSchedules.Any(s => !s.Name.Contains("recaps")))
-                Thread.Sleep(15000);
+            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("recaps")))
+            {
+                JobManager.AddJob(() => ExtractRecaps(context),
+                s => s.WithName("recaps")
+                .ToRunOnceIn(30)
+                .Seconds());
+                return;
+            }
 
             string yesterday = Yesterday();
             JArray yGames = CommonFunctions.GetGames(yesterday);
@@ -122,7 +134,7 @@ namespace fantasy_hoops.Database
                 var paragraph = new Paragraph
                 {
                     NewsID = nObj.NewsID,
-                    Content = (string)parObj["paragraph"],
+                    Content = parObj["paragraph"].ToString().Replace("\xFFFD", ""),
                     ParagraphNumber = i++
                 };
                 context.Paragraphs.Add(paragraph);
