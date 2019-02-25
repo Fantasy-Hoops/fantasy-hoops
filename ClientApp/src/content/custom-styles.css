@@ -1,7 +1,7 @@
 ﻿:root {
   --primary-color: #2C3E50;
   --secondary-color: #18BC9C;
-  --tertiary-color: #ECF0F1
+  --tertiary-color: #ECF0F1;
 }
 
 body {
@@ -720,4 +720,49 @@ thead {
 
 .table-hover>tbody>tr.no-hover:hover {
   background-color: #ffffff;
+}
+
+.NotificationCard {
+  transition: background-color 0.3s;
+}
+
+.NotificationCard:hover {
+  background-color: #F5F5F5;
+  transition: background-color 0.3s;
+}
+
+.NotificationCard--unread {
+  background-color: #F5F5F5;
+  border-left: 0.25rem solid var(--secondary-color);
+  transition: background-color 0.3s, border-left 0.3s;
+}
+
+.NotificationCard--unread:hover {
+  background-color: #E8E8E8;
+  border-left: 0.25rem solid green;
+  transition: background-color 0.3s, border-left 0.3s;
+}
+
+.NotificationCard__Body {
+  margin: -0.8rem;
+  color: var(--primary-color);
+  display: flex;
+}
+
+.NotificationCard__Image {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.NotificationCard__Title {
+  margin: 0;
+}
+
+.NotificationCard__Text {
+  margin: 0;
+}
+
+.NotificationCard__Date {
+  margin: 0;
 }
