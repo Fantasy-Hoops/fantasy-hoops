@@ -40,21 +40,26 @@ namespace fantasy_hoops.Database
                 player.Calculated = true;
             }
 
-            context.Lineups
-                .Where(x => x.Date == NextGame.PREVIOUS_GAME)
-                .Select(x => x.UserID)
-                .Distinct()
-                .ToList()
-                .ForEach(userID =>
+            var usersPlayed = context.Lineups
+                .Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME))
+                .Select(x => x.User)
+                .Distinct();
+
+            context.Users.Except(usersPlayed).ForEachAsync(u => u.Streak = 0);
+
+            usersPlayed
+                .ForEachAsync(user =>
                 {
+                    user.Streak++;
+
                     var userScore = Math.Round(allPlayers
                         .Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME)
-                                && x.UserID.Equals(userID))
+                                && x.UserID.Equals(user.Id))
                         .Select(x => x.FP).Sum(), 1);
 
                     var gs = new GameScoreNotification
                     {
-                        UserID = userID,
+                        UserID = user.Id,
                         ReadStatus = false,
                         DateCreated = DateTime.UtcNow,
                         Score = userScore

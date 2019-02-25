@@ -10,6 +10,7 @@ namespace fantasy_hoops.Models
         public String Description { get; set; }
         public int FavoriteTeamId { get; set; }
         public virtual Team Team { get; set; }
+        public int Streak { get; set; }
 
         public virtual ICollection<Lineup> Lineups { get; set; }
     }
