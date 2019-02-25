@@ -188,17 +188,7 @@ namespace fantasy_hoops.Repositories
 
         private int GetStreak(string id)
         {
-            //TODO Streak needs to be fixed
-            int streak = 0;
-            DateTime date = CommonFunctions.UTCToEastern(NextGame.NEXT_GAME);
-            if (!NextGame.NEXT_GAME.Equals(new DateTime()))
-                date = NextGame.NEXT_GAME.AddDays(-1);
-            while (_context.Lineups.Where(x => x.UserID.Equals(id) && x.Date.DayOfYear.Equals(date.DayOfYear)).Any())
-            {
-                streak++;
-                date = date.AddDays(-1);
-            }
-            return streak;
+            return _context.Users.Where(u => u.Id.Equals(id)).FirstOrDefault().Streak;
         }
 
         private decimal GetWeeklyScore(string id)
