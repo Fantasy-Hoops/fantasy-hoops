@@ -14,7 +14,7 @@ namespace fantasy_hoops
             JobManager.Initialize(registry);
             JobManager.UseUtcTime();
 
-            JobManager.AddJob(() => NextGame.Initialize(_context),
+            JobManager.AddJob(() => NextGame.Initialize(_context, false),
                 s => s.WithName("nextGame")
                 .ToRunNow());
 

@@ -24,9 +24,13 @@ namespace fantasy_hoops.Database
 
         private static void Update(GameContext context)
         {
-            var allPlayers = context.Lineups.Where(x => x.Date == NextGame.PREVIOUS_GAME)
+            var allPlayers = context.Lineups.Where(x => x.Date == NextGame.PREVIOUS_GAME && !x.Calculated)
                 .Include(x => x.Player).ThenInclude(x => x.Stats)
                 .ToList();
+
+            if (allPlayers.Count == 0)
+                return;
+
             foreach (var player in allPlayers)
             {
                 player.FP = player.Player.Stats
@@ -54,12 +58,8 @@ namespace fantasy_hoops.Database
                         DateCreated = DateTime.UtcNow,
                         Score = userScore
                     };
-                    if (!context.GameScoreNotifications
-                    .Any(x => x.UserID.Equals(userID)
-                                && x.Score == userScore
-                                && x.DateCreated < DateTime.UtcNow
-                                && x.DateCreated > NextGame.PREVIOUS_LAST_GAME))
-                        context.GameScoreNotifications.Add(gs);
+
+                    context.GameScoreNotifications.Add(gs);
                 });
             context.SaveChanges();
         }

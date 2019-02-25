@@ -17,11 +17,11 @@ namespace fantasy_hoops.Database
 
         private static ScoreService _scoreService;
 
-        public static void Initialize(GameContext context)
+        public static void Initialize(GameContext context, bool updatePrice)
         {
             if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("playerSeed")))
             {
-                JobManager.AddJob(() => Initialize(context),
+                JobManager.AddJob(() => Initialize(context, updatePrice),
                 s => s.WithName("playerSeed")
                 .ToRunOnceIn(30)
                 .Seconds());
@@ -29,7 +29,7 @@ namespace fantasy_hoops.Database
             }
 
             _scoreService = new ScoreService();
-            Calculate(context);
+            Calculate(context, updatePrice);
         }
 
         private static JObject GetPlayer(int id)
@@ -43,7 +43,7 @@ namespace fantasy_hoops.Database
             return json;
         }
 
-        private static void Calculate(GameContext context)
+        private static void Calculate(GameContext context, bool updatePrice)
         {
             string date = GetDate();
             JArray games = CommonFunctions.GetGames(date);
@@ -69,7 +69,8 @@ namespace fantasy_hoops.Database
                 player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["topg"];
                 player.GP = gamesPlayed <= 0 ? 0 : gamesPlayed;
                 player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
-                player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(context, player);
+                if (updatePrice)
+                    player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(context, player);
                 player.IsPlaying = IsPlaying(player, games);
             }
             context.SaveChanges();
