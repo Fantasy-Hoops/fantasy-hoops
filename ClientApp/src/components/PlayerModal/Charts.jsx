@@ -13,47 +13,52 @@ export class Charts extends Component {
     }
     this.options = [
       {
-        teamId: 0,
+        id: 0,
         name: 'Overall',
         criteria: 'ovr'
       },
       {
-        teamId: 1,
+        id: 1,
+        name: 'Minutes',
+        criteria: 'min'
+      },
+      {
+        id: 2,
         name: 'Points',
         criteria: 'pts'
       },
       {
-        teamId: 2,
+        id: 3,
         name: 'Assists',
         criteria: 'ast'
       },
       {
-        teamId: 3,
+        id: 4,
         name: 'Turnovers',
         criteria: 'tov'
       },
       {
-        teamId: 4,
+        id: 5,
         name: 'Rebounds',
         criteria: 'treb'
       },
       {
-        teamId: 5,
+        id: 6,
         name: 'Steals',
         criteria: 'stl'
       },
       {
-        teamId: 6,
+        id: 7,
         name: 'Blocks',
         criteria: 'blk'
       },
       {
-        teamId: 7,
+        id: 8,
         name: 'Fantasy Points',
         criteria: 'fp'
       },
       {
-        teamId: 8,
+        id: 9,
         name: 'Price',
         criteria: 'price'
       }
@@ -139,8 +144,9 @@ export class Charts extends Component {
     });
 
     games.forEach(game => {
+      const value = this.state.criteria === 'min' ? this.timeToMin(game[this.state.criteria]) : game[this.state.criteria];
       labels.push(game.date.substring(5, 10));
-      values.push(game[this.state.criteria]);
+      values.push(value);
     });
 
     const data = {
@@ -219,5 +225,10 @@ export class Charts extends Component {
       return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',0.4)';
     }
     throw new Error('Bad Hex');
+  }
+
+  timeToMin(min) {
+    const times = min.split(':');
+    return (parseInt(times[0]) + (parseInt(times[1]) / 60)).toFixed(1);
   }
 }
