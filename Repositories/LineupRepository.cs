@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using fantasy_hoops.Database;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 
@@ -19,7 +20,7 @@ namespace fantasy_hoops.Repositories
         public IQueryable<Object> GetLineup(string id)
         {
             return _context.Lineups
-                .Where(x => x.UserID.Equals(id) && x.Date == Database.NextGame.NEXT_GAME)
+                .Where(x => x.UserID.Equals(id) && x.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
                 .Select(x => new
                 {
                     id = x.Player.NbaID,
@@ -40,7 +41,7 @@ namespace fantasy_hoops.Repositories
                 UserID = userID,
                 PlayerID = playerID,
                 Position = position,
-                Date = Database.NextGame.NEXT_GAME,
+                Date = CommonFunctions.UTCToEastern(NextGame.NEXT_GAME),
                 Calculated = false
             };
             _context.Lineups.Add(player);
@@ -51,7 +52,7 @@ namespace fantasy_hoops.Repositories
             var player = _context.Lineups
                     .Where(x => x.UserID.Equals(userID)
                             && x.Position.Equals(position)
-                            && x.Date == Database.NextGame.NEXT_GAME)
+                            && x.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
                     .FirstOrDefault();
 
             player.PlayerID = playerID;
@@ -82,7 +83,7 @@ namespace fantasy_hoops.Repositories
         {
             return _context.Lineups
                 .Where(x => x.UserID.Equals(userID)
-                        && x.Date == Database.NextGame.NEXT_GAME)
+                        && x.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
                 .Any();
         }
 

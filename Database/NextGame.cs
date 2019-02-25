@@ -26,7 +26,7 @@ namespace fantasy_hoops.Database
             NEXT_GAME_CLIENT = NEXT_GAME;
         }
 
-        public static void Initialize(GameContext context)
+        public static void Initialize(GameContext context, bool updatePrices = true)
         {
             string gameDate = GetDate();
 
@@ -56,7 +56,7 @@ namespace fantasy_hoops.Database
                     s => s.WithName("recaps")
                 .ToRunOnceAt(nextRun.AddHours(5).AddMinutes(1)));
 
-                JobManager.AddJob(() => PlayerSeed.Initialize(context),
+                JobManager.AddJob(() => PlayerSeed.Initialize(context, updatePrices),
                      s => s.WithName("playerSeed")
                      .ToRunNow());
             }
