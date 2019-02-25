@@ -109,28 +109,7 @@ namespace fantasy_hoops.Database
 
         private static int Price(GameContext context, Player p)
         {
-            double GSavg = 0;
-            if (context.Stats.Where(x => x.Player.NbaID == p.NbaID).Count() < 1)
-                return PRICE_FLOOR;
-
-            try
-            {
-                double GSsum = context.Stats
-                            .Where(x => x.Player.NbaID == p.NbaID)
-                            .OrderByDescending(s => s.Date)
-                            .Take(5)
-                            .Select(s => s.GS)
-                            .Sum();
-
-                int GScount = context.Stats
-                            .Where(x => x.Player.NbaID == p.NbaID)
-                            .Take(5)
-                            .Count();
-
-                GSavg = GSsum / GScount;
-            }
-            catch { }
-            int price = _scoreService.GetPrice(p.FPPG, GSavg);
+            int price = _scoreService.GetPrice(p);
             if (price < PRICE_FLOOR)
                 return PRICE_FLOOR;
             return price;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using fantasy_hoops.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace fantasy_hoops.Services
         double GetFantasyPoints(int points, int defensiveRebounds, int offensiveRebounds,
             int assists, int steals, int blocks, int turnovers);
 
-        int GetPrice(double fantasyPoints, double gameScore);
+        int GetPrice(Player player);
 
     }
 }

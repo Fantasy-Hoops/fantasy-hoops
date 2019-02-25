@@ -131,7 +131,7 @@ namespace fantasy_hoops.Database
                 statsObj.FP = _scoreService.GetFantasyPoints(statsObj.PTS, statsObj.DREB, statsObj.OREB,
                     statsObj.AST, statsObj.STL, statsObj.BLK, statsObj.TOV);
 
-                statsObj.Price = _scoreService.GetPrice(statsObj.FP, statsObj.GS);
+                statsObj.Price = _scoreService.GetPrice(statsObj.Player);
                 context.Stats.Add(statsObj);
             }
         }
