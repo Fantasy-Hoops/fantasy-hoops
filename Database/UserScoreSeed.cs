@@ -4,7 +4,6 @@ using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace fantasy_hoops.Database
 {
@@ -45,10 +44,10 @@ namespace fantasy_hoops.Database
                 .Select(x => x.User)
                 .Distinct();
 
-            context.Users.Except(usersPlayed).ForEachAsync(u => u.Streak = 0);
+            context.Users.Except(usersPlayed).ToList().ForEach(u => u.Streak = 0);
 
-            usersPlayed
-                .ForEachAsync(user =>
+            usersPlayed.ToList()
+                .ForEach(user =>
                 {
                     user.Streak++;
 
