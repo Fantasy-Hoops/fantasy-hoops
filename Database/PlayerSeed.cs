@@ -34,7 +34,7 @@ namespace fantasy_hoops.Database
 
         private static JObject GetPlayer(int id)
         {
-            string url = "http://data.nba.net/10s/prod/v1/" + CommonFunctions.GetSeasonYear() + "/players/" + id + "_profile.json";
+            string url = "http://data.nba.net/v2015/json/mobile_teams/nba/"+ CommonFunctions.GetSeasonYear() + "/players/playercard_" + id + "_02.json";
             HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
             if (webResponse == null)
                 return null;
@@ -55,19 +55,19 @@ namespace fantasy_hoops.Database
                     player.Price = PRICE_FLOOR;
                     continue;
                 }
-                if (p["league"]["standard"] == null)
+                if (p["pl"]["ca"]["sa"] == null)
                 {
                     continue;
                 }
-                JToken stats = p["league"]["standard"]["stats"]["latest"];
-                int gamesPlayed = (int)stats["gamesPlayed"];
-                player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["ppg"];
-                player.REB = gamesPlayed <= 0 ? 0 : (double)stats["rpg"];
-                player.AST = gamesPlayed <= 0 ? 0 : (double)stats["apg"];
-                player.STL = gamesPlayed <= 0 ? 0 : (double)stats["spg"];
-                player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["bpg"];
-                player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["topg"];
-                player.GP = gamesPlayed <= 0 ? 0 : gamesPlayed;
+                JToken stats = p["pl"]["ca"]["sa"].Last;
+                int gamesPlayed = (int)stats["gp"];
+                player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
+                player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
+                player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
+                player.STL = gamesPlayed <= 0 ? 0 : (double)stats["stl"];
+                player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["blk"];
+                player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["tov"];
+                player.GP = gamesPlayed;
                 player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
                 if (updatePrice)
                     player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(context, player);
