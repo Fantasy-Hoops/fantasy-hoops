@@ -27,7 +27,7 @@ export class UserLeaderboard extends Component {
       dailyLoader: true,
       weeklyLoader: true,
       monthlyLoader: true,
-      friendsOnly: true,
+      friendsOnly: false,
       loader: false,
       dailyLoadCounter: 0,
       weeklyLoadCounter: 0,

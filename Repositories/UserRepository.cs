@@ -146,7 +146,7 @@ namespace fantasy_hoops.Repositories
         {
             // Getting all players that user has selected in recent 5 games
             var players = _context.Lineups
-                .Where(x => x.UserID.Equals(id) && x.Date < NextGame.NEXT_GAME)
+                .Where(x => x.UserID.Equals(id) && x.Date < CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
                 .OrderByDescending(x => x.Date)
                 .Select(x => new
                 {
@@ -190,7 +190,7 @@ namespace fantasy_hoops.Repositories
         {
             //TODO Streak needs to be fixed
             int streak = 0;
-            DateTime date = NextGame.NEXT_GAME;
+            DateTime date = CommonFunctions.UTCToEastern(NextGame.NEXT_GAME);
             if (!NextGame.NEXT_GAME.Equals(new DateTime()))
                 date = NextGame.NEXT_GAME.AddDays(-1);
             while (_context.Lineups.Where(x => x.UserID.Equals(id) && x.Date.DayOfYear.Equals(date.DayOfYear)).Any())

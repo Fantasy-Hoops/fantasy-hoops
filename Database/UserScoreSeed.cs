@@ -1,4 +1,5 @@
-﻿using fantasy_hoops.Models;
+﻿using fantasy_hoops.Helpers;
+using fantasy_hoops.Models;
 using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,7 +25,7 @@ namespace fantasy_hoops.Database
 
         private static void Update(GameContext context)
         {
-            var allPlayers = context.Lineups.Where(x => x.Date == NextGame.PREVIOUS_GAME && !x.Calculated)
+            var allPlayers = context.Lineups.Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME) && !x.Calculated)
                 .Include(x => x.Player).ThenInclude(x => x.Stats)
                 .ToList();
 
@@ -34,7 +35,7 @@ namespace fantasy_hoops.Database
             foreach (var player in allPlayers)
             {
                 player.FP = player.Player.Stats
-                    .Where(s => s.Date >= NextGame.PREVIOUS_GAME && s.Date <= NextGame.PREVIOUS_LAST_GAME)
+                    .Where(s => s.Date >= CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME) && s.Date <= CommonFunctions.UTCToEastern(NextGame.PREVIOUS_LAST_GAME))
                     .Select(x => x.FP).FirstOrDefault();
                 player.Calculated = true;
             }
@@ -47,7 +48,7 @@ namespace fantasy_hoops.Database
                 .ForEach(userID =>
                 {
                     var userScore = Math.Round(allPlayers
-                        .Where(x => x.Date == NextGame.PREVIOUS_GAME
+                        .Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME)
                                 && x.UserID.Equals(userID))
                         .Select(x => x.FP).Sum(), 1);
 

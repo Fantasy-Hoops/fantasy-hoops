@@ -89,7 +89,7 @@ namespace fantasy_hoops.Helpers
                 int dayOffset = dayOfMonth == 1 ? DaysInMonth() : dayOfMonth - 1;
                 return easternDate.AddDays(-dayOffset);
             }
-            return NextGame.PREVIOUS_GAME;
+            return UTCToEastern(NextGame.PREVIOUS_GAME);
         }
 
         public static string GetSeasonYear()

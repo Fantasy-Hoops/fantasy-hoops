@@ -75,6 +75,11 @@ namespace fantasy_hoops.Database
             if (injuryObj.Player == null)
                 return;
             context.Injuries.Add(injuryObj);
+            string statusBefore = context.Players
+                .Where(p => p.NbaID == injuryObj.Player.NbaID)
+                .FirstOrDefault()
+                .Status;
+            string statusAfter = injuryObj.Status;
             context.Players
                 .Where(p => p.NbaID == injuryObj.Player.NbaID)
                 .FirstOrDefault()
@@ -83,13 +88,15 @@ namespace fantasy_hoops.Database
                 .Where(p => p.NbaID == injuryObj.Player.NbaID)
                 .FirstOrDefault()
                 .StatusDate = DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5);
-            UpdateNotifications(context, injuryObj);
+
+            if (!statusBefore.Equals(statusAfter))
+                UpdateNotifications(context, injuryObj);
         }
 
         private static void UpdateNotifications(GameContext context, Injuries injury)
         {
             context.Lineups
-                .Where(x => x.Date.Equals(NextGame.NEXT_GAME)
+                .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
                             && x.PlayerID == injury.PlayerID)
                 .ToList()
                 .ForEach(s =>

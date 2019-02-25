@@ -26,7 +26,7 @@ export class UserScore extends Component {
           <div className="row" style={{ marginTop: '-0.5rem' }}>
             {players}
             <div className="mt-0" style={{ width: '8rem' }}>
-              <h4 className="text-center pt-2">{this.props.activity.score}</h4>
+              <h4 className="text-center pt-2">{this.props.activity.score.toFixed(1)}</h4>
               <h6 className="text-center" style={{ marginTop: "-0.7rem" }}>PTS</h6>
               <h6 className="text-center pt-1" style={{ fontSize: "0.8rem", marginTop: "0.5rem", fontWeight: 400 }}>{this.props.activity.date.substring(0, 10)}</h6>
             </div>

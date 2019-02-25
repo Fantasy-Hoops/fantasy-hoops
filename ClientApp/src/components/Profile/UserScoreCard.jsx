@@ -45,7 +45,7 @@ export class UserScoreCard extends Component {
             />
           </div>
           <p className="player-usertitle">{this.props.player.lastName}</p>
-          <p className="player-score">{this.props.player.fp}</p>
+          <p className="player-score">{this.props.player.fp.toFixed(1)}</p>
         </div>
       </a>
     );
