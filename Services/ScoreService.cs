@@ -1,4 +1,5 @@
 ﻿using fantasy_hoops.Database;
+using fantasy_hoops.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,9 +33,30 @@ namespace fantasy_hoops.Services
                     - 0.7 * fieldGoalsAttempted - 0.4 * freeThrowsMissed - 0.4 * fouls - turnovers, 2);
         }
 
-        public int GetPrice(double fantasyPoints, double gameScore)
+        public int GetPrice(Player p)
         {
-            return (int)((fantasyPoints + gameScore) * 7 / 5);
+            double GSavg = 0;
+            if (_context.Stats.Where(x => x.Player.NbaID == p.NbaID).Count() < 1)
+                return PlayerSeed.PRICE_FLOOR;
+
+            try
+            {
+                double GSsum = _context.Stats
+                            .Where(x => x.Player.NbaID == p.NbaID)
+                            .OrderByDescending(s => s.Date)
+                            .Take(5)
+                            .Select(s => s.GS)
+                            .Sum();
+
+                int GScount = _context.Stats
+                            .Where(x => x.Player.NbaID == p.NbaID)
+                            .Take(5)
+                            .Count();
+
+                GSavg = GSsum / GScount;
+            }
+            catch { }
+            return (int)((p.FPPG + GSavg) * 7 / 5);
         }
     }
 }
