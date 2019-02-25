@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { parse } from '../../utils/auth';
 import { handleErrors } from '../../utils/errors';
-import { GameScoreNotification } from './GameScoreNotification';
-import { InjuryNotification } from './InjuryNotification';
-import { FriendRequestNotification } from './FriendRequestNotification';
+import { NotificationCard } from './NotificationCard';
+import defaultPhoto from '../../content/images/default.png';
+import gameLogo from '../../../src/content/favicon.ico';
 import shortid from 'shortid';
 import _ from 'lodash';
 const user = parse();
@@ -91,27 +91,52 @@ export class Notifications extends Component {
     const cardWidth = 25;
     return _.slice(this.state.userNotifications, 0, 4)
       .map(notification => {
-        if (notification.score)
-          return <GameScoreNotification
+        if (notification.score) {
+          const text = (
+            <span>
+              Your lineup scored{" "}
+              <span className="text-dark font-weight-bold">
+                {notification.score.toFixed(1)} FP
+              </span>
+            </span>
+          );
+
+          return <NotificationCard
             key={shortid()}
-            width={`${cardWidth}rem`}
-            toggleNotification={this.toggleNotification}
             notification={notification}
-          />;
-        if (notification.friend)
-          return <FriendRequestNotification
+            imageSrc={gameLogo}
+            title="The game has finished!"
+            text={text}
+            link="/profile"
+          />
+        }
+        else if (notification.friend) {
+          const text = (
+            <span>
+              {notification.requestMessage}
+            </span>
+          );
+
+          return <NotificationCard
             key={shortid()}
-            width={`${cardWidth}rem`}
-            toggleNotification={this.toggleNotification}
             notification={notification}
-          />;
-        if (notification.player)
-          return <InjuryNotification
+            title={notification.friend.userName}
+            imageSrc={[`http://fantasyhoops.org/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
+            text={text}
+            link={`/profile/${notification.friend.userName}`}
+          />
+        } else if (notification.player) {
+          const title = `${notification.player.firstName[0]}. ${notification.player.lastName} is ${notification.injuryStatus.toLowerCase()}`;
+
+          return <NotificationCard
             key={shortid()}
-            width={`${cardWidth}rem`}
-            toggleNotification={this.toggleNotification}
             notification={notification}
-          />;
+            title={title}
+            imageSrc={[`http://fantasyhoops.org/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
+            text={notification.injuryDescription}
+            link="/lineup"
+          />
+        }
         return <div></div>;
       });
   }
@@ -148,7 +173,7 @@ export class Notifications extends Component {
               Mark All as Read
             </a>
           </h6>
-          <div style={{ marginBottom: '-0.5rem' }}>
+          <div style={{ marginBottom: '-0.5rem'}}>
             {notifications}
           </div>
           <h6 className="dropdown-header text-center mt-2" style={{ height: '1.5rem' }}>

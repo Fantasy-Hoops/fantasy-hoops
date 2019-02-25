@@ -1,21 +1,20 @@
 import React, { Component } from 'react';
 import { parse } from '../../utils/auth';
-import { handleErrors } from '../../utils/errors';
-import { GameScoreNotification } from './GameScoreNotification';
-import { InjuryNotification } from './InjuryNotification';
-import { FriendRequestNotification } from './FriendRequestNotification';
+import { NotificationCard } from './NotificationCard';
 import { Loader } from '../Loader';
 import { EmptyJordan } from '../EmptyJordan';
+import defaultPhoto from '../../content/images/default.png';
+import gameLogo from '../../../src/content/favicon.ico';
+
 import shortid from 'shortid';
 import _ from 'lodash';
-const LOAD_COUNT = 5;
 
+const LOAD_COUNT = 5;
 const user = parse();
 
 export class AllNotifications extends Component {
   constructor(props) {
     super(props);
-    this.toggleNotification = this.toggleNotification.bind(this);
     this.loadMore = this.loadMore.bind(this);
 
     this.state = {
@@ -36,32 +35,6 @@ export class AllNotifications extends Component {
           loader: false
         });
       })
-  }
-
-  async toggleNotification(notification) {
-    if (notification.readStatus)
-      return;
-    await fetch('http://fantasyhoops.org/api/notification/toggle', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(notification)
-    })
-      .then(res => handleErrors(res))
-      .then(res => res.text())
-      .catch(err => {
-      });
-
-    await fetch(`http://fantasyhoops.org/api/notification/${user.id}?count=${this.state.userNotifications.length}`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        this.setState({
-          userNotifications: res
-        });
-      });
   }
 
   async loadMore() {
@@ -91,28 +64,53 @@ export class AllNotifications extends Component {
     const cardWidth = 60;
     return _.slice(this.state.userNotifications)
       .map(notification => {
-        if (notification.score)
-          return <GameScoreNotification
+        if (notification.score) {
+          const text = (
+            <span>
+              Your lineup scored{" "}
+              <span className="text-dark font-weight-bold">
+                {notification.score.toFixed(1)} FP
+              </span>
+            </span>
+          );
+
+          return <NotificationCard
             key={shortid()}
-            width={`${cardWidth}%`}
-            toggleNotification={this.toggleNotification}
             notification={notification}
-          />;
-        if (notification.friend)
-          return <FriendRequestNotification
+            imageSrc={gameLogo}
+            title="The game has finished!"
+            text={text}
+            link="/profile"
+          />
+        }
+        else if (notification.friend) {
+          const text = (
+            <span>
+              {notification.requestMessage}
+            </span>
+          );
+
+          return <NotificationCard
             key={shortid()}
-            width={`${cardWidth}%`}
-            toggleNotification={this.toggleNotification}
             notification={notification}
-          />;
-        if (notification.player)
-          return <InjuryNotification
+            title={notification.friend.userName}
+            imageSrc={[`http://fantasyhoops.org/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
+            text={text}
+            link={`/profile/${notification.friend.userName}`}
+          />
+        } else if (notification.player) {
+          const title = `${notification.player.firstName[0]}. ${notification.player.lastName} is ${notification.injuryStatus.toLowerCase()}`;
+
+          return <NotificationCard
             key={shortid()}
-            width={`${cardWidth}%`}
-            toggleNotification={this.toggleNotification}
             notification={notification}
-          />;
-          else return <div></div>;
+            title={title}
+            imageSrc={[`http://fantasyhoops.org/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
+            text={notification.injuryDescription}
+            link="/lineup"
+          />
+        }
+        else return <div></div>;
       });
   }
 
@@ -122,9 +120,9 @@ export class AllNotifications extends Component {
       ? ''
       : <button className="btn btn-primary mt-2" onClick={this.loadMore}>See more</button>;
     return (
-      <div className="container bg-light p-5">
+      <div className="container bg-light mt-3">
         <h3 className="text-center"><i className="fa fa-bell"></i> User notifications</h3>
-        <div className="m-3">
+        <div className="mt-3 mb-3 mx-auto" style={{ width: "60%" }}>
           {notifications}
         </div>
         <div className="text-center">
@@ -134,4 +132,5 @@ export class AllNotifications extends Component {
       </div>
     );
   }
+
 }

@@ -35,7 +35,7 @@ namespace fantasy_hoops.Controllers
             return Ok(notifications);
         }
 
-        [HttpPost("toggle")]
+        [HttpPost("read")]
         public IActionResult ToggleNotification([FromBody]NotificationViewModel model)
         {
             _repository.ReadNotification(model);
