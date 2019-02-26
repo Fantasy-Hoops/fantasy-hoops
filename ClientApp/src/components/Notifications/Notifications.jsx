@@ -11,7 +11,6 @@ const user = parse();
 export class Notifications extends Component {
   constructor(props) {
     super(props);
-    this.toggleNotification = this.toggleNotification.bind(this);
     this.readAll = this.readAll.bind(this);
 
     this.state = {
@@ -31,33 +30,6 @@ export class Notifications extends Component {
           unreadCount: res.filter(n => n.readStatus === false).length
         });
       })
-  }
-
-  async toggleNotification(notification) {
-    if (notification.readStatus)
-      return;
-    await fetch('${process.env.REACT_APP_SERVER_NAME}/api/notification/toggle', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(notification)
-    })
-      .then(res => handleErrors(res))
-      .then(res => res.text())
-      .catch(err => {
-      });
-
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        this.setState({
-          userNotifications: res,
-          unreadCount: res.filter(n => n.readStatus === false).length
-        });
-      });
   }
 
   async readAll(e) {
