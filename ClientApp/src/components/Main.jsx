@@ -36,11 +36,11 @@ export class Main extends Component {
       : require(`../content/images/backgrounds/nba.png`);
     return (
       <div>
-        <h1 id="main-text" className="text-center title" style={{ marginTop: '15%' }}>
+        <h1 id="main-text" className="text-center title">
           Fantasy Hoops
-          </h1>
+        </h1>
         <div className="text-center">
-          <a href="/lineup" className="btn btn-primary mt-4" role="button" style={{ width: '20%', fontSize: '80%' }}>
+          <a href="/lineup" className="btn btn-primary mt-4" role="button" style={{ fontSize: '80%' }}>
             Play Now!
             </a>
         </div>

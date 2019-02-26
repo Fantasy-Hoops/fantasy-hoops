@@ -132,7 +132,11 @@ export class Notifications extends Component {
             key={shortid()}
             notification={notification}
             title={title}
-            imageSrc={[`http://fantasyhoops.org/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
+            circleImage={true}
+            imageSrc={[	`http://fantasyhoops.org/content/images/players/${notification.player.nbaID}.png`,	
+              require(`../../content/images/positions/${notification.player.position.toLowerCase()}.png`)	
+            ]}
+            imageClass="InjuryCard__Image"
             text={notification.injuryDescription}
             link="/lineup"
           />
@@ -162,7 +166,7 @@ export class Notifications extends Component {
           style={{ fontSize: '2rem' }}
         >{badge}
         </a>
-        <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink" style={{ width: '25rem' }}>
+        <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink" style={{ width: '18rem' }}>
           <h6 className="dropdown-header">Notifications
           <a
               onClick={this.readAll}
