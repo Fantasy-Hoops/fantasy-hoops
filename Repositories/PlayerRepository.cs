@@ -16,7 +16,7 @@ namespace fantasy_hoops.Repositories
 
         public IQueryable<Object> GetActivePlayers()
         {
-            return _context.Players.Where(x => x.IsPlaying)
+            return _context.Players.Where(x => x.IsPlaying && !x.IsInGLeague)
                 .Select(x => new
                 {
                     playerId = x.PlayerID,
