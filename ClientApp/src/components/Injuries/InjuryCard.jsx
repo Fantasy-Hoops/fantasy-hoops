@@ -56,9 +56,7 @@ export class InjuryCard extends Component {
               </div>
               <Img
                 className="injury-card__player-img"
-                alt={`${this.props.injury.player.firstName} ${
-                  this.props.injury.player.lastName
-                  }`}
+                alt={this.props.injury.player.fullName}
                 src={[
                   `http://fantasyhoops.org/content/images/players/${
                   this.props.injury.player.nbaID

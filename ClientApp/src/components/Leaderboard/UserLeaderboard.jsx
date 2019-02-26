@@ -236,7 +236,7 @@ export class UserLeaderboard extends Component {
       <div className="container bg-light pb-3">
         <div className="text-center pb-1">
           <img src={leaderboardLogo}
-            alt=""
+            alt="Leaderboard Logo"
             width="60rem"
           />
           <h3>Top Users</h3>
