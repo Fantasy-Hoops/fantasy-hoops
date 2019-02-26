@@ -62,7 +62,7 @@ namespace fantasy_hoops.Database
                     int hTeam = (int)boxscore["basicGameData"]["hTeam"]["teamId"];
                     int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
                     var stats = boxscore["stats"]["activePlayers"];
-                    DateTime date = DateTime.Parse((string)boxscore["basicGameData"]["startTimeUTC"]);
+                    DateTime date = CommonFunctions.UTCToEastern(DateTime.Parse((string)boxscore["basicGameData"]["startTimeUTC"]));
                     JArray players = (JArray)stats;
                     foreach (var player in players)
                     {
