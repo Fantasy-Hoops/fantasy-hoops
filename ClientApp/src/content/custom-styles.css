@@ -485,13 +485,7 @@ body {
 }
 
 /* User players card */
-.user-card-player {
-  z-index: 1;
-  overflow: hidden;
-  height: 3rem;
-  margin-top: 0.5rem;
-  margin-left: -0.3rem;
-}
+
 
 .player-usertitle {
   width: 81.59px;
@@ -818,4 +812,104 @@ thead {
     margin-left: 0.2rem;
     order: 0;
   }
+}
+
+.UserLeaderboardCard {
+  width: 40%;
+  min-width: 18rem;
+  height: 4.5rem;
+}
+
+.UserLeaderboardCard--daily {
+  height: 8.5rem;
+}
+
+.UserLeaderboardCard__body{
+  padding: 0;
+  display: grid;
+  grid-template-columns: 10% 15% 40% 35%;
+  grid-template-rows: 100%;
+}
+
+.UserLeaderboardCard__body--daily {
+  padding: 0;
+  display: grid;
+  grid-template-columns: 10% 16% 16% 16% 16% 16%;
+  grid-template-rows: 50% 50%;
+}
+
+.UserLeaderboardCard__body-item {
+  align-self: center;
+  text-align: center;
+}
+
+.UserLeaderboardCard__user-position {
+  text-align: right;
+  padding-top: 0.5rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+.UserLeaderboardCard__user-photo {
+  overflow: hidden;
+  height: 2.5rem;
+}
+
+.UserLeaderboardCard__username {
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.UserLeaderboardCard__username--daily {
+  grid-column: 3 / span 3;
+}
+
+.UserLeaderboardCard__FP {
+  align-self: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.UserLeaderboardCard__FP--daily {
+  grid-column: 6 / span 2;
+}
+
+.UserLeaderboardCard__player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.UserLeaderboardCard__player-photo--background {
+  width: 2rem;
+  height: 2rem;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.UserLeaderboardCard__player-photo--image {
+  width: 3rem;
+  overflow: hidden;
+  margin-left: -0.5rem;
+  margin-bottom: -1rem;
+}
+
+.UserLeaderboardCard__player-lastname {
+  font-size: 0.7rem;
+  font-weight: 500;
+  width: 2.8rem;
+  color: var(--primary-color);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.UserLeaderboardCard__player-fp {
+  font-size: 0.8rem;
+  font-weight: 1000;
+  color: var(--primary-color);
+  margin-bottom: 0.1rem;
 }
