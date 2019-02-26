@@ -45,7 +45,7 @@ export class PlayerLeaderboard extends Component {
   }
 
   async componentWillMount() {
-    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=daily`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/player?type=daily`)
       .then(res => {
         return res.json()
       })
@@ -55,7 +55,7 @@ export class PlayerLeaderboard extends Component {
           dailyLoader: false
         });
       })
-    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=weekly`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/player?type=weekly`)
       .then(res => {
         return res.json()
       })
@@ -65,7 +65,7 @@ export class PlayerLeaderboard extends Component {
           weeklyLoader: false
         });
       })
-    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=monthly`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/player?type=monthly`)
       .then(res => {
         return res.json()
       })
@@ -86,7 +86,7 @@ export class PlayerLeaderboard extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true })
-    await fetch(`http://fantasyhoops.org/api/stats/${player.nbaID}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${player.nbaID}`)
       .then(res => res.json())
       .then(res => {
         this.setState({
@@ -102,7 +102,7 @@ export class PlayerLeaderboard extends Component {
       loader: true,
       dailyLoadCounter: this.state.dailyLoadCounter + 1
     });
-    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=daily&from=${this.state.dailyPlayers.length}&limit=${LOAD_COUNT}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/player?type=daily&from=${this.state.dailyPlayers.length}&limit=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
@@ -119,7 +119,7 @@ export class PlayerLeaderboard extends Component {
       loader: true,
       weeklyLoadCounter: this.state.weeklyLoadCounter + 1
     });
-    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=weekly&from=${this.state.weeklyPlayers.length}&limit=${LOAD_COUNT}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/player?type=weekly&from=${this.state.weeklyPlayers.length}&limit=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
@@ -136,7 +136,7 @@ export class PlayerLeaderboard extends Component {
       loader: true,
       monthlyLoadCounter: this.state.monthlyLoadCounter + 1
     });
-    await fetch(`http://fantasyhoops.org/api/leaderboard/player?type=monthly&from=${this.state.monthlyPlayers.length}&limit=${LOAD_COUNT}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/player?type=monthly&from=${this.state.monthlyPlayers.length}&limit=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })

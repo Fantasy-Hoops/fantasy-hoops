@@ -8,7 +8,7 @@ export class RequestCard extends Component {
     const img = new Image();
     let avatar;
     if (this.props.id) {
-      img.src = `http://fantasyhoops.org/content/images/avatars/${this.props.id}.png`;
+      img.src = `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${this.props.id}.png`;
       avatar = img.height !== 0 ? img.src : defaultPhoto;
     }
     return (

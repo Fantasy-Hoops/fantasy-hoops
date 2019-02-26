@@ -13,7 +13,7 @@ export class UserCard extends Component {
   async componentWillMount() {
     const user = this.props.user;
     this.setState({
-      avatar: await loadImage(`http://fantasyhoops.org/content/images/avatars/${user.id}.png`, defaultPhoto)
+      avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.id}.png`, defaultPhoto)
     });
   }
 

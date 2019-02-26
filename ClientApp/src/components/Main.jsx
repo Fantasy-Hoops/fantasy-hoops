@@ -12,7 +12,7 @@ export class Main extends Component {
   async componentWillMount() {
     if (isAuth()) {
       const user = parse();
-      await fetch(`http://fantasyhoops.org/api/user/team/${user.id}`)
+      await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/team/${user.id}`)
         .then(res => res.json())
         .then(res => {
           const team = res[0].team;

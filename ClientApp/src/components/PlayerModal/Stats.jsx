@@ -19,7 +19,7 @@ export class Stats extends Component {
             className="img-modal pt-4 mb-2"
             alt={stats.team.abbreviation}
             src={[
-              `http://fantasyhoops.org/content/images/logos/${stats.team.abbreviation}.svg`,
+              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${stats.team.abbreviation}.svg`,
               defaultLogo
             ]}
             loader={<img height='150px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
@@ -31,8 +31,8 @@ export class Stats extends Component {
             style={{ zIndex: '1', paddingTop: '1.2rem' }}
             alt={stats.fullName}
             src={[
-              `http://fantasyhoops.org/content/images/players/${stats.nbaID}.png`,
-              `http://fantasyhoops.org/content/images/positions/${stats.position.toLowerCase()}.png`
+              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${stats.nbaID}.png`,
+              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/positions/${stats.position.toLowerCase()}.png`
             ]}
             loader={<img src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
           />

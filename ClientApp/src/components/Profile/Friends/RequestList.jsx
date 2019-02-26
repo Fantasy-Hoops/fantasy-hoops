@@ -16,7 +16,7 @@ export class RequestList extends Component {
     if (prevProps === this.props)
       return;
 
-    fetch(`http://fantasyhoops.org/api/friendrequest/requests/${this.props.user.id}`)
+    fetch(`${process.env.REACT_APP_SERVER_NAME}/api/friendrequest/requests/${this.props.user.id}`)
       .then(res => {
         return res.json()
       })

@@ -21,7 +21,7 @@ export class Notifications extends Component {
   }
 
   async componentDidMount() {
-    await fetch(`http://fantasyhoops.org/api/notification/${user.id}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}`)
       .then(res => {
         return res.json()
       })
@@ -36,7 +36,7 @@ export class Notifications extends Component {
   async toggleNotification(notification) {
     if (notification.readStatus)
       return;
-    await fetch('http://fantasyhoops.org/api/notification/toggle', {
+    await fetch('${process.env.REACT_APP_SERVER_NAME}/api/notification/toggle', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -48,7 +48,7 @@ export class Notifications extends Component {
       .catch(err => {
       });
 
-    await fetch(`http://fantasyhoops.org/api/notification/${user.id}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}`)
       .then(res => {
         return res.json()
       })
@@ -62,7 +62,7 @@ export class Notifications extends Component {
 
   async readAll(e) {
     e.preventDefault();
-    await fetch(`http://fantasyhoops.org/api/notification/readall/${user.id}`, {
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/readall/${user.id}`, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -73,7 +73,7 @@ export class Notifications extends Component {
       .catch(err => {
       });
 
-    fetch(`http://fantasyhoops.org/api/notification/${user.id}`)
+    fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}`)
       .then(res => {
         return res.json()
       })
@@ -121,7 +121,7 @@ export class Notifications extends Component {
             key={shortid()}
             notification={notification}
             title={notification.friend.userName}
-            imageSrc={[`http://fantasyhoops.org/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
+            imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
             text={text}
             link={`/profile/${notification.friend.userName}`}
           />
@@ -133,8 +133,8 @@ export class Notifications extends Component {
             notification={notification}
             title={title}
             circleImage={true}
-            imageSrc={[	`http://fantasyhoops.org/content/images/players/${notification.player.nbaID}.png`,	
-              require(`../../content/images/positions/${notification.player.position.toLowerCase()}.png`)	
+            imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${notification.player.nbaID}.png`,
+            require(`../../content/images/positions/${notification.player.position.toLowerCase()}.png`)
             ]}
             imageClass="InjuryCard__Image"
             text={notification.injuryDescription}
@@ -177,7 +177,7 @@ export class Notifications extends Component {
               Mark All as Read
             </a>
           </h6>
-          <div style={{ marginBottom: '-0.5rem'}}>
+          <div style={{ marginBottom: '-0.5rem' }}>
             {notifications}
           </div>
           <h6 className="dropdown-header text-center mt-2" style={{ height: '1.5rem' }}>

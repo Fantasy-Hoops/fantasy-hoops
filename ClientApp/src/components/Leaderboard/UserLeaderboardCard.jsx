@@ -12,7 +12,7 @@ export class UserLeaderboardCard extends Component {
 
   async componentWillMount() {
     this.setState({
-      avatar: await loadImage(`http://fantasyhoops.org/content/images/avatars/${this.props.userid}.png`, defaultPhoto)
+      avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${this.props.userid}.png`, defaultPhoto)
     });
   }
 

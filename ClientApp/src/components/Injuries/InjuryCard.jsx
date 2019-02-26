@@ -40,7 +40,7 @@ export class InjuryCard extends Component {
     const teamLogo = <Img
       className="injury-card__team-logo--behind"
       alt={this.props.injury.player.team.abbreviation}
-      src={[`http://fantasyhoops.org/content/images/logos/${this.props.injury.player.team.abbreviation}.svg`,
+      src={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.injury.player.team.abbreviation}.svg`,
         defaultLogo]}
       decode={false}
     />
@@ -58,7 +58,7 @@ export class InjuryCard extends Component {
                 className="injury-card__player-img"
                 alt={this.props.injury.player.fullName}
                 src={[
-                  `http://fantasyhoops.org/content/images/players/${
+                  `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${
                   this.props.injury.player.nbaID
                   }.png`,
                   require(`../../content/images/positions/${this.props.injury.player.position.toLowerCase()}.png`)

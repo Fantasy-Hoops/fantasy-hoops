@@ -20,7 +20,7 @@ export class NewsFeed extends Component {
     this.setState({
       newsLoader: true
     });
-    fetch(`http://fantasyhoops.org/api/news`)
+    fetch(`${process.env.REACT_APP_SERVER_NAME}/api/news`)
       .then(res => {
         return res.json()
       })
@@ -36,7 +36,7 @@ export class NewsFeed extends Component {
     this.setState({
       newsLoader: true
     });
-    fetch(`http://fantasyhoops.org/api/news?start=${this.state.news.length}`)
+    fetch(`${process.env.REACT_APP_SERVER_NAME}/api/news?start=${this.state.news.length}`)
       .then(res => {
         return res.json()
       })

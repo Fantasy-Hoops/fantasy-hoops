@@ -86,7 +86,7 @@ export class NotificationCard extends Component {
         this.setState({
             isRead: true
         })
-        await fetch('http://fantasyhoops.org/api/notification/read', {
+        await fetch('${process.env.REACT_APP_SERVER_NAME}/api/notification/read', {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'

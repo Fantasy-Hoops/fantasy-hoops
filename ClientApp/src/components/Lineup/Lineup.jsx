@@ -56,7 +56,7 @@ export class Lineup extends Component {
     this.setState({
       playerLoader: true
     });
-    await fetch(`http://fantasyhoops.org/api/lineup/nextGame`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/lineup/nextGame`)
       .then(res => {
         return res.json();
       })
@@ -78,7 +78,7 @@ export class Lineup extends Component {
 
     if (!this.state.isGame) return;
 
-    await fetch(`http://fantasyhoops.org/api/player`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/player`)
       .then(res => {
         return res.json();
       })
@@ -96,7 +96,7 @@ export class Lineup extends Component {
 
     if (!this.state.loadedPlayers && this.state.players) {
       const user = parse();
-      await fetch(`http://fantasyhoops.org/api/lineup/${user.id}`)
+      await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/lineup/${user.id}`)
         .then(res => {
           return res.json();
         })
@@ -322,7 +322,7 @@ export class Lineup extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true });
-    await fetch(`http://fantasyhoops.org/api/stats/${player.id}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${player.id}`)
       .then(res => res.json())
       .then(res => {
         this.setState({

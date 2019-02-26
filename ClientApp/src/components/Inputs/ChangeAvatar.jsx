@@ -62,7 +62,7 @@ export class ChangeAvatar extends Component {
       id: user.id,
       avatar: this.state.preview
     }
-    fetch('http://fantasyhoops.org/api/user/uploadAvatar', {
+    fetch('${process.env.REACT_APP_SERVER_NAME}/api/user/uploadAvatar', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -94,7 +94,7 @@ export class ChangeAvatar extends Component {
     const data = {
       id: user.id
     }
-    fetch('http://fantasyhoops.org/api/user/clearAvatar', {
+    fetch('${process.env.REACT_APP_SERVER_NAME}/api/user/clearAvatar', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
