@@ -81,8 +81,7 @@ export class InjuryCard extends Component {
                 {this.props.injury.status}
               </div>
               <h1 className="title">
-                {this.props.injury.player.firstName[0]}.{" "}
-                {this.props.injury.player.lastName}
+                {this.props.injury.player.abbrName}
               </h1>
               <h2 className="sub_title line-clamp">
                 {this.props.injury.title}

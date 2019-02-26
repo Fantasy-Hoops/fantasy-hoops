@@ -29,7 +29,7 @@ export class Stats extends Component {
           <Img
             className="ml-3 img-modal mb-2"
             style={{ zIndex: '1', paddingTop: '1.2rem' }}
-            alt={`${stats.firstName} ${stats.lastName}`}
+            alt={stats.fullName}
             src={[
               `http://fantasyhoops.org/content/images/players/${stats.nbaID}.png`,
               `http://fantasyhoops.org/content/images/positions/${stats.position.toLowerCase()}.png`
@@ -38,7 +38,7 @@ export class Stats extends Component {
           />
         </div>
         <div className="col">
-          <h1 className="">{stats.firstName} {stats.lastName}</h1>
+          <h1 className="">{stats.fullName}</h1>
           <h5>{stats.position} | {stats.team.city + " " + stats.team.name}</h5>
           <h5>#{stats.number}</h5>
         </div>

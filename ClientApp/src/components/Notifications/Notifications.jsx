@@ -126,7 +126,7 @@ export class Notifications extends Component {
             link={`/profile/${notification.friend.userName}`}
           />
         } else if (notification.player) {
-          const title = `${notification.player.firstName[0]}. ${notification.player.lastName} is ${notification.injuryStatus.toLowerCase()}`;
+          const title = `${notification.player.abbrName} is ${notification.injuryStatus.toLowerCase()}`;
 
           return <NotificationCard
             key={shortid()}

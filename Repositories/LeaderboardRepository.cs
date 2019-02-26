@@ -26,8 +26,10 @@ namespace fantasy_hoops.Repositories
                 {
                     x.PlayerID,
                     x.NbaID,
+                    x.FullName,
                     x.FirstName,
                     x.LastName,
+                    x.AbbrName,
                     x.Position,
                     teamColor = x.Team.Color,
                     FP = x.Stats
