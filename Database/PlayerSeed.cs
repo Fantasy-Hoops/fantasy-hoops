@@ -34,7 +34,7 @@ namespace fantasy_hoops.Database
 
         private static JObject GetPlayer(int id)
         {
-            string url = "http://data.nba.net/v2015/json/mobile_teams/nba/"+ CommonFunctions.GetSeasonYear() + "/players/playercard_" + id + "_02.json";
+            string url = "http://data.nba.net/v2015/json/mobile_teams/nba/" + CommonFunctions.GetSeasonYear() + "/players/playercard_" + id + "_02.json";
             HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
             if (webResponse == null)
                 return null;
@@ -45,35 +45,35 @@ namespace fantasy_hoops.Database
 
         private static void Calculate(GameContext context, bool updatePrice)
         {
-            string date = GetDate();
-            JArray games = CommonFunctions.GetGames(date);
-            foreach (var player in context.Players)
-            {
-                JObject p = GetPlayer(player.NbaID);
-                if (p == null)
-                {
-                    player.Price = PRICE_FLOOR;
-                    continue;
-                }
-                if (p["pl"]["ca"]["sa"] == null)
-                {
-                    continue;
-                }
-                JToken stats = p["pl"]["ca"]["sa"].Last;
-                int gamesPlayed = (int)stats["gp"];
-                player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
-                player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
-                player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
-                player.STL = gamesPlayed <= 0 ? 0 : (double)stats["stl"];
-                player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["blk"];
-                player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["tov"];
-                player.GP = gamesPlayed;
-                player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
-                if (updatePrice)
-                    player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(context, player);
-                player.IsPlaying = IsPlaying(player, games);
-            }
-            context.SaveChanges();
+            //string date = GetDate();
+            //JArray games = CommonFunctions.GetGames(date);
+            //foreach (var player in context.Players)
+            //{
+            //    JObject p = GetPlayer(player.NbaID);
+            //    if (p == null)
+            //    {
+            //        player.Price = PRICE_FLOOR;
+            //        continue;
+            //    }
+            //    if (p["pl"]["ca"]["sa"] == null)
+            //    {
+            //        continue;
+            //    }
+            //    JToken stats = p["pl"]["ca"]["sa"].Last;
+            //    int gamesPlayed = (int)stats["gp"];
+            //    player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
+            //    player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
+            //    player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
+            //    player.STL = gamesPlayed <= 0 ? 0 : (double)stats["stl"];
+            //    player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["blk"];
+            //    player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["tov"];
+            //    player.GP = gamesPlayed;
+            //    player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
+            //    if (updatePrice)
+            //        player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(context, player);
+            //    player.IsPlaying = IsPlaying(player, games);
+            //}
+            //context.SaveChanges();
             NextGame.NEXT_GAME_CLIENT = NextGame.NEXT_GAME;
             PLAYER_POOL_DATE = NextGame.NEXT_GAME;
         }
@@ -84,7 +84,8 @@ namespace fantasy_hoops.Database
             if (player.StatusDate.HasValue
                 && (player.StatusDate.Value.AddDays(5) < NextGame.NEXT_GAME)
                 && (player.Status.ToLower().Contains("out")
-                 || player.Status.ToLower().Contains("injured")))
+                 || player.Status.ToLower().Contains("injured"))
+                && player.IsInGLeague)
                 return false;
 
             foreach (JObject game in games)

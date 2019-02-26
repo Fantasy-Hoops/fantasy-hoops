@@ -99,8 +99,6 @@ namespace fantasy_hoops
         {
             _context = new GameContext();
             _context.Database.Migrate();
-            var task = Seed.InitializeAsync(_context);
-            task.Wait();
             Scheduler.Run(_context);
         }
 

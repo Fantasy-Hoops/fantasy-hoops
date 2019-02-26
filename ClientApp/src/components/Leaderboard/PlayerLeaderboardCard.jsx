@@ -40,7 +40,7 @@ export class PlayerLeaderboardCard extends Component {
                   <div className="card-circle position-absolute" style={{ top: '0.45rem', backgroundColor: `${this.props.player.teamColor}` }}>
                     <Img
                       className="user-card-player"
-                      alt={`${this.props.player.firstName} ${this.props.player.lastName}`}
+                      alt={`${this.props.player.fullName}`}
                       src={[
                         `http://fantasyhoops.org/content/images/players/${this.props.player.nbaID}.png`,
                         this.props.image
@@ -49,7 +49,7 @@ export class PlayerLeaderboardCard extends Component {
                     />
                   </div>
                 </div>
-                <p className="player-name pt-1" style={{ paddingLeft: '5rem' }}>{this.props.player.firstName} {this.props.player.lastName}</p>
+                <p className="player-name pt-1" style={{ paddingLeft: '5rem' }}>{this.props.player.fullName}</p>
               </div>
             </a>
             <div className="mt-0 position-absolute  " style={{ right: '0rem', width: '8rem' }}>

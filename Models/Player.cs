@@ -10,8 +10,10 @@ namespace fantasy_hoops.Models
 
         public int PlayerID { get; set; }
         public int NbaID { get; set; }
+        public String FullName { get; set; }
         public String FirstName { get; set; }
         public String LastName { get; set; }
+        public String AbbrName { get; set; }
         public String Position { get; set; }
         public int Number { get; set; }
         public int GP { get; set; }
@@ -28,6 +30,7 @@ namespace fantasy_hoops.Models
         public DateTime? StatusDate { get; set; }
         [Required, DefaultValue("Active")]
         public string Status { get; set; }
+        public bool IsInGLeague { get; set; }
 
         public virtual Team Team { get; set; }
         public virtual ICollection<Stats> Stats { get; set; }

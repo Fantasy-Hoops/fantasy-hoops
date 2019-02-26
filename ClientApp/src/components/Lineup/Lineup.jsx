@@ -10,7 +10,6 @@ import Countdown from "react-countdown-now";
 import { InfoModal } from "./InfoModal";
 import { Loader } from "../Loader";
 import { EmptyJordan } from "../EmptyJordan";
-import { UTCNow } from "../../utils/UTCNow";
 const $ = window.$;
 const budget = 300; // thousands
 

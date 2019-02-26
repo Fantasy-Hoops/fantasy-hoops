@@ -22,8 +22,10 @@ namespace fantasy_hoops.Repositories
                     Player = new
                     {
                         x.Player.NbaID,
+                        x.Player.FullName,
                         x.Player.FirstName,
                         x.Player.LastName,
+                        x.Player.AbbrName,
                         x.Player.Position,
                         Team = new
                         {

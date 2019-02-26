@@ -31,7 +31,7 @@ export class NewsCard extends Component {
         <span>
           <div className='position-absolute'>
             <Img
-              alt=""
+              alt={this.props.news.hTeam}
               width="50px"
               src={[
                 `http://fantasyhoops.org/content/images/logos/${this.props.news.hTeam}.svg`,
@@ -44,7 +44,7 @@ export class NewsCard extends Component {
         <span style={{ paddingLeft: '5rem' }}>
           <div className='position-absolute' >
             <Img
-              alt=""
+              alt={this.props.news.vTeam}
               width="50px"
               src={[
                 `http://fantasyhoops.org/content/images/logos/${this.props.news.vTeam}.svg`,

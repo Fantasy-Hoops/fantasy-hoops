@@ -1,6 +1,7 @@
 ﻿using fantasy_hoops.Database;
 using FluentScheduler;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace fantasy_hoops
@@ -9,6 +10,9 @@ namespace fantasy_hoops
     {
         public static async void Run(GameContext _context)
         {
+            if (_context.Teams.Count() < 30)
+                await Task.Run(()=> Seed.Initialize(_context));
+
             await Task.Run(() => Seed.UpdateTeamColors(_context));
             var registry = new Registry();
             JobManager.Initialize(registry);

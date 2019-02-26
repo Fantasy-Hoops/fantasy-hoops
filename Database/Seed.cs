@@ -5,94 +5,151 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using fantasy_hoops.Helpers;
+using System.Collections;
+using System.Collections.Generic;
+using FluentScheduler;
 
 namespace fantasy_hoops.Database
 {
     public class Seed
     {
+        private const string API_KEY = "3hjjqjrembg54reu2w2e2577";
 
-        public static async Task InitializeAsync(GameContext context)
+        public static void Initialize(GameContext context)
         {
-            // Checking if the tables are seeded already
-            if (context.Teams.Any())
+            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("seed")))
             {
+                JobManager.AddJob(() => Initialize(context),
+                s => s.WithName("seed")
+                .ToRunOnceIn(30)
+                .Seconds());
                 return;
             }
 
-            string apikey = "3hjjqjrembg54reu2w2e2577";
-
-            HttpWebResponse webResponse = CommonFunctions.GetResponse("http://api.sportradar.us/nba/trial/v4/en/seasons/" + CommonFunctions.GetSeasonYear() + "/REG/rankings.json?api_key=" + apikey);
-            if (webResponse == null)
-                return;
-            string apiResponse = CommonFunctions.ResponseToString(webResponse);
+            var teams = GetTeams();
             System.Threading.Thread.Sleep(1000);
-
-            JObject json = JObject.Parse(apiResponse);
-            JArray teams;
-            for (int i = 0; i < json["conferences"].Count(); i++)
+            var dbPlayers = context.Players;
+            var dbTeams = context.Teams;
+            foreach (var team in teams)
             {
-                for (int j = 0; j < json["conferences"][i]["divisions"].Count(); j++)
+                int teamNbaId = (int)team["reference"];
+
+                if (dbTeams.Any(t => t.NbaID == teamNbaId))
+                    goto Roster;
+
+                var teamObj = new Team
                 {
-                    for (int k = 0; k <= json["conferences"][i]["divisions"][j].Count(); k++)
+                    Name = (string)team["name"],
+                    City = (string)team["market"],
+                    NbaID = teamNbaId,
+                    Color = GetTeamColor(teamNbaId)
+                };
+                dbTeams.Add(teamObj);
+
+            Roster:
+                Team dbTeam = dbTeams.Where(t => t.NbaID == teamNbaId).FirstOrDefault();
+                List<JToken> roster = GetRoster((string)team["id"]);
+                System.Threading.Thread.Sleep(1000);
+                foreach (var player in roster)
+                {
+                    int playerNbaId = (int)player["reference"];
+                    bool gLeagueStatus = player["status"].ToString().Equals("D-LEAGUE") ? true : false;
+                    if (dbPlayers.Any(p => p.NbaID == playerNbaId))
                     {
-                        teams = (JArray)json["conferences"][i]["divisions"][j]["teams"];
-                        var team = new Team
+                        Player dbPlayer = dbPlayers.Where(p => p.NbaID == playerNbaId).FirstOrDefault();
+                        if (dbPlayer.Team == null)
+                            dbPlayer.Team = dbTeam;
+
+                        // UPDATE EXISTING
+                        if (dbPlayer.Team.NbaID == teamNbaId)
                         {
-                            Name = (string)teams[k].SelectToken("name"),
-                            City = (string)teams[k].SelectToken("market"),
-                            NbaID = (int)teams[k].SelectToken("reference"),
-                            Color = "#C4CED4"
-                        };
-
-                        var key = teams[k].SelectToken("id");
-                        string url = @"http://api.sportradar.us/nba/trial/v4/en/teams/" +
-                               key + "/profile.json?api_key="+apikey;
-                        HttpWebResponse webPlayerResponse = CommonFunctions.GetResponse(url);
-                        if (webResponse == null)
-                            return;
-                        string playerResponse = CommonFunctions.ResponseToString(webPlayerResponse);
-
-                        JObject jobject = JObject.Parse(playerResponse);
-                        JArray players = (JArray)jobject["players"];
-                        team.Abbreviation = (String)jobject["alias"];
-                        for (int l = 0; l < players.Count(); l++)
-                        {
-                            try
-                            {
-                                players[l].SelectToken("reference");
-
-                                var player = new Player
-                                {
-                                    FirstName = (String)players[l].SelectToken("first_name"),
-                                    LastName = (String)players[l].SelectToken("last_name"),
-                                    Position = (String)players[l].SelectToken("primary_position"),
-                                    NbaID = (int)players[l].SelectToken("reference"),
-                                    Number = (int)players[l].SelectToken("jersey_number"),
-                                    Price = PlayerSeed.PRICE_FLOOR,
-                                    FPPG = 0.0,
-                                    PTS = 0.0,
-                                    REB = 0.0,
-                                    AST = 0.0,
-                                    STL = 0.0,
-                                    BLK = 0.0,
-                                    TeamID = team.TeamID,
-                                    Team = team,
-                                    Status = "Active"
-                                };
-                                context.Players.Add(player);
-                                team.Players.Add(player);
-                            }
-                            catch (ArgumentNullException)
-                            {
-                                continue;
-                            }
+                            dbPlayer.IsInGLeague = gLeagueStatus;
+                            continue;
                         }
-                        context.Teams.Add(team);
-                        await context.SaveChangesAsync();
-                        System.Threading.Thread.Sleep(1000);
+                        else
+                        {
+                            var newTeam = dbTeams.Where(t => t.NbaID == teamNbaId).FirstOrDefault();
+                            dbPlayer.TeamID = newTeam.TeamID;
+                            dbPlayer.Team = newTeam;
+                            dbPlayer.Number = (int)player["jersey_number"];
+                            dbPlayer.IsInGLeague = gLeagueStatus;
+                        }
+                    }
+                    else
+                    {
+                        // ADD NEW
+                        try
+                        {
+                            string abbrName = "";
+                            if (player["first_name"] != null
+                                && player["first_name"].ToString().Length > 1)
+                                abbrName = string.Format("{0}. {1}", player["first_name"].ToString()[0], player["last_name"].ToString());
+                            else
+                                abbrName = player["last_name"].ToString();
+                            var playerObj = new Player
+                            {
+                                FullName = (string)player["full_name"],
+                                FirstName = (string)player["first_name"],
+                                LastName = (string)player["last_name"],
+                                AbbrName = abbrName,
+                                Position = (string)player["primary_position"],
+                                NbaID = (int)player["reference"],
+                                Number = (int)player["jersey_number"],
+                                Price = PlayerSeed.PRICE_FLOOR,
+                                FPPG = 0.0,
+                                PTS = 0.0,
+                                REB = 0.0,
+                                AST = 0.0,
+                                STL = 0.0,
+                                BLK = 0.0,
+                                TeamID = dbTeam.TeamID,
+                                Team = dbTeam,
+                                IsPlaying = false,
+                                Status = "Active",
+                                IsInGLeague = gLeagueStatus
+                            };
+                            dbPlayers.Add(playerObj);
+                        }
+                        catch (ArgumentNullException)
+                        {
+                            continue;
+                        }
                     }
                 }
             }
+            context.SaveChanges();
+        }
+
+        private static List<JToken> GetTeams(string apikey = API_KEY)
+        {
+            string teamsURL = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + CommonFunctions.GetSeasonYear() + "/REG/rankings.json?api_key=" + apikey;
+            HttpWebResponse webResponse =
+                CommonFunctions.GetResponse(teamsURL);
+            if (webResponse == null)
+                return new List<JToken>();
+            string responseString = CommonFunctions.ResponseToString(webResponse);
+            List<JToken> teams = new List<JToken>();
+            JObject json = JObject.Parse(responseString);
+            json["conferences"].ToList().ForEach(conf =>
+            {
+                conf["divisions"].ToList().ForEach(div =>
+                {
+                    div["teams"].ToList().ForEach(team => teams.Add(team));
+                });
+            });
+            return teams;
+        }
+
+        private static List<JToken> GetRoster(string teamId, string apikey = API_KEY)
+        {
+            string rosterURL = "http://api.sportradar.us/nba/trial/v4/en/teams/" + teamId + "/profile.json?api_key=" + apikey;
+            HttpWebResponse webResponse = CommonFunctions.GetResponse(rosterURL);
+            if (webResponse == null)
+                return new List<JToken>();
+            string responseString = CommonFunctions.ResponseToString(webResponse);
+
+            JObject json = JObject.Parse(responseString);
+            return json["players"].ToList();
         }
 
         public static void UpdateTeamColors(GameContext context)
@@ -202,6 +259,5 @@ namespace fantasy_hoops.Database
                     return "#C4CED4";
             }
         }
-
     }
 }

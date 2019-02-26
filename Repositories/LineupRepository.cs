@@ -24,8 +24,10 @@ namespace fantasy_hoops.Repositories
                 .Select(x => new
                 {
                     id = x.Player.NbaID,
+                    fullName = x.Player.FullName,
                     firstName = x.Player.FirstName,
                     lastName = x.Player.LastName,
+                    abbrName = x.Player.AbbrName,
                     position = x.Player.Position,
                     price = x.Player.Price,
                     fppg = x.Player.FPPG,

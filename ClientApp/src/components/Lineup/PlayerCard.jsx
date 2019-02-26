@@ -59,7 +59,7 @@ export class PlayerCard extends Component {
       const image = <Img
         onClick={this.props.status === 2 ? this.filter : undefined}
         className="card__player-img card-img-top"
-        alt={this.getDisplayName(this.props.player)}
+        alt={this.props.player.abbrName}
         src={[`http://fantasyhoops.org/content/images/players/${this.props.player.id}.png`,
         require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)]}
         loader={<img height='151px' width='206px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
@@ -102,7 +102,7 @@ export class PlayerCard extends Component {
                   onClick={this.showModal}
                   style={{ cursor: 'pointer' }}
                 >
-                  {this.getDisplayName(this.props.player)}
+                  {this.props.player.abbrName}
                 </h2>
               </a>
               {buttonState}
@@ -127,15 +127,6 @@ export class PlayerCard extends Component {
         </div>
       );
     }
-  }
-
-  getDisplayName(player) {
-    if (!player)
-      return;
-    if (player.firstName && player.firstName.length > 1)
-      return `${player.firstName[0]}. ${player.lastName}`;
-    else
-      return player.lastName;
   }
 
   select() {

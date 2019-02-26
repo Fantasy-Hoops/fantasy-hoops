@@ -22,8 +22,10 @@ namespace fantasy_hoops.Repositories
                 {
                     x.PlayerID,
                     x.NbaID,
+                    x.FullName,
                     x.FirstName,
                     x.LastName,
+                    x.AbbrName,
                     x.Number,
                     x.Position,
                     x.PTS,
@@ -103,8 +105,10 @@ namespace fantasy_hoops.Repositories
                 {
                     x.PlayerID,
                     x.NbaID,
+                    x.FullName,
                     x.FirstName,
                     x.LastName,
+                    x.AbbrName,
                     x.Number,
                     x.Position,
                     x.PTS,
