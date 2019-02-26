@@ -37,7 +37,7 @@ export class UserScoreCard extends Component {
               className="user-card-player"
               alt={this.props.player.lastName}
               src={[
-                `http://fantasyhoops.org/content/images/players/${this.props.player.nbaID}.png`,
+                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.nbaID}.png`,
                 require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
               ]}
               loader={<img className='position-static' style={{ marginLeft: '-46px', marginTop: '-25px' }} width='150px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}

@@ -25,7 +25,7 @@ export class Gamelog extends Component {
       loader: true,
       loadCounter: this.state.loadCounter + 1
     });
-    await fetch(`http://fantasyhoops.org/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
@@ -113,7 +113,7 @@ export class Gamelog extends Component {
             style={{ right: '0' }}
             alt={abbreviation}
             src={[
-              `http://fantasyhoops.org/content/images/logos/${abbreviation}.svg`,
+              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${abbreviation}.svg`,
               defaultLogo
             ]}
             loader={<img height='40px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}

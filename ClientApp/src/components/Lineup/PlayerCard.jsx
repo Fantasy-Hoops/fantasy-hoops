@@ -60,7 +60,7 @@ export class PlayerCard extends Component {
         onClick={this.props.status === 2 ? this.filter : undefined}
         className="card__player-img card-img-top"
         alt={this.props.player.abbrName}
-        src={[`http://fantasyhoops.org/content/images/players/${this.props.player.id}.png`,
+        src={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.id}.png`,
         require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)]}
         loader={<img height='151px' width='206px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
         decode={false}
@@ -68,7 +68,7 @@ export class PlayerCard extends Component {
       const teamLogo = <Img
         className="card__team-logo--behind"
         alt={this.props.player.team.abbreviation}
-        src={[`http://fantasyhoops.org/content/images/logos/${this.props.player.team.abbreviation}.svg`,
+        src={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.player.team.abbreviation}.svg`,
           defaultLogo]}
         decode={false}
       />

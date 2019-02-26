@@ -34,7 +34,7 @@ export class NewsCard extends Component {
               alt={this.props.news.hTeam}
               width="50px"
               src={[
-                `http://fantasyhoops.org/content/images/logos/${this.props.news.hTeam}.svg`,
+                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.news.hTeam}.svg`,
                 defaultLogo
               ]}
               loader={<img height='50px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
@@ -47,7 +47,7 @@ export class NewsCard extends Component {
               alt={this.props.news.vTeam}
               width="50px"
               src={[
-                `http://fantasyhoops.org/content/images/logos/${this.props.news.vTeam}.svg`,
+                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.news.vTeam}.svg`,
                 defaultLogo
               ]}
               loader={<img height='50px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}

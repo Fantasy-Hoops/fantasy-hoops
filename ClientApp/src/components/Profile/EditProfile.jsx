@@ -28,7 +28,7 @@ export class EditProfile extends Component {
   }
 
   async componentWillMount() {
-    await fetch(`http://fantasyhoops.org/api/team`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/team`)
       .then(res => {
         return res.json()
       })

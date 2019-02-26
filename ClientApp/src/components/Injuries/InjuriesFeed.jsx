@@ -31,7 +31,7 @@ export class InjuriesFeed extends Component {
   }
 
   async componentWillMount() {
-    await fetch(`http://fantasyhoops.org/api/injuries`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/injuries`)
       .then(res => {
         return res.json();
       })
@@ -56,7 +56,7 @@ export class InjuriesFeed extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true });
-    await fetch(`http://fantasyhoops.org/api/stats/${player.nbaID}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${player.nbaID}`)
       .then(res => res.json())
       .then(res => {
         this.setState({

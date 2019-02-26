@@ -38,7 +38,7 @@ export class LineupHistory extends Component {
   async showModal(player) {
     $('[data-toggle="tooltip"]').tooltip("hide");
     this.setState({ modalLoader: true })
-    await fetch(`http://fantasyhoops.org/api/stats/${player.nbaID}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}}/api/stats/${player.nbaID}`)
       .then(res => res.json())
       .then(res => {
         this.setState({
@@ -50,7 +50,7 @@ export class LineupHistory extends Component {
   }
 
   async componentWillMount() {
-    await fetch(`http://fantasyhoops.org/api/user/${user.id}?count=10`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/${user.id}?count=10`)
       .then(res => res.json())
       .then(res => {
         this.setState({
@@ -66,7 +66,7 @@ export class LineupHistory extends Component {
       loadCounter: this.state.loadCounter + 1,
       loader: true
     });
-    await fetch(`http://fantasyhoops.org/api/user/${user.id}?start=${this.state.history.length}&count=${LOAD_COUNT}`)
+    await fetch(`http://${process.env.REACT_APP_IMAGES_SERVER_NAME}/api/user/${user.id}?start=${this.state.history.length}&count=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })

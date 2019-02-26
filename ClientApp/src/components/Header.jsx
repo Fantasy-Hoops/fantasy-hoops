@@ -19,7 +19,7 @@ export class Header extends Component {
   async componentWillMount() {
     if (isAuth())
       this.setState({
-        avatar: await loadImage(`http://fantasyhoops.org/content/images/avatars/${parse().id}.png`, defaultPhoto)
+        avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${parse().id}.png`, defaultPhoto)
       });
   }
 
@@ -104,7 +104,7 @@ export class Header extends Component {
         <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
           <a className="navbar-brand btn-no-outline Header__Logo" href="/">
             <img src={require('../../src/content/favicon.ico')} width="40" height="40" alt="Fantasy Hoops" />
-            <span class="Header__Title">Fantasy Hoops</span>
+            <span className="Header__Title">Fantasy Hoops</span>
         </a>
           <button className="navbar-toggler Header__Burger"
             type="button" data-toggle="collapse"

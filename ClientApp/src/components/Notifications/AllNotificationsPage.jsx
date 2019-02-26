@@ -25,7 +25,7 @@ export class AllNotificationsPage extends Component {
   }
 
   async componentWillMount() {
-    await fetch(`http://fantasyhoops.org/api/notification/${user.id}?count=10`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}?count=10`)
       .then(res => {
         return res.json()
       })
@@ -42,7 +42,7 @@ export class AllNotificationsPage extends Component {
       loader: true,
       loadCounter: this.state.loadCounter + 1
     });
-    await fetch(`http://fantasyhoops.org/api/notification/${user.id}?start=${this.state.userNotifications.length}&count=${LOAD_COUNT}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}?start=${this.state.userNotifications.length}&count=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
@@ -94,7 +94,7 @@ export class AllNotificationsPage extends Component {
             key={shortid()}
             notification={notification}
             title={notification.friend.userName}
-            imageSrc={[`http://fantasyhoops.org/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
+            imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
             text={text}
             link={`/profile/${notification.friend.userName}`}
           />
@@ -106,8 +106,8 @@ export class AllNotificationsPage extends Component {
             notification={notification}
             title={title}
             circleImage={true}
-            imageSrc={[	`http://fantasyhoops.org/content/images/players/${notification.player.nbaID}.png`,	
-              require(`../../content/images/positions/${notification.player.position.toLowerCase()}.png`)	
+            imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${notification.player.nbaID}.png`,
+            require(`../../content/images/positions/${notification.player.position.toLowerCase()}.png`)
             ]}
             imageClass="InjuryCard__Image"
             text={notification.injuryDescription}

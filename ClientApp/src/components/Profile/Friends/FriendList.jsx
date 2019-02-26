@@ -12,7 +12,7 @@ export class FriendList extends Component {
   }
 
   async componentWillMount(prevProps) {
-    await fetch(`http://fantasyhoops.org/api/user/friends/${this.props.user.id}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/friends/${this.props.user.id}`)
       .then(res => {
         return res.json()
       })
