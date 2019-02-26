@@ -12,7 +12,7 @@ import { UserLeaderboard } from './components/Leaderboard/UserLeaderboard';
 import { PlayerLeaderboard } from './components/Leaderboard/PlayerLeaderboard';
 import { UserPool } from './components/UserPool';
 import { Main } from './components/Main';
-import { AllNotifications } from './components/Notifications/AllNotifications';
+import { AllNotificationsPage } from './components/Notifications/AllNotificationsPage';
 import { LineupHistory } from './components/Profile/LineupHistoryPage';
 
 export default class App extends Component {
@@ -32,7 +32,7 @@ export default class App extends Component {
         <PrivateRoute exact path='/leaderboard/users' component={UserLeaderboard} />
         <PrivateRoute exact path='/leaderboard/players' component={PlayerLeaderboard} />
         <PrivateRoute path='/users' component={UserPool} />
-        <PrivateRoute path='/notifications' component={AllNotifications} />
+        <PrivateRoute path='/notifications' component={AllNotificationsPage} />
         <PrivateRoute path='/history' component={LineupHistory} />
       </div>
     );

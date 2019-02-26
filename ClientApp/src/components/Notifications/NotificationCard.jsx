@@ -35,13 +35,20 @@ export class NotificationCard extends Component {
             this.props.notification.dateCreated
         ).getTime();
 
+        let bgStyle;
+        if (this.props.circleImage) {
+            bgStyle = {
+                backgroundColor: this.props.notification.player.team.color
+            };
+        }
+
         return (
             <div onClick={this.readNotification.bind(this)} className={"card cursor-pointer link mx-auto NotificationCard" + (!this.state.isRead ? "--unread" : "")}>
                 <div className="card-body NotificationCard__Body">
-                    <div className="NotificationCard__Image ml-1 mr-1">
+                    <div className={"NotificationCard__Image ml-1 mr-1" + (this.props.circleImage ? " notification-circle" : "")} style={bgStyle}>
                         <Img
-                            width="40rem"
-                            height="40rem"
+                            className={this.props.imageClass}
+                            width={this.props.circleImage ? "50px" : "40px"}
                             alt={this.props.imageAlt}
                             src={this.state.image}
                             loader={

@@ -12,7 +12,7 @@ import _ from 'lodash';
 const LOAD_COUNT = 5;
 const user = parse();
 
-export class AllNotifications extends Component {
+export class AllNotificationsPage extends Component {
   constructor(props) {
     super(props);
     this.loadMore = this.loadMore.bind(this);
@@ -105,7 +105,11 @@ export class AllNotifications extends Component {
             key={shortid()}
             notification={notification}
             title={title}
-            imageSrc={[`http://fantasyhoops.org/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
+            circleImage={true}
+            imageSrc={[	`http://fantasyhoops.org/content/images/players/${notification.player.nbaID}.png`,	
+              require(`../../content/images/positions/${notification.player.position.toLowerCase()}.png`)	
+            ]}
+            imageClass="InjuryCard__Image"
             text={notification.injuryDescription}
             link="/lineup"
           />

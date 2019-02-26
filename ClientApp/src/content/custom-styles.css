@@ -608,14 +608,24 @@ margin-bottom: 1.5rem;
   box-sizing: content-box;
   margin: 0 auto;
   border: none;
-  font: normal 82px/normal "Anton", Helvetica, sans-serif;
+  font: normal "Anton", Helvetica, sans-serif;
+  font-size: 48px;
+  line-height: normal;
   color: var(--primary-color);
   text-align: center;
   text-transform: uppercase;
   -o-text-overflow: clip;
   text-overflow: clip;
   letter-spacing: 10px;
-  text-shadow: 4px 4px 0 var(--secondary-color) , 6px 6px 0 var(--primary-color) ;
+  text-shadow: 4px 4px 0 var(--secondary-color) , 6px 6px 0 var(--primary-color);
+  margin-top: 40%;
+}
+
+@media screen and (min-width: 568px) {
+  #main-text {
+    font-size: 82px;
+    margin-top: 15%;
+  }
 }
 
 input[type=search] {
@@ -747,6 +757,7 @@ thead {
   margin: -0.8rem;
   color: var(--primary-color);
   display: flex;
+  align-items: center;
 }
 
 .NotificationCard__Image {
@@ -765,4 +776,46 @@ thead {
 
 .NotificationCard__Date {
   margin: 0;
+}
+
+.InjuryCard__Image {
+  margin-bottom: -5px;
+  margin-left: -5px;
+}
+
+.Header__Title {
+  display: none;
+}
+
+@media only screen and (min-width: 380px) {
+  .Header__Title {
+    display: inline-block;
+    margin-left: 0.5rem;
+  }
+}
+
+@media only screen and (max-width: 992px) {
+  .navbar-nav .dropdown-menu {
+    position: absolute;
+  }
+
+  .Header__Logo {
+    order: -2;
+  }
+  
+  .Header__Login {
+    order: -1;
+    margin-right: 1em;
+  }
+
+  .Header__LoggedIn {
+    display: flex;
+    flex-direction: row;
+    order: -1;
+  }
+  
+  .Header__Burger {
+    margin-left: 0.2rem;
+    order: 0;
+  }
 }

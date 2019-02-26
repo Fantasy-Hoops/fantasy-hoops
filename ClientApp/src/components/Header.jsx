@@ -26,7 +26,7 @@ export class Header extends Component {
   render() {
     // Login button in case user is not signed in
     const login = (
-      <ul className="nav navbar-nav ml-auto">
+      <ul className="nav navbar-nav ml-auto Header__Login">
         <li className="nav-item">
           <a className="nav-link btn-no-outline" href="/login">Login</a>
         </li>
@@ -38,11 +38,11 @@ export class Header extends Component {
     if (isAuth()) {
       const user = parse();
       profile = (
-        <ul className="nav navbar-nav ml-auto">
+        <ul className="nav navbar-nav ml-auto Header__LoggedIn">
           <Notifications />
           <li className="dropdown">
             <a
-              className="text-light ml-2 mr-3 nav-link dropdown-toggle no-arrow btn-no-outline"
+              className="text-light ml-2 mr-2 nav-link dropdown-toggle no-arrow btn-no-outline"
               id="navbarDropdownMenuLink"
               data-toggle="dropdown"
               aria-haspopup="true"
@@ -102,11 +102,11 @@ export class Header extends Component {
     return (
       <div style={{ paddingTop: this.state.navHeight }}>
         <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
-          <a className="navbar-brand btn-no-outline" href="/">
+          <a className="navbar-brand btn-no-outline Header__Logo" href="/">
             <img src={require('../../src/content/favicon.ico')} width="40" height="40" alt="Fantasy Hoops" />
-            Fantasy Hoops
+            <span class="Header__Title">Fantasy Hoops</span>
         </a>
-          <button className="navbar-toggler"
+          <button className="navbar-toggler Header__Burger"
             type="button" data-toggle="collapse"
             data-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown"
@@ -148,8 +148,8 @@ export class Header extends Component {
                 </li>
               }
             </ul>
-            {isAuth() ? profile : login}
           </div>
+          {isAuth() ? profile : login}          
         </nav>
       </div>
     );
