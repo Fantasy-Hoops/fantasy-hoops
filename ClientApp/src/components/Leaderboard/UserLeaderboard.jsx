@@ -233,7 +233,7 @@ export class UserLeaderboard extends Component {
     }
 
     return (
-      <div className="container bg-light pb-3">
+      <div className="container bg-light pt-3 p-0">
         <div className="text-center pb-1">
           <img src={leaderboardLogo}
             alt="Leaderboard Logo"
