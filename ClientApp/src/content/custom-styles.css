@@ -941,7 +941,7 @@ thead {
   margin: 0 auto;
   margin-bottom: 0.2rem;
   width: 30%;
-  min-width: 18.5rem;
+  min-width: 19rem;
   height: 3.5rem;
 }
 
@@ -949,7 +949,7 @@ thead {
   height: 100%;
   padding: 0;
   display: grid;
-  grid-template-columns: 15% 15% 50% 20%;
+  grid-template-columns: 18% 15% 43% 24%;
   grid-template-rows: 100%;
 }
 
@@ -959,51 +959,59 @@ thead {
 }
 
 .PlayerLeaderboardCard__player-ranking {
-  text-align: right;
+  text-align: left;
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--primary-color);
+  padding-left: 0.7rem;
 }
 
 .PlayerLeaderboardCard__player-photo--background {
   margin: 0 auto;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.3rem;
+  height: 2.3rem;
   overflow: hidden;
   border-radius: 50%;
 }
 
 .PlayerLeaderboardCard__player-photo--image {
-  width: 3.5rem;
+  width: 3.3rem;
   overflow: hidden;
   margin-left: -0.5rem;
   margin-bottom: -1.2rem;
 }
 
-.PlayerLeaderboardCard__player-name--full {
+.PlayerLeaderboardCard__player-name--abbr {
   text-align: left;
   font-size: 1rem;
-  font-weight: 600;
-  color: var(--grey-text);
+  color: var(--primary-color);
+  font-weight: 400;
+  white-space: nowrap;
+  text-decoration: none !important;
 }
 
 .PlayerLeaderboardCard__FP {
+  height: 100%;
   margin: 0;
+  padding-top: 18%;
+  border-left: 0.01rem solid #acacac;
+  background-color: #F5F5F5;
   text-align: center;
   align-self: center;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .UserScoreCard {
-  width: 55%;
-  min-width: 19.5rem;
+  width: 60%;
+  min-width: 19.8rem;
+  height: 5.5rem;
 }
 
 .UserScoreCard__body {
-  padding: 0.5rem;
+  padding: 0;
   display: grid;
-  grid-template-columns: 15% 15% 15% 15% 15% 25%;
+  grid-template-columns: 16% 16% 16% 16% 16% 20%;
   grid-template-rows: 100%;
   justify-items: center;
 }
@@ -1027,6 +1035,7 @@ thead {
   overflow: hidden;
   border-radius: 50%;
   margin: 0 auto;
+  margin-top: .4rem;
 }
 
 .UserScoreCard__player-photo--image {
@@ -1037,34 +1046,38 @@ thead {
 
 .UserScoreCard__player-lastname {
   font-size: 0.7rem;
-  font-weight: 500;
+  font-weight: 700;
+  width: 2.8rem;
   color: var(--primary-color);
-  margin: 0;
+  margin: 0.1rem 0 0 0;
   white-space: nowrap;
   width: 100%;
 }
 
 .UserScoreCard__player-FP {
-  font-size: 0.8rem;
-  font-weight: 1000;
+  font-size: 0.7rem;
+  font-weight: 400;
   color: var(--primary-color);
   margin: 0;
+}
+
+.UserScoreCard__result {
+  width: 100%;
+  height: 100%;
+  border-left: 0.01rem solid #acacac;
+  background-color: #F5F5F5;
 }
 
 .UserScoreCard__FP {
-  align-self: center;
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.UserScoreCard__PTS {
-  font-size: 1rem;
+  margin-top: 25%;
+  text-align: center;
+  font-size: 1.1rem;
   font-weight: 700;
-  color: var(--primary-color);
-  margin: 0;
 }
 
 .UserScoreCard__date {
   margin: 0;
+  text-align: center;
+  font-size: .8rem;
+  font-weight: 400;
 }

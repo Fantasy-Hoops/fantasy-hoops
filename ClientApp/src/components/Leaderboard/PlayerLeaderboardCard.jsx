@@ -49,11 +49,11 @@ export class PlayerLeaderboardCard extends Component {
                 />
               </div>
             </div>
-            <div className="PlayerLeaderboardCard__body-item PlayerLeaderboardCard__player-name--full">
-              {this.props.player.fullName}
+            <div className="PlayerLeaderboardCard__body-item PlayerLeaderboardCard__player-name--abbr">
+              {this.props.player.abbrName}
             </div>
             <div className="PlayerLeaderboardCard__body-item PlayerLeaderboardCard__FP">
-              {`${this.props.player.fp.toFixed(1)} FP`}
+              {`${this.props.player.fp.toFixed(1)} `}<span style={{ fontSize: '0.7rem', fontWeight: 400 }}>FP</span>
             </div>
           </div>
         </a>
