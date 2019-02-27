@@ -57,7 +57,7 @@ export class InfoPanel extends Component {
               />
             )
           });
-        return <div>{recentActivity}</div>
+        return recentActivity;
       }
       return (
         <div className="p-5">

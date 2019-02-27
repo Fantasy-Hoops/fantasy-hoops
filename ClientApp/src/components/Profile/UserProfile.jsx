@@ -87,11 +87,11 @@ export class UserProfile extends Component {
 
     return (
       <div className="container bg-light pt-1">
-        <div className="row p-4">
-          <div className="col-lg-4 order-lg-1">
+        <div className="row">
+          <div className="col-lg-4 order-lg-1 p-0 pt-3">
             {this.state.user ? <Avatar user={this.state.user} readOnly={this.state.readOnly} /> : ''}
           </div>
-          <div className="col-lg-8 order-lg-2 mt-5">
+          <div className="col-lg-8 order-lg-2 mt-5 p-2">
             <ul className="nav nav-pills">
               <li className="nav-item">
                 <a href="" data-target="#profile" data-toggle="tab" id="navLinkProfile" className="nav-link active tab-no-outline">Profile</a>

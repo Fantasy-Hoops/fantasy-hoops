@@ -47,7 +47,6 @@ namespace fantasy_hoops.Repositories
                 x.Description,
                 x.FavoriteTeamId,
                 date = NextGame.NEXT_GAME,
-
                 Team = new
                 {
                     Name = team.City + " " + team.Name,
@@ -170,6 +169,8 @@ namespace fantasy_hoops.Repositories
                 .Select(x => new
                 {
                     x.Date,
+                    longDate = x.Date.ToString("yyyy-MM-dd"),
+                    shortDate = x.Date.ToString("MMM. dd"),
                     Score = Math.Round(_context.Lineups.Where(y => y.Date.Equals(x.Date) && y.UserID.Equals(x.UserID)).Select(y => y.FP).Sum(), 1),
                     players = players.Where(y => y.Date.Equals(x.Date)).OrderBy(p => Array.IndexOf(PlayersOrder, p.Position)).ToList()
                 })
