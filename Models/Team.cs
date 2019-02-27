@@ -12,7 +12,9 @@ namespace fantasy_hoops.Models
         public String City { get; set; }
         public String Abbreviation { get; set; }
         public String Color { get; set; }
+        public int? NextOpponentID { get; set; }
 
+        public virtual Team NextOpponent { get; set; }
         public virtual ICollection<Player> Players { get; set; }
         public virtual ICollection<User> Users { get; set; }
     }

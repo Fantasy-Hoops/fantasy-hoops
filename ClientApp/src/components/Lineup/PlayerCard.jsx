@@ -76,7 +76,8 @@ export class PlayerCard extends Component {
         <div>
           <div className="player-card card">
             <div className="card__player-attributes">
-              {this.props.status === 1 ? <div className="card__player-position">{this.props.player.position}</div> : ''}
+              {this.props.status === 1 ? <div className="PlayerCard__opponent-badge">vs. {this.props.player.team.opp.abbreviation}</div> : ''}
+              {this.props.status === 2 ? <div className="card__player-position">{this.props.player.position}</div> : ''}
               {this.props.status === 1 ? <div className="ppg">{this.props.player.fppg.toFixed(1)}</div> : ''}
               {this.props.status === 1 ? <div className="ppg ppg-label">FPPG</div> : ''}
               <div className="card__player-price--badge badge badge-dark">

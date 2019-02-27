@@ -16,11 +16,11 @@ namespace fantasy_hoops.Helpers
         {
             DateTime timeUTC = time;
             TimeZoneInfo eastern = null;
-            #if DEBUG
-                eastern = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
-            #else
+#if DEBUG
+            eastern = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+#else
                 eastern = TimeZoneInfo.FindSystemTimeZoneById("EST");
-            #endif
+#endif
             return TimeZoneInfo.ConvertTimeFromUtc(timeUTC, eastern);
         }
         public static HttpWebResponse GetResponse(string url)
@@ -60,6 +60,17 @@ namespace fantasy_hoops.Helpers
             string apiResponse = ResponseToString(webResponse);
             JObject json = JObject.Parse(apiResponse);
             return (JArray)json["games"];
+        }
+
+        public static int GetNextGame(int playerId)
+        {
+            string url = "http://data.nba.net/v2015/json/mobile_teams/nba/" + GetSeasonYear() + "/players/playercard_" + playerId + "_02.json";
+            HttpWebResponse webResponse = GetResponse(url);
+            if (webResponse == null)
+                return -1;
+            string apiResponse = ResponseToString(webResponse);
+            JObject json = JObject.Parse(apiResponse);
+            return (int)json["pl"]["ng"]["otid"];
         }
 
         public static int DaysInMonth()
