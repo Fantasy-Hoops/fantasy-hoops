@@ -198,7 +198,7 @@ export class UserLeaderboard extends Component {
     let weeklyUsers = [];
     let monthlyUsers = [];
     if (this.state.friendsOnly) {
-      dailyUsers = this.createUsers(this.state.friendsDailyUsers)
+      dailyUsers = this.createUsers(this.state.friendsDailyUsers, true)
       weeklyUsers = this.createUsers(this.state.friendsWeeklyUsers)
       monthlyUsers = this.createUsers(this.state.friendsMonthlyUsers)
 
@@ -215,7 +215,7 @@ export class UserLeaderboard extends Component {
         : <button className="btn btn-primary mt-2" onClick={this.loadMonthly}>See more</button>;
     }
     else {
-      dailyUsers = this.createUsers(this.state.dailyUsers)
+      dailyUsers = this.createUsers(this.state.dailyUsers, true)
       weeklyUsers = this.createUsers(this.state.weeklyUsers)
       monthlyUsers = this.createUsers(this.state.monthlyUsers)
 
@@ -233,7 +233,7 @@ export class UserLeaderboard extends Component {
     }
 
     return (
-      <div className="container bg-light pb-3">
+      <div className="container bg-light pt-3 p-0">
         <div className="text-center pb-1">
           <img src={leaderboardLogo}
             alt="Leaderboard Logo"
@@ -304,16 +304,15 @@ export class UserLeaderboard extends Component {
     );
   }
 
-  createUsers(users) {
+  createUsers(users, isDaily) {
     return _.map(
       users,
       (user, index) => {
         return <Card
+          isDaily={isDaily}
           index={index}
           key={shortid()}
-          userName={user.userName}
-          fp={user.score}
-          userid={user.id}
+          user={user}
         />
       }
     );
