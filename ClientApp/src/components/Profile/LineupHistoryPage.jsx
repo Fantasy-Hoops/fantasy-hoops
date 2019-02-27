@@ -38,7 +38,7 @@ export class LineupHistory extends Component {
   async showModal(player) {
     $('[data-toggle="tooltip"]').tooltip("hide");
     this.setState({ modalLoader: true })
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}}/api/stats/${player.nbaID}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${player.nbaID}`)
       .then(res => res.json())
       .then(res => {
         this.setState({
@@ -66,7 +66,7 @@ export class LineupHistory extends Component {
       loadCounter: this.state.loadCounter + 1,
       loader: true
     });
-    await fetch(`http://${process.env.REACT_APP_IMAGES_SERVER_NAME}/api/user/${user.id}?start=${this.state.history.length}&count=${LOAD_COUNT}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/${user.id}?start=${this.state.history.length}&count=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
@@ -88,6 +88,7 @@ export class LineupHistory extends Component {
             activity={activity}
             showModal={this.showModal}
             center='0 auto'
+            width='40%'
           />
         )
       });
@@ -97,7 +98,7 @@ export class LineupHistory extends Component {
       : <button className="btn btn-primary m-3" onClick={this.loadMore}>See more</button>;
 
     return (
-      <div className="container bg-light p-5">
+      <div className="container p-0 pt-5">
         <h3 className="text-center pb-3"><span><img src={icon} width="65rem" alt="Basketball Player Scoring" /></span> Your lineup history</h3>
         {history}
         <Loader show={this.state.loader} />
