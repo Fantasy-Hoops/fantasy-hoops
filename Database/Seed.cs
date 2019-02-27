@@ -52,6 +52,8 @@ namespace fantasy_hoops.Database
                 System.Threading.Thread.Sleep(1000);
                 foreach (var player in roster)
                 {
+                    if (player["reference"] == null)
+                        continue;
                     int playerNbaId = (int)player["reference"];
                     bool gLeagueStatus = player["status"].ToString().Equals("D-LEAGUE") ? true : false;
                     if (dbPlayers.Any(p => p.NbaID == playerNbaId))
@@ -69,7 +71,6 @@ namespace fantasy_hoops.Database
                         else
                         {
                             var newTeam = dbTeams.Where(t => t.NbaID == teamNbaId).FirstOrDefault();
-                            dbPlayer.TeamID = newTeam.TeamID;
                             dbPlayer.Team = newTeam;
                             dbPlayer.Number = (int)player["jersey_number"];
                             dbPlayer.IsInGLeague = gLeagueStatus;

@@ -144,8 +144,8 @@ export class UserLeaderboardCard extends Component {
             </div>
 
             <a href={`/profile/${this.props.user.userName}`} className="UserLeaderboardCard__body-item UserLeaderboardCard__username">{this.props.user.userName}</a>
-            <div className="UserLeaderboardCard__body-item UserLeaderboardCard__FP">
-              {this.props.user.score.toFixed(1)} FP
+            <div className="UserLeaderboardCard__body-item UserLeaderboardCard__FP UserLeaderboardCard__FP--grey">
+              {`${this.props.user.score.toFixed(1)} `}<span style={{ fontSize: '0.7rem', fontWeight: 400 }}>FP</span>
             </div>
           </div>
         </div>
