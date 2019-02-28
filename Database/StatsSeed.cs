@@ -29,9 +29,7 @@ namespace fantasy_hoops.Database
             }
 
             _scoreService = new ScoreService();
-            // Gets each day's stats the number of days before today
-            int daysFromToday = 5;
-            Calculate(context, daysFromToday);
+            Calculate(context);
 
             JobManager.AddJob(() => UserScoreSeed.Initialize(context),
                 s => s.WithName("userScore")
@@ -46,48 +44,53 @@ namespace fantasy_hoops.Database
             return json;
         }
 
-        private static void Calculate(GameContext context, int days)
+        private static void Calculate(GameContext context)
         {
-            while (days > 0)
-            {
-                string gameDate = NextGame.NEXT_GAME.AddDays(-days).ToString("yyyyMMdd");
-                JArray games = CommonFunctions.GetGames(gameDate);
+            string gameDate = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
+            JArray games = CommonFunctions.GetGames(gameDate);
 
-                foreach (JObject game in games)
-                {
-                    string bsUrl = "http://data.nba.net/10s/prod/v1/" + gameDate + "/" + game["gameId"] + "_boxscore.json";
-                    JObject boxscore = GetBoxscore(bsUrl);
-                    if (boxscore["stats"] == null)
-                        continue;
-                    int hTeam = (int)boxscore["basicGameData"]["hTeam"]["teamId"];
-                    int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
-                    var stats = boxscore["stats"]["activePlayers"];
-                    DateTime date = CommonFunctions.UTCToEastern(DateTime.Parse((string)boxscore["basicGameData"]["startTimeUTC"]));
-                    JArray players = (JArray)stats;
-                    foreach (var player in players)
-                    {
-                        int oppId;
-                        string score = "";
-                        if (!context.Players.Any(x => x.NbaID.Equals((int)player["personId"])))
-                            continue;
-                        if ((int)player["teamId"] == hTeam)
-                        {
-                            oppId = vTeam;
-                            score = (int)boxscore["basicGameData"]["hTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["vTeam"]["score"];
-                        }
-                        else
-                        {
-                            oppId = hTeam;
-                            score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"];
-                        }
-                        if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
-                            continue;
-                        AddToDatabase(context, player, date, oppId, score);
-                    }
-                }
-                days--;
-                context.SaveChanges();
+            if (games.Any(g => (int)g["statusNum"] != 3))
+            {
+                JobManager.AddJob(() => Initialize(context),
+                s => s.WithName("statsSeed")
+                .ToRunOnceIn(10)
+                .Minutes());
+                return;
             }
+
+            foreach (JObject game in games)
+            {
+                string bsUrl = "http://data.nba.net/10s/prod/v1/" + gameDate + "/" + game["gameId"] + "_boxscore.json";
+                JObject boxscore = GetBoxscore(bsUrl);
+                if (boxscore["stats"] == null)
+                    continue;
+                int hTeam = (int)boxscore["basicGameData"]["hTeam"]["teamId"];
+                int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
+                var stats = boxscore["stats"]["activePlayers"];
+                DateTime date = CommonFunctions.UTCToEastern(DateTime.Parse((string)boxscore["basicGameData"]["startTimeUTC"]));
+                JArray players = (JArray)stats;
+                foreach (var player in players)
+                {
+                    int oppId;
+                    string score = "";
+                    if (!context.Players.Any(x => x.NbaID.Equals((int)player["personId"])))
+                        continue;
+                    if ((int)player["teamId"] == hTeam)
+                    {
+                        oppId = vTeam;
+                        score = (int)boxscore["basicGameData"]["hTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["vTeam"]["score"];
+                    }
+                    else
+                    {
+                        oppId = hTeam;
+                        score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"];
+                    }
+                    if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
+                        continue;
+                    AddToDatabase(context, player, date, oppId, score);
+                }
+            }
+            context.SaveChanges();
         }
 
         private static void AddToDatabase(GameContext context, JToken player, DateTime date, int oppId, string score)

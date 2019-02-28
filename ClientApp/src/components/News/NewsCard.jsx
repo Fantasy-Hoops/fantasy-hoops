@@ -34,7 +34,7 @@ export class NewsCard extends Component {
               alt={this.props.news.hTeam}
               width="50px"
               src={[
-                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.news.hTeam}.svg`,
+                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.news.vTeam}.svg`,
                 defaultLogo
               ]}
               loader={<img height='50px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
@@ -47,7 +47,7 @@ export class NewsCard extends Component {
               alt={this.props.news.vTeam}
               width="50px"
               src={[
-                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.news.vTeam}.svg`,
+                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.news.hTeam}.svg`,
                 defaultLogo
               ]}
               loader={<img height='50px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
@@ -55,7 +55,7 @@ export class NewsCard extends Component {
           </div>
         </span>
         <div className="card-header text-muted" style={{ height: '3rem', paddingLeft: '3.5rem' }}>
-          vs.
+          VS.
           <span style={{ float: 'right' }}>
             {this.props.news.date}
           </span>
