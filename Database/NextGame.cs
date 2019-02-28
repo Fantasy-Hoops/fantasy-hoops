@@ -41,7 +41,7 @@ namespace fantasy_hoops.Database
                     .ToRunOnceAt(NEXT_GAME));
 
                 DateTime nextRun = NEXT_LAST_GAME;
-                if (DateTime.UtcNow < PREVIOUS_LAST_GAME.AddHours(5))
+                if (DateTime.UtcNow < PREVIOUS_LAST_GAME.AddHours(2).AddMinutes(30))
                     nextRun = PREVIOUS_LAST_GAME;
 
                 if (CommonFunctions.UTCToEastern(nextRun).Day % 2 != 0)
@@ -51,15 +51,18 @@ namespace fantasy_hoops.Database
 
                 JobManager.AddJob(() => StatsSeed.Initialize(context),
                     s => s.WithName("statsSeed")
-                    .ToRunOnceAt(nextRun.AddHours(5)));
+                    .ToRunOnceAt(nextRun.AddHours(2).AddMinutes(30)));
 
+                DateTime previewsRuntime = PREVIOUS_LAST_GAME.AddHours(10);
+                if (DateTime.UtcNow > previewsRuntime)
+                    previewsRuntime = NEXT_LAST_GAME.AddHours(10);
                 JobManager.AddJob(() => NewsSeed.ExtractPreviews(context),
                     s => s.WithName("previews")
-                    .ToRunOnceAt(nextRun.AddHours(10).AddMinutes(1)));
+                    .ToRunOnceAt(previewsRuntime));
 
                 JobManager.AddJob(() => NewsSeed.ExtractRecaps(context),
                     s => s.WithName("recaps")
-                .ToRunOnceAt(nextRun.AddHours(5).AddMinutes(1)));
+                .ToRunOnceAt(nextRun.AddHours(5)));
 
                 JobManager.AddJob(() => PlayerSeed.Initialize(context, updatePrices),
                      s => s.WithName("playerSeed")
