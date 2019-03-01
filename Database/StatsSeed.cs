@@ -1,11 +1,8 @@
 ﻿using System.Net;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System;
 using Newtonsoft.Json.Linq;
 using fantasy_hoops.Models;
-using System.Globalization;
 using fantasy_hoops.Helpers;
 using FluentScheduler;
 using fantasy_hoops.Services;
@@ -30,10 +27,6 @@ namespace fantasy_hoops.Database
 
             _scoreService = new ScoreService();
             Calculate(context);
-
-            JobManager.AddJob(() => UserScoreSeed.Initialize(context),
-                s => s.WithName("userScore")
-                .ToRunNow());
         }
 
         private static JObject GetBoxscore(string url)
@@ -91,6 +84,10 @@ namespace fantasy_hoops.Database
                 }
             }
             context.SaveChanges();
+
+            JobManager.AddJob(() => UserScoreSeed.Initialize(context),
+                s => s.WithName("userScore")
+                .ToRunNow());
         }
 
         private static void AddToDatabase(GameContext context, JToken player, DateTime date, int oppId, string score)
