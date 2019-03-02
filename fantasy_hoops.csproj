@@ -50,7 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="config.env" CopyToOutputDirectory="Always" />
+    <None Include=".env" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
   <ItemGroup>

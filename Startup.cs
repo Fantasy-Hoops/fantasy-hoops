@@ -31,7 +31,7 @@ namespace fantasy_hoops
         {
             services.AddMvc();
 
-            DotEnv.Config(true, "config.env");
+            DotEnv.Config(true, ".env");
             #if DEBUG
                 DotEnv.Config(false, ".env.development");
             #endif
