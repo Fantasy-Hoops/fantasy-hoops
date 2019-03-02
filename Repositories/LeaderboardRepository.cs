@@ -272,5 +272,89 @@ namespace fantasy_hoops.Repositories
                 .Take(limit);
         }
 
+        public object GetSeasonLeaderboard()
+        {
+            var topLineups = _context.Lineups
+                .GroupBy(l => new { l.UserID, l.Date })
+                .Select(res => new
+                {
+                    res.First().Date,
+                    id = res.First().UserID,
+                    res.First().User.UserName,
+                    score = Math.Round(res.Sum(c => c.FP), 1),
+                    pg = res
+                        .Where(y => y.Position.Equals("PG") && y.Calculated).Select(l => new
+                        {
+                            l.Player.NbaID,
+                            teamColor = l.Player.Team.Color,
+                            l.Player.FullName,
+                            l.Player.FirstName,
+                            l.Player.LastName,
+                            l.Player.AbbrName,
+                            l.FP
+                        }).FirstOrDefault(),
+                    sg = res
+                        .Where(y => y.Position.Equals("SG") && y.Calculated).Select(l => new
+                        {
+                            l.Player.NbaID,
+                            teamColor = l.Player.Team.Color,
+                            l.Player.FullName,
+                            l.Player.FirstName,
+                            l.Player.LastName,
+                            l.Player.AbbrName,
+                            l.FP
+                        }).FirstOrDefault(),
+                    sf = res
+                        .Where(y => y.Position.Equals("SF") && y.Calculated).Select(l => new
+                        {
+                            l.Player.NbaID,
+                            teamColor = l.Player.Team.Color,
+                            l.Player.FullName,
+                            l.Player.FirstName,
+                            l.Player.LastName,
+                            l.Player.AbbrName,
+                            l.FP
+                        }).FirstOrDefault(),
+                    pf = res
+                        .Where(y => y.Position.Equals("PF") && y.Calculated).Select(l => new
+                        {
+                            l.Player.NbaID,
+                            teamColor = l.Player.Team.Color,
+                            l.Player.FullName,
+                            l.Player.FirstName,
+                            l.Player.LastName,
+                            l.Player.AbbrName,
+                            l.FP
+                        }).FirstOrDefault(),
+                    c = res
+                        .Where(y => y.Position.Equals("C") && y.Calculated).Select(l => new
+                        {
+                            l.Player.NbaID,
+                            teamColor = l.Player.Team.Color,
+                            l.Player.FullName,
+                            l.Player.FirstName,
+                            l.Player.LastName,
+                            l.Player.AbbrName,
+                            l.FP
+                        }).FirstOrDefault()
+                })
+                .OrderByDescending(t => t.score)
+                .Take(10);
+
+            var topPlayers = _context.Stats
+                .OrderByDescending(s => s.FP)
+                .Take(10)
+                .Select(p => new
+                {
+                    p.Player.NbaID,
+                    teamColor = p.Player.Team.Color,
+                    p.Player.FullName,
+                    p.Player.AbbrName,
+                    p.FP
+
+                });
+
+            return new { lineups = topLineups, players = topPlayers };
+        }
     }
 }
