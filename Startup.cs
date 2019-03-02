@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
 using fantasy_hoops;
+using dotenv.net;
 
 namespace fantasy_hoops
 {
@@ -29,6 +30,11 @@ namespace fantasy_hoops
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            DotEnv.Config(true);
+            #if DEBUG
+                DotEnv.Config(false, ".env.development");
+            #endif
 
             ConfigureAuth(services);
             ConfigureDbContext(services);
