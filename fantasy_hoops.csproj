@@ -50,6 +50,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="config.env" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Models\Notifications\" />
   </ItemGroup>
 
