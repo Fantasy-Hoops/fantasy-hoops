@@ -9,6 +9,6 @@ namespace fantasy_hoops.Repositories
         IEnumerable<Object> GetPlayerLeaderboard(int from, int limit, string type);
         IEnumerable<Object> GetUserLeaderboard(int from, int limit, string type);
         IEnumerable<Object> GetFriendsLeaderboard(string id, int from, int limit, string type);
-
+        Object GetSeasonLeaderboard();
     }
 }

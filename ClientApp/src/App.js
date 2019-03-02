@@ -10,6 +10,7 @@ import { Login } from './components/Authentication/Login'
 import { NewsFeed } from './components/News/NewsFeed';
 import { UserLeaderboard } from './components/Leaderboard/UserLeaderboard';
 import { PlayerLeaderboard } from './components/Leaderboard/PlayerLeaderboard';
+import { SeasonLeaderboard } from './components/Leaderboard/SeasonLeaderboard';
 import { UserPool } from './components/UserPool';
 import { Main } from './components/Main';
 import { AllNotificationsPage } from './components/Notifications/AllNotificationsPage';
@@ -31,6 +32,7 @@ export default class App extends Component {
         <Route path='/news' component={NewsFeed} />
         <PrivateRoute exact path='/leaderboard/users' component={UserLeaderboard} />
         <PrivateRoute exact path='/leaderboard/players' component={PlayerLeaderboard} />
+        <PrivateRoute exact path='/leaderboard/season' component={SeasonLeaderboard} />
         <PrivateRoute path='/users' component={UserPool} />
         <PrivateRoute path='/notifications' component={AllNotificationsPage} />
         <PrivateRoute path='/history' component={LineupHistory} />

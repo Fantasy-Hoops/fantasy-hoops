@@ -35,5 +35,11 @@ namespace fantasy_hoops.Controllers
         {
             return _repository.GetFriendsLeaderboard(id, from, limit, type).ToList();
         }
+
+        [HttpGet("season")]
+        public Object GetSeasonLeaderboard()
+        {
+            return _repository.GetSeasonLeaderboard();
+        }
     }
 }
