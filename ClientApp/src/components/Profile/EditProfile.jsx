@@ -243,7 +243,7 @@ export class EditProfile extends Component {
           <label className="col-lg-3 col-form-label form-control-label"></label>
           <div className="col-lg-9">
             <button id="submit" disabled className="btn btn-secondary">Save changes</button>
-            {!this.state.isChangingPassword && <button type="button" onClick={this.initChangePassword} class="btn btn-outline-primary ml-2">Change Password</button>}
+            {!this.state.isChangingPassword && <button type="button" onClick={this.initChangePassword} className="btn btn-outline-primary ml-2">Change Password</button>}
           </div>
         </div>
         </form>

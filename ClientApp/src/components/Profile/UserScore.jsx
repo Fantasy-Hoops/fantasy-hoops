@@ -8,7 +8,7 @@ export class UserScore extends Component {
     let players = '';
     if (this.props.activity != null) {
       players = _.map(
-        this.props.activity.players,
+        this.props.activity.lineup,
         (player) => {
           return (
             <UserScoreCard

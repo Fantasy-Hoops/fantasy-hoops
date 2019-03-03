@@ -47,143 +47,42 @@ namespace fantasy_hoops.Repositories
             DateTime date = CommonFunctions.GetDate(type);
             if (type.Equals("daily"))
             {
-                return _context.Users
-                .Select(x => new
+                return _context.Lineups
+                .Where(x => x.Calculated && x.Date >= date)
+                .GroupBy(l => new { l.UserID, l.Date })
+                .Select(res => new
                 {
-                    x.Id,
-                    x.UserName,
-                    Score = Math.Round(x.Lineups
-                        .Where(y => y.Date >= date && y.Calculated)
-                        .Select(y => y.FP).Sum(), 2),
-                    pg = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("PG") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    sg = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("SG") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    sf = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("SF") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    pf = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("PF") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    c = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("C") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault()
-
+                    res.First().UserID,
+                    res.First().User.UserName,
+                    res.First().Date,
+                    score = Math.Round(res.Sum(c => c.FP), 1),
+                    lineup = res.Select(l => new
+                    {
+                        l.Player.NbaID,
+                        l.Player.Position,
+                        teamColor = l.Player.Team.Color,
+                        l.Player.FullName,
+                        l.Player.FirstName,
+                        l.Player.LastName,
+                        l.Player.AbbrName,
+                        l.FP
+                    }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
                 })
-                .Where(y => y.Score > 0)
-                .OrderByDescending(x => x.Score)
+                .OrderByDescending(x => x.score)
                 .Skip(from)
                 .Take(limit);
             }
-            return _context.Users
-                .Select(x => new
+            return _context.Lineups
+                .Where(x => x.Calculated && x.Date >= date)
+                .GroupBy(l => l.UserID)
+                .Select(res => new
                 {
-                    x.Id,
-                    x.UserName,
-                    Score = Math.Round(x.Lineups
-                        .Where(y => y.Date >= date && y.Calculated)
-                        .Select(y => y.FP).Sum(), 2),
-                    pg = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("PG") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    sg = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("SG") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    sf = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("SF") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    pf = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("PF") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    c = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("C") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault()
-
+                    res.First().UserID,
+                    res.First().User.UserName,
+                    res.First().Date,
+                    score = Math.Round(res.Sum(c => c.FP), 2)
                 })
-                .Where(y => y.Score > 0)
-                .OrderByDescending(x => x.Score)
+                .OrderByDescending(x => x.score)
                 .Skip(from)
                 .Take(limit);
         }
@@ -202,69 +101,42 @@ namespace fantasy_hoops.Repositories
 
             DateTime date = CommonFunctions.GetDate(type);
 
-            return friendsOnly
+            if (type.Equals("daily"))
+            {
+                return friendsOnly
                 .Select(x => new
                 {
-                    x.Id,
+                    userID = x.Id,
                     x.UserName,
                     Score = Math.Round(x.Lineups
                         .Where(y => y.Date >= date && y.Calculated)
                         .Select(y => y.FP).Sum(), 2),
-                    pg = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("PG") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    sg = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("SG") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    sf = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("SF") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    pf = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("PF") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    c = x.Lineups
-                        .Where(y => y.Date >= date && y.Position.Equals("C") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault()
+                    lineup = x.Lineups.Where(y => y.Date >= date && y.Calculated)
+                    .Select(l => new
+                    {
+                        l.Player.NbaID,
+                        l.Player.Position,
+                        teamColor = l.Player.Team.Color,
+                        l.Player.FullName,
+                        l.Player.FirstName,
+                        l.Player.LastName,
+                        l.Player.AbbrName,
+                        l.FP
+                    }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
+                })
+                .Where(y => y.Score > 0)
+                .OrderByDescending(x => x.Score)
+                .Skip(from)
+                .Take(limit);
+            }
+            return friendsOnly
+                .Select(x => new
+                {
+                    userID = x.Id,
+                    x.UserName,
+                    Score = Math.Round(x.Lineups
+                        .Where(y => y.Date >= date && y.Calculated)
+                        .Select(y => y.FP).Sum(), 2)
                 })
                 .Where(y => y.Score > 0)
                 .OrderByDescending(x => x.Score)
@@ -272,76 +144,35 @@ namespace fantasy_hoops.Repositories
                 .Take(limit);
         }
 
-        public object GetSeasonLeaderboard()
+        public IQueryable<object> GetSeasonLineups()
         {
-            var topLineups = _context.Lineups
+            return _context.Lineups
                 .GroupBy(l => new { l.UserID, l.Date })
                 .Select(res => new
                 {
-                    res.First().Date,
-                    id = res.First().UserID,
+                    res.First().UserID,
                     res.First().User.UserName,
+                    res.First().Date,
                     score = Math.Round(res.Sum(c => c.FP), 1),
-                    pg = res
-                        .Where(y => y.Position.Equals("PG") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    sg = res
-                        .Where(y => y.Position.Equals("SG") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    sf = res
-                        .Where(y => y.Position.Equals("SF") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    pf = res
-                        .Where(y => y.Position.Equals("PF") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault(),
-                    c = res
-                        .Where(y => y.Position.Equals("C") && y.Calculated).Select(l => new
-                        {
-                            l.Player.NbaID,
-                            teamColor = l.Player.Team.Color,
-                            l.Player.FullName,
-                            l.Player.FirstName,
-                            l.Player.LastName,
-                            l.Player.AbbrName,
-                            l.FP
-                        }).FirstOrDefault()
+                    lineup = res.Select(l => new
+                    {
+                        l.Player.NbaID,
+                        l.Player.Position,
+                        teamColor = l.Player.Team.Color,
+                        l.Player.FullName,
+                        l.Player.FirstName,
+                        l.Player.LastName,
+                        l.Player.AbbrName,
+                        l.FP
+                    }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
                 })
                 .OrderByDescending(t => t.score)
                 .Take(10);
+        }
 
-            var topPlayers = _context.Stats
+        public IQueryable<object> GetSeasonPlayers()
+        {
+            return _context.Stats
                 .OrderByDescending(s => s.FP)
                 .Take(10)
                 .Select(p => new
@@ -353,8 +184,6 @@ namespace fantasy_hoops.Repositories
                     p.FP
 
                 });
-
-            return new { lineups = topLineups, players = topPlayers };
         }
     }
 }

@@ -75,7 +75,7 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(String id, int start = 0, int count = 0)
+        public IActionResult Get(String id, int start = 0, int count = 5)
         {
             var profile = _repository.GetProfile(id, start, count).FirstOrDefault();
             if(profile == null)
