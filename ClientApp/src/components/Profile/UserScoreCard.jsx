@@ -41,7 +41,7 @@ export class UserScoreCard extends Component {
                   `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.nbaID}.png`,
                   require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
                 ]}
-                loader={<img className='position-static' style={{ marginLeft: '-3.5rem', marginTop: '-2.2rem' }} width='150px' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
+                loader={<img className='UserScoreCard__loader' src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
                 decode={false}
               />
             </div>

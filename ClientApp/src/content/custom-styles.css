@@ -1050,6 +1050,13 @@ thead {
   margin: 0 0 -1.5rem -0.25rem;
 }
 
+.UserScoreCard__loader {
+  position: static;
+  margin-left: -3.5rem;
+  margin-top: -2.2rem;
+  width: 9.5rem;
+}
+
 .UserScoreCard__player-lastname {
   font-size: 0.7rem;
   font-weight: 700;

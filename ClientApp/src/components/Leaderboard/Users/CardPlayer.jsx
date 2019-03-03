@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Img from 'react-image';
 
-export class UserLeaderboardCardPlayer extends Component {
+export class CardPlayer extends Component {
   constructor(props) {
     super(props);
     this.state = {
