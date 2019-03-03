@@ -45,13 +45,11 @@ export class InfoPanel extends Component {
     const recentActivity = () => {
       if (!this.props.loader) {
         const recentActivity = _.map(
-          user.history,
+          user.recentActivity,
           (activity) => {
             return (
               <UserScore
                 key={shortid()}
-                posIMG={this.state.posIMG}
-                playerIMG={this.state.playerIMG}
                 activity={activity}
                 showModal={this.showModal}
               />

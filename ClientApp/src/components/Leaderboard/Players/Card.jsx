@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Img from 'react-image';
 const $ = window.$;
 
-export class PlayerLeaderboardCard extends Component {
+export class Card extends Component {
   constructor(props) {
     super(props);
     this.showModal = this.showModal.bind(this);

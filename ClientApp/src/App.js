@@ -8,9 +8,9 @@ import { Registration } from './components/Authentication/Registration';
 import { UserProfile } from './components/Profile/UserProfile';
 import { Login } from './components/Authentication/Login'
 import { NewsFeed } from './components/News/NewsFeed';
-import { UserLeaderboard } from './components/Leaderboard/UserLeaderboard';
-import { PlayerLeaderboard } from './components/Leaderboard/PlayerLeaderboard';
-import { SeasonLeaderboard } from './components/Leaderboard/SeasonLeaderboard';
+import { Leaderboard as UserLeaderboard } from './components/Leaderboard/Users/Leaderboard';
+import { Leaderboard as PlayerLeaderboard } from './components/Leaderboard/Players/Leaderboard';
+import { Leaderboard as SeasonLeaderboard } from './components/Leaderboard/Season/Leaderboard';
 import { UserPool } from './components/UserPool';
 import { Main } from './components/Main';
 import { AllNotificationsPage } from './components/Notifications/AllNotificationsPage';

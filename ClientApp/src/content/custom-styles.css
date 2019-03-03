@@ -918,6 +918,7 @@ thead {
   height: 2rem;
   overflow: hidden;
   border-radius: 50%;
+  margin: 0 auto;
 }
 
 .UserLeaderboardCard__player-photo--image {
@@ -1048,6 +1049,13 @@ thead {
   width: 3rem;
   overflow: hidden;
   margin: 0 0 -1.5rem -0.25rem;
+}
+
+.UserScoreCard__loader {
+  position: static;
+  margin-left: -3.5rem;
+  margin-top: -2.2rem;
+  width: 9.5rem;
 }
 
 .UserScoreCard__player-lastname {
