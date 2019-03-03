@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { UserLeaderboardCardPlayer } from './UserLeaderboardCardPlayer';
+import { CardPlayer } from './CardPlayer';
 import Img from 'react-image';
-import defaultPhoto from '../../content/images/default.png';
-import { loadImage } from '../../utils/loadImage';
+import defaultPhoto from '../../../content/images/default.png';
+import { loadImage } from '../../../utils/loadImage';
 import _ from 'lodash';
 import shortid from 'shortid';
 
-export class UserLeaderboardCard extends Component {
+export class Card extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,7 +24,7 @@ export class UserLeaderboardCard extends Component {
       this.props.user.lineup,
       (player) => {
         return (
-          <UserLeaderboardCardPlayer
+          <CardPlayer
             key={shortid()}
             player={player}
           />

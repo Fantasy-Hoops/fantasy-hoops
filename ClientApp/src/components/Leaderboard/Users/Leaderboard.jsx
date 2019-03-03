@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import { parse } from '../../utils/auth';
-import { UserLeaderboardCard as Card } from './UserLeaderboardCard';
-import leaderboardLogo from '../../content/images/leaderboard.png';
+import { parse } from '../../../utils/auth';
+import { Card } from './Card';
+import leaderboardLogo from '../../../content/images/leaderboard.png';
 import shortid from 'shortid';
 import _ from 'lodash';
-import { Loader } from '../Loader';
-import { EmptyJordan } from '../EmptyJordan';
+import { Loader } from '../../Loader';
+import { EmptyJordan } from '../../EmptyJordan';
 const user = parse();
 const LOAD_COUNT = 10;
 
-export class UserLeaderboard extends Component {
+export class Leaderboard extends Component {
   constructor(props) {
     super(props);
     this.toggleFriendsOnly = this.toggleFriendsOnly.bind(this);
@@ -44,7 +44,7 @@ export class UserLeaderboard extends Component {
         return res.json()
       })
       .then(res => {
-        this.state.showButton.daily = res.length === LOAD_COUNT ? true : false;
+        this.state.showButton.daily = res.length === LOAD_COUNT;
         this.setState({
           daily: res,
           activeTab: 'daily',
@@ -70,7 +70,7 @@ export class UserLeaderboard extends Component {
           return res.json()
         })
         .then(res => {
-          this.state.showButton[type] = res.length === LOAD_COUNT ? true : false;
+          this.state.showButton[type] = res.length === LOAD_COUNT;
           this.setState({
             [type]: res,
             loader: false
@@ -86,9 +86,7 @@ export class UserLeaderboard extends Component {
     if (this.state.activeTab === activeTab)
       return;
 
-    this.setState({
-      activeTab: activeTab
-    });
+    this.setState({ activeTab: activeTab });
 
     if (this.state[type].length === 0) {
       const url = this.state.friendsOnly
@@ -102,7 +100,7 @@ export class UserLeaderboard extends Component {
           return res.json()
         })
         .then(res => {
-          this.state.showButton[type] = res.length === LOAD_COUNT ? true : false;
+          this.state.showButton[type] = res.length === LOAD_COUNT;
           this.setState({
             [type]: res,
             loader: false
@@ -115,20 +113,18 @@ export class UserLeaderboard extends Component {
     const activeTab = this.state.activeTab;
     const type = this.state.friendsOnly ? activeTab + "Friends" : activeTab;
 
-    this.setState({
-      loadMore: true
-    });
+    this.setState({ loadMore: true });
 
-    const link = this.state.friendsOnly
+    const url = this.state.friendsOnly
       ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${user.id}?type=${activeTab}&from=${this.state[type].length}&limit=${LOAD_COUNT}`
       : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTab}&from=${this.state[type].length}&limit=${LOAD_COUNT}`;
 
-    await fetch(link)
+    await fetch(url)
       .then(res => {
         return res.json()
       })
       .then(res => {
-        this.state.showButton[type] = res.length === LOAD_COUNT ? true : false;
+        this.state.showButton[type] = res.length === LOAD_COUNT;
         this.setState({
           [type]: this.state[type].concat(res),
           loadMore: false

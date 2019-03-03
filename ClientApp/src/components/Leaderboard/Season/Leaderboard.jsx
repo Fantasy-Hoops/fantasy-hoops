@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import { UserLeaderboardCard } from './UserLeaderboardCard';
-import { PlayerLeaderboardCard } from './PlayerLeaderboardCard';
-import leaderboardLogo from '../../content/images/leaderboard.png';
+import { Card as UserCard } from '../Users/Card';
+import { Card as PlayerCard } from '../Players/Card';
+import leaderboardLogo from '../../../content/images/leaderboard.png';
 import shortid from 'shortid';
 import _ from 'lodash';
-import { Loader } from '../Loader';
-import { EmptyJordan } from '../EmptyJordan';
+import { Loader } from '../../Loader';
+import { EmptyJordan } from '../../EmptyJordan';
 
-export class SeasonLeaderboard extends Component {
+export class Leaderboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -81,7 +81,7 @@ export class SeasonLeaderboard extends Component {
     return _.map(
       users,
       (user, index) => {
-        return <UserLeaderboardCard
+        return <UserCard
           isDaily={true}
           index={index}
           key={shortid()}
@@ -95,7 +95,7 @@ export class SeasonLeaderboard extends Component {
     return _.map(
       players,
       (player, index) => {
-        return <PlayerLeaderboardCard
+        return <PlayerCard
           index={index}
           key={shortid()}
           player={player}
