@@ -144,9 +144,9 @@ namespace fantasy_hoops.Repositories
                 .Take(limit);
         }
 
-        public object GetSeasonLeaderboard()
+        public IQueryable<object> GetSeasonLineups()
         {
-            var topLineups = _context.Lineups
+            return _context.Lineups
                 .GroupBy(l => new { l.UserID, l.Date })
                 .Select(res => new
                 {
@@ -168,8 +168,11 @@ namespace fantasy_hoops.Repositories
                 })
                 .OrderByDescending(t => t.score)
                 .Take(10);
+        }
 
-            var topPlayers = _context.Stats
+        public IQueryable<object> GetSeasonPlayers()
+        {
+            return _context.Stats
                 .OrderByDescending(s => s.FP)
                 .Take(10)
                 .Select(p => new
@@ -181,8 +184,6 @@ namespace fantasy_hoops.Repositories
                     p.FP
 
                 });
-
-            return new { lineups = topLineups, players = topPlayers };
         }
     }
 }

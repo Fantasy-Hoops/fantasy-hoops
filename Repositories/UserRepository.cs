@@ -144,25 +144,25 @@ namespace fantasy_hoops.Repositories
         private IQueryable<Object> GetRecentActivity(string id, int start, int count)
         {
             var recentActivity = _context.Lineups
-                .Where(x => x.Calculated && x.UserID.Equals(id))
-                .GroupBy(l => new { l.UserID, l.Date })
-                .Select(res => new
+                .Where(lineup => lineup.Calculated && lineup.UserID.Equals(id))
+                .GroupBy(lineup => new { lineup.UserID, lineup.Date })
+                .Select(result => new
                 {
-                    res.First().Date,
-                    score = Math.Round(res.Sum(c => c.FP), 1),
-                    lineup = res.Select(l => new
+                    result.First().Date,
+                    score = Math.Round(result.Sum(c => c.FP), 1),
+                    lineup = result.Select(lineup => new
                     {
-                        l.Player.NbaID,
-                        l.Player.Position,
-                        teamColor = l.Player.Team.Color,
-                        l.Player.FullName,
-                        l.Player.FirstName,
-                        l.Player.LastName,
-                        l.Player.AbbrName,
-                        l.FP
-                    }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
+                        lineup.Player.NbaID,
+                        lineup.Player.Position,
+                        teamColor = lineup.Player.Team.Color,
+                        lineup.Player.FullName,
+                        lineup.Player.FirstName,
+                        lineup.Player.LastName,
+                        lineup.Player.AbbrName,
+                        lineup.FP
+                    }).OrderBy(player => Array.IndexOf(CommonFunctions.PlayersOrder, player.Position))
                 })
-                .OrderByDescending(z => z.Date)
+                .OrderByDescending(lineup => lineup.Date)
                 .Skip(start)
                 .Take(count);
             return recentActivity;
