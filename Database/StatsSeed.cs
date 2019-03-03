@@ -37,19 +37,26 @@ namespace fantasy_hoops.Database
             return json;
         }
 
-        private static void Calculate(GameContext context)
+        private static bool IsFinished(GameContext context, JArray games)
         {
-            string gameDate = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
-            JArray games = CommonFunctions.GetGames(gameDate);
-
-            if (games.Any(g => (int)g["statusNum"] != 3))
+            if (games.Any(g => (int)g["statusNum"] != 3 && (bool)g["isGameActivated"]))
             {
                 JobManager.AddJob(() => Initialize(context),
                 s => s.WithName("statsSeed")
                 .ToRunOnceIn(10)
                 .Minutes());
-                return;
+                return false;
             }
+            return true;
+        }
+
+        private static void Calculate(GameContext context)
+        {
+            string gameDate = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
+            JArray games = CommonFunctions.GetGames(gameDate);
+
+            if (!IsFinished(context, games))
+                return;
 
             foreach (JObject game in games)
             {
@@ -59,10 +66,9 @@ namespace fantasy_hoops.Database
                     continue;
                 int hTeam = (int)boxscore["basicGameData"]["hTeam"]["teamId"];
                 int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
-                var stats = boxscore["stats"]["activePlayers"];
                 DateTime date = CommonFunctions.UTCToEastern(DateTime.Parse((string)boxscore["basicGameData"]["startTimeUTC"]));
-                JArray players = (JArray)stats;
-                foreach (var player in players)
+                var players = boxscore["stats"]["activePlayers"];
+                foreach (var player in (JArray)players)
                 {
                     int oppId;
                     string score = "";
@@ -115,12 +121,12 @@ namespace fantasy_hoops.Database
                 STL = (int)player["steals"],
                 FLS = (int)player["pFouls"],
                 TOV = (int)player["turnovers"],
-                PTS = (int)player["points"],
-                PlayerID = (int)player["personId"]
+                PTS = (int)player["points"]
             };
 
-            statsObj.Player = context.Players.Where(x => x.NbaID == statsObj.PlayerID).FirstOrDefault();
-            bool shouldAdd = !context.Stats.Any(x => x.Date == date && x.Player.NbaID == statsObj.PlayerID);
+            statsObj.Player = context.Players.Where(x => x.NbaID == (int)player["personId"]).FirstOrDefault();
+            var sth = statsObj.Player.PlayerID;
+            bool shouldAdd = !context.Stats.Any(x => x.Date.Equals(date) && x.PlayerID == statsObj.Player.PlayerID);
 
             if (shouldAdd)
             {
