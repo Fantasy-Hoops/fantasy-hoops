@@ -918,6 +918,7 @@ thead {
   height: 2rem;
   overflow: hidden;
   border-radius: 50%;
+  margin: 0 auto;
 }
 
 .UserLeaderboardCard__player-photo--image {
