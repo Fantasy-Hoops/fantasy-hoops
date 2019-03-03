@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import { UserLeaderboardCardPlayer } from './UserLeaderboardCardPlayer';
 import Img from 'react-image';
 import defaultPhoto from '../../content/images/default.png';
 import { loadImage } from '../../utils/loadImage';
+import _ from 'lodash';
+import shortid from 'shortid';
 
 export class UserLeaderboardCard extends Component {
   constructor(props) {
@@ -12,8 +15,21 @@ export class UserLeaderboardCard extends Component {
 
   async componentWillMount() {
     this.setState({
-      avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${this.props.user.id}.png`, defaultPhoto)
+      avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${this.props.user.userID}.png`, defaultPhoto)
     });
+  }
+
+  getPlayers() {
+    return _.map(
+      this.props.user.lineup,
+      (player) => {
+        return (
+          <UserLeaderboardCardPlayer
+            key={shortid()}
+            player={player}
+          />
+        )
+      });
   }
 
   render() {
@@ -41,91 +57,12 @@ export class UserLeaderboardCard extends Component {
             <div title="Fantasy Points" className="UserLeaderboardCard__body-item UserLeaderboardCard__FP UserLeaderboardCard__FP--daily">
               {`${this.props.user.score.toFixed(1)} `}<span style={{ fontSize: '0.7rem', fontWeight: 400 }}>FP</span>
             </div>
-            <div className="UserLeaderboardCard__body-item UserLeaderboardCard__player">
-              <div className="UserLeaderboardCard__player-photo--background" style={{ backgroundColor: this.props.user.pg.teamColor }}>
-                <Img
-                  className="UserLeaderboardCard__player-photo--image"
-                  alt={this.props.user.userName}
-                  src={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.user.pg.nbaID}.png`]}
-                  decode={false}
-                />
-              </div>
-              <p className="UserLeaderboardCard__player-lastname">
-                {this.props.user.pg.lastName}
-              </p>
-              <p className="UserLeaderboardCard__player-fp">
-                {this.props.user.pg.fp.toFixed(1)}
-              </p>
-            </div>
-            <div className="UserLeaderboardCard__body-item UserLeaderboardCard__player">
-              <div className="UserLeaderboardCard__player-photo--background" style={{ backgroundColor: this.props.user.sg.teamColor }}>
-                <Img
-                  className="UserLeaderboardCard__player-photo--image"
-                  alt={this.props.user.userName}
-                  src={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.user.sg.nbaID}.png`]}
-                  decode={false}
-                />
-              </div>
-              <p className="UserLeaderboardCard__player-lastname">
-                {this.props.user.sg.lastName}
-              </p>
-              <p className="UserLeaderboardCard__player-fp">
-                {this.props.user.sg.fp.toFixed(1)}
-              </p>
-            </div>
-            <div className="UserLeaderboardCard__body-item UserLeaderboardCard__player">
-              <div className="UserLeaderboardCard__player-photo--background" style={{ backgroundColor: this.props.user.sf.teamColor }}>
-                <Img
-                  className="UserLeaderboardCard__player-photo--image"
-                  alt={this.props.user.userName}
-                  src={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.user.sf.nbaID}.png`]}
-                  decode={false}
-                />
-              </div>
-              <p className="UserLeaderboardCard__player-lastname">
-                {this.props.user.sf.lastName}
-              </p>
-              <p className="UserLeaderboardCard__player-fp">
-                {this.props.user.sf.fp.toFixed(1)}
-              </p>
-            </div>
-            <div className="UserLeaderboardCard__body-item UserLeaderboardCard__player">
-              <div className="UserLeaderboardCard__player-photo--background" style={{ backgroundColor: this.props.user.pf.teamColor }}>
-                <Img
-                  className="UserLeaderboardCard__player-photo--image"
-                  alt={this.props.user.userName}
-                  src={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.user.pf.nbaID}.png`]}
-                  decode={false}
-                />
-              </div>
-              <p className="UserLeaderboardCard__player-lastname">
-                {this.props.user.pf.lastName}
-              </p>
-              <p className="UserLeaderboardCard__player-fp">
-                {this.props.user.pf.fp.toFixed(1)}
-              </p>
-            </div>
-            <div className="UserLeaderboardCard__body-item UserLeaderboardCard__player">
-              <div className="UserLeaderboardCard__player-photo--background" style={{ backgroundColor: this.props.user.c.teamColor }}>
-                <Img
-                  className="UserLeaderboardCard__player-photo--image"
-                  alt={this.props.user.userName}
-                  src={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.user.c.nbaID}.png`]}
-                  decode={false}
-                />
-              </div>
-              <p className="UserLeaderboardCard__player-lastname">
-                {this.props.user.c.lastName}
-              </p>
-              <p className="UserLeaderboardCard__player-fp">
-                {this.props.user.c.fp.toFixed(1)}
-              </p>
-            </div>
+            {this.getPlayers()}
           </div>
         </div>
       );
     }
-    else
+    else {
       return (
         <div className="UserLeaderboardCard card bg-white rounded">
           <div className="UserLeaderboardCard__body card-body">
@@ -150,5 +87,6 @@ export class UserLeaderboardCard extends Component {
           </div>
         </div>
       );
+    }
   }
 }

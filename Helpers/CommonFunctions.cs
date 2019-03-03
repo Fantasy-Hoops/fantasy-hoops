@@ -12,6 +12,8 @@ namespace fantasy_hoops.Helpers
 {
     public class CommonFunctions
     {
+        public static Array PlayersOrder = new[] { "PG", "SG", "SF", "PF", "C" };
+
         public static DateTime UTCToEastern(DateTime time)
         {
             DateTime timeUTC = time;

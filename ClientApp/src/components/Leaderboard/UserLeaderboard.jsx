@@ -7,34 +7,34 @@ import _ from 'lodash';
 import { Loader } from '../Loader';
 import { EmptyJordan } from '../EmptyJordan';
 const user = parse();
-const LOAD_COUNT = 2;
+const LOAD_COUNT = 10;
 
 export class UserLeaderboard extends Component {
   constructor(props) {
     super(props);
     this.toggleFriendsOnly = this.toggleFriendsOnly.bind(this);
-    this.loadDaily = this.loadDaily.bind(this);
-    this.loadWeekly = this.loadWeekly.bind(this);
-    this.loadMonthly = this.loadMonthly.bind(this);
+    this.switchTab = this.switchTab.bind(this);
+    this.loadMore = this.loadMore.bind(this);
 
     this.state = {
-      dailyUsers: [],
-      weeklyUsers: [],
-      monthlyUsers: [],
-      friendsDailyUsers: [],
-      friendsWeeklyUsers: [],
-      friendsMonthlyUsers: [],
-      dailyLoader: true,
-      weeklyLoader: true,
-      monthlyLoader: true,
+      activeTab: 'daily',
       friendsOnly: false,
-      loader: false,
-      dailyLoadCounter: 0,
-      weeklyLoadCounter: 0,
-      monthlyLoadCounter: 0,
-      friendsDailyLoadCounter: 0,
-      friendsWeeklyLoadCounter: 0,
-      friendsMonthlyLoadCounter: 0
+      daily: [],
+      weekly: [],
+      monthly: [],
+      dailyFriends: [],
+      weeklyFriends: [],
+      monthlyFriends: [],
+      loader: true,
+      loadMore: false,
+      showButton: {
+        daily: false,
+        dailyFriends: false,
+        weekly: false,
+        weeklyFriends: false,
+        monthly: false,
+        monthlyFriends: false
+      }
     }
   }
 
@@ -44,194 +44,110 @@ export class UserLeaderboard extends Component {
         return res.json()
       })
       .then(res => {
+        this.state.showButton.daily = res.length === LOAD_COUNT ? true : false;
         this.setState({
-          dailyUsers: res
-        });
-      })
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=weekly`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        this.setState({
-          weeklyUsers: res
-        });
-      })
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=monthly`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        this.setState({
-          monthlyUsers: res
-        });
-      })
-
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${user.id}?type=daily`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        this.setState({
-          friendsDailyUsers: res,
-          dailyLoader: false
-        });
-      })
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${user.id}?type=weekly`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        this.setState({
-          friendsWeeklyUsers: res,
-          weeklyLoader: false
-        });
-      })
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${user.id}?type=monthly`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        this.setState({
-          friendsMonthlyUsers: res,
-          monthlyLoader: false
+          daily: res,
+          activeTab: 'daily',
+          loader: false
         });
       })
   }
 
-  toggleFriendsOnly() {
+  async toggleFriendsOnly() {
+    const friendsOnly = this.state.friendsOnly;
     this.setState({ friendsOnly: !this.state.friendsOnly });
+    const type = this.state.activeTab + (!friendsOnly ? 'Friends' : '');
+
+    if (this.state[type].length === 0) {
+      this.setState({ loader: true });
+
+      const url = !friendsOnly
+        ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${user.id}?type=${this.state.activeTab}`
+        : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${this.state.activeTab}`;
+
+      await fetch(url)
+        .then(res => {
+          return res.json()
+        })
+        .then(res => {
+          this.state.showButton[type] = res.length === LOAD_COUNT ? true : false;
+          this.setState({
+            [type]: res,
+            loader: false
+          });
+        })
+    }
   }
 
-  async loadDaily() {
+  async switchTab(e) {
+    const activeTab = e.target.id.split(/-/)[0];
+    const type = this.state.friendsOnly ? activeTab + "Friends" : activeTab;
+
+    if (this.state.activeTab === activeTab)
+      return;
+
     this.setState({
-      loader: true
+      activeTab: activeTab
     });
+
+    if (this.state[type].length === 0) {
+      const url = this.state.friendsOnly
+        ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${user.id}?type=${activeTab}`
+        : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTab}`;
+
+      this.setState({ loader: true });
+
+      await fetch(url)
+        .then(res => {
+          return res.json()
+        })
+        .then(res => {
+          this.state.showButton[type] = res.length === LOAD_COUNT ? true : false;
+          this.setState({
+            [type]: res,
+            loader: false
+          });
+        })
+    }
+  }
+
+  async loadMore() {
+    const activeTab = this.state.activeTab;
+    const type = this.state.friendsOnly ? activeTab + "Friends" : activeTab;
+
+    this.setState({
+      loadMore: true
+    });
+
     const link = this.state.friendsOnly
-      ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${user.id}?type=daily&from=${this.state.friendsDailyUsers.length}&limit=${LOAD_COUNT}`
-      : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=daily&from=${this.state.dailyUsers.length}&limit=${LOAD_COUNT}`;
+      ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${user.id}?type=${activeTab}&from=${this.state[type].length}&limit=${LOAD_COUNT}`
+      : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTab}&from=${this.state[type].length}&limit=${LOAD_COUNT}`;
+
     await fetch(link)
       .then(res => {
         return res.json()
       })
       .then(res => {
-        if (this.state.friendsOnly) {
-          this.setState({
-            friendsDailyLoadCounter: this.state.friendsDailyLoadCounter + 1,
-            friendsDailyUsers: this.state.friendsDailyUsers.concat(res),
-            loader: false
-          });
-        }
-        else {
-          this.setState({
-            dailyLoadCounter: this.state.dailyLoadCounter + 1,
-            dailyUsers: this.state.dailyUsers.concat(res),
-            loader: false
-          });
-        }
+        this.state.showButton[type] = res.length === LOAD_COUNT ? true : false;
+        this.setState({
+          [type]: this.state[type].concat(res),
+          loadMore: false
+        });
       });
   }
 
-  async loadWeekly() {
-    this.setState({
-      loader: true
-    });
-    const link = this.state.friendsOnly
-      ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${user.id}?type=weekly&from=${this.state.friendsWeeklyUsers.length}&limit=${LOAD_COUNT}`
-      : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=weekly&from=${this.state.weeklyUsers.length}&limit=${LOAD_COUNT}`;
-    await fetch(link)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        if (this.state.friendsOnly) {
-          this.setState({
-            friendsWeeklyLoadCounter: this.state.friendsWeeklyLoadCounter + 1,
-            friendsWeeklyUsers: this.state.friendsWeeklyUsers.concat(res),
-            loader: false
-          });
-        }
-        else {
-          this.setState({
-            weeklyLoadCounter: this.state.weeklyLoadCounter + 1,
-            weeklyUsers: this.state.weeklyUsers.concat(res),
-            loader: false
-          });
-        }
-      });
-  }
-
-  async loadMonthly() {
-    this.setState({
-      loader: true
-    });
-    const link = this.state.friendsOnly
-      ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${user.id}?type=monthly&from=${this.state.friendsMonthlyUsers.length}&limit=${LOAD_COUNT}`
-      : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=monthly&from=${this.state.monthlyUsers.length}&limit=${LOAD_COUNT}`;
-    await fetch(link)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        if (this.state.friendsOnly) {
-          this.setState({
-            friendsMonthlyLoadCounter: this.state.friendsMonthlyLoadCounter + 1,
-            friendsMonthlyUsers: this.state.friendsMonthlyUsers.concat(res),
-            loader: false
-          });
-        }
-        else {
-          this.setState({
-            monthlyLoadCounter: this.state.monthlyLoadCounter + 1,
-            monthlyUsers: this.state.monthlyUsers.concat(res),
-            loader: false
-          });
-        }
-      });
+  seeMoreBtn(type) {
+    return this.state.showButton[type] ? <button className="btn btn-primary mt-2" onClick={this.loadMore}>See more</button> : '';
   }
 
   render() {
-    let dailyBtn = '';
-    let weeklyBtn = '';
-    let monthlyBtn = ';'
-    let dailyUsers = [];
-    let weeklyUsers = [];
-    let monthlyUsers = [];
-    if (this.state.friendsOnly) {
-      dailyUsers = this.createUsers(this.state.friendsDailyUsers, true)
-      weeklyUsers = this.createUsers(this.state.friendsWeeklyUsers)
-      monthlyUsers = this.createUsers(this.state.friendsMonthlyUsers)
-
-      dailyBtn = this.state.friendsDailyLoadCounter * LOAD_COUNT + 10 > this.state.friendsDailyUsers.length
-        ? ''
-        : <button className="btn btn-primary mt-2" onClick={this.loadDaily}>See more</button>;
-
-      weeklyBtn = this.state.friendsWeeklyLoadCounter * LOAD_COUNT + 10 > this.state.friendsWeeklyUsers.length
-        ? ''
-        : <button className="btn btn-primary mt-2" onClick={this.loadWeekly}>See more</button>;
-
-      monthlyBtn = this.state.friendsMonthlyLoadCounter * LOAD_COUNT + 10 > this.state.friendsMonthlyUsers.length
-        ? ''
-        : <button className="btn btn-primary mt-2" onClick={this.loadMonthly}>See more</button>;
-    }
-    else {
-      dailyUsers = this.createUsers(this.state.dailyUsers, true)
-      weeklyUsers = this.createUsers(this.state.weeklyUsers)
-      monthlyUsers = this.createUsers(this.state.monthlyUsers)
-
-      dailyBtn = this.state.dailyLoadCounter * LOAD_COUNT + 10 > this.state.dailyUsers.length
-        ? ''
-        : <button className="btn btn-primary mt-2" onClick={this.loadDaily}>See more</button>;
-
-      weeklyBtn = this.state.weeklyLoadCounter * LOAD_COUNT + 10 > this.state.weeklyUsers.length
-        ? ''
-        : <button className="btn btn-primary mt-2" onClick={this.loadWeekly}>See more</button>;
-
-      monthlyBtn = this.state.monthlyLoadCounter * LOAD_COUNT + 10 > this.state.monthlyUsers.length
-        ? ''
-        : <button className="btn btn-primary mt-2" onClick={this.loadMonthly}>See more</button>;
-    }
-
+    const activeType = this.state.friendsOnly ? this.state.activeTab + "Friends" : this.state.activeTab;
+    const daily = this.createUsers(this.state.friendsOnly ? this.state.dailyFriends : this.state.daily, true);
+    const weekly = this.createUsers(this.state.friendsOnly ? this.state.weeklyFriends : this.state.weekly);
+    const monthly = this.createUsers(this.state.friendsOnly ? this.state.monthlyFriends : this.state.monthly);
+    const seeMoreBtn = this.state.loader || this.state.loadMore
+      ? <Loader show={this.state.loader || this.state.loadMore} />
+      : this.seeMoreBtn(activeType);
     return (
       <div className="container bg-light pt-3 p-0">
         <div className="text-center pb-1">
@@ -256,48 +172,45 @@ export class UserLeaderboard extends Component {
         </div>
         <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist" style={{ width: '30%' }}>
           <li className="nav-item">
-            <a className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" href="#daily" role="tab">Daily</a>
+            <a className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" href="#daily" role="tab" onClick={this.switchTab}>Daily</a>
           </li>
           <li className="nav-item">
-            <a className="nav-link tab-no-outline" id="weekly-tab" data-toggle="tab" href="#weekly" role="tab">Weekly</a>
+            <a className="nav-link tab-no-outline" id="weekly-tab" data-toggle="tab" href="#weekly" role="tab" onClick={this.switchTab}>Weekly</a>
           </li>
           <li className="nav-item">
-            <a className="nav-link tab-no-outline" id="monthly-tab" data-toggle="tab" href="#monthly" role="tab">Monthly</a>
+            <a className="nav-link tab-no-outline" id="monthly-tab" data-toggle="tab" href="#monthly" role="tab" onClick={this.switchTab}>Monthly</a>
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
           <div className="pt-4 pb-1 tab-pane fade show active animated bounceInUp" id="daily" role="tabpanel">
-            {!this.state.dailyLoader
-              ? dailyUsers.length > 0
-                ? dailyUsers
+            {!this.state.loader
+              ? daily.length > 0
+                ? daily
                 : <EmptyJordan message="Such empty..." />
-              : <Loader show={this.state.dailyLoader} />}
+              : ''}
             <div className="text-center">
-              {!this.state.loader ? dailyBtn : ''}
+              {seeMoreBtn}
             </div>
-            <Loader show={this.state.loader} />
           </div>
           <div className="pt-4 pb-1 tab-pane fade animated bounceInUp" id="weekly" role="tabpanel">
-            {!this.state.weeklyLoader
-              ? weeklyUsers.length > 0
-                ? weeklyUsers
+            {!this.state.loader
+              ? weekly.length > 0
+                ? weekly
                 : <EmptyJordan message="Such empty..." />
-              : <Loader show={this.state.weeklyLoader} />}
+              : ''}
             <div className="text-center">
-              {!this.state.loader ? weeklyBtn : ''}
+              {seeMoreBtn}
             </div>
-            <Loader show={this.state.loader} />
           </div>
           <div className="pt-4 pb-1 tab-pane fade animated bounceInUp" id="monthly" role="tabpanel">
-            {!this.state.monthlyLoader
-              ? monthlyUsers.length > 0
-                ? monthlyUsers
+            {!this.state.loader
+              ? monthly.length > 0
+                ? monthly
                 : <EmptyJordan message="Such empty..." />
-              : <Loader show={this.state.monthlyLoader} />}
+              : ''}
             <div className="text-center">
-              {!this.state.loader ? monthlyBtn : ''}
+              {seeMoreBtn}
             </div>
-            <Loader show={this.state.loader} />
           </div>
         </div>
       </div >

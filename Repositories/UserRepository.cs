@@ -52,7 +52,7 @@ namespace fantasy_hoops.Repositories
                     Name = team.City + " " + team.Name,
                     team.Color
                 },
-                history = activity,
+                recentActivity = activity,
                 Streak = streak,
                 Position = position,
                 TotalScore = totalScore
@@ -143,48 +143,29 @@ namespace fantasy_hoops.Repositories
 
         private IQueryable<Object> GetRecentActivity(string id, int start, int count)
         {
-            // Getting all players that user has selected in recent 5 games
-            var players = _context.Lineups
-                .Where(x => x.UserID.Equals(id) && x.Date < CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
-                .OrderByDescending(x => x.Date)
-                .Select(x => new
-                {
-                    x.Player.NbaID,
-                    x.Player.LastName,
-                    x.Player.Position,
-                    x.Player.Team.Color,
-                    x.Date,
-                    FP = _context.Lineups
-                        .Where(y => y.PlayerID.Equals(x.PlayerID) && y.Date.Equals(x.Date))
-                        .Select(y => y.FP)
-                        .FirstOrDefault()
-                })
-                .ToList();
-
-            var PlayersOrder = new[] { "PG", "SG", "SF", "PF", "C" };
-
-            var activityQuery = _context.Lineups
+            var recentActivity = _context.Lineups
                 .Where(x => x.Calculated && x.UserID.Equals(id))
-                .OrderByDescending(x => x.Date)
-                .Select(x => new
+                .GroupBy(l => new { l.UserID, l.Date })
+                .Select(res => new
                 {
-                    x.Date,
-                    longDate = x.Date.ToString("yyyy-MM-dd"),
-                    shortDate = x.Date.ToString("MMM. dd"),
-                    Score = Math.Round(_context.Lineups.Where(y => y.Date.Equals(x.Date) && y.UserID.Equals(x.UserID)).Select(y => y.FP).Sum(), 1),
-                    players = players.Where(y => y.Date.Equals(x.Date)).OrderBy(p => Array.IndexOf(PlayersOrder, p.Position)).ToList()
+                    res.First().Date,
+                    score = Math.Round(res.Sum(c => c.FP), 1),
+                    lineup = res.Select(l => new
+                    {
+                        l.Player.NbaID,
+                        l.Player.Position,
+                        teamColor = l.Player.Team.Color,
+                        l.Player.FullName,
+                        l.Player.FirstName,
+                        l.Player.LastName,
+                        l.Player.AbbrName,
+                        l.FP
+                    }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
                 })
-                .ToList()
-                .Where((x, index) => index % 5 == 0)
-                .Skip(start);
-
-            var activity = activityQuery;
-
-            if (count != 0)
-                activity = activityQuery.Take(count);
-
-
-            return activity.AsQueryable();
+                .OrderByDescending(z => z.Date)
+                .Skip(start)
+                .Take(count);
+            return recentActivity;
         }
 
         private int GetStreak(string id)
