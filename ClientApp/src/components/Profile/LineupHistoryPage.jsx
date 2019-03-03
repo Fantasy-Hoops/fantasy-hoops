@@ -20,7 +20,7 @@ export class LineupHistory extends Component {
       stats: '',
       loadCounter: 0,
       user: user,
-      history: [],
+      recentActivity: [],
       loader: true,
       modalLoader: true
     }
@@ -54,7 +54,7 @@ export class LineupHistory extends Component {
       .then(res => res.json())
       .then(res => {
         this.setState({
-          history: res.history,
+          recentActivity: res.recentActivity,
           loader: false,
           readOnly: false
         });
@@ -66,21 +66,21 @@ export class LineupHistory extends Component {
       loadCounter: this.state.loadCounter + 1,
       loader: true
     });
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/${user.id}?start=${this.state.history.length}&count=${LOAD_COUNT}`)
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/${user.id}?start=${this.state.recentActivity.length}&count=${LOAD_COUNT}`)
       .then(res => {
         return res.json()
       })
       .then(res => {
         this.setState({
-          history: this.state.history.concat(res.history),
+          recentActivity: this.state.recentActivity.concat(res.recentActivity),
           loader: false
         });
       });
   }
 
   render() {
-    const history = _.map(
-      this.state.history,
+    const recentActivity = _.map(
+      this.state.recentActivity,
       (activity) => {
         return (
           <UserScore
@@ -93,14 +93,14 @@ export class LineupHistory extends Component {
         )
       });
 
-    const btn = this.state.loadCounter * LOAD_COUNT + 10 > this.state.history.length
+    const btn = this.state.loadCounter * LOAD_COUNT + 10 > this.state.recentActivity.length
       ? ''
       : <button className="btn btn-primary m-3" onClick={this.loadMore}>See more</button>;
 
     return (
       <div className="container p-0 pt-5">
         <h3 className="text-center pb-3"><span><img src={icon} width="65rem" alt="Basketball Player Scoring" /></span> Your lineup history</h3>
-        {history}
+        {recentActivity}
         <Loader show={this.state.loader} />
         <div className="text-center">
           {!this.state.loader ? btn : ''}
