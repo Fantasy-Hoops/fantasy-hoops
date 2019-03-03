@@ -6,6 +6,8 @@ import shortid from 'shortid';
 import _ from 'lodash';
 import { Loader } from '../../Loader';
 import { EmptyJordan } from '../../EmptyJordan';
+import { PlayerModal } from '../../PlayerModal/PlayerModal';
+const $ = window.$;
 
 export class Leaderboard extends Component {
   constructor(props) {
@@ -14,8 +16,12 @@ export class Leaderboard extends Component {
       activeTab: 'lineups',
       lineups: '',
       players: '',
-      loader: true
+      loader: true,
+      stats: '',
+      modalLoader: true,
+      renderChild: false
     }
+    this.showModal = this.showModal.bind(this);
     this.loadLineups = this.loadLineups.bind(this);
     this.loadPlayers = this.loadPlayers.bind(this);
     this.switchTab = this.switchTab.bind(this);
@@ -32,6 +38,22 @@ export class Leaderboard extends Component {
           loader: false
         });
       })
+    await this.setState({
+      PG: require(`../../../content/images/positions/pg.png`),
+      SG: require(`../../../content/images/positions/sg.png`),
+      SF: require(`../../../content/images/positions/sf.png`),
+      PF: require(`../../../content/images/positions/pf.png`),
+      C: require(`../../../content/images/positions/c.png`)
+    });
+  }
+
+  componentDidMount() {
+    $("#playerModal").on("hidden.bs.modal", () => {
+      this.setState({
+        modalLoader: true,
+        renderChild: false
+      });
+    });
   }
 
   async switchTab(e) {
@@ -56,6 +78,19 @@ export class Leaderboard extends Component {
           });
         })
     }
+  }
+
+  async showModal(player) {
+    this.setState({ modalLoader: true })
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${player.nbaID}`)
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          stats: res,
+          modalLoader: false,
+          renderChild: true
+        });
+      });
   }
 
   render() {
@@ -98,7 +133,12 @@ export class Leaderboard extends Component {
             </div>
           </div>
         </div>
-      </div >
+        <PlayerModal
+          renderChild={this.state.renderChild}
+          loader={this.state.modalLoader}
+          stats={this.state.stats}
+        />
+      </div>
     );
   }
 
@@ -111,6 +151,7 @@ export class Leaderboard extends Component {
           index={index}
           key={shortid()}
           user={user}
+          showModal={this.showModal}
         />
       }
     );
@@ -125,6 +166,7 @@ export class Leaderboard extends Component {
           key={shortid()}
           player={player}
           showModal={this.showModal}
+          image={this.state[player.position]}
         />
       }
     );

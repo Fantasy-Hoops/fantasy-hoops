@@ -10,7 +10,9 @@ export class Card extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      avatar: ''
     }
+    this.showModal = this.showModal.bind(this);
   }
 
   async componentWillMount() {
@@ -25,11 +27,16 @@ export class Card extends Component {
       (player) => {
         return (
           <CardPlayer
+            showModal={this.showModal}
             key={shortid()}
             player={player}
           />
         )
       });
+  }
+
+  showModal(player) {
+    this.props.showModal(player);
   }
 
   render() {
