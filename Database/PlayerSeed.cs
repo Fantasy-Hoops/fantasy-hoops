@@ -55,8 +55,14 @@ namespace fantasy_hoops.Database
 
                 if (updatePrice)
                 {
-                    int hTeamNextGameId = CommonFunctions.GetNextGame(hTeamPlayers[0].NbaID);
-                    int vTeamNextGameId = CommonFunctions.GetNextGame(vTeamPlayers[0].NbaID);
+                    int hTeamNextGameId = CommonFunctions.GetNextGame(hTeamPlayers
+                        .Where(player => player.Status.Equals("Active"))
+                        .OrderByDescending(player => player.Price)
+                        .FirstOrDefault().NbaID);
+                    int vTeamNextGameId = CommonFunctions.GetNextGame(vTeamPlayers
+                        .Where(player => player.Status.Equals("Active"))
+                        .OrderByDescending(player => player.Price)
+                        .FirstOrDefault().NbaID);
 
                     var hTeam = context.Teams.Where(t => t.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
                     var vTeam = context.Teams.Where(t => t.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
