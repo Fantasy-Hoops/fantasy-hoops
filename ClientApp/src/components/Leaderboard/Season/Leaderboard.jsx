@@ -56,7 +56,7 @@ export class Leaderboard extends Component {
     });
   }
 
-  async switchTab(e) {
+  switchTab(e) {
     const type = e.target.id.split(/-/)[0];
 
     if (this.state.activeTab === type)
@@ -65,11 +65,9 @@ export class Leaderboard extends Component {
     this.setState({ activeTab: type });
 
     if (this.state[type].length === 0) {
-      this.setState({ loader: true });
-
-      await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/season/${type}`)
+      fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/season/${type}`)
         .then(res => {
-          return res.json()
+          return res.json();
         })
         .then(res => {
           this.setState({
@@ -97,7 +95,7 @@ export class Leaderboard extends Component {
     const lineups = this.loadLineups(this.state.lineups);
     const players = this.loadPlayers(this.state.players);
     return (
-      <div className="container bg-light pt-3 p-0">
+      <div className="container bg-light">
         <div className="text-center pb-1">
           <img src={leaderboardLogo}
             alt="Leaderboard Logo"
@@ -167,6 +165,7 @@ export class Leaderboard extends Component {
           player={player}
           showModal={this.showModal}
           image={this.state[player.position]}
+          season={true}
         />
       }
     );

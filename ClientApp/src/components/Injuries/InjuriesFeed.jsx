@@ -19,7 +19,7 @@ export class InjuriesFeed extends Component {
       modalLoader: true,
       renderChild: true
     };
-    }
+  }
 
   componentDidMount() {
     $("#playerModal").on("hidden.bs.modal", () => {
@@ -89,7 +89,7 @@ export class InjuriesFeed extends Component {
           injury={injury}
           showModal={this.showModal}
         />
-    );
+      );
     });
     return (
       <div className="container bg-light">

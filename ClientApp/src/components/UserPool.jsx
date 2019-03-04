@@ -54,7 +54,7 @@ export class UserPool extends Component {
     );
 
     return (
-      <div className="container bg-light pt-4 pb-2">
+      <div className="container bg-light">
         <div className="search m-3 mb-4">
           <span className="fa fa-search"></span>
           <DebounceInput

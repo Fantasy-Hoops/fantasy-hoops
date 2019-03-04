@@ -132,8 +132,8 @@ export class Leaderboard extends Component {
       ? <Loader show={this.state.loader || this.state.loadMore} />
       : this.seeMoreBtn(this.state.activeTab);
     return (
-      <div className="container bg-light pb-3">
-        <div className="text-center pb-3">
+      <div className="container bg-light">
+        <div className="text-center">
           <img src={leaderboardLogo}
             alt="Leaderboard Logo"
             width="60rem"

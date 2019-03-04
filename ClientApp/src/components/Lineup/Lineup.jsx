@@ -128,11 +128,11 @@ export class Lineup extends Component {
     ) {
       const btn = document.getElementById("submit");
       btn.disabled = false;
-      btn.className = "btn btn-primary btn-lg btn-block";
+      btn.className = "Lineup__submit-button btn btn-primary btn-block";
     } else {
       const btn = document.getElementById("submit");
       btn.disabled = true;
-      btn.className = "btn btn-outline-primary btn-lg btn-block";
+      btn.className = "Lineup__submit-button btn btn-outline-primary btn-block";
     }
   }
 
@@ -177,7 +177,7 @@ export class Lineup extends Component {
         seconds = this.getFormattedDateString(seconds, "second");
 
         return (
-          <span>
+          <span className="Lineup__countdown">
             Game starts in{" "}
             <strong>
               {days}
@@ -212,79 +212,62 @@ export class Lineup extends Component {
     };
 
     return (
-      <div className="container bg-light pb-5" style={{ width: "100%" }}>
-        <div
-          className="bg-light sticky-top"
-          style={{ top: "4rem", width: "100%" }}
-        >
-          <div className="pt-3 text-center mx-auto" style={{ width: "50%" }}>
-            <Alert
-              type={this.state.alertType}
-              text={this.state.alertText}
-              show={this.state.showAlert}
+      <div className="container bg-light" style={{ width: "100%" }}>
+        <div className="text-center mx-auto" style={{ width: "50%" }}>
+          <Alert
+            type={this.state.alertType}
+            text={this.state.alertText}
+            show={this.state.showAlert}
+          />
+        </div>
+        <div className="Lineup--sticky">
+          <div className="text-center">
+            <Countdown
+              date={this.getDate()}
+              zeroPadTime={3}
+              zeroPadDays={3}
+              renderer={renderer}
             />
           </div>
-          <button
-            type="button"
-            className="btn btn-primary absolute btn-circle btn-lg m-3"
-            data-toggle="modal"
-            data-target="#infoModal"
-            style={{ position: "absolute", right: "0", fontSize: "1.2rem" }}
-          >
-            <i className="fa fa-info mx-auto" aria-hidden="true" />
-          </button>
-          <div style={{ width: "100%" }}>
-            <div className="text-center mb-3">
-              <Countdown
-                date={this.getDate()}
-                zeroPadTime={3}
-                zeroPadDays={3}
-                renderer={renderer}
-              />
-            </div>
-            <div
-              className="mx-auto"
-              style={{ transform: "scale(0.7, 0.7)", marginTop: "-2rem" }}
-            >
-              <div className="row justify-content-center">
-                {this.state.pg}
-                {this.state.sg}
-                {this.state.sf}
-                {this.state.pf}
-                {this.state.c}
-              </div>
-            </div>
-            <div
-              className="row"
-              style={{
-                fontSize: "1.2rem",
-                color: remaining < 0 ? "red" : "black",
-                marginTop: "-1rem"
-              }}
-            >
-              <div className="col text-center">
-                <div> Remaining {remaining}K</div>
-              </div>
-            </div>
-            <ProgressBar players={this.state} />
-            <div
-              className="text-center mt-3 pb-3 mx-auto"
-              style={{ width: "50%" }}
-            >
-              <form onSubmit={this.handleSubmit}>
-                <button
-                  id="submit"
-                  disabled
-                  className="btn btn-outline-primary btn-lg btn-block"
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
+          <div className="Lineup__body">
+            {this.state.pg}
+            {this.state.sg}
+            {this.state.sf}
+            {this.state.pf}
+            {this.state.c}
           </div>
-          <Loader show={this.state.playerLoader} />
-          {playerPool()}
+          <p
+            className="text-center m-2"
+            style={{ color: remaining < 0 ? "red" : "black" }}
+          >
+            Remaining {remaining}K
+              </p>
+          <ProgressBar players={this.state} />
+          <div
+            className="text-center mt-3 pb-3 mx-auto position-relative"
+            style={{ width: "50%" }}
+          >
+            <form onSubmit={this.handleSubmit}>
+              <button
+                id="submit"
+                disabled
+                className="Lineup__submit-button btn btn-outline-primary"
+              >
+                Submit
+                </button>
+            </form>
+            <button
+              type="button"
+              className="btn btn-primary absolute Lineup__info-button"
+              data-toggle="modal"
+              data-target="#infoModal"
+            >
+              <i className="fa fa-info mx-auto" aria-hidden="true" />
+            </button>
+          </div>
         </div>
+        <Loader show={this.state.playerLoader} />
+        {playerPool()}
         <PlayerModal
           renderChild={this.state.renderChild}
           loader={this.state.modalLoader}

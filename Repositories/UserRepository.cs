@@ -149,6 +149,8 @@ namespace fantasy_hoops.Repositories
                 .Select(result => new
                 {
                     result.First().Date,
+                    longDate = result.First().Date.ToString("yyyy-MM-dd"),
+                    shortDate = result.First().Date.ToString("MMM. dd"),
                     score = Math.Round(result.Sum(c => c.FP), 1),
                     lineup = result.Select(lineup => new
                     {
@@ -212,6 +214,5 @@ namespace fantasy_hoops.Repositories
             });
             return position;
         }
-
     }
 }

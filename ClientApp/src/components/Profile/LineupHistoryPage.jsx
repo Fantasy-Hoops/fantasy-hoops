@@ -98,7 +98,7 @@ export class LineupHistory extends Component {
       : <button className="btn btn-primary m-3" onClick={this.loadMore}>See more</button>;
 
     return (
-      <div className="container p-0 pt-5">
+      <div className="container">
         <h3 className="text-center pb-3"><span><img src={icon} width="65rem" alt="Basketball Player Scoring" /></span> Your lineup history</h3>
         {recentActivity}
         <Loader show={this.state.loader} />
