@@ -116,10 +116,9 @@ export class Leaderboard extends Component {
         : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTab}`;
 
       this.setState({ loader: true });
-
       await fetch(url)
         .then(res => {
-          return res.json()
+          return res.json();
         })
         .then(res => {
           this.state.showButton[type] = res.length === LOAD_COUNT;
@@ -180,7 +179,7 @@ export class Leaderboard extends Component {
       ? <Loader show={this.state.loader || this.state.loadMore} />
       : this.seeMoreBtn(activeType);
     return (
-      <div className="container bg-light pt-3 p-0">
+      <div className="container bg-light">
         <div className="text-center pb-1">
           <img src={leaderboardLogo}
             alt="Leaderboard Logo"

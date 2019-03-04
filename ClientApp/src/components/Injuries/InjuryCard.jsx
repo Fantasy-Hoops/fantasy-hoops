@@ -27,8 +27,8 @@ export class InjuryCard extends Component {
     const link =
       this.props.injury.link !== "" ? (
         <span style={{ float: "left" }} className="comments">
-          <i className="fa fa-external-link-alt" />
           <a target="_blank" href={this.props.injury.link}>
+            <i className="fa fa-external-link-alt" />
             {" "}Link
           </a>
         </span>

@@ -10,7 +10,7 @@ export class Header extends Component {
     super(props);
 
     this.state = {
-      navHeight: '4rem',
+      navHeight: '2.5rem',
       userNotifications: '',
       unreadCount: 0
     };
@@ -105,7 +105,7 @@ export class Header extends Component {
           <a className="navbar-brand btn-no-outline Header__Logo" href="/">
             <img src={require('../../src/content/favicon.ico')} width="40" height="40" alt="Fantasy Hoops" />
             <span className="Header__Title">Fantasy Hoops</span>
-        </a>
+          </a>
           <button className="navbar-toggler Header__Burger"
             type="button" data-toggle="collapse"
             data-target="#navbarNavDropdown"
@@ -150,7 +150,7 @@ export class Header extends Component {
               }
             </ul>
           </div>
-          {isAuth() ? profile : login}          
+          {isAuth() ? profile : login}
         </nav>
       </div>
     );

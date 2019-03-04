@@ -52,8 +52,12 @@ export class Card extends Component {
             <div className="PlayerLeaderboardCard__body-item PlayerLeaderboardCard__player-name--abbr">
               {this.props.player.abbrName}
             </div>
-            <div className="PlayerLeaderboardCard__body-item PlayerLeaderboardCard__FP">
+            <div
+              className="PlayerLeaderboardCard__body-item PlayerLeaderboardCard__FP"
+              style={{ paddingTop: `${this.props.season ? '9%' : '18%'}` }}
+            >
               {`${this.props.player.fp.toFixed(1)} `}<span style={{ fontSize: '0.7rem', fontWeight: 400 }}>FP</span>
+              {this.props.season ? <div className="UserScoreCard__date" style={{ fontSize: '0.7rem' }}>{this.props.player.shortDate}</div> : ''}
             </div>
           </div>
         </a>

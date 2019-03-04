@@ -38,7 +38,6 @@ export class Card extends Component {
   showModal(player) {
     this.props.showModal(player);
   }
-
   render() {
     if (this.props.isDaily) {
       return (
@@ -63,6 +62,7 @@ export class Card extends Component {
             </a>
             <div title="Fantasy Points" className="UserLeaderboardCard__body-item UserLeaderboardCard__FP UserLeaderboardCard__FP--daily">
               {`${this.props.user.score.toFixed(1)} `}<span style={{ fontSize: '0.7rem', fontWeight: 400 }}>FP</span>
+              <div className="UserScoreCard__date" style={{ fontSize: '0.7rem' }}>{this.props.user.shortDate}</div>
             </div>
             {this.getPlayers()}
           </div>
@@ -86,7 +86,6 @@ export class Card extends Component {
                 />
               </a>
             </div>
-
             <a href={`/profile/${this.props.user.userName}`} className="UserLeaderboardCard__body-item UserLeaderboardCard__username">{this.props.user.userName}</a>
             <div className="UserLeaderboardCard__body-item UserLeaderboardCard__FP UserLeaderboardCard__FP--grey">
               {`${this.props.user.score.toFixed(1)} `}<span style={{ fontSize: '0.7rem', fontWeight: 400 }}>FP</span>

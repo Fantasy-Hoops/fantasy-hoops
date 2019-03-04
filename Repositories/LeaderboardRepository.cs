@@ -147,14 +147,16 @@ namespace fantasy_hoops.Repositories
         public IQueryable<object> GetSeasonLineups()
         {
             return _context.Lineups
-                .GroupBy(l => new { l.UserID, l.Date })
-                .Select(res => new
+                .GroupBy(lineup => new { lineup.UserID, lineup.Date })
+                .Select(result => new
                 {
-                    res.First().UserID,
-                    res.First().User.UserName,
-                    res.First().Date,
-                    score = Math.Round(res.Sum(c => c.FP), 1),
-                    lineup = res.Select(l => new
+                    result.First().UserID,
+                    result.First().User.UserName,
+                    longDate = result.First().Date.ToString("yyyy-MM-dd"),
+                    shortDate = result.First().Date.ToString("MMM. dd"),
+                    result.First().Date,
+                    score = Math.Round(result.Sum(c => c.FP), 1),
+                    lineup = result.Select(l => new
                     {
                         l.Player.NbaID,
                         l.Player.Position,
@@ -177,6 +179,8 @@ namespace fantasy_hoops.Repositories
                 .Take(10)
                 .Select(p => new
                 {
+                    longDate = p.Date.ToString("yyyy-MM-dd"),
+                    shortDate = p.Date.ToString("MMM. dd"),
                     p.Player.NbaID,
                     teamColor = p.Player.Team.Color,
                     p.Player.FullName,

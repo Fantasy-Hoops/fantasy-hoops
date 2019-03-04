@@ -27,22 +27,21 @@ export class PlayerPool extends Component {
       (player) => {
         if (player.position === this.props.position
           || this.props.position === '') {
-          return <div className="ml-3 mt-3" key={shortid()}>
-            <PlayerCard
-              key={player.id}
-              id={player.id}
-              status={1}
-              player={player}
-              selectPlayer={this.props.selectPlayer}
-              handleSelect={this.handleSelect}
-              showModal={this.props.showModal}
-            />
-          </div>
+          return <PlayerCard
+            key={shortid()}
+            key={player.id}
+            id={player.id}
+            status={1}
+            player={player}
+            selectPlayer={this.props.selectPlayer}
+            handleSelect={this.handleSelect}
+            showModal={this.props.showModal}
+          />
         }
       }
     );
     return (
-      <div className="container">
+      <div className="container p-0">
         <div className="row justify-content-center" style={{ margin: 'auto' }}>
           {players}
         </div>
