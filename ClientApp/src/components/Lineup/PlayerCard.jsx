@@ -62,7 +62,7 @@ export class PlayerCard extends Component {
         alt={this.props.player.abbrName}
         src={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.id}.png`,
         require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)]}
-        loader={<img className="PlayerCard__loader"  src={require(`../../content/images/imageLoader2.gif`)} alt="Loader"/>}
+        loader={<img className="PlayerCard__loader" src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
         decode={false}
       />
       const teamLogo = <Img
@@ -75,6 +75,8 @@ export class PlayerCard extends Component {
       let color = '';
       if (this.props.selectedPlayer && this.props.selectedPlayer.props.player) {
         color = (this.props.selectedPlayer.props.player.price + this.props.remaining) < this.props.player.price ? 'red' : '';
+      } else {
+        color = this.props.remaining < this.props.player.price ? 'red' : '';
       }
       return (
         <div className={`PlayerCard card ${this.props.status === 1 ? 'm-1' : ''}`}>
