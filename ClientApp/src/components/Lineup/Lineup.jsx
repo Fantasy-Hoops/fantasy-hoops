@@ -24,11 +24,13 @@ export class Lineup extends Component {
 
     this.state = {
       position: "",
-      pg: <PlayerCard filter={this.filter} status={0} position="PG" />,
-      sg: <PlayerCard filter={this.filter} status={0} position="SG" />,
-      sf: <PlayerCard filter={this.filter} status={0} position="SF" />,
-      pf: <PlayerCard filter={this.filter} status={0} position="PF" />,
-      c: <PlayerCard filter={this.filter} status={0} position="C" />,
+      lineup: {
+        pg: <PlayerCard filter={this.filter} status={0} position="PG" />,
+        sg: <PlayerCard filter={this.filter} status={0} position="SG" />,
+        sf: <PlayerCard filter={this.filter} status={0} position="SF" />,
+        pf: <PlayerCard filter={this.filter} status={0} position="PF" />,
+        c: <PlayerCard filter={this.filter} status={0} position="C" />
+      },
       loadedPlayers: false,
       showAlert: false,
       alertType: "",
@@ -117,11 +119,11 @@ export class Lineup extends Component {
     }
 
     if (
-      this.state.pg.props.player &&
-      this.state.sg.props.player &&
-      this.state.sf.props.player &&
-      this.state.pf.props.player &&
-      this.state.c.props.player &&
+      this.state.lineup.pg.props.player &&
+      this.state.lineup.sg.props.player &&
+      this.state.lineup.sf.props.player &&
+      this.state.lineup.pf.props.player &&
+      this.state.lineup.c.props.player &&
       this.calculateRemaining() >= 0 &&
       this.state.playerPoolDate === this.state.nextGame &&
       this.state.submit
@@ -202,6 +204,8 @@ export class Lineup extends Component {
       } else {
         return (
           <PlayerPool
+            remaining={remaining}
+            lineup={this.state.lineup}
             position={this.state.position}
             players={this.state.players}
             selectPlayer={this.selectPlayer}
@@ -230,11 +234,11 @@ export class Lineup extends Component {
             />
           </div>
           <div className="Lineup__body">
-            {this.state.pg}
-            {this.state.sg}
-            {this.state.sf}
-            {this.state.pf}
-            {this.state.c}
+            {this.state.lineup.pg}
+            {this.state.lineup.sg}
+            {this.state.lineup.sf}
+            {this.state.lineup.pf}
+            {this.state.lineup.c}
           </div>
           <p
             className="text-center m-2"
@@ -298,8 +302,9 @@ export class Lineup extends Component {
     ) : (
         <PlayerCard status={0} filter={this.filter} position={player.position} />
       );
+    this.state.lineup[pos] = playerCard;
     this.setState({
-      [pos]: playerCard
+      lineup: this.state.lineup
     });
   }
 
@@ -319,11 +324,11 @@ export class Lineup extends Component {
   calculateRemaining() {
     const remaining =
       budget -
-      this.price(this.state.pg) -
-      this.price(this.state.sg) -
-      this.price(this.state.sf) -
-      this.price(this.state.pf) -
-      this.price(this.state.c);
+      this.price(this.state.lineup.pg) -
+      this.price(this.state.lineup.sg) -
+      this.price(this.state.lineup.sf) -
+      this.price(this.state.lineup.pf) -
+      this.price(this.state.lineup.c);
     return remaining;
   }
 
@@ -338,16 +343,16 @@ export class Lineup extends Component {
     const user = parse();
     const data = {
       UserID: user.id,
-      PgID: this.state.pg.props.player.playerId,
-      SgID: this.state.sg.props.player.playerId,
-      SfID: this.state.sf.props.player.playerId,
-      PfID: this.state.pf.props.player.playerId,
-      CID: this.state.c.props.player.playerId,
-      PgPrice: this.state.pg.props.player.price,
-      SgPrice: this.state.sg.props.player.price,
-      SfPrice: this.state.sf.props.player.price,
-      PfPrice: this.state.pf.props.player.price,
-      CPrice: this.state.c.props.player.price
+      PgID: this.state.lineup.pg.props.player.playerId,
+      SgID: this.state.lineup.sg.props.player.playerId,
+      SfID: this.state.lineup.sf.props.player.playerId,
+      PfID: this.state.lineup.pf.props.player.playerId,
+      CID: this.state.lineup.c.props.player.playerId,
+      PgPrice: this.state.lineup.pg.props.player.price,
+      SgPrice: this.state.lineup.sg.props.player.price,
+      SfPrice: this.state.lineup.sf.props.player.price,
+      PfPrice: this.state.lineup.pf.props.player.price,
+      CPrice: this.state.lineup.c.props.player.price
     };
 
     fetch("/api/lineup/submit", {

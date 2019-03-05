@@ -62,7 +62,7 @@ export class PlayerCard extends Component {
         alt={this.props.player.abbrName}
         src={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.id}.png`,
         require(`../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)]}
-        loader={<img width='100%' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" style={{ zIndex: 5, position: 'relative' }} />}
+        loader={<img className="PlayerCard__loader"  src={require(`../../content/images/imageLoader2.gif`)} alt="Loader"/>}
         decode={false}
       />
       const teamLogo = <Img
@@ -72,6 +72,10 @@ export class PlayerCard extends Component {
           defaultLogo]}
         decode={false}
       />
+      let color = '';
+      if (this.props.selectedPlayer && this.props.selectedPlayer.props.player) {
+        color = (this.props.selectedPlayer.props.player.price + this.props.remaining) < this.props.player.price ? 'red' : '';
+      }
       return (
         <div className={`PlayerCard card ${this.props.status === 1 ? 'm-1' : ''}`}>
           <div className="PlayerCard__player-attributes">
@@ -83,11 +87,12 @@ export class PlayerCard extends Component {
               ${this.props.status === 2
                   ? 'PlayerCard__player-attributes--price-lineup'
                   : ''} badge badge-dark`}
+              style={{ color: color }}
             >
               {this.props.player.price + 'K'}
             </div>
           </div>
-          <div style={{ backgroundColor: `${this.props.player.team.teamColor}` }}>
+          <div className="PlayerCard__background" style={{ backgroundColor: `${this.props.player.team.teamColor}` }}>
             {image}
             {teamLogo}
           </div>
@@ -120,7 +125,7 @@ export class PlayerCard extends Component {
             className="PlayerCard__player-img"
             alt={this.props.position}
             src={this.state[this.props.position]}
-            loader={<img width='100%' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" style={{ zIndex: 5, position: 'relative' }} />}
+            loader={<img className="PlayerCard__loader" src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
             decode={false}
           />
           <div className="PlayerCard__position">{this.props.position}</div>

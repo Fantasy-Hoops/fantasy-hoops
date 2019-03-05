@@ -24,13 +24,13 @@ export class Avatar extends Component {
     const user = this.props.user;
     return (
       <div>
-        <div className="row">
+        <div className="row mx-auto">
           <h3 className="mt-3 mx-auto">{user.userName}</h3>
         </div>
         <Img
           alt={user.userName}
           className="mx-auto img-fluid img-circle d-block round-img"
-          style={{ width: '160px', height: '160px' }}
+          style={{ maxWidth: '12rem' }}
           src={this.state.avatar}
           loader={<img src={require(`../../content/images/imageLoader.gif`)} alt="Loader" />}
         />

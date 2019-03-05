@@ -36,6 +36,8 @@ export class PlayerPool extends Component {
             selectPlayer={this.props.selectPlayer}
             handleSelect={this.handleSelect}
             showModal={this.props.showModal}
+            remaining={this.props.remaining}
+            selectedPlayer={this.props.lineup[player.position.toLowerCase()]}
           />
         }
       }
