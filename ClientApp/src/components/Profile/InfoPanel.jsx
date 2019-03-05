@@ -76,7 +76,7 @@ export class InfoPanel extends Component {
 
     return (
       <div className="tab-pane active" id="profile">
-        <div className="row">
+        <div className="row mx-auto">
           <div className="col-md-12">
             <div className="mx-auto mb-2">
               <div className="m-1 badge badge-warning"><i className="fa fa-fire"></i> Streak: {user.streak}</div>

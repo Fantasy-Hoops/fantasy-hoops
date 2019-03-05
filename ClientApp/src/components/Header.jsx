@@ -10,7 +10,7 @@ export class Header extends Component {
     super(props);
 
     this.state = {
-      navHeight: '2.5rem',
+      navHeight: '4.2rem',
       userNotifications: '',
       unreadCount: 0
     };

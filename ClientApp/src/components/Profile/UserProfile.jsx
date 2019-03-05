@@ -87,7 +87,7 @@ export class UserProfile extends Component {
 
     return (
       <div className="container bg-light">
-        <div className="row">
+        <div className="row mx-auto">
           <div className="col-lg-4 order-lg-1 p-0 pt-3">
             {this.state.user ? <Avatar user={this.state.user} readOnly={this.state.readOnly} /> : ''}
           </div>

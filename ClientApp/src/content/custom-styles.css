@@ -10,7 +10,7 @@ body {
 }
 
 .container {
-  padding-top: 4.5rem;
+  padding-top: 1rem;
 }
 
 .background-image {
@@ -988,8 +988,8 @@ thead {
 .Lineup--sticky {
   width: 100%;
   position: sticky;
+  top: 5.2rem;
   padding-top: 1rem;
-  top: 5rem;
   z-index: 10;
   background-color: var(--tertiary-color)
 }
@@ -1042,7 +1042,7 @@ thead {
   white-space: nowrap;
   overflow: hidden;
   padding: .2rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--primary-color);
 }
@@ -1055,10 +1055,18 @@ thead {
   z-index: 1;
 }
 
+.PlayerCard__loader {
+  width: 100%;
+}
+
+.PlayerCard__background {
+  width: 100%;
+  min-height: 50%;
+}
+
 .PlayerCard__player-img {
   position: relative;
   z-index: 4;
-  padding-top: 1px;
   width: 100%;
 }
 
@@ -1255,22 +1263,34 @@ thead {
    .PlayerCard__player-name--lineup { 
       font-size: 0.8rem; 
    }
+   .PlayerCard__position {
+    font-size: 0.8rem; 
+  }
 }
 
 @media only screen and (max-width: 440px) {
    .PlayerCard__player-name--lineup { 
       font-size: 0.7rem; 
    }
+   .PlayerCard__position {
+    font-size: 0.7rem; 
+  }
 }
 
 @media only screen and (max-width: 380px) {
    .PlayerCard__player-name--lineup { 
       font-size: 0.6rem; 
    }
+   .PlayerCard__position {
+    font-size: 0.6rem; 
+  }
 }
 
 @media only screen and (max-width: 320px) {
    .PlayerCard__player-name--lineup { 
       font-size: 0.5rem; 
    }
+   .PlayerCard__position {
+    font-size: 0.5rem; 
+  }
 }

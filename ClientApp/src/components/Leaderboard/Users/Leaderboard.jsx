@@ -180,7 +180,7 @@ export class Leaderboard extends Component {
       : this.seeMoreBtn(activeType);
     return (
       <div className="container bg-light">
-        <div className="text-center pb-1">
+        <div className="text-center">
           <img src={leaderboardLogo}
             alt="Leaderboard Logo"
             width="60rem"
