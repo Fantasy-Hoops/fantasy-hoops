@@ -6,6 +6,8 @@ using fantasy_hoops.Models;
 using fantasy_hoops.Helpers;
 using FluentScheduler;
 using fantasy_hoops.Services;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Database
 {
@@ -26,7 +28,7 @@ namespace fantasy_hoops.Database
             }
 
             _scoreService = new ScoreService();
-            Calculate(context);
+            Task.Run(() => Calculate(context)).Wait();
         }
 
         private static JObject GetBoxscore(string url)
@@ -50,7 +52,7 @@ namespace fantasy_hoops.Database
             return true;
         }
 
-        private static void Calculate(GameContext context)
+        private static async Task Calculate(GameContext context)
         {
             string gameDate = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
             JArray games = CommonFunctions.GetGames(gameDate);
@@ -72,7 +74,7 @@ namespace fantasy_hoops.Database
                 {
                     int oppId;
                     string score = "";
-                    if (!context.Players.Any(x => x.NbaID.Equals((int)player["personId"])))
+                    if (!await context.Players.AnyAsync(x => x.NbaID.Equals((int)player["personId"])))
                         continue;
                     if ((int)player["teamId"] == hTeam)
                     {
@@ -86,17 +88,17 @@ namespace fantasy_hoops.Database
                     }
                     if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
                         continue;
-                    AddToDatabase(context, player, date, oppId, score);
+                    await AddToDatabaseAsync(context, player, date, oppId, score);
                 }
             }
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             JobManager.AddJob(() => UserScoreSeed.Initialize(context),
                 s => s.WithName("userScore")
                 .ToRunNow());
         }
 
-        private static void AddToDatabase(GameContext context, JToken player, DateTime date, int oppId, string score)
+        private static async Task AddToDatabaseAsync(GameContext context, JToken player, DateTime date, int oppId, string score)
         {
             Stats statsObj = new Stats
             {
@@ -126,7 +128,7 @@ namespace fantasy_hoops.Database
 
             statsObj.Player = context.Players.Where(x => x.NbaID == (int)player["personId"]).FirstOrDefault();
             var sth = statsObj.Player.PlayerID;
-            bool shouldAdd = !context.Stats.Any(x => x.Date.Equals(date) && x.PlayerID == statsObj.Player.PlayerID);
+            bool shouldAdd = !await context.Stats.AnyAsync(x => x.Date.Equals(date) && x.PlayerID == statsObj.Player.PlayerID);
 
             if (shouldAdd)
             {
@@ -138,7 +140,7 @@ namespace fantasy_hoops.Database
                     statsObj.AST, statsObj.STL, statsObj.BLK, statsObj.TOV);
 
                 statsObj.Price = _scoreService.GetPrice(statsObj.Player);
-                context.Stats.Add(statsObj);
+                await context.Stats.AddAsync(statsObj);
             }
         }
     }

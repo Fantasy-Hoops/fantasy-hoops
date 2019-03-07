@@ -8,6 +8,7 @@ using fantasy_hoops.Helpers;
 using System.Collections;
 using System.Collections.Generic;
 using FluentScheduler;
+using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Database
 {
@@ -26,6 +27,11 @@ namespace fantasy_hoops.Database
                 return;
             }
 
+            Task.Run(() => Calculate(context)).Wait();
+        }
+
+        private static async Task Calculate(GameContext context)
+        {
             var teams = GetTeams();
             System.Threading.Thread.Sleep(1000);
             var dbPlayers = context.Players;
@@ -34,7 +40,7 @@ namespace fantasy_hoops.Database
             {
                 int teamNbaId = (int)team["reference"];
 
-                if (dbTeams.Any(t => t.NbaID == teamNbaId))
+                if (await dbTeams.AnyAsync(t => t.NbaID == teamNbaId))
                     goto Roster;
 
                 var teamObj = new Team
@@ -44,7 +50,7 @@ namespace fantasy_hoops.Database
                     NbaID = teamNbaId,
                     Color = GetTeamColor(teamNbaId)
                 };
-                dbTeams.Add(teamObj);
+                await dbTeams.AddAsync(teamObj);
 
             Roster:
                 Team dbTeam = dbTeams.Where(t => t.NbaID == teamNbaId).FirstOrDefault();
@@ -56,7 +62,7 @@ namespace fantasy_hoops.Database
                         continue;
                     int playerNbaId = (int)player["reference"];
                     bool gLeagueStatus = player["status"].ToString().Equals("D-LEAGUE") ? true : false;
-                    if (dbPlayers.Any(p => p.NbaID == playerNbaId))
+                    if (await dbPlayers.AnyAsync(p => p.NbaID == playerNbaId))
                     {
                         Player dbPlayer = dbPlayers.Where(p => p.NbaID == playerNbaId).FirstOrDefault();
                         if (dbPlayer.Team == null)
@@ -109,7 +115,7 @@ namespace fantasy_hoops.Database
                                 Status = "Active",
                                 IsInGLeague = gLeagueStatus
                             };
-                            dbPlayers.Add(playerObj);
+                            await dbPlayers.AddAsync(playerObj);
                         }
                         catch (ArgumentNullException)
                         {
@@ -118,7 +124,7 @@ namespace fantasy_hoops.Database
                     }
                 }
             }
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         private static List<JToken> GetTeams(string apikey = API_KEY)
@@ -153,13 +159,13 @@ namespace fantasy_hoops.Database
             return json["players"].ToList();
         }
 
-        public static void UpdateTeamColors(GameContext context)
+        public static async Task UpdateTeamColors(GameContext context)
         {
             foreach (var team in context.Teams)
             {
                 team.Color = GetTeamColor(team.NbaID);
             }
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         private static string GetTeamColor(int id)

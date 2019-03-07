@@ -50,6 +50,21 @@ export const saveSubscription = (subscription) => {
     });
 }
 
+export const unsubscribePush = () => {
+  return this.getPushSubscription().then((subscription) => {
+    return subscription.unsubscribe().then(function () {
+      deleteSubscription(subscription);
+    });
+  });
+}
+
+export const getPushSubscription = () => {
+  return navigator.serviceWorker.ready
+    .then((registration) => {
+      return registration.pushManager.getSubscription();
+    });
+}
+
 export const deleteSubscription = (subscription) => {
   return fetch('./api/push/unsubscribe', {
     method: 'post',
@@ -60,4 +75,28 @@ export const deleteSubscription = (subscription) => {
       subscription: subscription
     })
   });
+}
+
+export const registerPush = () => {
+  return navigator.serviceWorker.ready
+    .then((registration) => {
+      return registration.pushManager.getSubscription().then((subscription) => {
+        if (subscription) {
+          // // renew subscription if we're within 5 days of expiration
+          if (subscription.expirationTime && Date.now() > subscription.expirationTime - 432000000) {
+            return unsubscribePush().then(() => {
+              return subscribePush(registration).then((subscription) => {
+                return subscription;
+              });
+            });
+          }
+
+          return subscription;
+        }
+        return subscribePush(registration);
+      });
+    })
+    .then((subscription) => {
+      return saveSubscription(subscription);
+    });
 }

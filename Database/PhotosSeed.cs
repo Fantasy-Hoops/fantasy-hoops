@@ -6,6 +6,7 @@ using fantasy_hoops.Helpers;
 using System;
 using FluentScheduler;
 using System.Threading;
+using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Database
 {
@@ -27,7 +28,7 @@ namespace fantasy_hoops.Database
 
             ExtractLogos(context);
             ExtractPlayerPhotos(context);
-            DeleteNotifications(context);
+            Task.Run(() => DeleteNotifications(context)).Wait();
         }
 
         private static void ExtractLogos(GameContext context)
@@ -105,13 +106,12 @@ namespace fantasy_hoops.Database
             return false;
         }
 
-        private static void DeleteNotifications(GameContext context)
+        private static async Task DeleteNotifications(GameContext context)
         {
-            context.Notifications
+            await context.Notifications
                 .Where(n => n.DateCreated < DateTime.Today.ToUniversalTime().AddDays(-7))
-                .ToList()
-                .ForEach(notification => context.Notifications.Remove(notification));
-            context.SaveChanges();
+                .ForEachAsync(notification => context.Notifications.Remove(notification));
+            await context.SaveChangesAsync();
         }
     }
 }

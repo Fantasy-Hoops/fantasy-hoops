@@ -8,6 +8,7 @@ using System.Globalization;
 using fantasy_hoops.Helpers;
 using FluentScheduler;
 using System.Threading;
+using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Database
 {
@@ -26,7 +27,7 @@ namespace fantasy_hoops.Database
 
             string today = Today();
             JArray tGames = CommonFunctions.GetGames(today);
-            GetPreviews(context, today, tGames);
+            Task.Run(() => GetPreviews(context, today, tGames)).Wait();
         }
 
         public static void ExtractRecaps(GameContext context)
@@ -42,10 +43,10 @@ namespace fantasy_hoops.Database
 
             string yesterday = Yesterday();
             JArray yGames = CommonFunctions.GetGames(yesterday);
-            GetRecaps(context, yesterday, yGames);
+            Task.Run(() => GetRecaps(context, yesterday, yGames)).Wait();
         }
 
-        private static void GetPreviews(GameContext context, string date, JArray games)
+        private static async Task GetPreviews(GameContext context, string date, JArray games)
         {
             JArray previews = new JArray();
             foreach (JObject game in games)
@@ -73,12 +74,12 @@ namespace fantasy_hoops.Database
             }
 
             foreach (JObject previewObj in previews)
-                AddToDatabase(context, previewObj);
+                await AddToDatabaseAsync(context, previewObj);
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
-        public static void GetRecaps(GameContext context, string date, JArray games)
+        public static async Task GetRecaps(GameContext context, string date, JArray games)
         {
             JArray news = new JArray();
             foreach (JObject game in games)
@@ -105,12 +106,12 @@ namespace fantasy_hoops.Database
             }
 
             foreach (JObject newsObj in news)
-                AddToDatabase(context, newsObj);
+                await AddToDatabaseAsync(context, newsObj);
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
-        private static void AddToDatabase(GameContext context, JToken newsObj)
+        private static async Task AddToDatabaseAsync(GameContext context, JToken newsObj)
         {
             var nObj = new News
             {
@@ -120,12 +121,12 @@ namespace fantasy_hoops.Database
                 vTeamID = (int)newsObj["vTeamID"]
             };
 
-            bool shouldAdd = !context.News.Any(x => x.Title.Equals((string)newsObj["title"])
+            bool shouldAdd = !await context.News.AnyAsync(x => x.Title.Equals((string)newsObj["title"])
             && x.Date.Equals(DateTime.Parse(newsObj["pubDateUTC"].ToString())));
 
             if (nObj == null || !shouldAdd)
                 return;
-            context.News.Add(nObj);
+            await context.News.AddAsync(nObj);
 
             JArray paragraphs = (JArray)newsObj["paragraphs"];
             int i = 0;
@@ -137,7 +138,7 @@ namespace fantasy_hoops.Database
                     Content = parObj["paragraph"].ToString().Replace("\xFFFD", ""),
                     ParagraphNumber = i++
                 };
-                context.Paragraphs.Add(paragraph);
+                await context.Paragraphs.AddAsync(paragraph);
             }
         }
 

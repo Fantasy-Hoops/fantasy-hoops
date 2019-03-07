@@ -37,7 +37,7 @@ export default class App extends Component {
         <PrivateRoute path='/users' component={UserPool} />
         <PrivateRoute path='/notifications' component={AllNotificationsPage} />
         <PrivateRoute path='/history' component={LineupHistory} />
-        <Route path='/push' component={Push} />
+        <PrivateRoute path='/push' component={Push} />
       </div>
     );
   }

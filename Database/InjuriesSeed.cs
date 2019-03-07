@@ -28,7 +28,7 @@ namespace fantasy_hoops.Database
                 return;
             }
 
-            Extract(context);
+            Task.Run(() => Extract(context)).Wait();
         }
 
         private static JArray GetInjuries()
@@ -39,9 +39,9 @@ namespace fantasy_hoops.Database
             return injuries;
         }
 
-        private static void Extract(GameContext context)
+        private static async Task Extract(GameContext context)
         {
-            context.Injuries.ForEachAsync(inj => context.Injuries.Remove(inj));
+            await context.Injuries.ForEachAsync(inj => context.Injuries.Remove(inj));
             JArray injuries = GetInjuries();
             foreach (JObject injury in injuries)
             {
@@ -49,17 +49,17 @@ namespace fantasy_hoops.Database
                 {
                     if (dayFrom.CompareTo(DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5)) > 0)
                         break;
-                    AddToDatabase(context, injury);
+                    await AddToDatabaseAsync(context, injury);
                 }
                 catch (Exception)
                 {
                     continue;
                 }
             }
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
-        private static void AddToDatabase(GameContext context, JToken injury)
+        private static async Task AddToDatabaseAsync(GameContext context, JToken injury)
         {
             var injuryObj = new Injuries
             {
@@ -74,7 +74,7 @@ namespace fantasy_hoops.Database
 
             if (injuryObj.Player == null)
                 return;
-            context.Injuries.Add(injuryObj);
+            await context.Injuries.AddAsync(injuryObj);
             string statusBefore = context.Players
                 .Where(p => p.NbaID == injuryObj.Player.NbaID)
                 .FirstOrDefault()
@@ -90,16 +90,15 @@ namespace fantasy_hoops.Database
                 .StatusDate = DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5);
 
             if (!statusBefore.Equals(statusAfter))
-                UpdateNotifications(context, injuryObj);
+                await UpdateNotifications(context, injuryObj);
         }
 
-        private static void UpdateNotifications(GameContext context, Injuries injury)
+        private static async Task UpdateNotifications(GameContext context, Injuries injury)
         {
-            context.Lineups
+            await context.Lineups
                 .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
                             && x.PlayerID == injury.PlayerID)
-                .ToList()
-                .ForEach(s =>
+                .ForEachAsync(async s =>
                 {
                     var inj = new InjuryNotification
                     {
@@ -111,10 +110,10 @@ namespace fantasy_hoops.Database
                         InjuryDescription = injury.Injury
                     };
 
-                    if (!context.InjuryNotifications
-                    .Any(x => x.InjuryStatus.Equals(inj.InjuryStatus)
+                    if (!await context.InjuryNotifications
+                    .AnyAsync(x => x.InjuryStatus.Equals(inj.InjuryStatus)
                                 && x.PlayerID == inj.PlayerID))
-                        context.InjuryNotifications.Add(inj);
+                        await context.InjuryNotifications.AddAsync(inj);
                 });
         }
     }
