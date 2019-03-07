@@ -69,7 +69,7 @@ namespace fantasy_hoops.Controllers
         [HttpPost("send/{userId}")]
         public async Task<IActionResult> Send([FromRoute] string userId, [FromBody] PushNotificationViewModel notification, [FromQuery] int? delay)
         {
-            if (!_env.IsDevelopment()) return Forbid();
+            // if (!_env.IsDevelopment()) return Forbid();
 
             if (delay != null) Thread.Sleep((int)delay);
 
