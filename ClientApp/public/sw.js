@@ -13,7 +13,7 @@ self.addEventListener('activate', function (event) {
 // Respond to a server push with a user notification
 self.addEventListener('push', function (event) {
   if (event.data) {
-    const { title, lang = 'en', body, tag, timestamp, requireInteraction, actions, image } = event.data.json();
+    const { title, lang = 'en', body, tag, timestamp, requireInteraction, actions, image, icon } = event.data.json();
 
     const promiseChain = self.registration.showNotification(title, {
       lang,
@@ -23,8 +23,8 @@ self.addEventListener('push', function (event) {
       timestamp: timestamp ? Date.parse(timestamp) : undefined,
       actions: actions || undefined,
       image: image || undefined,
-      badge: '/images/favicon.png',
-      icon: '/images/toast-image.jpg'
+      badge: './favicon.ico',
+      icon: icon || './favicon.ico'
     });
 
     // Ensure the toast notification is displayed before exiting this function

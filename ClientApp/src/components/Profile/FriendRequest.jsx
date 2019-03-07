@@ -109,6 +109,21 @@ export class FriendRequest extends Component {
           status: '0'
         });
       });
+
+    const notification = {
+      title: "Friend request",
+      body: `User ${receiver.userName} sent you a friend request`,
+      icon: `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${receiver.id}.png`,
+      tag: `${receiver.userName}_friend_request`
+    };
+
+    await fetch(`/api/push/send/${sender.id}`, {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(notification)
+    });
   }
 
   async acceptFriendRequest(receiver) {

@@ -4,6 +4,7 @@ using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace fantasy_hoops.Database
 {
@@ -19,10 +20,10 @@ namespace fantasy_hoops.Database
                 .Seconds());
                 return;
             }
-            Update(context);
+            Task.Run(() => Update(context)).Wait();
         }
 
-        private static void Update(GameContext context)
+        private static async Task Update(GameContext context)
         {
             var allPlayers = context.Lineups.Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME) && !x.Calculated)
                 .Include(x => x.Player).ThenInclude(x => x.Stats)
@@ -44,10 +45,10 @@ namespace fantasy_hoops.Database
                 .Select(x => x.User)
                 .Distinct();
 
-            context.Users.Except(usersPlayed).ToList().ForEach(u => u.Streak = 0);
+            await context.Users.Except(usersPlayed).ForEachAsync(u => u.Streak = 0);
 
-            usersPlayed.ToList()
-                .ForEach(user =>
+            await usersPlayed
+                .ForEachAsync(async user =>
                 {
                     user.Streak++;
 
@@ -64,9 +65,9 @@ namespace fantasy_hoops.Database
                         Score = userScore
                     };
 
-                    context.GameScoreNotifications.Add(gs);
+                    await context.GameScoreNotifications.AddAsync(gs);
                 });
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { subscribePush, saveSubscription, deleteSubscription } from '../utils/push';
 import { parse } from '../utils/auth';
 
 export class Push extends Component {
@@ -13,23 +12,19 @@ export class Push extends Component {
 
   handleClick(e) {
     e.preventDefault();
-    this.registerPush()
-      .then(() => {
-        this.sendMessage('Fantasy Hoops',
-          'Blagadariu nx 200FP surinkai!', 5000);
-      });
+    this.sendMessage('Testing',
+      'Dolor ipsum proident sint laborum dolor et sint id do aliquip officia est commodo. ');
   }
 
-  sendMessage(title, message, delay) {
+  sendMessage(title, message) {
     const notification = {
       title: title,
       body: message,
-      //tag: 'demo_testmessage' //we don't want a tag, as it would cause every notification after the first one to appear in the notification drawer only
+      icon: require('../content/favicon.ico'),
+      image: require('../content/images/default.png')
     };
 
-    const userId = localStorage.getItem('userId');
     let apiUrl = `./api/push/send/${parse().id}`;
-    if (delay) apiUrl += `?delay=${delay}`;
 
     return fetch(apiUrl, {
       method: 'post',
@@ -38,49 +33,6 @@ export class Push extends Component {
       },
       body: JSON.stringify(notification)
     });
-  }
-
-  subscribePushAndUpdateButtons(registration) {
-    return subscribePush(registration).then((subscription) => {
-      return subscription;
-    });
-  }
-
-  unsubscribePush() {
-    return this.getPushSubscription().then((subscription) => {
-      return subscription.unsubscribe().then(function () {
-        deleteSubscription(subscription);
-      });
-    });
-  }
-
-  getPushSubscription() {
-    return navigator.serviceWorker.ready
-      .then((registration) => {
-        return registration.pushManager.getSubscription();
-      });
-  }
-
-  registerPush() {
-    return navigator.serviceWorker.ready
-      .then((registration) => {
-        return registration.pushManager.getSubscription().then((subscription) => {
-          if (subscription) {
-            // // renew subscription if we're within 5 days of expiration
-            if (subscription.expirationTime && Date.now() > subscription.expirationTime - 432000000) {
-              return this.unsubscribePush().then(() => {
-                return this.subscribePushAndUpdateButtons(registration);
-              });
-            }
-
-            return subscription;
-          }
-          return this.subscribePushAndUpdateButtons(registration);
-        });
-      })
-      .then((subscription) => {
-        return saveSubscription(subscription);
-      });
   }
 
   render() {

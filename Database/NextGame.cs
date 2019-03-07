@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using fantasy_hoops.Helpers;
 using System.Linq;
 using System.Threading;
+using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Database
 {
@@ -75,9 +76,14 @@ namespace fantasy_hoops.Database
                     .ToRunOnceIn(1)
                     .Hours());
                 offset = 0;
-                context.Players.ToList().ForEach(p => p.IsPlaying = false);
-                context.SaveChanges();
+                Task.Run(() => SetPlayersNotPlaying(context)).Wait();
             }
+        }
+
+        private static async Task SetPlayersNotPlaying(GameContext context)
+        {
+            await context.Players.ForEachAsync(p => p.IsPlaying = false);
+            await context.SaveChangesAsync();
         }
 
         private static string GetDate()
