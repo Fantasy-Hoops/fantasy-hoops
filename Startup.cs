@@ -13,6 +13,10 @@ using System;
 using System.Text;
 using fantasy_hoops;
 using dotenv.net;
+using Microsoft.AspNetCore.Http;
+using fantasy_hoops.Services;
+using Microsoft.Net.Http.Headers;
+using WebPush;
 
 namespace fantasy_hoops
 {
@@ -29,6 +33,9 @@ namespace fantasy_hoops
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IPushService, PushService>();
+
             services.AddMvc();
 
             DotEnv.Config(true, ".env");
@@ -103,6 +110,9 @@ namespace fantasy_hoops
 
         private void StartJobs()
         {
+            Environment.SetEnvironmentVariable("VapidSubject", "mailto:email@outlook.com");
+            Environment.SetEnvironmentVariable("VapidPublicKey", "BBcHZh0MdAZjW7GTacGPphvPPXRyLAfB5UyC-t3ma_H0WI2KcH_W-31dE3XZqmb762FQCIG37GnsTnDwlN8Cg8s");
+            Environment.SetEnvironmentVariable("VapidPrivateKey", "Y2q1KzR5YmV1e_EPxA1aR7ogn13qiNVp0eE6G7rt2zY");
             _context = new GameContext();
             _context.Database.Migrate();
             Scheduler.Run(_context);
@@ -122,7 +132,15 @@ namespace fantasy_hoops
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    const int cacheExpirationInSeconds = 60 * 60 * 24 * 30; //one month
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] =
+                        "public,max-age=" + cacheExpirationInSeconds;
+                }
+            });
             app.UseSpaStaticFiles();
 
             app.UseMvc(routes =>
