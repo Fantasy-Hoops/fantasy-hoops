@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { parse } from '../../utils/auth';
 import { handleErrors } from '../../utils/errors';
+import { loadImage } from '../../utils/loadImage';
+import defaultImage from '../../content/images/default.png';
 
 export class FriendRequest extends Component {
   constructor(props) {
@@ -109,15 +111,21 @@ export class FriendRequest extends Component {
           status: '0'
         });
       });
-
     const notification = {
-      title: "Friend request",
-      body: `User ${receiver.userName} sent you a friend request`,
-      icon: `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${receiver.id}.png`,
-      tag: `${receiver.userName}_friend_request`
+      title: "FantasyHoops Friend Request",
+      body: `User '${sender.username}' sent you a friend request`,
+      icon: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${sender.id}.png`, defaultImage),
+      tag: `${sender.username}_friend_request`,
+      actions: [
+        { action: 'accept', title: '✔️ Accept' },
+        { action: 'decline', title: '❌ Decline' }],
+      data: {
+        senderID: sender.id,
+        receiverID: receiver.id
+      }
     };
 
-    await fetch(`/api/push/send/${sender.id}`, {
+    await fetch(`/api/push/send/${receiver.id}`, {
       method: 'post',
       headers: {
         'Content-type': 'application/json'

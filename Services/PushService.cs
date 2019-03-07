@@ -89,7 +89,6 @@ namespace fantasy_hoops.Services
         {
             foreach (var subscription in await GetUserSubscriptions(userId))
             {
-                var sth = subscription;
                 try
                 {
                     _client.SendNotification(subscription.ToWebPushSubscription(), JsonConvert.SerializeObject(notification), _vapidDetails);

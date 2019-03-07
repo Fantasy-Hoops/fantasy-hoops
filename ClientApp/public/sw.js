@@ -13,8 +13,7 @@ self.addEventListener('activate', function (event) {
 // Respond to a server push with a user notification
 self.addEventListener('push', function (event) {
   if (event.data) {
-    const { title, lang = 'en', body, tag, timestamp, requireInteraction, actions, image, icon } = event.data.json();
-
+    const { title, lang = 'en', body, tag, timestamp, requireInteraction, actions, image, icon, data } = event.data.json();
     const promiseChain = self.registration.showNotification(title, {
       lang,
       body,
@@ -23,14 +22,56 @@ self.addEventListener('push', function (event) {
       timestamp: timestamp ? Date.parse(timestamp) : undefined,
       actions: actions || undefined,
       image: image || undefined,
-      badge: './favicon.ico',
-      icon: icon || './favicon.ico'
+      icon: icon || './favicon.ico',
+      data: data || null
     });
 
     // Ensure the toast notification is displayed before exiting this function
     event.waitUntil(promiseChain);
   }
 });
+
+self.addEventListener('notificationclick', async (event) => {
+  const model = event.notification.data;
+  event.notification.close();
+  console.log(model);
+
+  if (event.action === 'accept') {
+    await fetch('/api/friendrequest/accept', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(model)
+    }).then(async () => {
+      const notification = {
+        title: "FantasyHoops Friend Request",
+        body: `User tester accepted your friend request!`,
+        icon: `https://fantasyhoops.org/content/images/avatars/${model.receiverID}.png`
+      };
+      await fetch(`./api/push/send/${model.senderID}`, {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(notification)
+      });
+    });
+  }
+  else if (event.action === 'decline') {
+    await fetch('/api/friendrequest/cancel', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(model)
+    })
+  }
+  else {
+    clients.openWindow("/notifications");
+  }
+}, false);
+
 
 self.addEventListener('notificationclick', function (event) {
   event.notification.close();

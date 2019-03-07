@@ -16,6 +16,12 @@ namespace fantasy_hoops.Models.ViewModels
             Body = text;
         }
 
+        public PushNotificationViewModel(string title, string body)
+        {
+            Title = title;
+            Body = body;
+        }
+
         [JsonProperty("title")]
         public string Title { get; set; } = "Push Demo";
 
@@ -45,6 +51,9 @@ namespace fantasy_hoops.Models.ViewModels
 
         [JsonProperty("actions")]
         public List<NotificationAction> Actions { get; set; } = new List<NotificationAction>();
+
+        [JsonProperty("data")]
+        public object Data { get; set; }
     }
 
     /// <summary>

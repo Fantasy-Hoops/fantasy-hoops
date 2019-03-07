@@ -19,9 +19,7 @@ export class Push extends Component {
   sendMessage(title, message) {
     const notification = {
       title: title,
-      body: message,
-      icon: require('../content/favicon.ico'),
-      image: require('../content/images/default.png')
+      body: message
     };
 
     let apiUrl = `./api/push/send/${parse().id}`;

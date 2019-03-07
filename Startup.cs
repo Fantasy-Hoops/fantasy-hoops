@@ -111,9 +111,6 @@ namespace fantasy_hoops
 
         private async Task StartJobs()
         {
-            Environment.SetEnvironmentVariable("VapidSubject", "mailto:email@outlook.com");
-            Environment.SetEnvironmentVariable("VapidPublicKey", "BBcHZh0MdAZjW7GTacGPphvPPXRyLAfB5UyC-t3ma_H0WI2KcH_W-31dE3XZqmb762FQCIG37GnsTnDwlN8Cg8s");
-            Environment.SetEnvironmentVariable("VapidPrivateKey", "Y2q1KzR5YmV1e_EPxA1aR7ogn13qiNVp0eE6G7rt2zY");
             _context = new GameContext();
             _context.Database.Migrate();
             await Scheduler.Run(_context);
