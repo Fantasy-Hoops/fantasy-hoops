@@ -121,7 +121,9 @@ export class FriendRequest extends Component {
         { action: 'decline', title: '❌ Decline' }],
       data: {
         senderID: sender.id,
-        receiverID: receiver.id
+        senderUsername: sender.username,
+        receiverID: receiver.id,
+        receiverUsername: receiver.userName
       }
     };
 

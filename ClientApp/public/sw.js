@@ -34,7 +34,6 @@ self.addEventListener('push', function (event) {
 self.addEventListener('notificationclick', async (event) => {
   const model = event.notification.data;
   event.notification.close();
-  console.log(model);
 
   if (event.action === 'accept') {
     await fetch('/api/friendrequest/accept', {
@@ -46,7 +45,7 @@ self.addEventListener('notificationclick', async (event) => {
     }).then(async () => {
       const notification = {
         title: "FantasyHoops Friend Request",
-        body: `User tester accepted your friend request!`,
+        body: `User ${model.receiverUsername} accepted your friend request!`,
         icon: `https://fantasyhoops.org/content/images/avatars/${model.receiverID}.png`
       };
       await fetch(`./api/push/send/${model.senderID}`, {
