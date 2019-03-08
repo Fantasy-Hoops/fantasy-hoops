@@ -56,7 +56,7 @@ namespace fantasy_hoops.Controllers
         [HttpPost("accept")]
         public IActionResult Accept([FromBody]FriendRequestViewModel model)
         {
-            var request = _repository.GetRequest(model.SenderID, model.ReceiverID);
+            var request = _repository.GetRequest(model.ReceiverID, model.SenderID);
             if (request == null)
                 return NotFound("Friend request has not been found!");
 

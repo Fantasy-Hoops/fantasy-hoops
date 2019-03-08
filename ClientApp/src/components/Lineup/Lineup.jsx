@@ -4,7 +4,7 @@ import { PlayerCard } from "./PlayerCard";
 import { ProgressBar } from "./ProgressBar";
 import { parse } from "../../utils/auth";
 import { handleErrors } from "../../utils/errors";
-import { Alert } from "../Alert";
+import { AlertNotification as Alert } from "../AlertNotification";
 import { PlayerModal } from "../PlayerModal/PlayerModal";
 import Countdown from "react-countdown-now";
 import { InfoModal } from "./InfoModal";
@@ -32,7 +32,6 @@ export class Lineup extends Component {
         c: <PlayerCard filter={this.filter} status={0} position="C" />
       },
       loadedPlayers: false,
-      showAlert: false,
       alertType: "",
       alertText: "",
       nextGame: "",
@@ -217,13 +216,11 @@ export class Lineup extends Component {
 
     return (
       <div className="container bg-light" style={{ width: "100%" }}>
-        <div className="text-center mx-auto" style={{ width: "50%" }}>
-          <Alert
-            type={this.state.alertType}
-            text={this.state.alertText}
-            show={this.state.showAlert}
-          />
-        </div>
+        <Alert
+          ref='alert' {...this.props}
+          type={this.state.alertType}
+          text={this.state.alertText}
+        />
         <div className="Lineup--sticky">
           <div className="text-center">
             <Countdown
@@ -366,18 +363,16 @@ export class Lineup extends Component {
       .then(res => res.text())
       .then(res => {
         this.setState({
-          showAlert: true,
-          alertType: "alert-success",
+          alertType: "success",
           alertText: res
         });
       })
       .catch(err => {
         this.setState({
-          showAlert: true,
-          alertType: "alert-danger",
+          alertType: "danger",
           alertText: err.message
         });
-      });
+      }).then(this.refs.alert.addNotification);
   }
 
   getFormattedDateString(value, word) {

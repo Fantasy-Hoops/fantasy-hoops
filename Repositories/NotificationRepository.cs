@@ -74,12 +74,11 @@ namespace fantasy_hoops.Repositories
 
         public void RemoveFriendRequestNotification(string userID, string friendID)
         {
-            var notification = _context.FriendRequestNotifications
-                .Where(x => x.UserID.Equals(userID) && x.FriendID.Equals(friendID))
-                .FirstOrDefault();
+            var notifications = _context.FriendRequestNotifications
+                .Where(x => x.UserID.Equals(userID) && x.FriendID.Equals(friendID)).ToList();
 
-            if (notification != null)
-                _context.FriendRequestNotifications.Remove(notification);
+            if (notifications != null)
+                _context.FriendRequestNotifications.RemoveRange(notifications);
         }
 
         public void ReadNotification(NotificationViewModel model)

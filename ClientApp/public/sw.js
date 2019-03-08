@@ -57,6 +57,7 @@ self.addEventListener('notificationclick', async (event) => {
         body: JSON.stringify(notification)
       });
     });
+    clients.openWindow(`/profile/${model.senderUsername}`);
   }
   else if (event.action === 'decline') {
     await fetch('/api/friendrequest/cancel', {
