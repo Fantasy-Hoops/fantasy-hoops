@@ -23,7 +23,8 @@ self.addEventListener('push', function (event) {
       actions: actions || undefined,
       image: image || undefined,
       icon: icon || './favicon.ico',
-      data: data || null
+      data: data || null,
+      vibrate: [200, 100, 200]
     });
 
     // Ensure the toast notification is displayed before exiting this function
@@ -45,7 +46,7 @@ self.addEventListener('notificationclick', async (event) => {
     }).then(async () => {
       const notification = {
         title: "FantasyHoops Friend Request",
-        body: `User ${model.receiverUsername} accepted your friend request!`,
+        body: `User '${model.receiverUsername}' accepted your friend request!`,
         icon: `https://fantasyhoops.org/content/images/avatars/${model.receiverID}.png`
       };
       await fetch(`./api/push/send/${model.senderID}`, {
@@ -66,8 +67,11 @@ self.addEventListener('notificationclick', async (event) => {
       body: JSON.stringify(model)
     })
   }
+  else if (event.action === 'lineup') {
+    clients.openWindow("/lineup");
+  }
   else {
-    clients.openWindow("/notifications");
+    clients.openWindow("/");
   }
 }, false);
 

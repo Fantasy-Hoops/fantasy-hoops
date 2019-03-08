@@ -18,7 +18,7 @@ namespace fantasy_hoops.Services
     {
         private readonly WebPushClient _client;
         private readonly GameContext _context;
-        private readonly VapidDetails _vapidDetails;
+        public static VapidDetails _vapidDetails = new VapidDetails(Environment.GetEnvironmentVariable("VapidSubject"), Environment.GetEnvironmentVariable("VapidPublicKey"), Environment.GetEnvironmentVariable("VapidPrivateKey"));
 
         /// <inheritdoc />
         public PushService(string vapidSubject, string vapidPublicKey, string vapidPrivateKey)
