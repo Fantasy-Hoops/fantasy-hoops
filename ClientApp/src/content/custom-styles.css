@@ -699,8 +699,8 @@ thead {
   }
   
   .Header__Burger {
-    margin-left: 0.2rem;
-    order: 0;
+    margin-right: 0.5rem;
+    order: -10;
   }
 }
 
