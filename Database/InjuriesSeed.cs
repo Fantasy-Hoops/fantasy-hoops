@@ -161,6 +161,7 @@ namespace fantasy_hoops.Database
                     }
                 }
             });
+            lineupsAffected.Clear();
         }
     }
 }
