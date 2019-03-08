@@ -21,8 +21,8 @@ namespace fantasy_hoops.Services
 
         public async void AcceptRequest(FriendRequestViewModel model, FriendRequest request)
         {
-            _repository.UpdateRequest(request, model.ReceiverID, model.SenderID, RequestStatus.ACCEPTED);
-            _notificationRepository.AddFriendRequestNotification(model.ReceiverID, model.SenderID, "Accepted your friend request.");
+            _repository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.ACCEPTED);
+            _notificationRepository.AddFriendRequestNotification(model.SenderID, model.ReceiverID, "Accepted your friend request.");
 
             await _context.SaveChangesAsync();
         }
