@@ -9,6 +9,11 @@ using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.Notifications;
 using FluentScheduler;
 using System.Threading;
+using Newtonsoft.Json;
+using fantasy_hoops.Services;
+using WebPush;
+using fantasy_hoops.Models.ViewModels;
+using System.Collections.Generic;
 
 namespace fantasy_hoops.Database
 {
@@ -16,6 +21,7 @@ namespace fantasy_hoops.Database
     {
         const int DAYS_TO_SAVE = 2;
         static DateTime dayFrom = DateTime.UtcNow.AddDays(-DAYS_TO_SAVE);
+        private static List<InjuryPushNotificationViewModel> lineupsAffected = new List<InjuryPushNotificationViewModel>();
 
         public static void Initialize(GameContext context)
         {
@@ -57,6 +63,7 @@ namespace fantasy_hoops.Database
                 }
             }
             await context.SaveChangesAsync();
+            SendPushNotifications(context);
         }
 
         private static async Task AddToDatabaseAsync(GameContext context, JToken injury)
@@ -90,16 +97,24 @@ namespace fantasy_hoops.Database
                 .StatusDate = DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5);
 
             if (!statusBefore.Equals(statusAfter))
-                await UpdateNotifications(context, injuryObj);
+                await UpdateNotifications(context, injuryObj, statusBefore, statusAfter);
         }
 
-        private static async Task UpdateNotifications(GameContext context, Injuries injury)
+        private static async Task UpdateNotifications(GameContext context, Injuries injury, string statusBefore, string statusAfter)
         {
             await context.Lineups
                 .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
                             && x.PlayerID == injury.PlayerID)
                 .ForEachAsync(async s =>
                 {
+                    lineupsAffected.Add(new InjuryPushNotificationViewModel
+                    {
+                        UserID = s.UserID,
+                        StatusBefore = statusBefore,
+                        StatusAfter = statusAfter,
+                        AbbrName = s.Player.AbbrName,
+                        PlayerNbaID = s.Player.NbaID
+                    });
                     var inj = new InjuryNotification
                     {
                         UserID = s.UserID,
@@ -115,6 +130,38 @@ namespace fantasy_hoops.Database
                                 && x.PlayerID == inj.PlayerID))
                         await context.InjuryNotifications.AddAsync(inj);
                 });
+        }
+
+        private static void SendPushNotifications(GameContext context)
+        {
+            WebPushClient _webPushClient = new WebPushClient();
+            lineupsAffected.ForEach(lineup =>
+            {
+                PushNotificationViewModel notification =
+                    new PushNotificationViewModel("FantasyHoops Injury",
+                        string.Format("{0} status changed from {1} to {2}!", lineup.AbbrName, lineup.StatusBefore, lineup.StatusAfter));
+                notification.Image = Environment.GetEnvironmentVariable("REACT_APP_IMAGES_SERVER_NAME") + "/content/images/players/" + lineup.PlayerNbaID + ".png";
+                notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🤾🏾‍♂️ Lineup") };
+                foreach (var subscription in context.PushSubscriptions.Where(sub => sub.UserID.Equals(lineup.UserID)))
+                {
+                    try
+                    {
+                        _webPushClient.SendNotification(subscription.ToWebPushSubscription(), JsonConvert.SerializeObject(notification), PushService._vapidDetails);
+                    }
+                    catch (WebPushException e)
+                    {
+                        if (e.Message == "Subscription no longer valid")
+                        {
+                            context.PushSubscriptions.Remove(subscription);
+                            context.SaveChanges();
+                        }
+                        else
+                        {
+                            // Track exception with eg. AppInsights
+                        }
+                    }
+                }
+            });
         }
     }
 }

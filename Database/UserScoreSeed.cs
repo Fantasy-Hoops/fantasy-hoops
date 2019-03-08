@@ -1,6 +1,7 @@
 ﻿using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Services;
 using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -29,7 +30,6 @@ namespace fantasy_hoops.Database
         private static async Task Update(GameContext context)
         {
             WebPushClient _webPushClient = new WebPushClient();
-            VapidDetails _vapidDetails = new VapidDetails(Environment.GetEnvironmentVariable("VapidSubject"), Environment.GetEnvironmentVariable("VapidPublicKey"), Environment.GetEnvironmentVariable("VapidPrivateKey"));
             var allPlayers = context.Lineups.Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME) && !x.Calculated)
                 .Include(x => x.Player).ThenInclude(x => x.Stats)
                 .ToList();
@@ -71,13 +71,15 @@ namespace fantasy_hoops.Database
                     };
 
                     await context.GameScoreNotifications.AddAsync(gs);
-                    PushNotificationViewModel notification = new PushNotificationViewModel("FantasyHoops Game Score", string.Format("Game has finished! Your lineup scored {0} FP", gs.Score));
+                    PushNotificationViewModel notification =
+                    new PushNotificationViewModel("FantasyHoops Game Score",
+                        string.Format("Game has finished! Your lineup scored {0} FP", gs.Score));
 
                     foreach (var subscription in await context.PushSubscriptions.Where(sub => sub.UserID.Equals(user.Id)).ToListAsync())
                     {
                         try
                         {
-                            _webPushClient.SendNotification(subscription.ToWebPushSubscription(), JsonConvert.SerializeObject(notification), _vapidDetails);
+                            _webPushClient.SendNotification(subscription.ToWebPushSubscription(), JsonConvert.SerializeObject(notification), PushService._vapidDetails);
                         }
                         catch (WebPushException e)
                         {
