@@ -6,6 +6,7 @@ using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebPush;
@@ -14,6 +15,8 @@ namespace fantasy_hoops.Database
 {
     public class UserScoreSeed
     {
+        private static List<GameScorePushNotificationModel> _usersPlayed = new List<GameScorePushNotificationModel>();
+
         public static void Initialize(GameContext context)
         {
             if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("userScore")))
@@ -52,50 +55,62 @@ namespace fantasy_hoops.Database
 
             await context.Users.Except(usersPlayed).ForEachAsync(u => u.Streak = 0);
 
-            await usersPlayed
-                .ForEachAsync(async user =>
+            foreach (var user in usersPlayed)
+            {
+                user.Streak++;
+                var userScore = Math.Round(allPlayers
+                    .Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME)
+                            && x.UserID.Equals(user.Id))
+                    .Select(x => x.FP).Sum(), 1);
+
+                _usersPlayed.Add(new GameScorePushNotificationModel
                 {
-                    user.Streak++;
+                    UserID = user.Id,
+                    Score = userScore
+                });
 
-                    var userScore = Math.Round(allPlayers
-                        .Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME)
-                                && x.UserID.Equals(user.Id))
-                        .Select(x => x.FP).Sum(), 1);
+                var gs = new GameScoreNotification
+                {
+                    UserID = user.Id,
+                    ReadStatus = false,
+                    DateCreated = DateTime.UtcNow,
+                    Score = userScore
+                };
+            }
+            await context.SaveChangesAsync();
+            SendPushNotifications(context);
+        }
 
-                    var gs = new GameScoreNotification
+        private static void SendPushNotifications(GameContext context)
+        {
+            WebPushClient _webPushClient = new WebPushClient();
+            _usersPlayed.ForEach(user =>
+            {
+                PushNotificationViewModel notification =
+                    new PushNotificationViewModel("FantasyHoops Injury",
+                        string.Format("Game has finished! Your lineup scored {0} FP", user.Score));
+                notification.Actions = new List<NotificationAction> { new NotificationAction("leaderboard", "🏆 Leaderboard") };
+                foreach (var subscription in context.PushSubscriptions.Where(sub => sub.UserID.Equals(user.UserID)))
+                {
+                    try
                     {
-                        UserID = user.Id,
-                        ReadStatus = false,
-                        DateCreated = DateTime.UtcNow,
-                        Score = userScore
-                    };
-
-                    await context.GameScoreNotifications.AddAsync(gs);
-                    PushNotificationViewModel notification =
-                    new PushNotificationViewModel("FantasyHoops Game Score",
-                        string.Format("Game has finished! Your lineup scored {0} FP", gs.Score));
-
-                    foreach (var subscription in await context.PushSubscriptions.Where(sub => sub.UserID.Equals(user.Id)).ToListAsync())
+                        _webPushClient.SendNotification(subscription.ToWebPushSubscription(), JsonConvert.SerializeObject(notification), PushService._vapidDetails);
+                    }
+                    catch (WebPushException e)
                     {
-                        try
+                        if (e.Message == "Subscription no longer valid")
                         {
-                            _webPushClient.SendNotification(subscription.ToWebPushSubscription(), JsonConvert.SerializeObject(notification), PushService._vapidDetails);
+                            context.PushSubscriptions.Remove(subscription);
+                            context.SaveChanges();
                         }
-                        catch (WebPushException e)
+                        else
                         {
-                            if (e.Message == "Subscription no longer valid")
-                            {
-                                context.PushSubscriptions.Remove(subscription);
-                                await context.SaveChangesAsync();
-                            }
-                            else
-                            {
-                                // Track exception with eg. AppInsights
-                            }
+                            // Track exception with eg. AppInsights
                         }
                     }
-                });
-            await context.SaveChangesAsync();
+                }
+            });
+            _usersPlayed.Clear();
         }
     }
 }
