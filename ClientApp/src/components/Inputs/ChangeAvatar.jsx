@@ -9,7 +9,6 @@ export class ChangeAvatar extends Component {
     super(props);
 
     this.onCrop = this.onCrop.bind(this);
-    this.onClose = this.onClose.bind(this);
     this.closeImage = this.closeImage.bind(this);
     this.loadImage = this.loadImage.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -37,19 +36,18 @@ export class ChangeAvatar extends Component {
     });
   }
 
-  loadImage() {
-    const saveBtn = document.getElementById('save');
-    saveBtn.disabled = false;
-  }
-
-  onClose() {
+  clear() {
     this.setState({
-      showAlert: false,
-      alertType: '',
-      alertText: ''
+      preview: null,
+      src: null
     });
     if (this.state.showAlert)
       window.location.reload();
+  }
+
+  loadImage() {
+    const saveBtn = document.getElementById('save');
+    saveBtn.disabled = false;
   }
 
   onCrop(preview) {
@@ -132,7 +130,7 @@ export class ChangeAvatar extends Component {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="changeImage">Crop your image</h5>
-              <a onClick={this.onClose} type="button btn-no-outline" className="close" data-dismiss="modal" aria-label="Close">
+              <a type="button btn-no-outline" className="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </a>
             </div>
@@ -149,7 +147,7 @@ export class ChangeAvatar extends Component {
             </div>
             <div className="modal-footer mx-auto">
               <button disabled={false} id="save" onClick={this.handleSubmit} type="button" className="btn btn-success">Save changes</button>
-              <button onClick={this.onClose} type="button" className="btn btn-primary" data-dismiss="modal">Close</button>
+              <button type="button" className="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>

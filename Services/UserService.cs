@@ -46,7 +46,7 @@ namespace fantasy_hoops.Services
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
-            File.Copy(@"./ClientApp/src/content/images/default.png", @"./ClientApp/build/content/images/avatars/"+ _repository.GetUserByName(model.UserName).Id+".png");
+            File.Copy(@"./ClientApp/build/content/images/avatars/default.png", @"./ClientApp/build/content/images/avatars/"+ _repository.GetUserByName(model.UserName).Id+".png");
             return result.Succeeded;
         }
 
@@ -131,7 +131,7 @@ namespace fantasy_hoops.Services
                     try
                     {
                         System.IO.File.Delete(filePath);
-                        File.Copy(@"./ClientApp/src/content/images/default.png", @"./ClientApp/build/content/images/avatars/" + model.Id + ".png");
+                        File.Copy(@"./ClientApp/build/content/images/avatars/default.png", @"./ClientApp/build/content/images/avatars/" + model.Id + ".png");
                     }
                     catch
                     {

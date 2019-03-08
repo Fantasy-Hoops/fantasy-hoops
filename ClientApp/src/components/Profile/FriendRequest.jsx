@@ -3,12 +3,15 @@ import { parse } from '../../utils/auth';
 import { handleErrors } from '../../utils/errors';
 import { loadImage } from '../../utils/loadImage';
 import defaultImage from '../../content/images/default.png';
+import { AlertNotification as Alert } from '../AlertNotification';
 
 export class FriendRequest extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: '-2'
+      status: '-2',
+      alertText: '',
+      alertType: ''
     }
   }
 
@@ -84,6 +87,11 @@ export class FriendRequest extends Component {
 
     return (
       <div className="row">
+        <Alert
+          ref='alert' {...this.props}
+          type={this.state.alertType}
+          text={this.state.alertText}
+        />
         {btn}
       </div>
     );
@@ -106,11 +114,21 @@ export class FriendRequest extends Component {
       },
       body: JSON.stringify(model)
     })
+      .then(res => handleErrors(res))
+      .then(res => res.text())
       .then(res => {
         this.setState({
-          status: '0'
+          status: '0',
+          alertType: "success",
+          alertText: res
         });
-      });
+      })
+      .catch(err => {
+        this.setState({
+          alertType: "danger",
+          alertText: err.message
+        });
+      }).then(this.refs.alert.addNotification);
     const notification = {
       title: "FantasyHoops Friend Request",
       body: `User '${sender.username}' sent you a friend request`,
@@ -153,11 +171,21 @@ export class FriendRequest extends Component {
       },
       body: JSON.stringify(model)
     })
+      .then(res => handleErrors(res))
+      .then(res => res.text())
       .then(res => {
         this.setState({
-          status: '1'
+          status: '1',
+          alertType: "success",
+          alertText: res
         });
-      });
+      })
+      .catch(err => {
+        this.setState({
+          alertType: "danger",
+          alertText: err.message
+        });
+      }).then(this.refs.alert.addNotification);
   }
 
   async cancelFriendRequest(receiver) {
@@ -177,11 +205,21 @@ export class FriendRequest extends Component {
       },
       body: JSON.stringify(model)
     })
+      .then(res => handleErrors(res))
+      .then(res => res.text())
       .then(res => {
         this.setState({
-          status: '3'
+          status: '3',
+          alertType: "success",
+          alertText: res
         });
-      });
+      })
+      .catch(err => {
+        this.setState({
+          alertType: "danger",
+          alertText: err.message
+        });
+      }).then(this.refs.alert.addNotification);
   }
 
   async removeFriend(receiver) {
@@ -201,11 +239,21 @@ export class FriendRequest extends Component {
       },
       body: JSON.stringify(model)
     })
+      .then(res => handleErrors(res))
+      .then(res => res.text())
       .then(res => {
         this.setState({
-          status: '3'
+          status: '3',
+          alertType: "success",
+          alertText: res
         });
-      });
+      })
+      .catch(err => {
+        this.setState({
+          alertType: "danger",
+          alertText: err.message
+        });
+      }).then(this.refs.alert.addNotification);
   }
 
   changeButton(e, className, text) {
