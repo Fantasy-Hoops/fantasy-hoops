@@ -154,9 +154,9 @@ export class FriendRequest extends Component {
     });
   }
 
-  async acceptFriendRequest(receiver) {
-    const sender = parse();
-    if (!sender)
+  async acceptFriendRequest(sender) {
+    const receiver = parse();
+    if (!receiver && !sender)
       return;
 
     const model = {

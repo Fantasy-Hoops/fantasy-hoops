@@ -1313,3 +1313,11 @@ thead {
     font-size: 0.5rem; 
   }
 }
+
+.notification-container-top-right {
+  top: 6.5rem !important;
+}
+
+.notification-container-mobile-top {
+  top: 4.3rem !important;
+}
