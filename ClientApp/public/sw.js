@@ -35,44 +35,48 @@ self.addEventListener('push', function (event) {
 self.addEventListener('notificationclick', async (event) => {
   const model = event.notification.data;
   event.notification.close();
-
-  if (event.action === 'accept') {
-    await fetch('/api/friendrequest/accept', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(model)
-    }).then(async () => {
-      const notification = {
-        title: "FantasyHoops Friend Request",
-        body: `User '${model.receiverUsername}' accepted your friend request!`,
-        icon: `https://fantasyhoops.org/content/images/avatars/${model.receiverID}.png`
-      };
-      await fetch(`./api/push/send/${model.senderID}`, {
-        method: 'post',
+  switch (event.action) {
+    case 'accept':
+      await fetch('/api/friendrequest/accept', {
+        method: 'POST',
         headers: {
           'Content-type': 'application/json'
         },
-        body: JSON.stringify(notification)
-      });
-    });
-    clients.openWindow(`/profile/${model.senderUsername}`);
-  }
-  else if (event.action === 'decline') {
-    await fetch('/api/friendrequest/cancel', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(model)
-    })
-  }
-  else if (event.action === 'lineup') {
-    clients.openWindow("/lineup");
-  }
-  else {
-    clients.openWindow("/");
+        body: JSON.stringify(model)
+      }).then(async () => {
+        const notification = {
+          title: "FantasyHoops Friend Request",
+          body: `User '${model.receiverUsername}' accepted your friend request!`,
+          icon: `https://fantasyhoops.org/content/images/avatars/${model.receiverID}.png`
+        };
+        await fetch(`./api/push/send/${model.senderID}`, {
+          method: 'post',
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: JSON.stringify(notification)
+        });
+      }).then(clients.openWindow(`/profile/${model.senderUsername}`));
+      break;
+    case 'decline':
+      await fetch('/api/friendrequest/cancel', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(model)
+      })
+      break;
+    case 'decline':
+      break;
+    case 'lineup':
+      clients.openWindow("/lineup");
+      break;
+    case 'leaderboard':
+      clients.openWindow("/leaderboard/users");
+      break;
+    default:
+      clients.openWindow("/");
   }
 }, false);
 
@@ -91,7 +95,6 @@ self.addEventListener('notificationclick', function (event) {
               client = clientList[i];
             }
           }
-
           return client.focus();
         }
 

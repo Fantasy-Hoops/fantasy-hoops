@@ -30,7 +30,9 @@ namespace fantasy_hoops.Services
         public async void CancelRequest(FriendRequestViewModel model, FriendRequest request)
         {
             _repository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.CANCELED);
+
             _notificationRepository.RemoveFriendRequestNotification(model.ReceiverID, model.SenderID);
+            _notificationRepository.RemoveFriendRequestNotification(model.SenderID, model.ReceiverID);
 
             await _context.SaveChangesAsync();
         }
