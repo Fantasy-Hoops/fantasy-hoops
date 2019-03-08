@@ -102,34 +102,33 @@ namespace fantasy_hoops.Database
 
         private static async Task UpdateNotifications(GameContext context, Injuries injury, string statusBefore, string statusAfter)
         {
-            await context.Lineups
+            foreach (var lineup in context.Lineups
                 .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
-                            && x.PlayerID == injury.PlayerID)
-                .ForEachAsync(async s =>
+                            && x.PlayerID == injury.PlayerID))
                 {
                     lineupsAffected.Add(new InjuryPushNotificationViewModel
                     {
-                        UserID = s.UserID,
+                    UserID = lineup.UserID,
                         StatusBefore = statusBefore,
                         StatusAfter = statusAfter,
-                        AbbrName = s.Player.AbbrName,
-                        PlayerNbaID = s.Player.NbaID
+                    AbbrName = lineup.Player.AbbrName,
+                    PlayerNbaID = lineup.Player.NbaID
                     });
                     var inj = new InjuryNotification
                     {
-                        UserID = s.UserID,
+                    UserID = lineup.UserID,
                         ReadStatus = false,
                         DateCreated = DateTime.UtcNow,
-                        PlayerID = s.PlayerID,
+                    PlayerID = lineup.PlayerID,
                         InjuryStatus = injury.Status,
                         InjuryDescription = injury.Injury
                     };
 
-                    if (!await context.InjuryNotifications
-                    .AnyAsync(x => x.InjuryStatus.Equals(inj.InjuryStatus)
+                if (!context.InjuryNotifications
+                .Any(x => x.InjuryStatus.Equals(inj.InjuryStatus)
                                 && x.PlayerID == inj.PlayerID))
                         await context.InjuryNotifications.AddAsync(inj);
-                });
+            }
         }
 
         private static void SendPushNotifications(GameContext context)
