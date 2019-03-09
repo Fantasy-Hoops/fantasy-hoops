@@ -991,7 +991,7 @@ thead {
   top: 5.2rem;
   padding-top: 1rem;
   z-index: 10;
-  background-color: var(--tertiary-color)
+  background: linear-gradient(to bottom, var(--tertiary-color) 85%, transparent);
 }
 
 .Lineup__countdown {
@@ -1023,6 +1023,7 @@ thead {
 .Lineup__submit-button {
   font-size: 1.2rem;
   font-weight: 700;
+  margin-bottom: 2rem;
 }
 
 .PlayerPool {
