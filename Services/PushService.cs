@@ -16,37 +16,49 @@ namespace fantasy_hoops.Services
 {
     public class PushService : IPushService
     {
+        private static readonly Lazy<PushService> INSTANCE = new Lazy<PushService>();
+
         private readonly WebPushClient _client;
         private readonly GameContext _context;
-        public static VapidDetails _vapidDetails = new VapidDetails(Environment.GetEnvironmentVariable("VapidSubject"), Environment.GetEnvironmentVariable("VapidPublicKey"), Environment.GetEnvironmentVariable("VapidPrivateKey"));
+        public static VapidDetails _vapidDetails;
 
-        /// <inheritdoc />
+        public PushService()
+        {
+            _context = new GameContext();
+            _client = new WebPushClient();
+            _context = new GameContext();
+            _client = new WebPushClient();
+            var vapidSubject = Environment.GetEnvironmentVariable("VapidSubject");
+            var vapidPublicKey = Environment.GetEnvironmentVariable("VapidPublicKey");
+            var vapidPrivateKey = Environment.GetEnvironmentVariable("VapidPrivateKey");
+            CheckOrGenerateVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
+            _vapidDetails = new VapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
+        }
+
         public PushService(string vapidSubject, string vapidPublicKey, string vapidPrivateKey)
         {
             _context = new GameContext();
             _client = new WebPushClient();
-
             CheckOrGenerateVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
-
             _vapidDetails = new VapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
         }
 
-        /// <inheritdoc />
         public PushService(IConfiguration configuration)
         {
             _context = new GameContext();
             _client = new WebPushClient();
-
-            var vapidSubject = configuration.GetValue<string>("Vapid:Subject");
-            var vapidPublicKey = configuration.GetValue<string>("Vapid:PublicKey");
-            var vapidPrivateKey = configuration.GetValue<string>("Vapid:PrivateKey");
-
+            var vapidSubject = Environment.GetEnvironmentVariable("VapidSubject");
+            var vapidPublicKey = Environment.GetEnvironmentVariable("VapidPublicKey");
+            var vapidPrivateKey = Environment.GetEnvironmentVariable("VapidPrivateKey");
             CheckOrGenerateVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
-
             _vapidDetails = new VapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
         }
 
-        /// <inheritdoc />
+        public static Lazy<PushService> Instance
+        {
+            get { return INSTANCE; }
+        }
+
         public void CheckOrGenerateVapidDetails(string vapidSubject, string vapidPublicKey, string vapidPrivateKey)
         {
             if (string.IsNullOrEmpty(vapidSubject) ||
@@ -113,12 +125,34 @@ namespace fantasy_hoops.Services
             await Send(userId, new PushNotificationViewModel(text));
         }
 
-        /// <summary>
-        /// Loads a list of user subscriptions from the database
-        /// </summary>
-        /// <param name="userId">user id</param>
-        /// <returns>List of subscriptions</returns>
         private async Task<List<PushSubscription>> GetUserSubscriptions(string userId) =>
             await _context.PushSubscriptions.Where(s => s.UserID.Equals(userId)).ToListAsync();
+
+        public async Task SendAdminNotification(PushNotificationViewModel notification)
+        {
+            string adminRoleID = _context.Roles.Where(role => role.Name.Equals("Admin")).FirstOrDefault().Id;
+            foreach (var admin in await _context.UserRoles.Where(userRole => userRole.RoleId.Equals(adminRoleID)).ToListAsync())
+            {
+                foreach (var subscription in await GetUserSubscriptions(admin.UserId))
+                {
+                    try
+                    {
+                        _client.SendNotification(subscription.ToWebPushSubscription(), JsonConvert.SerializeObject(notification), _vapidDetails);
+                    }
+                    catch (WebPushException e)
+                    {
+                        if (e.Message == "Subscription no longer valid")
+                        {
+                            _context.PushSubscriptions.Remove(subscription);
+                            await _context.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            // Track exception with eg. AppInsights
+                        }
+                    }
+                }
+            }
+        }
     }
 }

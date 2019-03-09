@@ -73,6 +73,9 @@ self.addEventListener('notificationclick', async (event) => {
     case 'leaderboard':
       clients.openWindow("/leaderboard/users");
       break;
+    case 'new_user':
+      clients.openWindow(`/profile/${model.userName}`)
+      break;
     default:
       clients.openWindow("/");
   }

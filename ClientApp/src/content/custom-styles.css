@@ -671,7 +671,7 @@ thead {
   display: none;
 }
 
-@media only screen and (min-width: 380px) {
+@media only screen and (min-width: 385px) {
   .Header__Title {
     display: inline-block;
     margin-left: 0.5rem;
@@ -1061,6 +1061,7 @@ thead {
 }
 
 .PlayerCard__background {
+  position: relative;
   width: 100%;
   min-height: 50%;
 }
@@ -1132,14 +1133,19 @@ thead {
 
 .PlayerCard__player-injury-badge {
   position: absolute;
-  bottom: 23%;
+  left: 0;
+  bottom: -0.2rem;
   font-size: 0.65rem;
-  padding: 0.3rem;
+  padding: 0.2rem;
   color: black;
   text-align: center;
-  font-weight: bold;
+  font-weight: 700;
   text-transform: uppercase;
   z-index: 6;
+}
+
+.PlayerCard__player-injury-badge--lineup {
+  font-size: 0.5rem;
 }
 
 .PlayerCard__button {
@@ -1232,6 +1238,9 @@ thead {
   .PlayerCard__player-injury-badge {
     font-size: 0.5rem;
   }
+  .PlayerCard__player-injury-badge--lineup {
+    font-size: 5.5px;
+  }
   .Lineup__submit-button {
     font-size: 1.1rem;
   }
@@ -1272,6 +1281,10 @@ thead {
   }
   .PlayerCard__player-injury-badge {
     font-size: 0.4rem;
+  }
+  .PlayerCard__player-injury-badge--lineup {
+    padding: 0.1rem;
+    font-size: 5px;
   }
   .Lineup__submit-button {
     font-size: 1rem;

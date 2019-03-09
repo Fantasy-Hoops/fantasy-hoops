@@ -113,7 +113,7 @@ export class Registration extends Component {
               id="email"
               value={this.state.email}
               onChange={this.handleChange}
-              regex={/^(([^<>()\],;:\s@]+(\.]][^<>()\],;:\s@]+)*)|(.+))@(([^<>()[\],;:\s@]+)+[^<>()[\],;:\s@]{2,})$/i}
+              regex={/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/}
               error="Invalid email"
             />
           </div>
