@@ -159,7 +159,7 @@ export class EditProfile extends Component {
                 id="email"
                 value={this.state.email}
                 onChange={this.handleChange}
-                regex={/^(([^<>()\],;:\s@]+(\.]][^<>()\],;:\s@]+)*)|(.+))@(([^<>()[\],;:\s@]+)+[^<>()[\],;:\s@]{2,})$/i}
+                regex={/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/}
                 error="Invalid email"
               />
             </div>
@@ -195,57 +195,57 @@ export class EditProfile extends Component {
             </div>
           }
           {this.state.isChangingPassword &&
-          <div>
-            <hr className="col-xs-12" />
-            <div className="form-group row">
-              <label className="col-lg-3 col-form-label form-control-label">Password</label>
-              <div className="col-lg-9">
-                <Input
-                  type="password"
-                  id="password"
-                  value={this.state.password}
-                  onChange={this.handleChange}
-                  notRequired={changingPassword}
-                />
+            <div>
+              <hr className="col-xs-12" />
+              <div className="form-group row">
+                <label className="col-lg-3 col-form-label form-control-label">Password</label>
+                <div className="col-lg-9">
+                  <Input
+                    type="password"
+                    id="password"
+                    value={this.state.password}
+                    onChange={this.handleChange}
+                    notRequired={changingPassword}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="form-group row">
-              <label className="col-lg-3 col-form-label form-control-label">New password</label>
-              <div className="col-lg-9">
-                <Input
-                  type="password"
-                  id="newPassword"
-                  value={this.state.newPassword}
-                  onChange={this.handleChange}
-                  regex={/^.{8,20}$/}
-                  error="Password must contain 8-20 characters."
-                  notRequired={changingPassword}
-                  children="confirmNewPassword"
-                />
+              <div className="form-group row">
+                <label className="col-lg-3 col-form-label form-control-label">New password</label>
+                <div className="col-lg-9">
+                  <Input
+                    type="password"
+                    id="newPassword"
+                    value={this.state.newPassword}
+                    onChange={this.handleChange}
+                    regex={/^.{8,20}$/}
+                    error="Password must contain 8-20 characters."
+                    notRequired={changingPassword}
+                    children="confirmNewPassword"
+                  />
+                </div>
               </div>
-            </div>
-            <div className="form-group row">
-              <label className="col-lg-3 col-form-label form-control-label">Confirm new password</label>
-              <div className="col-lg-9">
-                <Input
-                  type="password"
-                  id="confirmNewPassword"
-                  value={this.state.confirmNewPassword}
-                  onChange={this.handleChange}
-                  match="newPassword"
-                  error="Passwords must match"
-                  notRequired={changingPassword}
-                />
+              <div className="form-group row">
+                <label className="col-lg-3 col-form-label form-control-label">Confirm new password</label>
+                <div className="col-lg-9">
+                  <Input
+                    type="password"
+                    id="confirmNewPassword"
+                    value={this.state.confirmNewPassword}
+                    onChange={this.handleChange}
+                    match="newPassword"
+                    error="Passwords must match"
+                    notRequired={changingPassword}
+                  />
+                </div>
               </div>
+            </div>}
+          <div className="form-group row">
+            <label className="col-lg-3 col-form-label form-control-label"></label>
+            <div className="col-lg-9">
+              <button id="submit" disabled className="btn btn-secondary">Save changes</button>
+              {!this.state.isChangingPassword && <button type="button" onClick={this.initChangePassword} className="btn btn-outline-primary ml-2">Change Password</button>}
             </div>
-          </div>}
-        <div className="form-group row">
-          <label className="col-lg-3 col-form-label form-control-label"></label>
-          <div className="col-lg-9">
-            <button id="submit" disabled className="btn btn-secondary">Save changes</button>
-            {!this.state.isChangingPassword && <button type="button" onClick={this.initChangePassword} className="btn btn-outline-primary ml-2">Change Password</button>}
           </div>
-        </div>
         </form>
       </div >
     );

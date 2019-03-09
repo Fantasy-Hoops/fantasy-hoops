@@ -21,6 +21,7 @@ namespace fantasy_hoops.Database
         public DbSet<GameScoreNotification> GameScoreNotifications { get; set; }
         public DbSet<InjuryNotification> InjuryNotifications { get; set; }
         public DbSet<FriendRequestNotification> FriendRequestNotifications { get; set; }
+        public DbSet<PushSubscription> PushSubscriptions { get; set; }
 
         public GameContext()
         {

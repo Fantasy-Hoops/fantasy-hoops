@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using fantasy_hoops.Helpers;
 using System.Linq;
 using System.Threading;
+using Microsoft.EntityFrameworkCore;
+using fantasy_hoops.Services;
 
 namespace fantasy_hoops.Database
 {
@@ -39,6 +41,10 @@ namespace fantasy_hoops.Database
                 JobManager.AddJob(() => Initialize(context),
                     s => s.WithName(NEXT_GAME.ToLongDateString())
                     .ToRunOnceAt(NEXT_GAME));
+
+                JobManager.AddJob(() => PushService.Instance.Value.SendNudgeNotifications().Wait(),
+                    s => s.WithName("nudgeNotifications")
+                    .ToRunOnceAt(NEXT_GAME.AddHours(-2)));
 
                 DateTime nextRun = NEXT_LAST_GAME;
                 if (DateTime.UtcNow < PREVIOUS_LAST_GAME.AddHours(2).AddMinutes(30))
@@ -75,9 +81,14 @@ namespace fantasy_hoops.Database
                     .ToRunOnceIn(1)
                     .Hours());
                 offset = 0;
-                context.Players.ToList().ForEach(p => p.IsPlaying = false);
-                context.SaveChanges();
+                Task.Run(() => SetPlayersNotPlaying(context)).Wait();
             }
+        }
+
+        private static async Task SetPlayersNotPlaying(GameContext context)
+        {
+            await context.Players.ForEachAsync(p => p.IsPlaying = false);
+            await context.SaveChangesAsync();
         }
 
         private static string GetDate()

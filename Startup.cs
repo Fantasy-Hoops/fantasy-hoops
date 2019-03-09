@@ -13,6 +13,11 @@ using System;
 using System.Text;
 using fantasy_hoops;
 using dotenv.net;
+using Microsoft.AspNetCore.Http;
+using fantasy_hoops.Services;
+using Microsoft.Net.Http.Headers;
+using WebPush;
+using System.Threading.Tasks;
 
 namespace fantasy_hoops
 {
@@ -29,16 +34,19 @@ namespace fantasy_hoops
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IPushService, PushService>();
+
             services.AddMvc();
 
             DotEnv.Config(true, ".env");
-            #if DEBUG
-                DotEnv.Config(false, ".env.development");
-            #endif
+#if DEBUG
+            DotEnv.Config(false, ".env.development");
+#endif
 
             ConfigureAuth(services);
             ConfigureDbContext(services);
-            StartJobs();
+            Task.Run(() => StartJobs());
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -101,15 +109,15 @@ namespace fantasy_hoops
                        = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
-        private void StartJobs()
+        private async Task StartJobs()
         {
             _context = new GameContext();
             _context.Database.Migrate();
-            Scheduler.Run(_context);
+            await Scheduler.Run(_context);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -122,7 +130,15 @@ namespace fantasy_hoops
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    const int cacheExpirationInSeconds = 60 * 60 * 24 * 30; //one month
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] =
+                        "public,max-age=" + cacheExpirationInSeconds;
+                }
+            });
             app.UseSpaStaticFiles();
 
             app.UseMvc(routes =>
@@ -141,6 +157,35 @@ namespace fantasy_hoops
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+            Task.Run(() => CreateRoles(serviceProvider)).Wait();
+        }
+
+        private async Task CreateRoles(IServiceProvider serviceProvider)
+        {
+            //initializing custom roles 
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<User>>();
+            string[] roleNames = { "Admin" };
+            IdentityResult roleResult;
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                // ensure that the role does not exist
+                if (!roleExist)
+                {
+                    //create the roles and seed them to the database: 
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            var naidze = await UserManager.FindByNameAsync("Naidze");
+            if (naidze != null)
+                await UserManager.AddToRoleAsync(naidze, "Admin");
+
+            var bennek = await UserManager.FindByNameAsync("bennek");
+            if (bennek != null)
+                await UserManager.AddToRoleAsync(bennek, "Admin");
         }
     }
 }

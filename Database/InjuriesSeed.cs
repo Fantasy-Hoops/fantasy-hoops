@@ -8,7 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.Notifications;
 using FluentScheduler;
-using System.Threading;
+using fantasy_hoops.Services;
+using WebPush;
+using fantasy_hoops.Models.ViewModels;
+using System.Collections.Generic;
 
 namespace fantasy_hoops.Database
 {
@@ -16,6 +19,7 @@ namespace fantasy_hoops.Database
     {
         const int DAYS_TO_SAVE = 2;
         static DateTime dayFrom = DateTime.UtcNow.AddDays(-DAYS_TO_SAVE);
+        private static Stack<InjuryPushNotificationViewModel> lineupsAffected = new Stack<InjuryPushNotificationViewModel>();
 
         public static void Initialize(GameContext context)
         {
@@ -28,7 +32,7 @@ namespace fantasy_hoops.Database
                 return;
             }
 
-            Extract(context);
+            Task.Run(() => Extract(context)).Wait();
         }
 
         private static JArray GetInjuries()
@@ -39,9 +43,9 @@ namespace fantasy_hoops.Database
             return injuries;
         }
 
-        private static void Extract(GameContext context)
+        private static async Task Extract(GameContext context)
         {
-            context.Injuries.ForEachAsync(inj => context.Injuries.Remove(inj));
+            await context.Injuries.ForEachAsync(inj => context.Injuries.Remove(inj));
             JArray injuries = GetInjuries();
             foreach (JObject injury in injuries)
             {
@@ -49,17 +53,18 @@ namespace fantasy_hoops.Database
                 {
                     if (dayFrom.CompareTo(DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5)) > 0)
                         break;
-                    AddToDatabase(context, injury);
+                    await AddToDatabaseAsync(context, injury);
                 }
                 catch (Exception)
                 {
                     continue;
                 }
             }
-            context.SaveChanges();
+            await context.SaveChangesAsync();
+            await SendPushNotifications(context);
         }
 
-        private static void AddToDatabase(GameContext context, JToken injury)
+        private static async Task AddToDatabaseAsync(GameContext context, JToken injury)
         {
             var injuryObj = new Injuries
             {
@@ -74,7 +79,7 @@ namespace fantasy_hoops.Database
 
             if (injuryObj.Player == null)
                 return;
-            context.Injuries.Add(injuryObj);
+            await context.Injuries.AddAsync(injuryObj);
             string statusBefore = context.Players
                 .Where(p => p.NbaID == injuryObj.Player.NbaID)
                 .FirstOrDefault()
@@ -90,32 +95,53 @@ namespace fantasy_hoops.Database
                 .StatusDate = DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5);
 
             if (!statusBefore.Equals(statusAfter))
-                UpdateNotifications(context, injuryObj);
+                await UpdateNotifications(context, injuryObj, statusBefore, statusAfter);
         }
 
-        private static void UpdateNotifications(GameContext context, Injuries injury)
+        private static async Task UpdateNotifications(GameContext context, Injuries injury, string statusBefore, string statusAfter)
         {
-            context.Lineups
+            foreach (var lineup in context.Lineups
                 .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
-                            && x.PlayerID == injury.PlayerID)
-                .ToList()
-                .ForEach(s =>
+                            && x.PlayerID == injury.PlayerID))
+            {
+                lineupsAffected.Push(new InjuryPushNotificationViewModel
                 {
-                    var inj = new InjuryNotification
-                    {
-                        UserID = s.UserID,
-                        ReadStatus = false,
-                        DateCreated = DateTime.UtcNow,
-                        PlayerID = s.PlayerID,
-                        InjuryStatus = injury.Status,
-                        InjuryDescription = injury.Injury
-                    };
-
-                    if (!context.InjuryNotifications
-                    .Any(x => x.InjuryStatus.Equals(inj.InjuryStatus)
-                                && x.PlayerID == inj.PlayerID))
-                        context.InjuryNotifications.Add(inj);
+                    UserID = lineup.UserID,
+                    StatusBefore = statusBefore,
+                    StatusAfter = statusAfter,
+                    AbbrName = lineup.Player.AbbrName,
+                    PlayerNbaID = lineup.Player.NbaID
                 });
+                var inj = new InjuryNotification
+                {
+                    UserID = lineup.UserID,
+                    ReadStatus = false,
+                    DateCreated = DateTime.UtcNow,
+                    PlayerID = lineup.PlayerID,
+                    InjuryStatus = injury.Status,
+                    InjuryDescription = injury.Injury
+                };
+
+                if (!context.InjuryNotifications
+                .Any(x => x.InjuryStatus.Equals(inj.InjuryStatus)
+                                && x.PlayerID == inj.PlayerID))
+                    await context.InjuryNotifications.AddAsync(inj);
+            }
+        }
+
+        private static async Task SendPushNotifications(GameContext context)
+        {
+            WebPushClient _webPushClient = new WebPushClient();
+            while (lineupsAffected.Count > 0)
+            {
+                var lineup = lineupsAffected.Pop();
+                PushNotificationViewModel notification =
+                    new PushNotificationViewModel("Fantasy Hoops Injury",
+                        string.Format("{0} status changed from {1} to {2}!", lineup.AbbrName, lineup.StatusBefore, lineup.StatusAfter));
+                notification.Image = Environment.GetEnvironmentVariable("REACT_APP_IMAGES_SERVER_NAME") + "/content/images/players/" + lineup.PlayerNbaID + ".png";
+                notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🤾🏾‍♂️ Lineup") };
+                await PushService.Instance.Value.Send(lineup.UserID, notification);
+            }
         }
     }
 }

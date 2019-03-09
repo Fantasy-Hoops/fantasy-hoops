@@ -7,6 +7,8 @@ using fantasy_hoops.Models;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Services;
 using FluentScheduler;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace fantasy_hoops.Database
 {
@@ -29,7 +31,7 @@ namespace fantasy_hoops.Database
             }
 
             _scoreService = new ScoreService();
-            Calculate(context, updatePrice);
+            Task.Run(() => Calculate(context, updatePrice)).Wait();
         }
 
         private static JObject GetPlayer(int id)
@@ -43,9 +45,9 @@ namespace fantasy_hoops.Database
             return json;
         }
 
-        private static void Calculate(GameContext context, bool updatePrice)
+        private static async Task Calculate(GameContext context, bool updatePrice)
         {
-            context.Players.ToList().ForEach(p => p.IsPlaying = false);
+            await context.Players.ForEachAsync(p => p.IsPlaying = false);
             string date = GetDate();
             JArray games = CommonFunctions.GetGames(date);
             foreach (var game in games)
@@ -102,7 +104,7 @@ namespace fantasy_hoops.Database
                     player.IsPlaying = IsPlaying(player);
                 }
             }
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             NextGame.NEXT_GAME_CLIENT = NextGame.NEXT_GAME;
             PLAYER_POOL_DATE = NextGame.NEXT_GAME;
         }

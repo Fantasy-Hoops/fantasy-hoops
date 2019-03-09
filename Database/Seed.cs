@@ -8,6 +8,9 @@ using fantasy_hoops.Helpers;
 using System.Collections;
 using System.Collections.Generic;
 using FluentScheduler;
+using Microsoft.EntityFrameworkCore;
+using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Services;
 
 namespace fantasy_hoops.Database
 {
@@ -26,7 +29,12 @@ namespace fantasy_hoops.Database
                 return;
             }
 
-            var teams = GetTeams();
+            Task.Run(() => Calculate(context)).Wait();
+        }
+
+        private static async Task Calculate(GameContext context)
+        {
+            List<JToken> teams = await GetTeams();
             System.Threading.Thread.Sleep(1000);
             var dbPlayers = context.Players;
             var dbTeams = context.Teams;
@@ -34,7 +42,7 @@ namespace fantasy_hoops.Database
             {
                 int teamNbaId = (int)team["reference"];
 
-                if (dbTeams.Any(t => t.NbaID == teamNbaId))
+                if (await dbTeams.AnyAsync(t => t.NbaID == teamNbaId))
                     goto Roster;
 
                 var teamObj = new Team
@@ -44,7 +52,7 @@ namespace fantasy_hoops.Database
                     NbaID = teamNbaId,
                     Color = GetTeamColor(teamNbaId)
                 };
-                dbTeams.Add(teamObj);
+                await dbTeams.AddAsync(teamObj);
 
             Roster:
                 Team dbTeam = dbTeams.Where(t => t.NbaID == teamNbaId).FirstOrDefault();
@@ -56,7 +64,7 @@ namespace fantasy_hoops.Database
                         continue;
                     int playerNbaId = (int)player["reference"];
                     bool gLeagueStatus = player["status"].ToString().Equals("D-LEAGUE") ? true : false;
-                    if (dbPlayers.Any(p => p.NbaID == playerNbaId))
+                    if (await dbPlayers.AnyAsync(p => p.NbaID == playerNbaId))
                     {
                         Player dbPlayer = dbPlayers.Where(p => p.NbaID == playerNbaId).FirstOrDefault();
                         if (dbPlayer.Team == null)
@@ -109,7 +117,7 @@ namespace fantasy_hoops.Database
                                 Status = "Active",
                                 IsInGLeague = gLeagueStatus
                             };
-                            dbPlayers.Add(playerObj);
+                            await dbPlayers.AddAsync(playerObj);
                         }
                         catch (ArgumentNullException)
                         {
@@ -118,16 +126,37 @@ namespace fantasy_hoops.Database
                     }
                 }
             }
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
-        private static List<JToken> GetTeams(string apikey = API_KEY)
+        private static async Task<List<JToken>> GetTeams(string apikey = API_KEY)
         {
+            HttpWebResponse webResponse = null;
             string teamsURL = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + CommonFunctions.GetSeasonYear() + "/REG/rankings.json?api_key=" + apikey;
-            HttpWebResponse webResponse =
-                CommonFunctions.GetResponse(teamsURL);
-            if (webResponse == null)
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(teamsURL);
+                request.Method = "GET";
+                request.KeepAlive = true;
+                request.ContentType = "application/json";
+                webResponse = (HttpWebResponse)request.GetResponse();
+            }
+            catch (WebException e)
+            {
+                PushNotificationViewModel notification =
+                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API Key has expired! Please change the API Key to new one. " +
+                    "Error message: " + e.Message);
+                await PushService.Instance.Value.SendAdminNotification(notification);
                 return new List<JToken>();
+            }
+            if(webResponse != null)
+            {
+                string expiration = webResponse.Headers.Get(3);
+                int callsLeft = 1000 - (int.Parse(webResponse.Headers.Get(12)) + 30);
+                PushNotificationViewModel notification =
+                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API calls left: " + callsLeft);
+                await PushService.Instance.Value.SendAdminNotification(notification);
+            }
             string responseString = CommonFunctions.ResponseToString(webResponse);
             List<JToken> teams = new List<JToken>();
             JObject json = JObject.Parse(responseString);
@@ -153,13 +182,13 @@ namespace fantasy_hoops.Database
             return json["players"].ToList();
         }
 
-        public static void UpdateTeamColors(GameContext context)
+        public static async Task UpdateTeamColors(GameContext context)
         {
             foreach (var team in context.Teams)
             {
                 team.Color = GetTeamColor(team.NbaID);
             }
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         private static string GetTeamColor(int id)

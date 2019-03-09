@@ -8,12 +8,12 @@ namespace fantasy_hoops
 {
     public class Scheduler
     {
-        public static async void Run(GameContext _context)
+        public static async Task Run(GameContext _context)
         {
             if (_context.Teams.Count() < 30)
-                await Task.Run(()=> Seed.Initialize(_context));
+                await Task.Run(() => Seed.Initialize(_context));
 
-            await Task.Run(() => Seed.UpdateTeamColors(_context));
+            await Seed.UpdateTeamColors(_context);
             var registry = new Registry();
             JobManager.Initialize(registry);
             JobManager.UseUtcTime();
