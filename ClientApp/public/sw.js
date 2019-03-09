@@ -13,7 +13,7 @@ self.addEventListener('activate', function (event) {
 // Respond to a server push with a user notification
 self.addEventListener('push', function (event) {
   if (event.data) {
-    const { title, lang = 'en', body, tag, timestamp, requireInteraction, actions, image, icon, data } = event.data.json();
+    const { title, lang = 'en', body, tag, timestamp, requireInteraction, actions, image, icon, data, badge, vibrate } = event.data.json();
     const promiseChain = self.registration.showNotification(title, {
       lang,
       body,
@@ -24,9 +24,9 @@ self.addEventListener('push', function (event) {
       image: image || undefined,
       icon: icon || './favicon.ico',
       data: data || null,
-      vibrate: [200, 100, 200]
+      badge: badge || '../public/images/notificationBadge.png',
+      vibrate: vibrate || null
     });
-
     // Ensure the toast notification is displayed before exiting this function
     event.waitUntil(promiseChain);
   }
@@ -45,7 +45,7 @@ self.addEventListener('notificationclick', async (event) => {
         body: JSON.stringify(model)
       }).then(async () => {
         const notification = {
-          title: "FantasyHoops Friend Request",
+          title: "Fantasy Hoops Friend Request",
           body: `User '${model.receiverUsername}' accepted your friend request!`,
           icon: `https://fantasyhoops.org/content/images/avatars/${model.receiverID}.png`
         };

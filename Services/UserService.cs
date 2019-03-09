@@ -58,7 +58,7 @@ namespace fantasy_hoops.Services
             catch { }
 
             PushNotificationViewModel notification =
-                new PushNotificationViewModel("FantasyHoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", model.UserName));
+                new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", model.UserName));
             notification.Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") };
             notification.Data = new { userName = model.UserName };
             await PushService.Instance.Value.SendAdminNotification(notification);

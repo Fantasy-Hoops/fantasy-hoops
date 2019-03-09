@@ -136,7 +136,7 @@ namespace fantasy_hoops.Database
             {
                 var lineup = lineupsAffected.Pop();
                 PushNotificationViewModel notification =
-                    new PushNotificationViewModel("FantasyHoops Injury",
+                    new PushNotificationViewModel("Fantasy Hoops Injury",
                         string.Format("{0} status changed from {1} to {2}!", lineup.AbbrName, lineup.StatusBefore, lineup.StatusAfter));
                 notification.Image = Environment.GetEnvironmentVariable("REACT_APP_IMAGES_SERVER_NAME") + "/content/images/players/" + lineup.PlayerNbaID + ".png";
                 notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🤾🏾‍♂️ Lineup") };

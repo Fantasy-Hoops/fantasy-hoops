@@ -148,7 +148,7 @@ namespace fantasy_hoops.Services
             }
 
             PushNotificationViewModel notification =
-                    new PushNotificationViewModel("FantasyHoops Reminder",
+                    new PushNotificationViewModel("Fantasy Hoops Reminder",
                         string.Format("Game is starting in less than 2 hours! Don't forget to set up your lineup!"));
             notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🏆 Lineup") };
             foreach (var user in await _context.Users.Where(user => user.Streak > 0).ToListAsync())

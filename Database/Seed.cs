@@ -144,10 +144,18 @@ namespace fantasy_hoops.Database
             catch (WebException e)
             {
                 PushNotificationViewModel notification =
-                    new PushNotificationViewModel("FantasyHoops Admin Notification", "Sportradar API Key has expired! Please change the API Key to new one. " +
+                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API Key has expired! Please change the API Key to new one. " +
                     "Error message: " + e.Message);
                 await PushService.Instance.Value.SendAdminNotification(notification);
                 return new List<JToken>();
+            }
+            if(webResponse != null)
+            {
+                string expiration = webResponse.Headers.Get(3);
+                int callsLeft = 1000 - (int.Parse(webResponse.Headers.Get(12)) + 30);
+                PushNotificationViewModel notification =
+                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API calls left: " + callsLeft);
+                await PushService.Instance.Value.SendAdminNotification(notification);
             }
             string responseString = CommonFunctions.ResponseToString(webResponse);
             List<JToken> teams = new List<JToken>();

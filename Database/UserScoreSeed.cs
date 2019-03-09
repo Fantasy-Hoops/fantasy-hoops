@@ -89,7 +89,7 @@ namespace fantasy_hoops.Database
             {
                 var user = _usersPlayed.Pop();
                 PushNotificationViewModel notification =
-                    new PushNotificationViewModel("FantasyHoops Game Score",
+                    new PushNotificationViewModel("Fantasy Hoops Game Score",
                         string.Format("Game has finished! Your lineup scored {0} FP", user.Score));
                 notification.Actions = new List<NotificationAction> { new NotificationAction("leaderboard", "🏆 Leaderboard") };
                 await PushService.Instance.Value.Send(user.UserID, notification);

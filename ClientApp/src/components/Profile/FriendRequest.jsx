@@ -130,7 +130,7 @@ export class FriendRequest extends Component {
         });
       }).then(this.refs.alert.addNotification);
     const notification = {
-      title: "FantasyHoops Friend Request",
+      title: "Fantasy Hoops Friend Request",
       body: `User '${sender.username}' sent you a friend request`,
       icon: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${sender.id}.png`, defaultImage),
       tag: `${sender.username}_friend_request`,

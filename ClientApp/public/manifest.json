@@ -1,15 +1,19 @@
 {
-  "short_name": "FH",
-  "name": "FantasyHoops",
+  "dir": "ltr",
+  "lang": "en-US",
+  "name": "Fantasy Hoops",
+  "short_name": "Fantasy Hoops",
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#2C3E50",
+  "background_color": "#2C3E50",
+  "description": "NBA Fantasy Basketball Game",
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "256x256 192x192 128x128 96x96 64x64 48x48 32x32 24x24 16x16",
       "type": "image/x-icon"
     }
-  ],
-  "start_url": "./index.html",
-  "display": "standalone",
-  "theme_color": "#007BFF",
-  "background_color": "#ffffff"
+  ]
 }
