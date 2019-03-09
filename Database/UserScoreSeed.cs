@@ -76,6 +76,7 @@ namespace fantasy_hoops.Database
                     DateCreated = DateTime.UtcNow,
                     Score = userScore
                 };
+                await context.GameScoreNotifications.AddAsync(gs);
             }
             await context.SaveChangesAsync();
             SendPushNotifications(context);
