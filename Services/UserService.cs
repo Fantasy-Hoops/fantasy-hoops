@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,7 +47,22 @@ namespace fantasy_hoops.Services
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
-            File.Copy(@"./ClientApp/build/content/images/avatars/default.png", @"./ClientApp/build/content/images/avatars/"+ _repository.GetUserByName(model.UserName).Id+".png");
+
+            try
+            {
+                string avatarDir = @"./ClientApp/build/content/images/avatars";
+                if (!Directory.Exists(avatarDir))
+                    Directory.CreateDirectory(avatarDir);
+                new WebClient().DownloadFile("https://fantasyhoops.org/content/images/avatars/default.png", @"./ClientApp/build/content/images/avatars/" + _repository.GetUserByName(model.UserName).Id + ".png");
+            }
+            catch { }
+
+            PushNotificationViewModel notification =
+                new PushNotificationViewModel("FantasyHoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", model.UserName));
+            notification.Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") };
+            notification.Data = new { userName = model.UserName };
+            await PushService.Instance.Value.SendAdminNotification(notification);
+
             return result.Succeeded;
         }
 

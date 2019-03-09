@@ -40,9 +40,9 @@ namespace fantasy_hoops
             services.AddMvc();
 
             DotEnv.Config(true, ".env");
-            #if DEBUG
-                DotEnv.Config(false, ".env.development");
-            #endif
+#if DEBUG
+            DotEnv.Config(false, ".env.development");
+#endif
 
             ConfigureAuth(services);
             ConfigureDbContext(services);
@@ -117,7 +117,7 @@ namespace fantasy_hoops
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -157,6 +157,35 @@ namespace fantasy_hoops
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+            Task.Run(() => CreateRoles(serviceProvider)).Wait();
+        }
+
+        private async Task CreateRoles(IServiceProvider serviceProvider)
+        {
+            //initializing custom roles 
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<User>>();
+            string[] roleNames = { "Admin" };
+            IdentityResult roleResult;
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                // ensure that the role does not exist
+                if (!roleExist)
+                {
+                    //create the roles and seed them to the database: 
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            var naidze = await UserManager.FindByNameAsync("Naidze");
+            if (naidze != null)
+                await UserManager.AddToRoleAsync(naidze, "Admin");
+
+            var bennek = await UserManager.FindByNameAsync("bennek");
+            if (bennek != null)
+                await UserManager.AddToRoleAsync(bennek, "Admin");
         }
     }
 }
