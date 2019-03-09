@@ -87,7 +87,7 @@ namespace fantasy_hoops.Database
             _usersPlayed.ForEach(user =>
             {
                 PushNotificationViewModel notification =
-                    new PushNotificationViewModel("FantasyHoops Injury",
+                    new PushNotificationViewModel("FantasyHoops Game Score",
                         string.Format("Game has finished! Your lineup scored {0} FP", user.Score));
                 notification.Actions = new List<NotificationAction> { new NotificationAction("leaderboard", "🏆 Leaderboard") };
                 foreach (var subscription in context.PushSubscriptions.Where(sub => sub.UserID.Equals(user.UserID)))

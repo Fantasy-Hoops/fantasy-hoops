@@ -67,8 +67,6 @@ self.addEventListener('notificationclick', async (event) => {
         body: JSON.stringify(model)
       })
       break;
-    case 'decline':
-      break;
     case 'lineup':
       clients.openWindow("/lineup");
       break;
