@@ -33,14 +33,11 @@ export class PlayerCard extends Component {
 
   render() {
     if (this.props.status > 0) {
-      const innerHTML = this.props.player.selected
-        ? <i className="fa fa-times"></i>
-        : <i className="fa fa-plus"></i>;
       const buttonState = this.props.status === 1
         ? <div className="PlayerCard__button">
-          <button className={`btn-no-outline center PlayerCard__button--circle ${this.props.player.selected ? 'btn-danger' : 'btn-primary'} text-center`}
+          <button className={`btn-no-outline center PlayerCard__button--circle ${this.props.player.selected ? 'btn-danger PlayerCard__Button--selected' : 'btn-primary PlayerCard__Button--default'} text-center`}
             onClick={this.select}>
-            {innerHTML}
+             <i className={"fa fa-plus PlayerCard__Button__Icon" + (this.props.player.selected ? "--selected" : "")}></i>
           </button>
         </div>
         : '';

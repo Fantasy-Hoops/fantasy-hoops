@@ -1156,6 +1156,24 @@ thead {
   border-radius: 1.375rem;
 }
 
+.PlayerCard__Button--selected {
+  transition: background-color 0.3s;
+}
+
+.PlayerCard__Button--default {
+  transition: background-color 0.3s;
+}
+
+.PlayerCard__Button__Icon {
+  transition: transform .3s;
+}
+
+.PlayerCard__Button__Icon--selected {
+  transform: rotate(45deg);
+  transform-origin: center center;
+  transition: transform .3s;
+}
+
 .PlayerCard__player-name {
   position: relative;
   text-align: center;
