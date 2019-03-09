@@ -9,6 +9,8 @@ using System.Collections;
 using System.Collections.Generic;
 using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
+using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Services;
 
 namespace fantasy_hoops.Database
 {
@@ -32,7 +34,7 @@ namespace fantasy_hoops.Database
 
         private static async Task Calculate(GameContext context)
         {
-            var teams = GetTeams();
+            List<JToken> teams = await GetTeams();
             System.Threading.Thread.Sleep(1000);
             var dbPlayers = context.Players;
             var dbTeams = context.Teams;
@@ -127,13 +129,26 @@ namespace fantasy_hoops.Database
             await context.SaveChangesAsync();
         }
 
-        private static List<JToken> GetTeams(string apikey = API_KEY)
+        private static async Task<List<JToken>> GetTeams(string apikey = API_KEY)
         {
+            HttpWebResponse webResponse = null;
             string teamsURL = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + CommonFunctions.GetSeasonYear() + "/REG/rankings.json?api_key=" + apikey;
-            HttpWebResponse webResponse =
-                CommonFunctions.GetResponse(teamsURL);
-            if (webResponse == null)
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(teamsURL);
+                request.Method = "GET";
+                request.KeepAlive = true;
+                request.ContentType = "application/json";
+                webResponse = (HttpWebResponse)request.GetResponse();
+            }
+            catch (WebException e)
+            {
+                PushNotificationViewModel notification =
+                    new PushNotificationViewModel("FantasyHoops Admin Notification", "Sportradar API Key has expired! Please change the API Key to new one. " +
+                    "Error message: " + e.Message);
+                await PushService.Instance.Value.SendAdminNotification(notification);
                 return new List<JToken>();
+            }
             string responseString = CommonFunctions.ResponseToString(webResponse);
             List<JToken> teams = new List<JToken>();
             JObject json = JObject.Parse(responseString);
