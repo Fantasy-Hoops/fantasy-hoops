@@ -4,6 +4,7 @@ import defaultPhoto from '../content/images/default.png';
 import { Notifications } from './Notifications/Notifications';
 import Img from 'react-image';
 import { loadImage } from '../utils/loadImage';
+import { registerPush } from '../utils/push';
 
 export class Header extends Component {
   constructor(props) {
@@ -37,6 +38,7 @@ export class Header extends Component {
     let profile = '';
     if (isAuth()) {
       const user = parse();
+      registerPush();
       profile = (
         <ul className="nav navbar-nav ml-auto Header__LoggedIn">
           <Notifications />

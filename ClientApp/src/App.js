@@ -15,6 +15,7 @@ import { UserPool } from './components/UserPool';
 import { Main } from './components/Main';
 import { AllNotificationsPage } from './components/Notifications/AllNotificationsPage';
 import { LineupHistory } from './components/Profile/LineupHistoryPage';
+import { Push } from './components/Push';
 
 export default class App extends Component {
   displayName = App.name
@@ -36,6 +37,7 @@ export default class App extends Component {
         <PrivateRoute path='/users' component={UserPool} />
         <PrivateRoute path='/notifications' component={AllNotificationsPage} />
         <PrivateRoute path='/history' component={LineupHistory} />
+        <PrivateRoute path='/push' component={Push} />
       </div>
     );
   }

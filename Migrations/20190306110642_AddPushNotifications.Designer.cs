@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20190306110642_AddPushNotifications")]
+    partial class AddPushNotifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -325,11 +327,10 @@ namespace fantasy_hoops.Migrations
 
                     b.Property<double?>("ExpirationTime");
 
-                    b.Property<string>("UserID");
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
                     b.HasKey("P256Dh");
-
-                    b.HasIndex("UserID");
 
                     b.ToTable("PushSubscriptions");
                 });
@@ -616,13 +617,6 @@ namespace fantasy_hoops.Migrations
                         .WithMany("Players")
                         .HasForeignKey("TeamID")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("fantasy_hoops.Models.PushSubscription", b =>
-                {
-                    b.HasOne("fantasy_hoops.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.Stats", b =>
