@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
+using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -132,27 +133,26 @@ namespace fantasy_hoops.Services
         {
             string adminRoleID = _context.Roles.Where(role => role.Name.Equals("Admin")).FirstOrDefault().Id;
             foreach (var admin in await _context.UserRoles.Where(userRole => userRole.RoleId.Equals(adminRoleID)).ToListAsync())
+                await Send(admin.UserId, notification);
+        }
+
+        public async Task SendNudgeNotifications()
+        {
+            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("nudgeNotifications")))
             {
-                foreach (var subscription in await GetUserSubscriptions(admin.UserId))
-                {
-                    try
-                    {
-                        _client.SendNotification(subscription.ToWebPushSubscription(), JsonConvert.SerializeObject(notification), _vapidDetails);
-                    }
-                    catch (WebPushException e)
-                    {
-                        if (e.Message == "Subscription no longer valid")
-                        {
-                            _context.PushSubscriptions.Remove(subscription);
-                            await _context.SaveChangesAsync();
-                        }
-                        else
-                        {
-                            // Track exception with eg. AppInsights
-                        }
-                    }
-                }
+                JobManager.AddJob(() => SendNudgeNotifications().Wait(),
+                s => s.WithName("nudgeNotifications")
+                .ToRunOnceIn(30)
+                .Seconds());
+                return;
             }
+
+            PushNotificationViewModel notification =
+                    new PushNotificationViewModel("FantasyHoops Reminder",
+                        string.Format("Game is starting in less than 2 hours! Don't forget to set up your lineup!"));
+            notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🏆 Lineup") };
+            foreach (var user in await _context.Users.Where(user => user.Streak > 0).ToListAsync())
+                await Send(user.Id, notification);
         }
     }
 }

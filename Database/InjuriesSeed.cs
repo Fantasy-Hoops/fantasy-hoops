@@ -8,8 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.Notifications;
 using FluentScheduler;
-using System.Threading;
-using Newtonsoft.Json;
 using fantasy_hoops.Services;
 using WebPush;
 using fantasy_hoops.Models.ViewModels;
@@ -21,7 +19,7 @@ namespace fantasy_hoops.Database
     {
         const int DAYS_TO_SAVE = 2;
         static DateTime dayFrom = DateTime.UtcNow.AddDays(-DAYS_TO_SAVE);
-        private static List<InjuryPushNotificationViewModel> lineupsAffected = new List<InjuryPushNotificationViewModel>();
+        private static Stack<InjuryPushNotificationViewModel> lineupsAffected = new Stack<InjuryPushNotificationViewModel>();
 
         public static void Initialize(GameContext context)
         {
@@ -63,7 +61,7 @@ namespace fantasy_hoops.Database
                 }
             }
             await context.SaveChangesAsync();
-            SendPushNotifications(context);
+            await SendPushNotifications(context);
         }
 
         private static async Task AddToDatabaseAsync(GameContext context, JToken injury)
@@ -105,63 +103,45 @@ namespace fantasy_hoops.Database
             foreach (var lineup in context.Lineups
                 .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
                             && x.PlayerID == injury.PlayerID))
+            {
+                lineupsAffected.Push(new InjuryPushNotificationViewModel
                 {
-                    lineupsAffected.Add(new InjuryPushNotificationViewModel
-                    {
                     UserID = lineup.UserID,
-                        StatusBefore = statusBefore,
-                        StatusAfter = statusAfter,
+                    StatusBefore = statusBefore,
+                    StatusAfter = statusAfter,
                     AbbrName = lineup.Player.AbbrName,
                     PlayerNbaID = lineup.Player.NbaID
-                    });
-                    var inj = new InjuryNotification
-                    {
+                });
+                var inj = new InjuryNotification
+                {
                     UserID = lineup.UserID,
-                        ReadStatus = false,
-                        DateCreated = DateTime.UtcNow,
+                    ReadStatus = false,
+                    DateCreated = DateTime.UtcNow,
                     PlayerID = lineup.PlayerID,
-                        InjuryStatus = injury.Status,
-                        InjuryDescription = injury.Injury
-                    };
+                    InjuryStatus = injury.Status,
+                    InjuryDescription = injury.Injury
+                };
 
                 if (!context.InjuryNotifications
                 .Any(x => x.InjuryStatus.Equals(inj.InjuryStatus)
                                 && x.PlayerID == inj.PlayerID))
-                        await context.InjuryNotifications.AddAsync(inj);
+                    await context.InjuryNotifications.AddAsync(inj);
             }
         }
 
-        private static void SendPushNotifications(GameContext context)
+        private static async Task SendPushNotifications(GameContext context)
         {
             WebPushClient _webPushClient = new WebPushClient();
-            lineupsAffected.ForEach(lineup =>
+            while (lineupsAffected.Count > 0)
             {
+                var lineup = lineupsAffected.Pop();
                 PushNotificationViewModel notification =
                     new PushNotificationViewModel("FantasyHoops Injury",
                         string.Format("{0} status changed from {1} to {2}!", lineup.AbbrName, lineup.StatusBefore, lineup.StatusAfter));
                 notification.Image = Environment.GetEnvironmentVariable("REACT_APP_IMAGES_SERVER_NAME") + "/content/images/players/" + lineup.PlayerNbaID + ".png";
                 notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🤾🏾‍♂️ Lineup") };
-                foreach (var subscription in context.PushSubscriptions.Where(sub => sub.UserID.Equals(lineup.UserID)))
-                {
-                    try
-                    {
-                        _webPushClient.SendNotification(subscription.ToWebPushSubscription(), JsonConvert.SerializeObject(notification), PushService._vapidDetails);
-                    }
-                    catch (WebPushException e)
-                    {
-                        if (e.Message == "Subscription no longer valid")
-                        {
-                            context.PushSubscriptions.Remove(subscription);
-                            context.SaveChanges();
-                        }
-                        else
-                        {
-                            // Track exception with eg. AppInsights
-                        }
-                    }
-                }
-            });
-            lineupsAffected.Clear();
+                await PushService.Instance.Value.Send(lineup.UserID, notification);
+            }
         }
     }
 }
