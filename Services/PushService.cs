@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using FluentScheduler;
@@ -151,7 +152,11 @@ namespace fantasy_hoops.Services
                     new PushNotificationViewModel("Fantasy Hoops Reminder",
                         string.Format("Game is starting in less than 2 hours! Don't forget to set up your lineup!"));
             notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🏆 Lineup") };
-            foreach (var user in await _context.Users.Where(user => user.Streak > 0).ToListAsync())
+            foreach (var user in await _context.Lineups
+                .Where(lineup => lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME)) && !lineup.Calculated)
+                .Select(lineup => lineup.User)
+                .Where(user => user.Streak > 0)
+                .ToListAsync())
                 await Send(user.Id, notification);
         }
     }
