@@ -1,24 +1,32 @@
 import React, { Component } from 'react';
 import { Input } from '../Inputs/Input';
-import { handleErrors } from '../../utils/errors'
+import { handleErrors } from '../../utils/errors';
 import { Alert } from '../Alert';
 import { isAuth } from '../../utils/auth';
 
-export class Login extends Component {
+export default class LoginPage extends Component {
   constructor(props) {
     super(props);
+    const { location } = this.props;
 
-    const error = this.props.location.state && this.props.location.state.error;
+    const error = location.state && location.state.error;
 
     this.state = {
       username: '',
       password: '',
-      showAlert: error ? true : false,
+      showAlert: error,
       alertType: error ? 'alert-danger' : '',
-      alertText: error ? this.props.location.state.error : ''
-    }
+      alertText: error ? location.state.error : ''
+    };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    // If user has signed in already, he is redirecting to main page
+    if (isAuth()) {
+      window.location.replace('/');
+    }
   }
 
   handleChange(e) {
@@ -32,16 +40,15 @@ export class Login extends Component {
       btn.disabled = true;
       return;
     }
-    else {
-      const forms = document.querySelectorAll('.form-control');
-      for (let i = 0; i < forms.length; i++) {
-        if (!forms[i].required)
-          continue;
-        if (forms[i].value.length === 0) {
-          btn.className = 'btn btn-outline-primary btn-block';
-          btn.disabled = true;
-          return;
-        }
+    const forms = document.querySelectorAll('.form-control');
+    for (let i = 0; i < forms.length; i++) {
+      if (!forms[i].required) {
+        continue;
+      }
+      if (forms[i].value.length === 0) {
+        btn.className = 'btn btn-outline-primary btn-block';
+        btn.disabled = true;
+        return;
       }
     }
     btn.className = 'btn btn-primary btn-block';
@@ -50,10 +57,12 @@ export class Login extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
+    const { username, password } = this.state;
+    const { location } = this.props;
 
     const data = {
-      UserName: this.state.username,
-      Password: this.state.password
+      UserName: username,
+      Password: password
     };
 
     fetch('/api/user/login', {
@@ -65,62 +74,58 @@ export class Login extends Component {
     })
       .then(res => handleErrors(res))
       .then(res => res.text())
-      .then(res => {
+      .then((res) => {
         localStorage.setItem('accessToken', res);
 
         // If user was redirected to login because of authentication errors,
         // he is now being redirected back
-        if (this.props.location.state && this.props.location.state.fallback) {
-          window.location.replace("/lineup");
+        if (location.state && location.state.fallback) {
+          window.location.replace('/lineup');
           return;
         }
-        window.location.replace("/");
+        window.location.replace('/');
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({
           showAlert: true,
           alertType: 'alert-danger',
           alertText: err.message.substring(4)
-        })
+        });
       });
   }
 
-  componentDidMount() {
-    // If user has signed in already, he is redirecting to main page
-    if (isAuth()) {
-      window.location.replace("/");
-    }
-  }
-
   render() {
+    const {
+      alertType, alertText, showAlert, username, password
+    } = this.state;
     return (
       <div className="container pb-3 bg-light vertical-center" style={{ maxWidth: '420px' }}>
         <br />
         <h2>Login</h2>
         <hr />
-        <Alert type={this.state.alertType} text={this.state.alertText} show={this.state.showAlert} />
+        <Alert type={alertType} text={alertText} show={showAlert} />
         <form onSubmit={this.handleSubmit} id="form">
           <div className="form-group">
-            <label>Username</label>
+            <label htmlFor="username">Username</label>
             <Input
               type="text"
               id="username"
               placeholder="Username"
-              value={this.state.username}
+              value={username}
               onChange={this.handleChange}
             />
           </div>
           <div className="form-group">
-            <label>Password</label>
+            <label htmlFor="password">Password</label>
             <Input
               type="password"
               id="password"
               placeholder="Password"
-              value={this.state.password}
+              value={password}
               onChange={this.handleChange}
             />
           </div>
-          <button id="login" disabled className="btn btn-outline-primary btn-block">Log in</button>
+          <button type="submit" id="login" disabled className="btn btn-outline-primary btn-block">Log in</button>
           <a href="/register" className="btn btn-success btn-block">Sign up</a>
         </form>
       </div>

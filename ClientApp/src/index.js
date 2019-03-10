@@ -1,5 +1,6 @@
-import '../src/content/custom-styles.css';
-import '../src/content/random-letters.css';
+/* eslint-disable react/jsx-filename-extension */
+import './content/custom-styles.css';
+import './content/random-letters.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
@@ -12,4 +13,5 @@ ReactDOM.render(
   <BrowserRouter basename={baseUrl}>
     <App />
   </BrowserRouter>,
-  rootElement);
+  rootElement
+);
