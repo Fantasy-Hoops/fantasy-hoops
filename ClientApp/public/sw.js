@@ -2,24 +2,16 @@
 
 importScripts("./js/util.js");
 
-const CACHE_NAME = 'offline';
-const urlsToCache = [
-  '/images/jordan-crying.png',
-  './offline.html'
-];
-
 self.addEventListener("install", function (event) {
-  urlsToCache.forEach(url => {
-    var offlineRequest = new Request(url);
-    event.waitUntil(
-      fetch(offlineRequest).then(function (response) {
-        return caches.open(CACHE_NAME).then(function (cache) {
-          console.log("[oninstall] Cached offline page", response.url);
-          return cache.put(offlineRequest, response);
-        });
-      })
-    );
-  });
+  var offlineRequest = new Request("./offline.html");
+  event.waitUntil(
+    fetch(offlineRequest).then(function (response) {
+      return caches.open("offline").then(function (cache) {
+        console.log("[oninstall] Cached offline page", response.url);
+        return cache.put(offlineRequest, response);
+      });
+    })
+  );
 });
 
 self.addEventListener("fetch", function (event) {
@@ -30,7 +22,7 @@ self.addEventListener("fetch", function (event) {
         console.error(
           "[onfetch] Failed. Serving cached offline fallback " + error
         );
-        return caches.open(CACHE_NAME).then(function (cache) {
+        return caches.open("offline").then(function (cache) {
           return cache.match("./offline.html");
         });
       })
@@ -69,7 +61,7 @@ self.addEventListener("push", function (event) {
       image: image || undefined,
       icon: icon || "./favicon.ico",
       data: data || null,
-      badge: badge || "../public/images/notificationBadge.png",
+      badge: badge || './images/badge.gif',
       vibrate: vibrate || null
     });
     // Ensure the toast notification is displayed before exiting this function
