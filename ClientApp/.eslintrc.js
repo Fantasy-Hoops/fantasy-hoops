@@ -20,5 +20,11 @@ module.exports = {
     'react',
   ],
   rules: {
+    'no-continue': 'off',
+    'comma-dangle': 'off',
+    'no-plusplus': 'off',
+    'import/no-extraneous-dependencies': 'off',
+    'jsx-a11y/label-has-associated-control': 'off',
+    'jsx-a11y/label-has-for': 'off'
   },
 };
