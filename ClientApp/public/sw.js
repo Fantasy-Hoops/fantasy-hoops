@@ -2,11 +2,11 @@
 
 importScripts("./js/util.js");
 
-self.addEventListener("install", function(event) {
-  var offlineRequest = new Request("./offline");
+self.addEventListener("install", function (event) {
+  var offlineRequest = new Request("./offline.html");
   event.waitUntil(
-    fetch(offlineRequest).then(function(response) {
-      return caches.open("offline").then(function(cache) {
+    fetch(offlineRequest).then(function (response) {
+      return caches.open("offline").then(function (cache) {
         console.log("[oninstall] Cached offline page", response.url);
         return cache.put(offlineRequest, response);
       });
@@ -14,28 +14,28 @@ self.addEventListener("install", function(event) {
   );
 });
 
-self.addEventListener("fetch", function(event) {
+self.addEventListener("fetch", function (event) {
   var request = event.request;
   if (request.method === "GET") {
     event.respondWith(
-      fetch(request).catch(function(error) {
+      fetch(request).catch(function (error) {
         console.error(
           "[onfetch] Failed. Serving cached offline fallback " + error
         );
-        return caches.open("offline").then(function(cache) {
-          return cache.match("./offline");
+        return caches.open("offline").then(function (cache) {
+          return cache.match("./offline.html");
         });
       })
     );
   }
 });
 
-self.addEventListener("activate", function(event) {
+self.addEventListener("activate", function (event) {
   event.waitUntil(clients.claim());
 });
 
 // Respond to a server push with a user notification
-self.addEventListener("push", function(event) {
+self.addEventListener("push", function (event) {
   if (event.data) {
     const {
       title,
@@ -88,10 +88,10 @@ self.addEventListener(
               title: "Fantasy Hoops Friend Request",
               body: `User '${
                 model.receiverUsername
-              }' accepted your friend request!`,
+                }' accepted your friend request!`,
               icon: `https://fantasyhoops.org/content/images/avatars/${
                 model.receiverID
-              }.png`
+                }.png`
             };
             await fetch(`./api/push/send/${model.senderID}`, {
               method: "post",
@@ -128,13 +128,13 @@ self.addEventListener(
   false
 );
 
-self.addEventListener("notificationclick", function(event) {
+self.addEventListener("notificationclick", function (event) {
   event.notification.close();
 
   event.waitUntil(
     clients
       .matchAll({ type: "window", includeUncontrolled: true })
-      .then(function(clientList) {
+      .then(function (clientList) {
         if (clientList.length > 0) {
           let client = clientList[0];
 
@@ -151,7 +151,7 @@ self.addEventListener("notificationclick", function(event) {
   );
 });
 
-self.addEventListener("pushsubscriptionchange", function(event) {
+self.addEventListener("pushsubscriptionchange", function (event) {
   event.waitUntil(
     Promise.all([
       Promise.resolve(
@@ -161,7 +161,7 @@ self.addEventListener("pushsubscriptionchange", function(event) {
         event.newSubscription
           ? event.newSubscription
           : subscribePush(registration)
-      ).then(function(sub) {
+      ).then(function (sub) {
         return saveSubscription(sub);
       })
     ])

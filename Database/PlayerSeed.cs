@@ -47,64 +47,67 @@ namespace fantasy_hoops.Database
 
         private static async Task Calculate(GameContext context, bool updatePrice)
         {
-            await context.Players.ForEachAsync(p => p.IsPlaying = false);
-            string date = GetDate();
-            JArray games = CommonFunctions.GetGames(date);
-            foreach (var game in games)
+            if(bool.Parse(Environment.GetEnvironmentVariable("UPDATE_PLAYER_SEED")))
             {
-                var hTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
-                var vTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
-
-                if (updatePrice)
+                await context.Players.ForEachAsync(p => p.IsPlaying = false);
+                string date = GetDate();
+                JArray games = CommonFunctions.GetGames(date);
+                foreach (var game in games)
                 {
-                    int hTeamNextGameId = CommonFunctions.GetNextGame(hTeamPlayers
-                        .Where(player => player.Status.Equals("Active"))
-                        .OrderByDescending(player => player.Price)
-                        .FirstOrDefault().NbaID);
-                    int vTeamNextGameId = CommonFunctions.GetNextGame(vTeamPlayers
-                        .Where(player => player.Status.Equals("Active"))
-                        .OrderByDescending(player => player.Price)
-                        .FirstOrDefault().NbaID);
+                    var hTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
+                    var vTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
 
-                    var hTeam = context.Teams.Where(t => t.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
-                    var vTeam = context.Teams.Where(t => t.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
-
-                    if (hTeamNextGameId != -1)
-                        hTeam.NextOpponent = context.Teams.Where(t => t.NbaID == hTeamNextGameId).FirstOrDefault();
-                    else hTeam.NextOpponentID = null;
-
-                    if (vTeamNextGameId != -1)
-                        vTeam.NextOpponent = context.Teams.Where(t => t.NbaID == vTeamNextGameId).FirstOrDefault();
-                    else vTeam.NextOpponentID = null;
-                }
-                foreach (var player in hTeamPlayers.Union(vTeamPlayers))
-                {
-                    JObject p = GetPlayer(player.NbaID);
-                    if (p == null)
-                    {
-                        player.Price = PRICE_FLOOR;
-                        continue;
-                    }
-                    if (p["pl"]["ca"]["sa"] == null)
-                    {
-                        continue;
-                    }
-                    JToken stats = p["pl"]["ca"]["sa"].Last;
-                    int gamesPlayed = (int)stats["gp"];
-                    player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
-                    player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
-                    player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
-                    player.STL = gamesPlayed <= 0 ? 0 : (double)stats["stl"];
-                    player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["blk"];
-                    player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["tov"];
-                    player.GP = gamesPlayed;
-                    player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
                     if (updatePrice)
-                        player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(context, player);
-                    player.IsPlaying = IsPlaying(player);
+                    {
+                        int hTeamNextGameId = CommonFunctions.GetNextGame(hTeamPlayers
+                            .Where(player => player.Status.Equals("Active"))
+                            .OrderByDescending(player => player.Price)
+                            .FirstOrDefault().NbaID);
+                        int vTeamNextGameId = CommonFunctions.GetNextGame(vTeamPlayers
+                            .Where(player => player.Status.Equals("Active"))
+                            .OrderByDescending(player => player.Price)
+                            .FirstOrDefault().NbaID);
+
+                        var hTeam = context.Teams.Where(t => t.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
+                        var vTeam = context.Teams.Where(t => t.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
+
+                        if (hTeamNextGameId != -1)
+                            hTeam.NextOpponent = context.Teams.Where(t => t.NbaID == hTeamNextGameId).FirstOrDefault();
+                        else hTeam.NextOpponentID = null;
+
+                        if (vTeamNextGameId != -1)
+                            vTeam.NextOpponent = context.Teams.Where(t => t.NbaID == vTeamNextGameId).FirstOrDefault();
+                        else vTeam.NextOpponentID = null;
+                    }
+                    foreach (var player in hTeamPlayers.Union(vTeamPlayers))
+                    {
+                        JObject p = GetPlayer(player.NbaID);
+                        if (p == null)
+                        {
+                            player.Price = PRICE_FLOOR;
+                            continue;
+                        }
+                        if (p["pl"]["ca"]["sa"] == null)
+                        {
+                            continue;
+                        }
+                        JToken stats = p["pl"]["ca"]["sa"].Last;
+                        int gamesPlayed = (int)stats["gp"];
+                        player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
+                        player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
+                        player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
+                        player.STL = gamesPlayed <= 0 ? 0 : (double)stats["stl"];
+                        player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["blk"];
+                        player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["tov"];
+                        player.GP = gamesPlayed;
+                        player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
+                        if (updatePrice)
+                            player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(context, player);
+                        player.IsPlaying = IsPlaying(player);
+                    }
                 }
+                await context.SaveChangesAsync();
             }
-            await context.SaveChangesAsync();
             NextGame.NEXT_GAME_CLIENT = NextGame.NEXT_GAME;
             PLAYER_POOL_DATE = NextGame.NEXT_GAME;
         }
