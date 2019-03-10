@@ -16,8 +16,6 @@ namespace fantasy_hoops.Database
 {
     public class Seed
     {
-        private const string API_KEY = "3hjjqjrembg54reu2w2e2577";
-
         public static void Initialize(GameContext context)
         {
             if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("seed")))
@@ -129,10 +127,11 @@ namespace fantasy_hoops.Database
             await context.SaveChangesAsync();
         }
 
-        private static async Task<List<JToken>> GetTeams(string apikey = API_KEY)
+        private static async Task<List<JToken>> GetTeams()
         {
             HttpWebResponse webResponse = null;
-            string teamsURL = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + CommonFunctions.GetSeasonYear() + "/REG/rankings.json?api_key=" + apikey;
+            string teamsURL = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + CommonFunctions.GetSeasonYear()
+                + "/REG/rankings.json?api_key=" + Environment.GetEnvironmentVariable("API_KEY");
             try
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(teamsURL);
@@ -149,7 +148,7 @@ namespace fantasy_hoops.Database
                 await PushService.Instance.Value.SendAdminNotification(notification);
                 return new List<JToken>();
             }
-            if(webResponse != null)
+            if (webResponse != null)
             {
                 string expiration = webResponse.Headers.Get(3);
                 int callsLeft = 1000 - (int.Parse(webResponse.Headers.Get(12)) + 30);
@@ -170,9 +169,9 @@ namespace fantasy_hoops.Database
             return teams;
         }
 
-        private static List<JToken> GetRoster(string teamId, string apikey = API_KEY)
+        private static List<JToken> GetRoster(string teamId)
         {
-            string rosterURL = "http://api.sportradar.us/nba/trial/v4/en/teams/" + teamId + "/profile.json?api_key=" + apikey;
+            string rosterURL = "http://api.sportradar.us/nba/trial/v4/en/teams/" + teamId + "/profile.json?api_key=" + Environment.GetEnvironmentVariable("API_KEY");
             HttpWebResponse webResponse = CommonFunctions.GetResponse(rosterURL);
             if (webResponse == null)
                 return new List<JToken>();

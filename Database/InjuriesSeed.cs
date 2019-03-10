@@ -12,6 +12,7 @@ using fantasy_hoops.Services;
 using WebPush;
 using fantasy_hoops.Models.ViewModels;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace fantasy_hoops.Database
 {
@@ -32,7 +33,14 @@ namespace fantasy_hoops.Database
                 return;
             }
 
-            Task.Run(() => Extract(context)).Wait();
+            try
+            {
+                Task.Run(() => Extract(context)).Wait();
+            }
+            catch (AggregateException e)
+            {
+                Debug.WriteLine("Injuries seed exception: " + e.Message);
+            }
         }
 
         private static JArray GetInjuries()
@@ -138,7 +146,7 @@ namespace fantasy_hoops.Database
                 PushNotificationViewModel notification =
                     new PushNotificationViewModel("Fantasy Hoops Injury",
                         string.Format("{0} status changed from {1} to {2}!", lineup.AbbrName, lineup.StatusBefore, lineup.StatusAfter));
-                notification.Image = Environment.GetEnvironmentVariable("REACT_APP_IMAGES_SERVER_NAME") + "/content/images/players/" + lineup.PlayerNbaID + ".png";
+                notification.Image = Environment.GetEnvironmentVariable("IMAGES_SERVER_NAME") + "/content/images/players/" + lineup.PlayerNbaID + ".png";
                 notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🤾🏾‍♂️ Lineup") };
                 await PushService.Instance.Value.Send(lineup.UserID, notification);
             }
