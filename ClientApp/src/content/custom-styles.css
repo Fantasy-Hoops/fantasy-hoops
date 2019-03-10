@@ -1334,3 +1334,10 @@ thead {
 .notification-container-mobile-top {
   top: 4.3rem !important;
 }
+
+.A2HS-Button {
+  display: none;
+  position: absolute;
+  left: 1rem;
+  top: 6rem
+}

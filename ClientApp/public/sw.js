@@ -2,8 +2,26 @@
 
 importScripts('./js/util.js');
 
-self.addEventListener('install', function (event) {
-  self.skipWaiting();
+self.addEventListener('install', function (e) {
+  e.waitUntil(
+    caches.open('static').then(function (cache) {
+      return cache.addAll([
+        '.',
+        '/static/js/main.8b8a6c25.js',
+        '/static/css/main.d978d13d.css',
+        'static/media/favicon.f3a2aac4.ico',
+        'favicon.ico'
+      ]).then(() => self.skipWaiting());
+    })
+  );
+});
+
+self.addEventListener('fetch', function (e) {
+  e.respondWith(
+    caches.match(e.request).then(function (response) {
+      return response || fetch(e.request);
+    })
+  );
 });
 
 self.addEventListener('activate', function (event) {
