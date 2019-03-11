@@ -42,7 +42,7 @@ namespace fantasy_hoops.Database
                     s => s.WithName(NEXT_GAME.ToLongDateString())
                     .ToRunOnceAt(NEXT_GAME));
 
-                if (updatePrices && NEXT_GAME.Subtract(DateTime.UtcNow).TotalMinutes > 115)
+                if (NEXT_GAME.Subtract(DateTime.UtcNow).TotalMinutes > 115)
                     JobManager.AddJob(() => PushService.Instance.Value.SendNudgeNotifications().Wait(),
                         s => s.WithName("nudgeNotifications")
                         .ToRunOnceAt(NEXT_GAME.AddHours(-2)));
