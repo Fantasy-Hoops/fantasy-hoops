@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 import { Redirect } from 'react-router';
 import { isAuth } from '../../utils/auth';

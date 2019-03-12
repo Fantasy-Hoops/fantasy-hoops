@@ -25,6 +25,7 @@ module.exports = {
     'no-plusplus': 'off',
     'import/no-extraneous-dependencies': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
-    'jsx-a11y/label-has-for': 'off'
+    'jsx-a11y/label-has-for': 'off',
+    'class-methods-use-this': 'off'
   },
 };

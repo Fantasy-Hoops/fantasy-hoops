@@ -3,7 +3,7 @@ import { parse } from '../../utils/auth';
 import { Avatar } from './Avatar';
 import { EditProfile } from './EditProfile';
 import { InfoPanel } from './InfoPanel';
-import { Friends } from './Friends/Friends';
+import Friends from './Friends/Friends';
 import { Error } from '../Error';
 import { handleErrors } from '../../utils/errors';
 import { Loader } from '../Loader';

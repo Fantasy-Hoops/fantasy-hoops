@@ -3,10 +3,15 @@
   --secondary-color: #18bc9c;
   --tertiary-color: #ecf0f1;
   --grey-text: #696969;
+  --grey-background: #f5f5f5;
 }
 
 body {
   background-color: var(--tertiary-color);
+}
+
+a:hover {
+  text-decoration: none;
 }
 
 .container {
@@ -248,7 +253,6 @@ body {
 }
 .post-module .post-content .post-meta a {
   color: #999999;
-  text-decoration: none;
 }
 .hover .post-content .description {
   display: block !important;
@@ -454,12 +458,10 @@ body {
 
 .link {
   color: #0060b6;
-  text-decoration: none;
 }
 
 .link:hover {
   color: #00a0c6;
-  text-decoration: none;
   cursor: pointer;
 }
 
@@ -627,12 +629,12 @@ thead {
 }
 
 .NotificationCard:hover {
-  background-color: #f5f5f5;
+  background-color: var(--grey-background);
   transition: background-color 0.3s;
 }
 
 .NotificationCard--unread {
-  background-color: #f5f5f5;
+  background-color: var(--grey-background);
   border-left: 0.25rem solid var(--secondary-color);
   transition: background-color 0.3s, border-left 0.3s;
 }
@@ -771,7 +773,6 @@ thead {
   color: var(--primary-color);
   font-weight: 400;
   white-space: nowrap;
-  text-decoration: none !important;
 }
 
 .UserLeaderboardCard__username--daily {
@@ -792,14 +793,14 @@ thead {
 .UserLeaderboardCard__FP--grey {
   height: 100%;
   border-left: 0.01rem solid #acacac;
-  background-color: #f5f5f5;
+  background-color: var(--grey-background);
   padding-top: 23%;
 }
 
 .UserLeaderboardCard__player {
   width: 100%;
   height: 100%;
-  background-color: #f5f5f5;
+  background-color: var(--grey-background);
   padding-top: 0.5rem;
   grid-column: span 2;
   display: flex;
@@ -890,14 +891,13 @@ thead {
   color: var(--primary-color);
   font-weight: 400;
   white-space: nowrap;
-  text-decoration: none !important;
 }
 
 .PlayerLeaderboardCard__FP {
   height: 100%;
   margin: 0;
   border-left: 0.01rem solid #acacac;
-  background-color: #f5f5f5;
+  background-color: var(--grey-background);
   text-align: center;
   align-self: center;
   font-size: 1.1rem;
@@ -1348,4 +1348,39 @@ thead {
   position: absolute;
   left: 1rem;
   top: 6rem;
+}
+
+.RequestCard {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.RequestCard__Body {
+  display: flex;
+  align-items: center;
+}
+
+.RequestCard__Info {
+  display: flex;
+  align-items: center;
+}
+
+.RequestCard__Avatar {
+  height: 4rem;
+  width: 4rem;
+}
+
+.RequestCard__Info__Name {
+  margin: 0 0 0 1rem;
+  font-size: 1.5rem;
+}
+
+.RequestCard__Buttons {
+  height: 100%;
+  padding: 0 1.25rem;
+  background: var(--grey-background);
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  border-left: 1px solid rgba(0, 0, 0, 0.15);
 }
