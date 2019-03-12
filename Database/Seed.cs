@@ -116,6 +116,8 @@ namespace fantasy_hoops.Database
                                 IsInGLeague = gLeagueStatus
                             };
                             await dbPlayers.AddAsync(playerObj);
+                            if (playerObj.Position.Equals("NA"))
+                                await PushService.Instance.Value.SendAdminNotification(new PushNotificationViewModel("Fantasy Hoops Notification", string.Format("Player '{0}' with position {1} was added to database.", playerObj.FullName, playerObj.Position)));
                         }
                         catch (ArgumentNullException)
                         {

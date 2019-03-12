@@ -49,7 +49,7 @@ namespace fantasy_hoops.Database
 
         private static async Task Calculate(GameContext context, bool updatePrice)
         {
-            if(bool.Parse(Environment.GetEnvironmentVariable("UPDATE_PLAYER_SEED")))
+            if (bool.Parse(Environment.GetEnvironmentVariable("UPDATE_PLAYER_SEED")))
             {
                 await context.Players.ForEachAsync(p => p.IsPlaying = false);
                 string date = GetDate();
@@ -89,12 +89,13 @@ namespace fantasy_hoops.Database
                             player.Price = PRICE_FLOOR;
                             continue;
                         }
-                        if (p["pl"]["ca"] == null || p["pl"]["ca"]["sa"] == null)
+                        int gamesPlayed = 0;
+                        JToken stats = null;
+                        if (!(p["pl"]["ca"] == null || p["pl"]["ca"]["sa"] == null))
                         {
-                            continue;
+                            stats = p["pl"]["ca"]["sa"].Last;
+                            gamesPlayed = (int)stats["gp"];
                         }
-                        JToken stats = p["pl"]["ca"]["sa"].Last;
-                        int gamesPlayed = (int)stats["gp"];
                         player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
                         player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
                         player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
@@ -119,7 +120,8 @@ namespace fantasy_hoops.Database
                 && (player.StatusDate.Value.AddDays(5) < NextGame.NEXT_GAME)
                 && (player.Status.ToLower().Contains("out")
                  || player.Status.ToLower().Contains("injured")))
-                || player.IsInGLeague)
+                || player.IsInGLeague
+                || player.Position.Equals("NA"))
                 return false;
             return true;
         }
