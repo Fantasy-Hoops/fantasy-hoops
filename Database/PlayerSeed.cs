@@ -32,6 +32,8 @@ namespace fantasy_hoops.Database
 
             _scoreService = new ScoreService();
             Task.Run(() => Calculate(context, updatePrice)).Wait();
+            NextGame.NEXT_GAME_CLIENT = NextGame.NEXT_GAME;
+            PLAYER_POOL_DATE = NextGame.NEXT_GAME;
         }
 
         private static JObject GetPlayer(int id)
@@ -87,7 +89,7 @@ namespace fantasy_hoops.Database
                             player.Price = PRICE_FLOOR;
                             continue;
                         }
-                        if (p["pl"]["ca"]["sa"] == null)
+                        if (p["pl"]["ca"] == null || p["pl"]["ca"]["sa"] == null)
                         {
                             continue;
                         }
@@ -108,8 +110,6 @@ namespace fantasy_hoops.Database
                 }
                 await context.SaveChangesAsync();
             }
-            NextGame.NEXT_GAME_CLIENT = NextGame.NEXT_GAME;
-            PLAYER_POOL_DATE = NextGame.NEXT_GAME;
         }
 
         private static bool IsPlaying(Player player)
