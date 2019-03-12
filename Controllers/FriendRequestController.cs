@@ -90,17 +90,10 @@ namespace fantasy_hoops.Controllers
             return Ok("Friend has been removed successfully.");
         }
 
-        [HttpGet("pending/{id}")]
-        public IActionResult GetPendingRequests(String id)
-        {
-            var requests = _repository.GetPendingRequests(id).ToList();
-            return Ok(requests);
-        }
-
         [HttpGet("requests/{id}")]
         public IActionResult GetRequests(String id)
         {
-            var requests = _repository.GetIncomingRequests(id).ToList();
+            var requests = _repository.GetRequests(id).ToList();
             return Ok(requests);
         }
 

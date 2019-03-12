@@ -27,27 +27,25 @@ namespace fantasy_hoops.Repositories
             requests.Add(request);
         }
 
-        public IQueryable<object> GetIncomingRequests(string id)
+        public IQueryable<Object> GetRequests(string id)
         {
             return requests
                 .Where(x => x.SenderID.Equals(id) && x.Status.Equals(RequestStatus.PENDING))
                 .Select(x => new
                 {
                     x.Receiver.UserName,
-                    x.Receiver.Id
+                    x.Receiver.Id,
+                    Status = RequestType.Outcoming
                 })
-                .AsQueryable();
-        }
-
-        public IQueryable<object> GetPendingRequests(string id)
-        {
-            return requests
-                .Where(x => x.ReceiverID.Equals(id) && x.Status.Equals(RequestStatus.PENDING))
-                .Select(x => new
-                {
-                    x.Sender.UserName,
-                    x.Sender.Id
-                }).AsQueryable();
+                .Union(requests
+                    .Where(x => x.ReceiverID.Equals(id) && x.Status.Equals(RequestStatus.PENDING))
+                    .Select(x => new
+                    {
+                        x.Sender.UserName,
+                        x.Sender.Id,
+                        Status = RequestType.Incoming
+                    })
+                ).AsQueryable();
         }
 
         public FriendRequest GetRequest(string senderID, string receiverID)
