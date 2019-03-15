@@ -46,6 +46,12 @@ export class Leaderboard extends Component {
   }
 
   async componentDidMount() {
+    $("#playerModal").on("hidden.bs.modal", () => {
+      this.setState({
+        modalLoader: true,
+        renderChild: false
+      });
+    });
     await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=daily`)
       .then(res => {
         return res.json()
@@ -64,15 +70,6 @@ export class Leaderboard extends Component {
       SF: require(`../../../content/images/positions/sf.png`),
       PF: require(`../../../content/images/positions/pf.png`),
       C: require(`../../../content/images/positions/c.png`)
-    });
-  }
-
-  componentDidMount() {
-    $("#playerModal").on("hidden.bs.modal", () => {
-      this.setState({
-        modalLoader: true,
-        renderChild: false
-      });
     });
   }
 
