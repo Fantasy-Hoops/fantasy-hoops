@@ -49,7 +49,7 @@ export class LineupHistory extends Component {
       });
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/${user.id}?count=10`)
       .then(res => res.json())
       .then(res => {

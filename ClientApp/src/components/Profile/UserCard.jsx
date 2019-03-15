@@ -1,38 +1,41 @@
 import React, { Component } from 'react';
-import defaultPhoto from '../../content/images/default.png';
+import PropTypes from 'prop-types';
 import Img from 'react-image';
-import { loadImage } from '../../utils/loadImage';
 
 export class UserCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-    }
-  }
-
-  async componentWillMount() {
-    const user = this.props.user;
-    this.setState({
-      avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.id}.png`, defaultPhoto)
-    });
+    };
   }
 
   render() {
+    const { user } = this.props;
     return (
-      <a href={`/profile/${this.props.user.userName}`} className="friend-card m-3" style={{ backgroundColor: `${this.props.user.color}`, width: '8rem' }}>
-        <canvas className="header-bg"></canvas>
+      <a href={`/profile/${user.userName}`} className="friend-card m-3" style={{ backgroundColor: `${user.color}`, width: '8rem' }}>
+        <canvas className="header-bg" />
         <div className="avatar">
           <Img
-            alt={this.props.user.userName}
-            src={this.state.avatar}
-            loader={<img width='500px' src={require(`../../content/images/imageLoader2.gif`)} alt="Loader" />}
+            alt={user.userName}
+            src={`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.id}.png`}
+            loader={<img width="500px" src={require('../../content/images/imageLoader2.gif')} alt="Loader" />}
             decode={false}
           />
         </div>
         <div className="content badge badge-dark" style={{ marginTop: '1rem', marginBottom: '0.5rem', fontSize: '1rem' }}>
-          <span>{this.props.user.userName}</span>
+          <span>{user.userName}</span>
         </div>
       </a>
     );
   }
 }
+
+UserCard.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    userName: PropTypes.string.isRequired,
+    color: PropTypes.string
+  }).isRequired
+};
+
+export default UserCard;

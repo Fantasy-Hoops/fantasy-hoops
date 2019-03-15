@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import shortid from 'shortid';
+import _ from 'lodash';
 import { parse } from '../../utils/auth';
 import { handleErrors } from '../../utils/errors';
 import { NotificationCard } from './NotificationCard';
 import defaultPhoto from '../../content/images/default.png';
-import gameLogo from '../../../src/content/favicon.ico';
-import shortid from 'shortid';
-import _ from 'lodash';
+import gameLogo from '../../content/favicon.ico';
+
 const user = parse();
 
 export class Notifications extends Component {
@@ -21,15 +23,80 @@ export class Notifications extends Component {
 
   async componentDidMount() {
     await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
+      .then(res => res.json())
+      .then((res) => {
         this.setState({
           userNotifications: res,
           unreadCount: res.filter(n => n.readStatus === false).length
         });
-      })
+      });
+  }
+
+  getNotifications() {
+    const { userNotifications } = this.state;
+    if (userNotifications.length < 1) { return <a className="dropdown-item cursor-default text-center">No notifications</a>; }
+    return _.slice(userNotifications, 0, 4)
+      .map((notification) => {
+        if (notification.score) {
+          const text = (
+            <span>
+              Your lineup scored
+              {' '}
+              <span className="text-dark font-weight-bold">
+                {notification.score.toFixed(1)}
+                {' '}
+                FP
+              </span>
+            </span>
+          );
+
+          return (
+            <NotificationCard
+              key={shortid()}
+              notification={notification}
+              imageSrc={[gameLogo]}
+              title="The game has finished!"
+              text={text}
+              link="/leaderboard/users"
+            />
+          );
+        } if (notification.friend) {
+          const text = (
+            <span>
+              {notification.requestMessage}
+            </span>
+          );
+
+          return (
+            <NotificationCard
+              key={shortid()}
+              notification={notification}
+              title={notification.friend.userName}
+              imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
+              text={text}
+              link={`/profile/${notification.friend.userName}`}
+            />
+          );
+        } if (notification.player) {
+          const title = `${notification.player.abbrName} is ${notification.injuryStatus.toLowerCase()}`;
+
+          return (
+            <NotificationCard
+              key={shortid()}
+              notification={notification}
+              title={title}
+              circleImage
+              imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${notification.player.nbaID}.png`,
+                require(`../../content/images/positions/${notification.player.position.toLowerCase()}.png`)
+              ]}
+              imageClass="InjuryCard__Image"
+              text={notification.injuryDescription}
+              link="/lineup"
+            />
+          );
+        }
+        return <div />;
+      });
   }
 
   async readAll(e) {
@@ -41,90 +108,31 @@ export class Notifications extends Component {
       }
     })
       .then(res => handleErrors(res))
-      .then(res => res.text())
-      .catch(err => {
-      });
+      .then(res => res.text());
 
     fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
+      .then(res => res.json())
+      .then((res) => {
         this.setState({
           userNotifications: res,
           unreadCount: res.filter(n => n.readStatus === false).length
         });
-      })
-  }
-
-  getNotifications() {
-    if (this.state.userNotifications.length < 1)
-      return <a className="dropdown-item cursor-default text-center">No notifications</a>;
-    const cardWidth = 25;
-    return _.slice(this.state.userNotifications, 0, 4)
-      .map(notification => {
-        if (notification.score) {
-          const text = (
-            <span>
-              Your lineup scored{" "}
-              <span className="text-dark font-weight-bold">
-                {notification.score.toFixed(1)} FP
-              </span>
-            </span>
-          );
-
-          return <NotificationCard
-            key={shortid()}
-            notification={notification}
-            imageSrc={gameLogo}
-            title="The game has finished!"
-            text={text}
-            link="/profile"
-          />
-        }
-        else if (notification.friend) {
-          const text = (
-            <span>
-              {notification.requestMessage}
-            </span>
-          );
-
-          return <NotificationCard
-            key={shortid()}
-            notification={notification}
-            title={notification.friend.userName}
-            imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
-            text={text}
-            link={`/profile/${notification.friend.userName}`}
-          />
-        } else if (notification.player) {
-          const title = `${notification.player.abbrName} is ${notification.injuryStatus.toLowerCase()}`;
-
-          return <NotificationCard
-            key={shortid()}
-            notification={notification}
-            title={title}
-            circleImage={true}
-            imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${notification.player.nbaID}.png`,
-            require(`../../content/images/positions/${notification.player.position.toLowerCase()}.png`)
-            ]}
-            imageClass="InjuryCard__Image"
-            text={notification.injuryDescription}
-            link="/lineup"
-          />
-        }
-        return <div></div>;
       });
   }
 
+
   render() {
-    const badge = this.state.unreadCount > 0
-      ? <span
-        className="badge badge-danger"
-        style={{ fontSize: '0.8rem', position: 'absolute', marginLeft: '-0.6rem' }}
-      >
-        {this.state.unreadCount}
-      </span>
+    const { unreadCount } = this.state;
+
+    const badge = unreadCount > 0
+      ? (
+        <span
+          className="badge badge-danger"
+          style={{ fontSize: '0.8rem', position: 'absolute', marginLeft: '-0.6rem' }}
+        >
+          {unreadCount}
+        </span>
+      )
       : '';
     const notifications = this.getNotifications();
     return (
@@ -136,15 +144,19 @@ export class Notifications extends Component {
           aria-haspopup="true"
           aria-expanded="false"
           style={{ fontSize: '2rem' }}
-        >{badge}
+        >
+          {badge}
         </a>
         <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink" style={{ width: '18rem' }}>
-          <h6 className="dropdown-header">Notifications
-          <a
+          <h6 className="dropdown-header">
+            Notifications
+            <a
+              role="link"
+              tabIndex="-1"
               onClick={this.readAll}
+              onKeyDown={this.readAll}
               className="position-absolute btn-no-outline"
               style={{ right: '1rem' }}
-              href=""
             >
               Mark All as Read
             </a>
@@ -153,15 +165,17 @@ export class Notifications extends Component {
             {notifications}
           </div>
           <h6 className="dropdown-header text-center mt-2" style={{ height: '1.5rem' }}>
-            <a
+            <Link
               className="btn-no-outline"
-              href="/notifications"
+              to="/notifications"
             >
               See all
-            </a>
+            </Link>
           </h6>
         </div>
       </li>
     );
   }
 }
+
+export default Notifications;

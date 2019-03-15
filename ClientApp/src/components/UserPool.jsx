@@ -1,73 +1,88 @@
 import React, { Component } from 'react';
-import { UserCard } from './Profile/UserCard';
 import shortid from 'shortid';
 import _ from 'lodash';
 import { DebounceInput } from 'react-debounce-input';
+import { UserCard } from './Profile/UserCard';
 import { Loader } from './Loader';
 
 export class UserPool extends Component {
+  _isMounted = false;
+
   constructor(props) {
     super(props);
     this.state = {
       loader: true
-    }
+    };
     this.filterList = this.filterList.bind(this);
   }
 
-  filterList(e) {
-    if (this.state.initialUsers) {
-      let updatedList = this.state.initialUsers;
-      updatedList = _.filter(updatedList, user => {
-        return user.userName.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+  async componentDidMount() {
+    this._isMounted = true;
+    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user`)
+      .then(res => res.json())
+      .then((res) => {
+        if (this._isMounted) {
+          this.setState({
+            initialUsers: res,
+            users: res,
+            loader: false
+          });
+        }
       });
-      this.setState({ users: updatedList });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  filterList(e) {
+    const { initialUsers } = this.state;
+    if (initialUsers) {
+      let updatedList = initialUsers;
+      updatedList = _.filter(updatedList, user => user.userName.toLowerCase()
+        .search(e.target.value.toLowerCase()) !== -1);
+      if (this._isMounted) {
+        this.setState({ users: updatedList });
+      }
     }
   }
 
-  async componentWillMount() {
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
-        this.setState({
-          initialUsers: res,
-          users: res,
-          loader: false
-        });
-      })
-  }
-
   render() {
-    if (this.state.loader)
-      return <div className="m-5"><Loader show={this.state.loader} /></div>;
+    const { loader, users } = this.state;
+    if (loader && !this._isMounted) { return <div className="m-5"><Loader show={loader} /></div>; }
 
-    const users = _.map(
-      this.state.users,
-      (user) => {
-        return <UserCard
+
+    const userCards = _.map(
+      users,
+      user => (
+        <UserCard
           key={shortid()}
           user={user}
           color={user.color}
         />
-      }
+      )
     );
-
     return (
       <div className="container bg-light">
         <div className="search m-3 mb-4">
-          <span className="fa fa-search"></span>
+          <span className="fa fa-search" />
           <DebounceInput
-            className="form-control" type="search" name="search" placeholder="Search..."
+            className="form-control"
+            type="search"
+            name="search"
+            placeholder="Search..."
             debounceTimeout={600}
-            onChange={this.filterList} />
+            onChange={this.filterList}
+          />
         </div>
         <div className="center col">
           <div className="row">
-            {users}
+            {userCards}
           </div>
         </div>
-      </div >
+      </div>
     );
   }
 }
+
+export default UserPool;

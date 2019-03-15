@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { CardPlayer } from './CardPlayer';
 import Img from 'react-image';
 import defaultPhoto from '../../../content/images/default.png';
@@ -15,7 +16,7 @@ export class Card extends Component {
     this.showModal = this.showModal.bind(this);
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     this.setState({
       avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${this.props.user.userID}.png`, defaultPhoto)
     });
@@ -46,20 +47,20 @@ export class Card extends Component {
             <div className="UserLeaderboardCard__body-item UserLeaderboardCard__user-ranking UserLeaderboardCard__user-ranking--daily">
               {this.props.index + 1}
             </div>
-            <a href={`/profile/${this.props.user.userName}`} className="UserLeaderboardCard__body-item UserLeaderboardCard__user-photo">
+            <Link to={`/profile/${this.props.user.userName}`} className="UserLeaderboardCard__body-item UserLeaderboardCard__user-photo">
               <Img
                 className="UserLeaderboardCard__user-photo--image"
                 alt={this.props.user.userName}
                 src={this.state.avatar}
                 decode={false}
               />
-            </a>
-            <a
-              href={`/profile/${this.props.user.userName}`}
+            </Link>
+            <Link
+              to={`/profile/${this.props.user.userName}`}
               className="UserLeaderboardCard__body-item UserLeaderboardCard__username UserLeaderboardCard__username--daily"
             >
               {this.props.user.userName}
-            </a>
+            </Link>
             <div title="Fantasy Points" className="UserLeaderboardCard__body-item UserLeaderboardCard__FP UserLeaderboardCard__FP--daily">
               {`${this.props.user.score.toFixed(1)} `}<span style={{ fontSize: '0.7rem', fontWeight: 400 }}>FP</span>
               <div className="UserScoreCard__date" style={{ fontSize: '0.7rem' }}>{this.props.user.shortDate}</div>
@@ -77,16 +78,16 @@ export class Card extends Component {
               {this.props.index + 1}
             </div>
             <div className="UserLeaderboardCard__body-item">
-              <a href={`/profile/${this.props.user.userName}`} >
+              <Link to={`/profile/${this.props.user.userName}`} >
                 <Img
                   className="UserLeaderboardCard__user-photo--image"
                   alt={this.props.user.userName}
                   src={this.state.avatar}
                   decode={false}
                 />
-              </a>
+              </Link>
             </div>
-            <a href={`/profile/${this.props.user.userName}`} className="UserLeaderboardCard__body-item UserLeaderboardCard__username">{this.props.user.userName}</a>
+            <Link to={`/profile/${this.props.user.userName}`} className="UserLeaderboardCard__body-item UserLeaderboardCard__username">{this.props.user.userName}</Link>
             <div className="UserLeaderboardCard__body-item UserLeaderboardCard__FP UserLeaderboardCard__FP--grey">
               {`${this.props.user.score.toFixed(1)} `}<span style={{ fontSize: '0.7rem', fontWeight: 400 }}>FP</span>
             </div>

@@ -12,7 +12,7 @@ export default class FriendList extends Component {
     };
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const { user } = this.props;
     await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/friends/${user.id}`)
       .then(res => res.json())

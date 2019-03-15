@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { parse } from '../../../utils/auth';
 import FriendList from './FriendList';
@@ -14,10 +15,10 @@ export const Friends = (props) => {
         {loggedInAsSameUser && (
           <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li className="nav-item">
-              <a className="nav-link active" id="pills-friends-tab" data-toggle="pill" href="#pills-friends" role="tab" aria-controls="pills-friends" aria-selected="true">My friends</a>
+              <Link className="nav-link active" id="pills-friends-tab" data-toggle="pill" to="#pills-friends" role="tab" aria-controls="pills-friends" aria-selected="true">My friends</Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" id="pills-requests-tab" data-toggle="pill" href="#pills-requests" role="tab" aria-controls="pills-requests" aria-selected="false">Requests</a>
+              <Link className="nav-link" id="pills-requests-tab" data-toggle="pill" to="#pills-requests" role="tab" aria-controls="pills-requests" aria-selected="false">Requests</Link>
             </li>
           </ul>
         )}
@@ -36,7 +37,7 @@ export const Friends = (props) => {
 
 Friends.propTypes = {
   user: PropTypes.shape({
-    username: PropTypes.string.isRequired
+    userName: PropTypes.string.isRequired
   }).isRequired
 };
 

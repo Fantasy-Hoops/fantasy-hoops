@@ -26,6 +26,11 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
     'jsx-a11y/label-has-for': 'off',
-    'class-methods-use-this': 'off'
+    'class-methods-use-this': 'off',
+    'linebreak-style': 'off',
+    'global-require': 'off',
+    'no-underscore-dangle': 'off',
+    'jsx-a11y/anchor-is-valid': 'off',
+    'import/no-dynamic-require': 'off'
   },
 };
