@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Input } from '../Inputs/Input';
-import { handleErrors } from '../../utils/errors'
+import { handleErrors } from '../../utils/errors';
 import { Alert } from '../Alert';
 import { isAuth } from '../../utils/auth';
 
@@ -145,7 +146,7 @@ export class Registration extends Component {
         <div className="mt-1">
           <small style={{ color: 'hsl(0, 0%, 45%)' }}>
             Already on Fantasy Hoops?
-            <a href="/login"> Sign In</a>
+            <Link to="/login"> Sign In</Link>
           </small>
         </div>
       </div>

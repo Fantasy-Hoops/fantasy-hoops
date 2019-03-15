@@ -1,6 +1,7 @@
-import React from "react";
-import ReactNotification from "react-notifications-component";
-import "react-notifications-component/dist/theme.css";
+import React from 'react';
+import PropTypes from 'prop-types';
+import ReactNotification from 'react-notifications-component';
+import 'react-notifications-component/dist/theme.css';
 
 export class AlertNotification extends React.Component {
   constructor(props) {
@@ -10,17 +11,18 @@ export class AlertNotification extends React.Component {
   }
 
   addNotification() {
-    const title = this.props.type === 'success'
+    const { type, text } = this.props;
+    const title = type === 'success'
       ? 'Success!'
       : 'Error!';
     this.notificationDOMRef.current.addNotification({
-      title: title,
-      message: this.props.text,
-      type: this.props.type,
-      insert: "top",
-      container: "top-right",
-      animationIn: ["animated", "flipInX"],
-      animationOut: ["animated", "flipOutX"],
+      title,
+      message: text,
+      type,
+      insert: 'top',
+      container: 'top-right',
+      animationIn: ['animated', 'flipInX'],
+      animationOut: ['animated', 'flipOutX'],
       dismiss: { duration: 5000 },
       dismissable: { click: true, touch: true }
     });
@@ -30,3 +32,10 @@ export class AlertNotification extends React.Component {
     return <ReactNotification ref={this.notificationDOMRef} />;
   }
 }
+
+AlertNotification.propTypes = {
+  type: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired
+};
+
+export default AlertNotification;

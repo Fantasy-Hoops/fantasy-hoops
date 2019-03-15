@@ -36,7 +36,6 @@ namespace fantasy_hoops.Repositories
                         .Where(y => y.Date >= date)
                         .Select(y => y.FP).Sum()
                 })
-                .Where(x => x.FP > 0)
                 .OrderByDescending(x => x.FP)
                 .Skip(from)
                 .Take(limit);
@@ -124,7 +123,6 @@ namespace fantasy_hoops.Repositories
                         l.FP
                     }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
                 })
-                .Where(y => y.Score > 0)
                 .OrderByDescending(x => x.Score)
                 .Skip(from)
                 .Take(limit);
@@ -138,7 +136,6 @@ namespace fantasy_hoops.Repositories
                         .Where(y => y.Date >= date && y.Calculated)
                         .Select(y => y.FP).Sum(), 2)
                 })
-                .Where(y => y.Score > 0)
                 .OrderByDescending(x => x.Score)
                 .Skip(from)
                 .Take(limit);

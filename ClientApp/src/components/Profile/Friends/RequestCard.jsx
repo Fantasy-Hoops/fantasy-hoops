@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Img from 'react-image';
 import defaultPhoto from '../../../content/images/default.png';
 
@@ -14,7 +15,7 @@ export const RequestCard = (props) => {
   return (
     <div className="card rounded mx-auto RequestCard">
       <div className="RequestCard__Body">
-        <a href={`/profile/${userName}`} className="card-body RequestCard__Info">
+        <Link to={`/profile/${userName}`} className="card-body RequestCard__Info">
           <Img
             className="RequestCard__Avatar"
             alt=""
@@ -22,7 +23,7 @@ export const RequestCard = (props) => {
             decode={false}
           />
           <p className="RequestCard__Info__Name">{userName}</p>
-        </a>
+        </Link>
         <div className="RequestCard__Buttons">
           {
             type === 1

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 import Img from 'react-image';
 import { UTCNow } from "../../utils/UTCNow";
@@ -25,14 +26,15 @@ export class InjuryCard extends Component {
       status = "injury-out";
     else status = "injury-questionable";
     const link =
-      this.props.injury.link !== "" ? (
-        <span style={{ float: "left" }} className="comments">
-          <a target="_blank" href={this.props.injury.link}>
-            <i className="fa fa-external-link-alt" />
-            {" "}Link
-          </a>
-        </span>
-      ) : (
+      this.props.injury.link
+        ? (
+          <span style={{ float: "left" }} className="comments">
+            <Link target="_blank" to={this.props.injury.link}>
+              <i className="fa fa-external-link-alt" />
+              {" "}Link
+          </Link>
+          </span>
+        ) : (
           ""
         );
     const injuryDateUTC = new Date(this.props.injury.date).getTime();

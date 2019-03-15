@@ -4,6 +4,7 @@ import { PlayerModal } from '../PlayerModal/PlayerModal';
 import shortid from 'shortid';
 import { Loader } from '../Loader';
 import _ from 'lodash';
+import { Link } from 'react-router-dom';
 const $ = window.$;
 
 export class InfoPanel extends Component {
@@ -69,7 +70,7 @@ export class InfoPanel extends Component {
         return '';
       else return (
         <div className="pt-3">
-          <a className="btn btn-outline-primary" href="/history" role="button">History</a>
+          <Link className="btn btn-outline-primary" to="/history" role="button">History</Link>
         </div>
       );
     }
@@ -80,8 +81,8 @@ export class InfoPanel extends Component {
           <div className="col-md-12">
             <div className="mx-auto mb-2">
               <div className="m-1 badge badge-warning"><i className="fa fa-fire"></i> Streak: {user.streak}</div>
-              <a href='/leaderboard/users' className="m-1 badge badge-danger"><i className="fa fa-trophy"></i> Weekly Ranking: {user.position}</a>
-              <a href='/leaderboard/users' className="m-1 badge badge-info"><i className="fa fa-basketball-ball"></i> Weekly Score: {Math.round(user.totalScore * 100) / 100} FP</a>
+              <Link to='/leaderboard/users' className="m-1 badge badge-danger"><i className="fa fa-trophy"></i> Weekly Ranking: {user.position}</Link>
+              <Link to='/leaderboard/users' className="m-1 badge badge-info"><i className="fa fa-basketball-ball"></i> Weekly Score: {Math.round(user.totalScore * 100) / 100} FP</Link>
             </div>
             {user.description &&
               <div>

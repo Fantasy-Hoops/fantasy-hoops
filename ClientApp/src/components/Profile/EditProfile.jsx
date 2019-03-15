@@ -29,7 +29,7 @@ export class EditProfile extends Component {
     this.initChangePassword = this.initChangePassword.bind(this);
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/team`)
       .then(res => {
         return res.json()

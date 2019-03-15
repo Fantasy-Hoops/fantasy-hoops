@@ -14,14 +14,12 @@ export class Avatar extends Component {
     };
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const user = this.props.user;
     this.setState({
       avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.id}.png`, defaultPhoto)
     });
-  }
-
-  componentDidMount() {
+    
     $('#changeImage').on('hidden.bs.modal', () => {
       return this.refs.changeAvatar.clear();
     });

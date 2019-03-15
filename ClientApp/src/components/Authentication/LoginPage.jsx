@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { Input } from '../Inputs/Input';
 import { handleErrors } from '../../utils/errors';
 import { Alert } from '../Alert';
@@ -126,9 +128,21 @@ export default class LoginPage extends Component {
             />
           </div>
           <button type="submit" id="login" disabled className="btn btn-outline-primary btn-block">Log in</button>
-          <a href="/register" className="btn btn-success btn-block">Sign up</a>
+          <Link to="/register" className="btn btn-success btn-block">Sign up</Link>
         </form>
       </div>
     );
   }
 }
+
+LoginPage.propTypes = {
+  location: PropTypes.shape({
+    pathname: PropTypes.string.isRequired
+  })
+};
+
+LoginPage.defaultProps = {
+  location: {
+    pathname: ''
+  }
+};

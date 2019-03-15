@@ -1,8 +1,11 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import Img from 'react-image';
 import { isAuth, parse, logout } from '../utils/auth';
 import defaultPhoto from '../content/images/default.png';
 import { Notifications } from './Notifications/Notifications';
-import Img from 'react-image';
 import { loadImage } from '../utils/loadImage';
 import { registerPush } from '../utils/push';
 
@@ -11,25 +14,25 @@ export class Header extends Component {
     super(props);
 
     this.state = {
-      navHeight: '4.2rem',
-      userNotifications: '',
-      unreadCount: 0
+      navHeight: '4.2rem'
     };
   }
 
-  async componentWillMount() {
-    if (isAuth())
+  async componentDidMount() {
+    if (isAuth()) {
       this.setState({
         avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${parse().id}.png`, defaultPhoto)
       });
+    }
   }
 
   render() {
+    const { avatar, navHeight } = this.state;
     // Login button in case user is not signed in
     const login = (
       <ul className="nav navbar-nav ml-auto Header__Login">
         <li className="nav-item">
-          <a className="nav-link btn-no-outline" href="/login">Login</a>
+          <Link className="nav-link btn-no-outline" to="/login">Login</Link>
         </li>
       </ul>
     );
@@ -38,7 +41,7 @@ export class Header extends Component {
     let profile = '';
     if (isAuth()) {
       const user = parse();
-      registerPush();
+      if (Notification.permission !== 'denied') { registerPush(); }
       profile = (
         <ul className="nav navbar-nav ml-auto Header__LoggedIn">
           <Notifications />
@@ -53,7 +56,7 @@ export class Header extends Component {
               <Img
                 width="36rem"
                 alt={user.username}
-                src={this.state.avatar}
+                src={avatar}
               />
             </a>
             <ul className="dropdown-menu dropdown-menu-right">
@@ -63,18 +66,18 @@ export class Header extends Component {
                   <div className="row">
                     <div className="col-lg-4">
                       <p className="text-center">
-                        <a className="btn-no-outline" href='/profile'>
+                        <Link className="btn-no-outline" to="/profile">
                           <Img
                             width="100rem"
                             height="100rem"
                             alt={user.username}
-                            src={this.state.avatar}
+                            src={avatar}
                           />
-                        </a>
+                        </Link>
                       </p>
                     </div>
                     <div className="col-lg-8">
-                      <a className="btn-no-outline text-dark" href='/profile'><h4 className="text-left"><strong>{user.username}</strong></h4></a>
+                      <a className="btn-no-outline text-dark" href="/profile"><h4 className="text-left"><strong>{user.username}</strong></h4></a>
                       <p className="text-left small">{user.email}</p>
                       <p className="text-left">
                         <a role="button" href={`/profile/${user.username}/edit`} className="btn btn-outline-primary btn-block btn-sm">Edit profile</a>
@@ -83,7 +86,7 @@ export class Header extends Component {
                   </div>
                 </div>
               </li>
-              <li className="divider"></li>
+              <li className="divider" />
               <li>
                 <div className="navbar-login navbar-login-session w-100">
                   <div className="row">
@@ -102,53 +105,64 @@ export class Header extends Component {
     }
 
     return (
-      <div style={{ paddingTop: this.state.navHeight }}>
+      <div style={{ paddingTop: navHeight }}>
         <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
-          <a className="navbar-brand btn-no-outline Header__Logo" href="/">
-            <img src={require('../../src/content/favicon.ico')} width="40" height="40" alt="Fantasy Hoops" />
+          <Link className="navbar-brand btn-no-outline Header__Logo" to="/">
+            <img src={require('../content/favicon.ico')} width="40" height="40" alt="Fantasy Hoops" />
             <span className="Header__Title">Fantasy Hoops</span>
-          </a>
-          <button className="navbar-toggler Header__Burger"
-            type="button" data-toggle="collapse"
+          </Link>
+          <button
+            className="navbar-toggler Header__Burger"
+            type="button"
+            data-toggle="collapse"
             data-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown"
             aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon" />
           </button>
           <div className="collapse navbar-collapse" id="navbarNavDropdown">
             <ul className="navbar-nav">
-              {isAuth() &&
-                <li className="nav-item">
-                  <a className="nav-link btn-no-outline" href="/lineup">Lineup</a>
-                </li>
+              {isAuth()
+                && (
+                  <li className="nav-item">
+                    <Link className="nav-link btn-no-outline" to="/lineup">Lineup</Link>
+                  </li>
+                )
               }
-              {isAuth() &&
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle btn-no-outline"
-                    id="navbarDropdownMenuLink"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false">
-                    Leaderboards</a>
-                  <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a className="dropdown-item" href="/leaderboard/users">Top Users</a>
-                    <a className="dropdown-item" href="/leaderboard/players">Top NBA Players</a>
-                    <a className="dropdown-item" href="/leaderboard/season">Top Season Performers</a>
-                  </div>
-                </li>
+              {isAuth()
+                && (
+                  <li className="nav-item dropdown">
+                    <a
+                      className="nav-link dropdown-toggle btn-no-outline"
+                      id="navbarDropdownMenuLink"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      Leaderboards
+                    </a>
+                    <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <Link className="dropdown-item" to="/leaderboard/users">Top Users</Link>
+                      <Link className="dropdown-item" to="/leaderboard/players">Top NBA Players</Link>
+                      <Link className="dropdown-item" to="/leaderboard/season">Top Season Performers</Link>
+                    </div>
+                  </li>
+                )
               }
               <li className="nav-item">
-                <a className="nav-link btn-no-outline" href="/injuries">Injuries</a>
+                <Link className="nav-link btn-no-outline" to="/injuries">Injuries</Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link btn-no-outline" href="/news">News</a>
+                <Link className="nav-link btn-no-outline" to="/news">News</Link>
               </li>
-              {isAuth() &&
-                <li className="nav-item">
-                  <a className="nav-link btn-no-outline" href="/users">Users</a>
-                </li>
+              {isAuth()
+                && (
+                  <li className="nav-item">
+                    <Link className="nav-link btn-no-outline" to="/users">Users</Link>
+                  </li>
+                )
               }
             </ul>
           </div>
@@ -158,3 +172,5 @@ export class Header extends Component {
     );
   }
 }
+
+export default connect()(Header);

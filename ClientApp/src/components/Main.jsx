@@ -1,5 +1,6 @@
-import React, { Component } from "react";
-import { isAuth, parse } from "../utils/auth";
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { isAuth, parse } from '../utils/auth';
 
 export class Main extends Component {
   constructor(props) {
@@ -9,7 +10,7 @@ export class Main extends Component {
     };
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     if (isAuth()) {
       const user = parse();
       await fetch(
@@ -77,14 +78,14 @@ export class Main extends Component {
           Fantasy Hoops
         </h1>
         <div className="text-center">
-          <a
-            href="/lineup"
+          <Link
+            to="/lineup"
             className="btn btn-primary mt-4"
             role="button"
             style={{ fontSize: "80%" }}
           >
             Play Now!
-          </a>
+          </Link>
         </div>
         <div
           className="background-image"

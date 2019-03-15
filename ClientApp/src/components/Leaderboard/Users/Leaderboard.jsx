@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { parse } from '../../../utils/auth';
 import { Card } from './Card';
 import leaderboardLogo from '../../../content/images/leaderboard.png';
@@ -44,7 +45,7 @@ export class Leaderboard extends Component {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=daily`)
       .then(res => {
         return res.json()
@@ -202,13 +203,13 @@ export class Leaderboard extends Component {
         </div>
         <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist" style={{ width: '30%' }}>
           <li className="nav-item">
-            <a className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" href="#daily" role="tab" onClick={this.switchTab}>Daily</a>
+            <Link className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" to="#daily" role="tab" onClick={this.switchTab}>Daily</Link>
           </li>
           <li className="nav-item">
-            <a className="nav-link tab-no-outline" id="weekly-tab" data-toggle="tab" href="#weekly" role="tab" onClick={this.switchTab}>Weekly</a>
+            <Link className="nav-link tab-no-outline" id="weekly-tab" data-toggle="tab" to="#weekly" role="tab" onClick={this.switchTab}>Weekly</Link>
           </li>
           <li className="nav-item">
-            <a className="nav-link tab-no-outline" id="monthly-tab" data-toggle="tab" href="#monthly" role="tab" onClick={this.switchTab}>Monthly</a>
+            <Link className="nav-link tab-no-outline" id="monthly-tab" data-toggle="tab" to="#monthly" role="tab" onClick={this.switchTab}>Monthly</Link>
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">

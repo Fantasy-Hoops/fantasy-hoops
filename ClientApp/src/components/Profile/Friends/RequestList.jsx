@@ -12,7 +12,7 @@ export default class RequestList extends Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { user } = this.props;
 
     fetch(`${process.env.REACT_APP_SERVER_NAME}/api/friendrequest/requests/${user.id}`)

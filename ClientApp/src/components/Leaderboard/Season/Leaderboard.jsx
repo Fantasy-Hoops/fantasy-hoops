@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Card as UserCard } from '../Users/Card';
 import { Card as PlayerCard } from '../Players/Card';
 import leaderboardLogo from '../../../content/images/leaderboard.png';
@@ -27,7 +28,7 @@ export class Leaderboard extends Component {
     this.switchTab = this.switchTab.bind(this);
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/season/lineups`)
       .then(res => {
         return res.json()
@@ -105,10 +106,10 @@ export class Leaderboard extends Component {
         </div>
         <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist" style={{ width: '30%' }}>
           <li className="nav-item">
-            <a className="nav-link active tab-no-outline" id="lineups-tab" data-toggle="tab" href="#lineups" role="tab" onClick={this.switchTab}>Lineups</a>
+            <Link className="nav-link active tab-no-outline" id="lineups-tab" data-toggle="tab" to="#lineups" role="tab" onClick={this.switchTab}>Lineups</Link>
           </li>
           <li className="nav-item">
-            <a className="nav-link tab-no-outline" id="players-tab" data-toggle="tab" href="#players" role="tab" onClick={this.switchTab}>Players</a>
+            <Link className="nav-link tab-no-outline" id="players-tab" data-toggle="tab" to="#players" role="tab" onClick={this.switchTab}>Players</Link>
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
