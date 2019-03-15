@@ -14,12 +14,18 @@ namespace fantasy_hoops.Helpers
     {
         public static Array PlayersOrder = new[] { "PG", "SG", "SF", "PF", "C" };
 
-        public static DateTime UTCToEastern(DateTime time)
+        public static DateTime UTCToEastern(DateTime UTC)
         {
-            DateTime timeUTC = time;
             TimeZoneInfo eastern = TimeZoneInfo.FindSystemTimeZoneById(Environment.GetEnvironmentVariable("TIME_ZONE_ID"));
-            return TimeZoneInfo.ConvertTimeFromUtc(timeUTC, eastern);
+            return TimeZoneInfo.ConvertTimeFromUtc(UTC, eastern);
         }
+
+        public static DateTime EasternToUTC(DateTime eastern)
+        {
+            TimeZoneInfo easternZone = TimeZoneInfo.FindSystemTimeZoneById((Environment.GetEnvironmentVariable("TIME_ZONE_ID")));
+            return TimeZoneInfo.ConvertTimeToUtc(eastern, easternZone);
+        }
+
         public static HttpWebResponse GetResponse(string url)
         {
             try

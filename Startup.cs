@@ -18,6 +18,8 @@ using fantasy_hoops.Services;
 using Microsoft.Net.Http.Headers;
 using WebPush;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
 
 namespace fantasy_hoops
 {
@@ -25,19 +27,44 @@ namespace fantasy_hoops
     {
         private GameContext _context;
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public IHostingEnvironment HostingEnvironment { get; private set; }
+        public IConfiguration Configuration { get; private set; }
 
-        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        {
+            this.HostingEnvironment = env;
+            this.Configuration = configuration;
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IPushService, PushService>();
-
             services.AddMvc();
+
+            // Add gzip compression
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<GzipCompressionProvider>();
+                //options.EnableForHttps = true;
+                options.MimeTypes = new[]
+                {
+                    // Default
+                    "text/plain",
+                    "text/css",
+                    "application/javascript",
+                    "text/html",
+                    "application/xml",
+                    "text/xml",
+                    "application/json",
+                    "text/json",
+
+                    // Custom
+                    "image/svg+xml",
+                    "application/font-woff2"
+                };
+            });
 
             DotEnv.Config(true, ".env");
 #if DEBUG
