@@ -2,7 +2,7 @@ import React from 'react';
 import { Route } from 'react-router';
 import { PrivateRoute } from '../components/Authentication/PrivateRoute';
 import { Lineup } from '../components/Lineup/Lineup';
-import { Navbar } from '../components/Navbar';
+import Navbar from '../components/Navbar';
 import { InjuriesFeed } from '../components/Injuries/InjuriesFeed';
 import { Registration } from '../components/Authentication/Registration';
 import { UserProfile } from '../components/Profile/UserProfile';

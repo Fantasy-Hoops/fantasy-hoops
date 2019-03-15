@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Img from 'react-image';
 import $ from 'jquery';
@@ -10,7 +9,7 @@ import { Notifications } from './Notifications/Notifications';
 import { loadImage } from '../utils/loadImage';
 import { registerPush } from '../utils/push';
 
-export class Navbar extends Component {
+export default class Navbar extends Component {
   constructor(props) {
     super(props);
 
@@ -177,5 +176,3 @@ export class Navbar extends Component {
     );
   }
 }
-
-export default connect()(Navbar);
