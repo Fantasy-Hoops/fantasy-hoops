@@ -18,7 +18,7 @@ namespace fantasy_hoops.Database
 {
     public class InjuriesSeed
     {
-        const int DAYS_TO_SAVE = 2;
+        const int DAYS_TO_SAVE = 5;
         static DateTime dayFrom = DateTime.UtcNow.AddDays(-DAYS_TO_SAVE);
         private static Stack<InjuryPushNotificationViewModel> lineupsAffected = new Stack<InjuryPushNotificationViewModel>();
 
@@ -57,11 +57,12 @@ namespace fantasy_hoops.Database
             JArray injuries = GetInjuries();
             foreach (JObject injury in injuries)
             {
+                DateTime dateUTC = CommonFunctions.EasternToUTC(DateTime.Parse(injury["ModifiedDate"].ToString()));
                 try
                 {
-                    if (dayFrom.CompareTo(DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5)) > 0)
+                    if (dayFrom.CompareTo(dateUTC) > 0)
                         break;
-                    await AddToDatabaseAsync(context, injury);
+                    await AddToDatabaseAsync(context, injury, dateUTC);
                 }
                 catch (Exception)
                 {
@@ -72,7 +73,7 @@ namespace fantasy_hoops.Database
             await SendPushNotifications(context);
         }
 
-        private static async Task AddToDatabaseAsync(GameContext context, JToken injury)
+        private static async Task AddToDatabaseAsync(GameContext context, JToken injury, DateTime dateUTC)
         {
             var injuryObj = new Injuries
             {
@@ -80,7 +81,7 @@ namespace fantasy_hoops.Database
                 Status = (string)injury["PlayerStatus"],
                 Injury = (string)injury["Injury"],
                 Description = (string)injury["News"],
-                Date = DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5),
+                Date = dateUTC,
                 Link = (string)injury["Link"]
             };
             injuryObj.Player = context.Players.Where(x => x.NbaID == (int)injury["PrimarySourceKey"]).FirstOrDefault();
@@ -100,7 +101,7 @@ namespace fantasy_hoops.Database
             context.Players
                 .Where(p => p.NbaID == injuryObj.Player.NbaID)
                 .FirstOrDefault()
-                .StatusDate = DateTime.Parse(injury["CreatedDate"].ToString()).AddHours(5);
+                .StatusDate = dateUTC;
 
             if (!statusBefore.Equals(statusAfter))
                 await UpdateNotifications(context, injuryObj, statusBefore, statusAfter);

@@ -123,6 +123,7 @@ namespace fantasy_hoops.Repositories
                         l.FP
                     }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
                 })
+                .Where(x => x.lineup.Count() > 0)
                 .OrderByDescending(x => x.Score)
                 .Skip(from)
                 .Take(limit);
