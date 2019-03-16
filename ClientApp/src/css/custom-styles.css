@@ -675,6 +675,14 @@ thead {
   margin-left: -5px;
 }
 
+.Header__Logo {
+  width: 35px;
+}
+
+.Header__Icon {
+  display: none;
+}
+
 .Header__Title {
   display: none;
 }
@@ -683,6 +691,15 @@ thead {
   .Header__Title {
     display: inline-block;
     margin-left: 0.5rem;
+  }
+  .Header__Logo {
+    width: 10rem;
+  }
+}
+
+@media only screen and (min-width: 100px) {
+  .Header__Icon {
+    display: inline-block;
   }
 }
 
@@ -1052,8 +1069,8 @@ thead {
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
-  padding: 0.25rem 0 0.2rem 0;
-  font-size: 1rem;
+  padding: 0.7rem 0 0.5rem 0;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--primary-color);
 }
@@ -1067,17 +1084,26 @@ thead {
 }
 
 .PlayerCard__loader {
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 100%;
+}
+
+.PlayerCard__image {
+  position: relative;
 }
 
 .PlayerCard__background {
   position: relative;
+  z-index: 0;
   width: 100%;
-  min-height: 50%;
 }
 
 .PlayerCard__player-img {
-  position: relative;
+  position: absolute;
+  left: 0;
+  top: 0;
   z-index: 4;
   width: 100%;
 }
@@ -1322,7 +1348,7 @@ thead {
   }
   .PlayerCard__position {
     font-size: 0.6rem;
-    padding: 0;
+    padding: 0.5rem;
   }
 }
 
@@ -1332,6 +1358,7 @@ thead {
   }
   .PlayerCard__position {
     font-size: 0.5rem;
+    padding: 0.5rem;
   }
 }
 

@@ -6,7 +6,7 @@ import { NotificationCard } from './NotificationCard';
 import { Loader } from '../Loader';
 import { EmptyJordan } from '../EmptyJordan';
 import defaultPhoto from '../../../content/images/default.png';
-import gameLogo from '../../../content/favicon.ico';
+import gameLogo from '../../../content/images/logo.png';
 
 
 const LOAD_COUNT = 5;

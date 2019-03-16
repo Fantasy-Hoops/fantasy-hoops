@@ -111,8 +111,8 @@ export default class Navbar extends Component {
       <div style={{ paddingTop: navHeight }}>
         <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
           <Link className="navbar-brand btn-no-outline Header__Logo" to="/">
-            <img src={require('../../content/favicon.ico')} width="40" height="40" alt="Fantasy Hoops" />
-            <span className="Header__Title">Fantasy Hoops</span>
+            <img className="Header__Icon" src={require('../../content/images/logo.png')} width="35" height="35" alt="FH" />
+            <img className="Header__Title ml-2 mt-2" src={require('../../content/images/title.png')} height="30" alt="Fantasy Hoops" />
           </Link>
           <button
             className="navbar-toggler Header__Burger"
