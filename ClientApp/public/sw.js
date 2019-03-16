@@ -62,7 +62,7 @@ self.addEventListener("push", function (event) {
       image: image || undefined,
       icon: icon || "./favicon.ico",
       data: data || null,
-      badge: badge || './images/badge.gif',
+      badge: badge || './images/badge.png',
       vibrate: vibrate || null
     });
     // Ensure the toast notification is displayed before exiting this function
