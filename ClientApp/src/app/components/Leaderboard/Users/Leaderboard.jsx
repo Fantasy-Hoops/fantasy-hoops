@@ -210,7 +210,7 @@ export class Leaderboard extends Component {
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
-          <div className="pt-4 pb-1 tab-pane fade show active animated bounceInUp" id="daily" role="tabpanel">
+          <div className="pt-4 pb-1 tab-pane fade show active animated slideInUp fast" id="daily" role="tabpanel">
             {!this.state.loader
               ? daily.length > 0
                 ? daily
@@ -220,7 +220,7 @@ export class Leaderboard extends Component {
               {seeMoreBtn}
             </div>
           </div>
-          <div className="pt-4 pb-1 tab-pane fade animated bounceInUp" id="weekly" role="tabpanel">
+          <div className="pt-4 pb-1 tab-pane fade animated slideInUp fast" id="weekly" role="tabpanel">
             {!this.state.loader
               ? weekly.length > 0
                 ? weekly
@@ -230,7 +230,7 @@ export class Leaderboard extends Component {
               {seeMoreBtn}
             </div>
           </div>
-          <div className="pt-4 pb-1 tab-pane fade animated bounceInUp" id="monthly" role="tabpanel">
+          <div className="pt-4 pb-1 tab-pane fade animated slideInUp fast" id="monthly" role="tabpanel">
             {!this.state.loader
               ? monthly.length > 0
                 ? monthly

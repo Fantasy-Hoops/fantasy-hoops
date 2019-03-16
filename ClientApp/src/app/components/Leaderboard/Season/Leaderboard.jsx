@@ -142,7 +142,7 @@ export class Leaderboard extends PureComponent {
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
-          <div className="pt-4 pb-1 tab-pane fade show active animated bounceInUp" id="lineups" role="tabpanel">
+          <div className="pt-4 pb-1 tab-pane fade show active animated slideInUp fast" id="lineups" role="tabpanel">
             <div className="text-center">
               {!this.state.loader
                 ? lineupCards.length > 0
@@ -151,7 +151,7 @@ export class Leaderboard extends PureComponent {
                 : <Loader show={this.state.loader} />}
             </div>
           </div>
-          <div className="pt-4 pb-1 tab-pane fade animated bounceInUp" id="players" role="tabpanel">
+          <div className="pt-4 pb-1 tab-pane fade animated slideInUp fast" id="players" role="tabpanel">
             <div className="text-center">
               {!this.state.loader
                 ? playerCards.length > 0
