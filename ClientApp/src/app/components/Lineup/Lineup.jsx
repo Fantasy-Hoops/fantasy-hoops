@@ -141,33 +141,33 @@ export class Lineup extends Component {
 
   render() {
     if (this.state.poolLoader) {
- return (
-      <div className="p-5">
+      return (
+        <div className="p-5">
           <Loader show={this.state.poolLoader} />
         </div>
-    ); 
-}
+      );
+    }
 
     if (!this.state.isGame) {
- return (
-      <div className="p-5">
+      return (
+        <div className="p-5">
           <EmptyJordan message="The game hasn't started yet..." />
         </div>
-    );
- }
+      );
+    }
 
     const remaining = this.calculateRemaining();
     const Completionist = () => (
       <span>The game already started. Come back soon!</span>
     );
     const renderer = ({
- days, hours, minutes, seconds, completed 
-}) => {
+      days, hours, minutes, seconds, completed
+    }) => {
       if (completed) {
         this.state.submit = false;
         return <Completionist />;
       }
-      if (this.state.playerPoolDate !== this.state.nextGame) {return <h5>Please wait a moment until player pool is updated!</h5>;}
+      if (this.state.playerPoolDate !== this.state.nextGame) { return <h5>Please wait a moment until player pool is updated!</h5>; }
       this.state.submit = true;
 
       days = this.getFormattedDateString(days, 'day');
@@ -176,16 +176,16 @@ export class Lineup extends Component {
       seconds = this.getFormattedDateString(seconds, 'second');
 
       return (
-          <span className="Lineup__countdown">
-            Game starts in
+        <span className="Lineup__countdown">
+          Game starts in
 {" "}
-            <strong>
-              {days}
-              {hours}
-              {minutes}
-              {seconds}
-            </strong>
-          </span>
+          <strong>
+            {days}
+            {hours}
+            {minutes}
+            {seconds}
+          </strong>
+        </span>
       );
     };
     const playerPool = () => {
@@ -200,14 +200,14 @@ export class Lineup extends Component {
         );
       }
       return (
-          <PlayerPool
-            remaining={remaining}
-            lineup={this.state.lineup}
-            position={this.state.position}
-            players={this.state.players}
-            selectPlayer={this.selectPlayer}
-            showModal={this.showModal}
-          />
+        <PlayerPool
+          remaining={remaining}
+          lineup={this.state.lineup}
+          position={this.state.position}
+          players={this.state.players}
+          selectPlayer={this.selectPlayer}
+          showModal={this.showModal}
+        />
       );
     };
 
@@ -242,7 +242,7 @@ export class Lineup extends Component {
             Remaining
             {' '}
             {remaining}
-K
+            K
                     </p>
           <ProgressBar players={this.state} />
           <div
@@ -298,8 +298,8 @@ K
         showModal={this.showModal}
       />
     ) : (
-      <PlayerCard status={0} filter={this.filter} position={player.position} />
-    );
+        <PlayerCard status={0} filter={this.filter} position={player.position} />
+      );
     this.state.lineup[pos] = playerCard;
     this.setState({
       lineup: this.state.lineup

@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use strict";
 
 importScripts("./js/util.js");
