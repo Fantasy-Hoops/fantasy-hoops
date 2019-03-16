@@ -6,7 +6,7 @@ import { parse } from '../../utils/auth';
 import { handleErrors } from '../../utils/errors';
 import { NotificationCard } from './NotificationCard';
 import defaultPhoto from '../../../content/images/default.png';
-import gameLogo from '../../../content/favicon.ico';
+import gameLogo from '../../../content/images/logo.png';
 
 const user = parse();
 

@@ -55,7 +55,6 @@ export class PlayerCard extends Component {
 
       const image = (
         <Img
-          onClick={this.props.status === 2 ? this.filter : undefined}
           className={`PlayerCard__player-img ${this.props.status === 2 ? 'PlayerCard__player-img--lineup' : ''}`}
           alt={this.props.player.abbrName}
           src={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.id}.png`,
@@ -101,7 +100,13 @@ export class PlayerCard extends Component {
               {`${this.props.player.price}K`}
             </div>
           </div>
-          <div className="PlayerCard__background" style={{ backgroundColor: `${this.props.player.team.teamColor}` }}>
+          <div className="PlayerCard__image" onClick={this.props.status === 2 ? this.filter : undefined}>
+            <canvas
+              className="PlayerCard__background"
+              style={{ backgroundColor: `${this.props.player.team.teamColor}` }}
+              width="260"
+              height="190">
+            </canvas>
             {image}
             {teamLogo}
             {injuryBadge}
@@ -129,12 +134,17 @@ export class PlayerCard extends Component {
     }
 
     return (
-      <div onClick={this.filter} className="PlayerCard card" tabIndex="1">
+      <div onClick={this.filter} className="PlayerCard card position-relative" tabIndex="1">
+        <canvas
+          className="PlayerCard__background"
+          width="260"
+          height="190">
+        </canvas>
         <Img
           className="PlayerCard__player-img"
           alt={this.props.position}
           src={this.state[this.props.position]}
-          loader={<img className="PlayerCard__loader" height="200%" src={require('../../../content/images/imageLoader2.gif')} alt="Loader" />}
+          loader={<img className="PlayerCard__loader" src={require('../../../content/images/imageLoader2.gif')} alt="Loader" />}
           decode={false}
         />
         <div className="PlayerCard__position">{this.props.position}</div>
