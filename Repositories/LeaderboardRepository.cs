@@ -135,8 +135,12 @@ namespace fantasy_hoops.Repositories
                     x.UserName,
                     Score = Math.Round(x.Lineups
                         .Where(y => y.Date >= date && y.Calculated)
-                        .Select(y => y.FP).Sum(), 2)
+                        .Select(y => y.FP).Sum(), 2),
+                    gamesPlayed = x.Lineups
+                        .Where(y => y.Date >= date && y.Calculated)
+                        .Count() / 5
                 })
+                .Where(x => x.gamesPlayed > 0)
                 .OrderByDescending(x => x.Score)
                 .Skip(from)
                 .Take(limit);

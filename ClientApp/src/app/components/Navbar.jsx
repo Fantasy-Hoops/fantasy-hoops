@@ -44,7 +44,7 @@ export default class Navbar extends Component {
     let profile = '';
     if (isAuth()) {
       const user = parse();
-      if (Notification.permission !== 'denied') { registerPush(); }
+      if (typeof Notification !== 'undefined' && Notification.permission !== 'denied') { registerPush(); }
       profile = (
         <ul className="nav navbar-nav ml-auto Header__LoggedIn">
           <Notifications />

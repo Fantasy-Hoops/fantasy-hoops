@@ -12,7 +12,7 @@ import { Leaderboard as UserLeaderboard } from '../components/Leaderboard/Users/
 import { Leaderboard as PlayerLeaderboard } from '../components/Leaderboard/Players/Leaderboard';
 import { Leaderboard as SeasonLeaderboard } from '../components/Leaderboard/Season/Leaderboard';
 import { UserPool } from '../components/UserPool';
-import { Main } from '../components/Main';
+import Main from '../components/Main';
 import { AllNotificationsPage } from '../components/Notifications/AllNotificationsPage';
 import { LineupHistory } from '../components/Profile/LineupHistoryPage';
 import { Push } from '../components/Push';
