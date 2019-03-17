@@ -24,19 +24,25 @@ namespace fantasy_hoops.Services
         {
             if (!_repository.IsUpdating(model.UserID))
             {
+                // REMOVE AFTER FULL LINEUPS CHANGE
                 _repository.AddPlayer(model.UserID, "PG", model.PgID);
                 _repository.AddPlayer(model.UserID, "SG", model.SgID);
                 _repository.AddPlayer(model.UserID, "SF", model.SfID);
                 _repository.AddPlayer(model.UserID, "PF", model.PfID);
                 _repository.AddPlayer(model.UserID, "C", model.CID);
+                // LEAVE
+                _repository.AddLineup(model);
             }
             else
             {
+                // REMOVE AFTER FULL LINEUPS CHANGE
                 _repository.UpdatePlayer(model.UserID, "PG", model.PgID);
                 _repository.UpdatePlayer(model.UserID, "SG", model.SgID);
                 _repository.UpdatePlayer(model.UserID, "SF", model.SfID);
                 _repository.UpdatePlayer(model.UserID, "PF", model.PfID);
                 _repository.UpdatePlayer(model.UserID, "C", model.CID);
+                // LEAVE
+                _repository.AddLineup(model);
             }
 
             await _context.SaveChangesAsync();
