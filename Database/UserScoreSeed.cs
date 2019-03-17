@@ -30,6 +30,50 @@ namespace fantasy_hoops.Database
             Task.Run(() => Update(context)).Wait();
         }
 
+        //private static async Task Migrate(GameContext context)
+        //{
+        //    var oldLineups = context.Lineups
+        //        .GroupBy(l => new { l.UserID, l.Date })
+        //        .Select(res => new
+        //        {
+        //            res.First().UserID,
+        //            res.First().Date,
+        //            score = Math.Round(res.Sum(c => c.FP), 1),
+        //            calculated = res.First().Calculated,
+        //            lineup = res.Select(l => new
+        //            {
+        //                l.PlayerID,
+        //                l.Player.NbaID,
+        //                l.Player.Position,
+        //                teamColor = l.Player.Team.Color,
+        //                l.Player.FullName,
+        //                l.Player.FirstName,
+        //                l.Player.LastName,
+        //                l.Player.AbbrName,
+        //                l.FP
+        //            }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position)).ToList()
+        //        });
+
+        //    foreach (var lineup in oldLineups)
+        //    {
+        //        var userLineup = new UserLineup
+        //        {
+        //            Date = lineup.Date,
+        //            UserID = lineup.UserID,
+        //            FP = lineup.score,
+        //            IsCalculated = lineup.calculated,
+        //            PgID = lineup.lineup[0].PlayerID,
+        //            SgID = lineup.lineup[1].PlayerID,
+        //            SfID = lineup.lineup[2].PlayerID,
+        //            PfID = lineup.lineup[3].PlayerID,
+        //            CID = lineup.lineup[4].PlayerID
+        //        };
+
+        //        await context.UserLineups.AddAsync(userLineup);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
+
         private static async Task Update(GameContext context)
         {
             WebPushClient _webPushClient = new WebPushClient();

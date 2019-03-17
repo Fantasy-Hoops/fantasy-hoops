@@ -27,7 +27,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(String id)
         {
-            return Ok(_repository.GetLineup(id).ToList());
+            return Ok(_repository.GetLineup(id));
         }
 
         [HttpPost("submit")]

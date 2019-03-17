@@ -97,9 +97,9 @@ export class Lineup extends Component {
       fetch(`${process.env.REACT_APP_SERVER_NAME}/api/lineup/${user.id}`)
         .then(res => res.json())
         .then((res) => {
-          res.forEach((selectedPlayer) => {
+          Object.values(res).forEach((selectedPlayer) => {
             this.state.players.forEach((player) => {
-              if (player.id == selectedPlayer.id) {
+              if (player.id == selectedPlayer.player.nbaID) {
                 player.selected = true;
                 player.status = 2;
                 this.selectPlayer(player);
