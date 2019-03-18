@@ -1,8 +1,10 @@
 ﻿using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
+using fantasy_hoops.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace fantasy_hoops.Repositories
@@ -41,53 +43,78 @@ namespace fantasy_hoops.Repositories
                 .Take(limit);
         }
 
-        public IEnumerable<object> GetUserLeaderboard(int from, int limit, string type)
+        public IEnumerable<object> GetUserLeaderboard(int from, int limit, string type, string date)
         {
-            DateTime date = CommonFunctions.GetDate(type);
+            date = date.Length == 0
+                ? DateTime.UtcNow < NextGame.PREVIOUS_LAST_GAME
+                    ? NextGame.PREVIOUS_GAME.AddDays(-1).ToString("yyyyMMdd")
+                    : NextGame.PREVIOUS_GAME.ToString("yyyyMMdd")
+                : date;
+
+            DateTime dateTime = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
             if (type.Equals("daily"))
             {
-                return _context.Lineups
-                .Where(x => x.Calculated && x.Date >= date)
-                .GroupBy(l => new { l.UserID, l.Date })
-                .Select(res => new
+                var dailyStats = _context.Stats.Where(stats => stats.Date >= dateTime.Date && stats.Date <= dateTime.AddDays(1).Date);
+
+                return _context.UserLineups
+                .Where(lineup => lineup.IsCalculated && lineup.Date >= dateTime.Date && lineup.Date <= dateTime.AddDays(1).Date)
+                .OrderByDescending(lineup => lineup.FP)
+                .Select(lineup => new
                 {
-                    res.First().UserID,
-                    res.First().User.UserName,
-                    res.First().Date,
-                    score = Math.Round(res.Sum(c => c.FP), 1),
-                    lineup = res.Select(l => new
-                    {
-                        l.Player.NbaID,
-                        l.Player.Position,
-                        teamColor = l.Player.Team.Color,
-                        l.Player.FullName,
-                        l.Player.FirstName,
-                        l.Player.LastName,
-                        l.Player.AbbrName,
-                        l.FP
-                    }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
+                    lineup.UserID,
+                    lineup.User.UserName,
+                    longDate = lineup.Date.ToString("yyyy-MM-dd"),
+                    shortDate = lineup.Date.ToString("MMM. dd"),
+                    lineup.Date,
+                    lineup.FP,
+                    lineup = _context.Players
+                        .Where(player =>
+                            player.PlayerID == lineup.PgID
+                            || player.PlayerID == lineup.SgID
+                            || player.PlayerID == lineup.SfID
+                            || player.PlayerID == lineup.PfID
+                            || player.PlayerID == lineup.CID)
+                        .Select(player => new
+                        {
+                            player.NbaID,
+                            player.Position,
+                            teamColor = player.Team.Color,
+                            player.FullName,
+                            player.FirstName,
+                            player.LastName,
+                            player.AbbrName,
+                            FP = dailyStats.Where(stats => stats.PlayerID == player.PlayerID)
+                                .Select(stats => stats.FP).FirstOrDefault()
+                        }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
                 })
-                .OrderByDescending(x => x.score)
                 .Skip(from)
                 .Take(limit);
             }
-            return _context.Lineups
-                .Where(x => x.Calculated && x.Date >= date)
-                .GroupBy(l => l.UserID)
-                .Select(res => new
+            return _context.UserLineups
+                .Where(lineup => lineup.IsCalculated && lineup.Date >= CommonFunctions.GetDate(type))
+                .GroupBy(lineup => lineup.UserID)
+                .Select(lineup => new
                 {
-                    res.First().UserID,
-                    res.First().User.UserName,
-                    res.First().Date,
-                    score = Math.Round(res.Sum(c => c.FP), 2)
+                    lineup.First().UserID,
+                    lineup.First().User.UserName,
+                    longDate = lineup.First().Date.ToString("yyyy-MM-dd"),
+                    shortDate = lineup.First().Date.ToString("MMM. dd"),
+                    lineup.First().Date,
+                    FP = Math.Round(lineup.Sum(res => res.FP), 1)
                 })
-                .OrderByDescending(x => x.score)
+                .OrderByDescending(lineup => lineup.FP)
                 .Skip(from)
                 .Take(limit);
         }
 
-        public IEnumerable<object> GetFriendsLeaderboard(string id, int from, int limit, string type)
+        public IEnumerable<object> GetFriendsLeaderboard(string id, int from, int limit, string type, string date)
         {
+            date = date.Length == 0
+                ? DateTime.UtcNow < NextGame.PREVIOUS_LAST_GAME
+                    ? NextGame.PREVIOUS_GAME.AddDays(-1).ToString("yyyyMMdd")
+                    : NextGame.PREVIOUS_GAME.ToString("yyyyMMdd")
+                : date;
+
             var loggedInUser = _context.Users.Where(u => u.Id.Equals(id));
             var friendsOnly = _context.FriendRequests
                 .Include(u => u.Sender)
@@ -98,80 +125,100 @@ namespace fantasy_hoops.Repositories
                 .Where(f => f.SenderID.Equals(loggedInUser.FirstOrDefault().Id) && f.Status == Models.RequestStatus.ACCEPTED)
                 .Select(u => u.Receiver)).Concat(loggedInUser);
 
-            DateTime date = CommonFunctions.GetDate(type);
+            //DateTime date = CommonFunctions.GetDate(type);
+            DateTime dateTime = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
 
             if (type.Equals("daily"))
             {
+                var dailyStats = _context.Stats.Where(stats => stats.Date >= dateTime.Date && stats.Date <= dateTime.AddDays(1).Date);
+
                 return friendsOnly
-                .Select(x => new
+                    .SelectMany(user => user.UserLineups)
+                    .Where(lineup => lineup.Date >= dateTime && lineup.Date <= dateTime.AddDays(1).Date && lineup.IsCalculated)
+                .Select(lineup => new
                 {
-                    userID = x.Id,
-                    x.UserName,
-                    Score = Math.Round(x.Lineups
-                        .Where(y => y.Date >= date && y.Calculated)
-                        .Select(y => y.FP).Sum(), 2),
-                    lineup = x.Lineups.Where(y => y.Date >= date && y.Calculated)
-                    .Select(l => new
-                    {
-                        l.Player.NbaID,
-                        l.Player.Position,
-                        teamColor = l.Player.Team.Color,
-                        l.Player.FullName,
-                        l.Player.FirstName,
-                        l.Player.LastName,
-                        l.Player.AbbrName,
-                        l.FP
-                    }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
+                    lineup.UserID,
+                    lineup.User.UserName,
+                    longDate = lineup.Date.ToString("yyyy-MM-dd"),
+                    shortDate = lineup.Date.ToString("MMM. dd"),
+                    lineup.Date,
+                    lineup.FP,
+                    lineup = _context.Players
+                        .Where(player =>
+                            player.PlayerID == lineup.PgID
+                            || player.PlayerID == lineup.SgID
+                            || player.PlayerID == lineup.SfID
+                            || player.PlayerID == lineup.PfID
+                            || player.PlayerID == lineup.CID)
+                        .Select(player => new
+                        {
+                            player.NbaID,
+                            player.Position,
+                            teamColor = player.Team.Color,
+                            player.FullName,
+                            player.FirstName,
+                            player.LastName,
+                            player.AbbrName,
+                            FP = player.Stats.Where(stats => stats.Date.Date == lineup.Date.Date)
+                                .Select(stats => stats.FP).FirstOrDefault()
+                        }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
                 })
                 .Where(x => x.lineup.Count() > 0)
-                .OrderByDescending(x => x.Score)
+                .OrderByDescending(x => x.FP)
                 .Skip(from)
                 .Take(limit);
             }
             return friendsOnly
-                .Select(x => new
+                .Select(user => new
                 {
-                    userID = x.Id,
-                    x.UserName,
-                    Score = Math.Round(x.Lineups
-                        .Where(y => y.Date >= date && y.Calculated)
-                        .Select(y => y.FP).Sum(), 2),
-                    gamesPlayed = x.Lineups
-                        .Where(y => y.Date >= date && y.Calculated)
-                        .Count() / 5
+                    userID = user.Id,
+                    user.UserName,
+                    FP = Math.Round(user.UserLineups
+                        .Where(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
+                        .Select(lineup => lineup.FP).Sum(), 1),
+                    gamesPlayed = user.UserLineups
+                        .Where(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
+                        .Count()
                 })
-                .Where(x => x.gamesPlayed > 0)
-                .OrderByDescending(x => x.Score)
+                .Where(user => user.gamesPlayed > 0)
+                .OrderByDescending(lineup => lineup.FP)
                 .Skip(from)
                 .Take(limit);
         }
 
         public IQueryable<object> GetSeasonLineups()
         {
-            return _context.Lineups
-                .GroupBy(lineup => new { lineup.UserID, lineup.Date })
-                .Select(result => new
+            return _context.UserLineups
+                .OrderByDescending(lineup => lineup.FP)
+                .Take(10)
+                .Select(lineup => new
                 {
-                    result.First().UserID,
-                    result.First().User.UserName,
-                    longDate = result.First().Date.ToString("yyyy-MM-dd"),
-                    shortDate = result.First().Date.ToString("MMM. dd"),
-                    result.First().Date,
-                    score = Math.Round(result.Sum(c => c.FP), 1),
-                    lineup = result.Select(l => new
-                    {
-                        l.Player.NbaID,
-                        l.Player.Position,
-                        teamColor = l.Player.Team.Color,
-                        l.Player.FullName,
-                        l.Player.FirstName,
-                        l.Player.LastName,
-                        l.Player.AbbrName,
-                        l.FP
-                    }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
-                })
-                .OrderByDescending(t => t.score)
-                .Take(10);
+                    lineup.UserID,
+                    lineup.User.UserName,
+                    longDate = lineup.Date.ToString("yyyy-MM-dd"),
+                    shortDate = lineup.Date.ToString("MMM. dd"),
+                    lineup.Date,
+                    lineup.FP,
+                    lineup = _context.Players
+                        .Where(player =>
+                            player.PlayerID == lineup.PgID
+                            || player.PlayerID == lineup.SgID
+                            || player.PlayerID == lineup.SfID
+                            || player.PlayerID == lineup.PfID
+                            || player.PlayerID == lineup.CID)
+                        .Select(player => new
+                        {
+                            player.NbaID,
+                            player.Position,
+                            teamColor = player.Team.Color,
+                            player.FullName,
+                            player.FirstName,
+                            player.LastName,
+                            player.AbbrName,
+                            FP = player.Stats.Where(stats => stats.Date.Date == lineup.Date.Date)
+                                .Select(stats => stats.FP).FirstOrDefault()
+                        }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
+                });
         }
 
         public IQueryable<object> GetSeasonPlayers()

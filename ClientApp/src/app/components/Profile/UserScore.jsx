@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { UserScoreCard } from './UserScoreCard';
+import React, { PureComponent } from 'react';
 import shortid from 'shortid';
 import _ from 'lodash';
+import { UserScoreCard } from './UserScoreCard';
 
-export class UserScore extends Component {
+export class UserScore extends PureComponent {
   render() {
     let players = '';
     if (this.props.activity != null) {
@@ -16,8 +16,9 @@ export class UserScore extends Component {
               player={player}
               showModal={this.props.showModal}
             />
-          )
-        });
+          );
+        }
+      );
     }
 
     return (
@@ -25,13 +26,14 @@ export class UserScore extends Component {
         <div className="UserScoreCard__body card-body">
           {players}
           <div className="UserScoreCard__body-item UserScoreCard__result">
-            <div className="UserScoreCard__FP">{`${this.props.activity.score.toFixed(1)} `}
+            <div className="UserScoreCard__FP">
+              {`${this.props.activity.fp.toFixed(1)} `}
               <span style={{ fontSize: '0.7rem', fontWeight: 400, marginBottom: '0rem' }}>FP</span>
             </div>
             <div className="UserScoreCard__date">{this.props.activity.shortDate}</div>
           </div>
         </div>
-      </div >
+      </div>
     );
   }
 }

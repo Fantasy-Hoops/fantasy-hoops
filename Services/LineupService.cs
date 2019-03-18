@@ -42,7 +42,7 @@ namespace fantasy_hoops.Services
                 _repository.UpdatePlayer(model.UserID, "PF", model.PfID);
                 _repository.UpdatePlayer(model.UserID, "C", model.CID);
                 // LEAVE
-                _repository.AddLineup(model);
+                _repository.UpdateLineup(model);
             }
 
             await _context.SaveChangesAsync();

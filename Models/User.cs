@@ -13,5 +13,6 @@ namespace fantasy_hoops.Models
         public int Streak { get; set; }
 
         public virtual ICollection<Lineup> Lineups { get; set; }
+        public virtual ICollection<UserLineup> UserLineups { get; set; }
     }
 }

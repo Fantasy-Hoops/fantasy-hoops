@@ -8,7 +8,7 @@ import { Registration } from '../components/Authentication/Registration';
 import { UserProfile } from '../components/Profile/UserProfile';
 import LoginPage from '../components/Authentication/LoginPage';
 import { NewsFeed } from '../components/News/NewsFeed';
-import { Leaderboard as UserLeaderboard } from '../components/Leaderboard/Users/Leaderboard';
+import UserLeaderboard from '../components/Leaderboard/Users/Leaderboard';
 import { Leaderboard as PlayerLeaderboard } from '../components/Leaderboard/Players/Leaderboard';
 import { Leaderboard as SeasonLeaderboard } from '../components/Leaderboard/Season/Leaderboard';
 import { UserPool } from '../components/UserPool';
