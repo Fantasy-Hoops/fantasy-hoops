@@ -47,7 +47,8 @@ export class PlayerCard extends Component {
 
       let injuryStatus = '';
       if (this.props.player.injuryStatus.toLowerCase().includes('out')
-        || this.props.player.injuryStatus.toLowerCase().includes('injured')) { injuryStatus = 'injury-out'; }
+        || this.props.player.injuryStatus.toLowerCase().includes('injured')
+        || this.props.player.injuryStatus.toLowerCase().includes('suspended')) { injuryStatus = 'injury-out'; }
       else { injuryStatus = 'injury-questionable'; }
 
       let injuryBadge = '';

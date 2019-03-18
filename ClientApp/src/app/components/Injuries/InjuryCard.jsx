@@ -20,8 +20,9 @@ export class InjuryCard extends Component {
     if (this.props.injury.status.toLowerCase().includes("active"))
       status = "injury-active";
     else if (
-      this.props.injury.status.toLowerCase().includes("out") ||
-      this.props.injury.status.toLowerCase().includes("injured")
+      this.props.injury.status.toLowerCase().includes("out")
+      || this.props.injury.status.toLowerCase().includes("injured")
+      || this.props.injury.status.toLowerCase().includes("suspended")
     )
       status = "injury-out";
     else status = "injury-questionable";
