@@ -97,9 +97,6 @@ namespace fantasy_hoops.Repositories
                 {
                     lineup.First().UserID,
                     lineup.First().User.UserName,
-                    longDate = lineup.First().Date.ToString("yyyy-MM-dd"),
-                    shortDate = lineup.First().Date.ToString("MMM. dd"),
-                    lineup.First().Date,
                     FP = Math.Round(lineup.Sum(res => res.FP), 1)
                 })
                 .OrderByDescending(lineup => lineup.FP)

@@ -134,7 +134,7 @@ export class Leaderboard extends Component {
           />
           <h3>Top NBA Players</h3>
         </div>
-        <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist" style={{ width: '40%' }}>
+        <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
           <li className="nav-item">
             <Link className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" to="#daily" role="tab" onClick={this.switchTab}>Daily</Link>
           </li>

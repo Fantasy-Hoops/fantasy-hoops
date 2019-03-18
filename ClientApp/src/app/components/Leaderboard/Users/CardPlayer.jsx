@@ -29,7 +29,7 @@ export default class CardPlayer extends PureComponent {
         >
           <div
             role="button"
-            tabIndex="0"
+            tabIndex="-1"
             className="UserLeaderboardCard__player-photo--background"
             style={{ backgroundColor: this.props.player.teamColor }}
             data-toggle="modal"

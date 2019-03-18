@@ -229,6 +229,6 @@ export class Charts extends Component {
 
   timeToMin(min) {
     const times = min.split(':');
-    return (parseInt(times[0]) + (parseInt(times[1]) / 60)).toFixed(1);
+    return (parseInt(times[0])).toFixed(1);
   }
 }
