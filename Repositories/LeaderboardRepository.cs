@@ -23,21 +23,21 @@ namespace fantasy_hoops.Repositories
         {
             DateTime date = CommonFunctions.GetDate(type);
 
-            return _context.Stats
+            return _context.Players
                 .Select(x => new
                 {
-                    x.Date,
                     x.PlayerID,
-                    x.Player.NbaID,
-                    x.Player.FullName,
-                    x.Player.FirstName,
-                    x.Player.LastName,
-                    x.Player.AbbrName,
-                    x.Player.Position,
-                    teamColor = x.Player.Team.Color,
-                    x.FP
+                    x.NbaID,
+                    x.FullName,
+                    x.FirstName,
+                    x.LastName,
+                    x.AbbrName,
+                    x.Position,
+                    teamColor = x.Team.Color,
+                    FP = x.Stats
+                        .Where(y => y.Date >= date)
+                        .Select(y => y.FP).Sum()
                 })
-                .Where(y => y.Date >= date)
                 .OrderByDescending(x => x.FP)
                 .Skip(from)
                 .Take(limit);

@@ -77,8 +77,8 @@ namespace fantasy_hoops.Repositories
                             s.FLS,
                             s.TOV,
                             s.PTS,
-                            s.GS,
-                            s.FP,
+                            GS = Math.Round(s.GS, 1),
+                            FP = Math.Round(s.FP, 1),
                             s.Price
                         })
                         .OrderByDescending(s => s.Date)

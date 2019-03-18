@@ -47,31 +47,27 @@ export class Gamelog extends Component {
       : <button className="btn btn-primary float-left m-2" onClick={this.loadMore}>See more</button>;
     return (
       <div className="table-responsive">
-        <table className="table table-sm table-hover table-bordered text-right">
+        <table className="table table-sm table-hover table-bordered text-justify">
           <thead>
             <tr className="bg-primary text-light">
-              <th scope="col" style={{ width: '6rem' }}>DATE</th>
-              <th scope="col" style={{ width: '4rem' }}>OPP</th>
+              <th scope="col" style={{ width: '7.5rem' }}>RECENT</th>
               <th scope="col" style={{ width: '6rem' }}>SCORE</th>
               <th scope="col" style={{ width: '3rem' }}>MIN</th>
-              <th scope="col" style={{ width: '3rem' }}>FGM</th>
-              <th scope="col" style={{ width: '3rem' }}>FGA</th>
-              <th scope="col" style={{ width: '3rem' }}>FG%</th>
-              <th scope="col" style={{ width: '3rem' }}>3PM</th>
-              <th scope="col" style={{ width: '3rem' }}>3PA</th>
-              <th scope="col" style={{ width: '3rem' }}>3P%</th>
-              <th scope="col" style={{ width: '3rem' }}>FTM</th>
-              <th scope="col" style={{ width: '3rem' }}>FTA</th>
-              <th scope="col" style={{ width: '3rem' }}>FT%</th>
-              <th scope="col" style={{ width: '3rem' }}>DREB</th>
-              <th scope="col" style={{ width: '3rem' }}>OREB</th>
-              <th scope="col" style={{ width: '3rem' }}>TREB</th>
-              <th scope="col" style={{ width: '3rem' }}>AST</th>
-              <th scope="col" style={{ width: '3rem' }}>BLK</th>
-              <th scope="col" style={{ width: '3rem' }}>STL</th>
-              <th scope="col" style={{ width: '3rem' }}>FLS</th>
-              <th scope="col" style={{ width: '3rem' }}>TOV</th>
               <th scope="col" style={{ width: '3rem' }}>PTS</th>
+              <th scope="col" style={{ width: '3rem' }}>REB</th>
+              <th scope="col" style={{ width: '3rem' }}>AST</th>
+              <th scope="col" style={{ width: '3rem' }}>STL</th>
+              <th scope="col" style={{ width: '3rem' }}>BLK</th>
+              <th scope="col" style={{ width: '3rem' }}>PF</th>
+              <th scope="col" style={{ width: '3rem' }}>TO</th>
+              <th scope="col" style={{ width: '3rem' }}>OREB</th>
+              <th scope="col" style={{ width: '3rem' }}>DREB</th>
+              <th scope="col" style={{ width: '3rem' }}>FG</th>
+              <th scope="col" style={{ width: '3rem' }}>FG%</th>
+              <th scope="col" style={{ width: '3rem' }}>FT</th>
+              <th scope="col" style={{ width: '3rem' }}>FT%</th>
+              <th scope="col" style={{ width: '3rem' }}>3P</th>
+              <th scope="col" style={{ width: '3rem' }}>3P%</th>
               <th scope="col" style={{ width: '3rem' }}>GS</th>
               <th scope="col" style={{ width: '3rem' }}>FP</th>
             </tr>
@@ -106,39 +102,34 @@ export class Gamelog extends Component {
         score = <span className="text-success">W</span>;
       else score = <span className="text-danger">L</span>;
       return <tr key={shortid()} >
-        <td style={{ width: '6rem' }}>{moment(s.date).format("ddd MM/DD")}</td>
-        <td style={{ width: '4rem' }}>
+        <td style={{ width: '7.5rem' }}>{moment(s.date).format("MMM. DD")} vs 
           <Img
-            width='40rem'
+            width='30rem'
             style={{ right: '0' }}
             alt={abbreviation}
             src={[
-              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${abbreviation}.svg`,
-              defaultLogo
+              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${abbreviation}.svg`
             ]}
             loader={<img height='40px' src={require(`../../../content/images/imageLoader2.gif`)} alt="Loader" />}
           />
         </td>
-        <td style={{ width: '6rem' }}>{score} {s.score}</td>
+        <td valign="middle" style={{ width: '6rem' }}>{score} {s.score}</td>
         <td style={{ width: '3rem' }}>{s.min}</td>
-        <td style={{ width: '3rem' }}>{s.fgm}</td>
-        <td style={{ width: '3rem' }}>{s.fga}</td>
-        <td style={{ width: '3rem' }}>{s.fgp}</td>
-        <td style={{ width: '3rem' }}>{s.tpm}</td>
-        <td style={{ width: '3rem' }}>{s.tpa}</td>
-        <td style={{ width: '3rem' }}>{s.tpp}</td>
-        <td style={{ width: '3rem' }}>{s.ftm}</td>
-        <td style={{ width: '3rem' }}>{s.fta}</td>
-        <td style={{ width: '3rem' }}>{s.ftp}</td>
-        <td style={{ width: '3rem' }}>{s.dreb}</td>
-        <td style={{ width: '3rem' }}>{s.oreb}</td>
+        <td style={{ width: '3rem' }}>{s.pts}</td>
         <td style={{ width: '3rem' }}>{s.treb}</td>
         <td style={{ width: '3rem' }}>{s.ast}</td>
-        <td style={{ width: '3rem' }}>{s.blk}</td>
         <td style={{ width: '3rem' }}>{s.stl}</td>
+        <td style={{ width: '3rem' }}>{s.blk}</td>
         <td style={{ width: '3rem' }}>{s.fls}</td>
         <td style={{ width: '3rem' }}>{s.tov}</td>
-        <td style={{ width: '3rem' }}>{s.pts}</td>
+        <td style={{ width: '3rem' }}>{s.oreb}</td>
+        <td style={{ width: '3rem' }}>{s.dreb}</td>
+        <td style={{ width: '3rem' }}>{s.fgm}/{s.fga}</td>
+        <td style={{ width: '3rem' }}>{s.fgp}</td>
+        <td style={{ width: '3rem' }}>{s.ftm}/{s.fta}</td>
+        <td style={{ width: '3rem' }}>{s.ftp}</td>
+        <td style={{ width: '3rem' }}>{s.tpm}/{s.tpa}</td>
+        <td style={{ width: '3rem' }}>{s.tpp}</td>
         <td style={{ width: '3rem' }}>{s.gs}</td>
         <td style={{ width: '3rem' }}>{s.fp}</td>
       </tr>;

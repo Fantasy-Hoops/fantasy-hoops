@@ -15,7 +15,7 @@ export const RequestCard = (props) => {
   return (
     <div className="card rounded mx-auto RequestCard">
       <div className="RequestCard__Body">
-        <Link to={`/profile/${userName}`} className="card-body RequestCard__Info">
+        <a href={`/profile/${userName}`} className="card-body RequestCard__Info">
           <Img
             className="RequestCard__Avatar"
             alt=""
@@ -23,7 +23,7 @@ export const RequestCard = (props) => {
             decode={false}
           />
           <p className="RequestCard__Info__Name">{userName}</p>
-        </Link>
+        </a>
         <div className="RequestCard__Buttons">
           {
             type === 1
