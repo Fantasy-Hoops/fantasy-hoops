@@ -61,7 +61,7 @@ export class PlayerModal extends Component {
           <div className="modal-content">
             <div className="modal-body">
               <a className="close" data-dismiss="modal" aria-label="Close">
-                <i style={{ fontSize: '1.5rem' }} width='50rem' className="fas fa-times"></i>
+                <i style={{ fontSize: '1.5rem' }} width='50rem' className="fas fa-times" />
               </a>
               {this.getContent()}
             </div>

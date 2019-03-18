@@ -46,7 +46,7 @@ export class Stats extends Component {
           <table className="table text-right" style={{ maxWidth: '60%' }}>
             <thead>
               <tr>
-                <th scope="col" style={{ backgroundColor: 'white', width: '5rem' }}><h6>FPPG</h6><h3>{stats.fppg.toFixed(1)}</h3></th>
+                <th scope="col" style={{ position: 'relative', backgroundColor: 'white', width: '5rem' }}><h6>FPPG</h6><h3>{stats.fppg.toFixed(1)}</h3></th>
                 <th scope="col" style={{ width: '5rem' }}><h6>PTS</h6><h3>{stats.pts}</h3></th>
                 <th scope="col" style={{ width: '5rem' }}><h6>REB</h6><h3>{stats.reb}</h3></th>
                 <th scope="col" style={{ width: '5rem' }}><h6>AST</h6><h3>{stats.ast}</h3></th>
