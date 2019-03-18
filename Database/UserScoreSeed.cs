@@ -77,22 +77,28 @@ namespace fantasy_hoops.Database
         private static async Task Update(GameContext context)
         {
             WebPushClient _webPushClient = new WebPushClient();
-            var allPlayers = context.Lineups.Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME) && !x.Calculated)
-                .Include(x => x.Player).ThenInclude(x => x.Stats)
+            var todayStats = context.Stats.Where(stats => stats.Date >= CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME));
+            var allLineups = context.UserLineups.Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME) && !x.IsCalculated)
                 .ToList();
 
-            if (allPlayers.Count == 0)
+            if (allLineups.Count == 0)
                 return;
 
-            foreach (var player in allPlayers)
+            foreach (var lineup in allLineups)
             {
-                player.FP = player.Player.Stats
-                    .Where(s => s.Date >= CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME) && s.Date <= CommonFunctions.UTCToEastern(NextGame.PREVIOUS_LAST_GAME))
-                    .Select(x => x.FP).FirstOrDefault();
-                player.Calculated = true;
+                lineup.FP =
+                    todayStats
+                    .Where(stats => stats.PlayerID == lineup.PgID
+                        || stats.PlayerID == lineup.SgID
+                        || stats.PlayerID == lineup.SfID
+                        || stats.PlayerID == lineup.PfID
+                        || stats.PlayerID == lineup.CID)
+                    .Select(stats => stats.FP)
+                    .Sum();
+                lineup.IsCalculated = true;
             }
 
-            var usersPlayed = context.Lineups
+            var usersPlayed = context.UserLineups
                 .Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME))
                 .Select(x => x.User)
                 .Distinct();
@@ -102,10 +108,11 @@ namespace fantasy_hoops.Database
             foreach (var user in usersPlayed)
             {
                 user.Streak++;
-                var userScore = Math.Round(allPlayers
+                var userScore = Math.Round(allLineups
                     .Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME)
                             && x.UserID.Equals(user.Id))
-                    .Select(x => x.FP).Sum(), 1);
+                    .Select(x => x.FP)
+                    .FirstOrDefault());
 
                 _usersPlayed.Push(new GameScorePushNotificationModel
                 {

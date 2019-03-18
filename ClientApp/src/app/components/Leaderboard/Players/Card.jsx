@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Img from 'react-image';
 const $ = window.$;
 
-export class Card extends Component {
+export class Card extends PureComponent {
   constructor(props) {
     super(props);
     this.showModal = this.showModal.bind(this);
