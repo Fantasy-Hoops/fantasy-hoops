@@ -87,14 +87,14 @@ namespace fantasy_hoops.Database
             foreach (var lineup in allLineups)
             {
                 lineup.FP =
-                    todayStats
+                    Math.Round(todayStats
                     .Where(stats => stats.PlayerID == lineup.PgID
                         || stats.PlayerID == lineup.SgID
                         || stats.PlayerID == lineup.SfID
                         || stats.PlayerID == lineup.PfID
                         || stats.PlayerID == lineup.CID)
                     .Select(stats => stats.FP)
-                    .Sum();
+                    .Sum(), 1);
                 lineup.IsCalculated = true;
             }
 

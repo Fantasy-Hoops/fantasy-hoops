@@ -9,7 +9,7 @@ import { Loader } from '../../Loader';
 import { EmptyJordan } from '../../EmptyJordan';
 
 const { $ } = window;
-const LOAD_COUNT = 10;
+const LOAD_COUNT = 30;
 
 export class Leaderboard extends Component {
   constructor(props) {
@@ -79,7 +79,6 @@ export class Leaderboard extends Component {
 
   async switchTab(e) {
     const type = e.target.id.split(/-/)[0];
-
     if (this.state.activeTab === type) { return; }
 
     this.setState({ activeTab: type });

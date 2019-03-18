@@ -2,6 +2,10 @@ import React, { PureComponent } from 'react';
 import { Link } from 'react-router-dom';
 import shortid from 'shortid';
 import _ from 'lodash';
+import DatePicker from 'react-datepicker';
+import enGB from 'date-fns/locale/en-GB';
+import 'react-datepicker/dist/react-datepicker.css';
+import moment from 'moment';
 import { parse } from '../../../utils/auth';
 import Card from './Card';
 import leaderboardLogo from '../../../../content/images/leaderboard.png';
@@ -22,6 +26,7 @@ export default class Leaderboard extends PureComponent {
     this.switchTab = this.switchTab.bind(this);
     this.loadMore = this.loadMore.bind(this);
     this.showModal = this.showModal.bind(this);
+    this.onDateChange = this.onDateChange.bind(this);
 
     this.state = {
       activeTab: 'daily',
@@ -49,6 +54,9 @@ export default class Leaderboard extends PureComponent {
   }
 
   async componentDidMount() {
+    $(document).ready(() => {
+      $('[data-toggle=tooltip]').tooltip({ trigger: "hover" });
+    });
     $('#playerModal').on('hidden.bs.modal', () => {
       this.setState({
         modalLoader: true,
@@ -75,17 +83,41 @@ export default class Leaderboard extends PureComponent {
     });
   }
 
+  async onDateChange(date) {
+    const { friendsOnly, showButton } = this.state;
+    const dateFormat = moment(date).format('YYYYMMDD');
+    const type = friendsOnly ? 'dailyFriends' : 'daily';
+    const url = friendsOnly
+      ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${loggedInUser.id}?type=daily&date=${dateFormat}`
+      : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=daily&date=${dateFormat}`;
+
+    this.setState({ loader: true });
+    await fetch(url)
+      .then(res => res.json())
+      .then((res) => {
+        showButton[type] = res.length === LOAD_COUNT;
+        this.setState({
+          [type]: res,
+          loader: false
+        });
+      });
+    this.setState({ date, dateFormat });
+  }
+
   async toggleFriendsOnly() {
-    const { friendsOnly, activeTab, showButton } = this.state;
+    const {
+      friendsOnly, activeTab, showButton, dateFormat
+    } = this.state;
     this.setState({ friendsOnly: !friendsOnly });
     const type = activeTab + (!friendsOnly ? 'Friends' : '');
+    const dateParam = dateFormat ? `&date=${dateFormat}` : '';
 
     if (this.state[type].length === 0) {
       this.setState({ loader: true });
 
       const url = !friendsOnly
-        ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${loggedInUser.id}?type=${activeTab}`
-        : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTab}`;
+        ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${loggedInUser.id}?type=${activeTab}${dateParam}`
+        : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTab}${dateParam}`;
 
       await fetch(url)
         .then(res => res.json())
@@ -100,9 +132,12 @@ export default class Leaderboard extends PureComponent {
   }
 
   async switchTab(e) {
-    const { friendsOnly, activeTab, showButton } = this.state;
+    const {
+      friendsOnly, activeTab, showButton, dateFormat
+    } = this.state;
     const activeTabURL = e.target.id.split(/-/)[0];
     const type = friendsOnly ? `${activeTabURL}Friends` : activeTabURL;
+    const dateParam = dateFormat ? `&date=${dateFormat}` : '';
 
     if (activeTab === activeTabURL) { return; }
 
@@ -110,8 +145,8 @@ export default class Leaderboard extends PureComponent {
 
     if (this.state[type].length === 0) {
       const url = friendsOnly
-        ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${loggedInUser.id}?type=${activeTabURL}`
-        : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTabURL}`;
+        ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${loggedInUser.id}?type=${activeTabURL}${dateParam}`
+        : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTabURL}${dateParam}`;
 
       this.setState({ loader: true });
       await fetch(url)
@@ -127,14 +162,17 @@ export default class Leaderboard extends PureComponent {
   }
 
   async loadMore() {
-    const { activeTab, friendsOnly, showButton } = this.state;
+    const {
+      activeTab, friendsOnly, showButton, dateFormat
+    } = this.state;
     const type = friendsOnly ? `${activeTab}Friends` : activeTab;
+    const dateParam = dateFormat ? `&date=${dateFormat}` : '';
 
     this.setState({ loadMore: true });
 
     const url = friendsOnly
-      ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${loggedInUser.id}?type=${activeTab}&from=${this.state[type].length}&limit=${LOAD_COUNT}`
-      : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTab}&from=${this.state[type].length}&limit=${LOAD_COUNT}`;
+      ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${loggedInUser.id}?type=${activeTab}&from=${this.state[type].length}&limit=${LOAD_COUNT}${dateParam}`
+      : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTab}&from=${this.state[type].length}&limit=${LOAD_COUNT}${dateParam}`;
 
     await fetch(url)
       .then(res => res.json())
@@ -227,7 +265,7 @@ export default class Leaderboard extends PureComponent {
             <h6>Friends only</h6>
           </div>
         </div>
-        <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist" style={{ width: '30%' }}>
+        <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
           <li className="nav-item">
             <Link className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" to="#daily" role="tab" onClick={this.switchTab}>Daily</Link>
           </li>
@@ -240,6 +278,28 @@ export default class Leaderboard extends PureComponent {
         </ul>
         <div className="tab-content" id="myTabContent">
           <div className="pt-4 pb-1 tab-pane animated bounceInUp show active" id="daily" role="tabpanel">
+            {!this.state.loader
+              ? (
+                <div className="DatePicker">
+                  <DatePicker
+                    className="input-group-text"
+                    placeholderText="Select the date..."
+                    locale={enGB}
+                    onChange={this.onDateChange}
+                    selected={this.state.date}
+                  />
+                  <a
+                    className="position-absolute"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="Works properly only from February 24"
+                    style={{ top: '0.3rem', left: '-2rem' }}
+                  >
+                    <i className="fa fa-info mx-auto" aria-hidden="true" />
+                  </a>
+                </div>
+              )
+              : null}
             {!loader
               ? dailyUsers.length > 0
                 ? dailyUsers

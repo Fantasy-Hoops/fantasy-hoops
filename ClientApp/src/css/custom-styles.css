@@ -1411,3 +1411,10 @@ thead {
   align-items: center;
   border-left: 1px solid rgba(0, 0, 0, 0.15);
 }
+
+.DatePicker {
+  position: relative;
+  margin: 0 auto;
+  margin-bottom: 1rem;
+  width: 12.3rem;
+}
