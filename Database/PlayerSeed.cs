@@ -60,27 +60,8 @@ namespace fantasy_hoops.Database
                     var vTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
 
                     if (updatePrice)
-                    {
-                        int hTeamNextGameId = CommonFunctions.GetNextGame(hTeamPlayers
-                            .Where(player => player.Status.Equals("Active"))
-                            .OrderByDescending(player => player.Price)
-                            .FirstOrDefault().NbaID);
-                        int vTeamNextGameId = CommonFunctions.GetNextGame(vTeamPlayers
-                            .Where(player => player.Status.Equals("Active"))
-                            .OrderByDescending(player => player.Price)
-                            .FirstOrDefault().NbaID);
+                        SetNextOpponent(context, game);
 
-                        var hTeam = context.Teams.Where(t => t.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
-                        var vTeam = context.Teams.Where(t => t.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
-
-                        if (hTeamNextGameId != -1)
-                            hTeam.NextOpponent = context.Teams.Where(t => t.NbaID == hTeamNextGameId).FirstOrDefault();
-                        else hTeam.NextOpponentID = null;
-
-                        if (vTeamNextGameId != -1)
-                            vTeam.NextOpponent = context.Teams.Where(t => t.NbaID == vTeamNextGameId).FirstOrDefault();
-                        else vTeam.NextOpponentID = null;
-                    }
                     foreach (var player in hTeamPlayers.Union(vTeamPlayers))
                     {
                         JObject p = GetPlayer(player.NbaID);
@@ -142,6 +123,18 @@ namespace fantasy_hoops.Database
             if (price < PRICE_FLOOR)
                 return PRICE_FLOOR;
             return price;
+        }
+
+        private static void SetNextOpponent(GameContext context, JToken game)
+        {
+            Team hTeam = context.Teams.Where(team => team.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
+            Team vTeam = context.Teams.Where(team => team.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
+
+            hTeam.NextOpponentID = vTeam.TeamID;
+            hTeam.NextOppFormatted = string.Format("vs {0}", game["vTeam"]["triCode"]);
+
+            vTeam.NextOpponentID = hTeam.TeamID;
+            vTeam.NextOppFormatted = string.Format("@ {0}", game["hTeam"]["triCode"]);
         }
     }
 }
