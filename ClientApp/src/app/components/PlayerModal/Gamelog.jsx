@@ -19,7 +19,7 @@ export default class Gamelog extends Component {
     };
   }
 
-  getRows(btn) {
+  getRows() {
     if (this.props.loader) { return ''; }
 
     const rows = this.state.games.sort(this.compare).map((s) => {
@@ -76,13 +76,6 @@ export default class Gamelog extends Component {
         </tr>
       );
     });
-    if (!(this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length) || this.state.loader) {
-      rows.push(
-        <tr className="no-hover" key={shortid()}>
-          <td colSpan="20" className="align-middle">{btn}</td>
-        </tr>
-      );
-    }
     return rows;
   }
 
@@ -108,44 +101,43 @@ export default class Gamelog extends Component {
   }
 
   render() {
-    const btn = this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length
-      ? (
-        <div className="p-1 float-left">
-          <Loader show={this.state.loader} />
-        </div>
-      )
-      : <button type="button" className="btn btn-primary float-left m-2" onClick={this.loadMore}>See more</button>;
+    const btn = (!(this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length) && !this.state.loader)
+      ? <button type="button" className="btn btn-primary float-left mt-2" onClick={this.loadMore}>See more</button>
+      : <Loader show={this.state.loader} />;
     return (
-      <div id="table-scroll" className="table-responsive table-scroll">
-        <table id="main-table" className="table table-sm table-hover text-right main-table">
-          <thead>
-            <tr className="bg-primary text-light">
-              <th style={{ fontWeight: 700 }}>DATE</th>
-              <th>MIN</th>
-              <th>PTS</th>
-              <th>REB</th>
-              <th>AST</th>
-              <th>STL</th>
-              <th>BLK</th>
-              <th>PF</th>
-              <th>TO</th>
-              <th>OREB</th>
-              <th>DREB</th>
-              <th>FG</th>
-              <th>FG%</th>
-              <th>FT</th>
-              <th>FT%</th>
-              <th>3P</th>
-              <th>3P%</th>
-              <th>GS</th>
-              <th>FP</th>
-              <th>SCORE</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.getRows(btn)}
-          </tbody>
-        </table>
+      <div>
+        <div id="table-scroll" className="table-responsive table-scroll">
+          <table id="main-table" className="table table-sm table-hover text-right main-table">
+            <thead>
+              <tr className="bg-primary text-light">
+                <th className="GameLog__corner-cell">DATE</th>
+                <th>MIN</th>
+                <th>PTS</th>
+                <th>REB</th>
+                <th>AST</th>
+                <th>STL</th>
+                <th>BLK</th>
+                <th>PF</th>
+                <th>TO</th>
+                <th>OREB</th>
+                <th>DREB</th>
+                <th>FG</th>
+                <th>FG%</th>
+                <th>FT</th>
+                <th>FT%</th>
+                <th>3P</th>
+                <th>3P%</th>
+                <th>GS</th>
+                <th>FP</th>
+                <th>SCORE</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.getRows()}
+            </tbody>
+          </table>
+        </div>
+        {btn}
       </div>
     );
   }
