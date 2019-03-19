@@ -53,20 +53,20 @@ export default class Gamelog extends Component {
             /
             {s.fga}
           </td>
-          <td>{s.fgp}</td>
+          <td>{s.fga !== 0 ? s.fgp : '-'}</td>
           <td>
             {s.ftm}
             /
             {s.fta}
           </td>
-          <td>{s.ftp}</td>
+          <td>{s.fta !== 0 ? s.ftp : '-'}</td>
           <td>
             {s.tpm}
             /
             {s.tpa}
           </td>
-          <td>{s.tpp}</td>
-          <td>{s.gs}</td>
+          <td>{s.tpa !== 0 ? s.tpp : '-'}</td>
+          <td>{s.gs.toFixed(1)}</td>
           <td>{s.fp.toFixed(1)}</td>
           <td>
             {score}
@@ -78,8 +78,8 @@ export default class Gamelog extends Component {
     });
     if (!(this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length) || this.state.loader) {
       rows.push(
-        <tr className="no-hover" key={shortid()} style={{ height: '7rem' }}>
-          <td className="align-middle">{btn}</td>
+        <tr className="no-hover" key={shortid()}>
+          <td colSpan="20" className="align-middle">{btn}</td>
         </tr>
       );
     }
@@ -117,7 +117,7 @@ export default class Gamelog extends Component {
       : <button type="button" className="btn btn-primary float-left m-2" onClick={this.loadMore}>See more</button>;
     return (
       <div id="table-scroll" className="table-responsive table-scroll">
-        <table id="main-table" className="table table-sm table-hover table-bordered text-justify main-table">
+        <table id="main-table" className="table table-sm table-hover text-right main-table">
           <thead>
             <tr className="bg-primary text-light">
               <th style={{ fontWeight: 700 }}>DATE</th>

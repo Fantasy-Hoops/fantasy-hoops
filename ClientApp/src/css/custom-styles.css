@@ -1434,7 +1434,7 @@ input:checked + .slider:before {
 .PlayerModal .table-scroll th,
 .PlayerModal .table-scroll td {
   vertical-align: middle;
-  width: 50px;
+  min-width: 40px;
 }
 .PlayerModal .table-scroll thead th {
   position: -webkit-sticky;
@@ -1460,10 +1460,13 @@ input:checked + .slider:before {
   z-index: 2;
   background: var(--grey-background);
   font-weight: 400;
+  text-align: left;
 }
 .PlayerModal thead th:first-child,
 .PlayerModal tfoot th:first-child {
   z-index: 5;
+  min-width: 70px;
+  text-align: left;
 }
 
 .PlayerModal th:nth-last-child(1) {
