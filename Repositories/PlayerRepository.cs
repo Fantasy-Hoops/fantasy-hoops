@@ -30,12 +30,7 @@ namespace fantasy_hoops.Repositories
                         x.Team.TeamID,
                         x.Team.Abbreviation,
                         TeamColor = x.Team.Color,
-                        opp = new
-                        {
-                            x.Team.NextOpponent.NbaID,
-                            x.Team.NextOpponent.Abbreviation,
-                            x.Team.NextOpponent.Color
-                        }
+                        opp = x.Team.NextOppFormatted
                     },
                     x.Price,
                     x.Position,

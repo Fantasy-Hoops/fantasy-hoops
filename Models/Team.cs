@@ -13,6 +13,7 @@ namespace fantasy_hoops.Models
         public String Abbreviation { get; set; }
         public String Color { get; set; }
         public int? NextOpponentID { get; set; }
+        public String NextOppFormatted { get; set; }
 
         public virtual Team NextOpponent { get; set; }
         public virtual ICollection<Player> Players { get; set; }

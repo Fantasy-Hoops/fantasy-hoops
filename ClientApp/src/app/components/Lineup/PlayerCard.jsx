@@ -87,8 +87,7 @@ export class PlayerCard extends Component {
               <p className="PlayerCard__player-attributes--FPPG-label">FPPG</p>
             </div> : ''}
             {this.props.status === 1 ? <div className="PlayerCard__player-attributes--opponent">
-              <span style={{ fontSize: "0.65rem" }}>vs. </span>
-              {this.props.player.team.opp.abbreviation}
+              {this.props.player.team.opp}
             </div> : ''}
             {this.props.status === 2 ? <div className="PlayerCard__player-attributes--position">{this.props.player.position}</div> : ''}
             <div

@@ -31,44 +31,44 @@ export default class Gamelog extends Component {
       if (parseInt(str[0], 10) > parseInt(str[1], 10)) { score = <span className="text-success">W</span>; } else score = <span className="text-danger">L</span>;
       return (
         <tr key={shortid()}>
-          <th style={{ width: '80px' }}>
+          <th>
             {moment(s.date).format('MMM. DD')}
             <br />
             <span style={{ fontWeight: 900 }}>{scoreTokens[1] || 'vs'}</span>
             {' '}
             {abbreviation || '?'}
           </th>
-          <td style={{ width: '3.5rem' }}>{s.min}</td>
-          <td style={{ width: '40px' }}>{s.pts}</td>
-          <td style={{ width: '40px' }}>{s.treb}</td>
-          <td style={{ width: '40px' }}>{s.ast}</td>
-          <td style={{ width: '40px' }}>{s.stl}</td>
-          <td style={{ width: '40px' }}>{s.blk}</td>
-          <td style={{ width: '40px' }}>{s.fls}</td>
-          <td style={{ width: '40px' }}>{s.tov}</td>
-          <td style={{ width: '40px' }}>{s.oreb}</td>
-          <td style={{ width: '40px' }}>{s.dreb}</td>
-          <td style={{ width: '50px' }}>
+          <td>{s.min}</td>
+          <td>{s.pts}</td>
+          <td>{s.treb}</td>
+          <td>{s.ast}</td>
+          <td>{s.stl}</td>
+          <td>{s.blk}</td>
+          <td>{s.fls}</td>
+          <td>{s.tov}</td>
+          <td>{s.oreb}</td>
+          <td>{s.dreb}</td>
+          <td>
             {s.fgm}
             /
             {s.fga}
           </td>
-          <td style={{ width: '50px' }}>{s.fgp}</td>
-          <td style={{ width: '50px' }}>
+          <td>{s.fgp}</td>
+          <td>
             {s.ftm}
             /
             {s.fta}
           </td>
-          <td style={{ width: '50px' }}>{s.ftp}</td>
-          <td style={{ width: '50px' }}>
+          <td>{s.ftp}</td>
+          <td>
             {s.tpm}
             /
             {s.tpa}
           </td>
-          <td style={{ width: '50px' }}>{s.tpp}</td>
-          <td style={{ width: '50px' }}>{s.gs}</td>
-          <td style={{ width: '50px' }}>{s.fp}</td>
-          <td style={{ width: '7rem' }}>
+          <td>{s.tpp}</td>
+          <td>{s.gs}</td>
+          <td>{s.fp.toFixed(1)}</td>
+          <td>
             {score}
             {' '}
             {scoreTokens[0]}
@@ -120,26 +120,26 @@ export default class Gamelog extends Component {
         <table id="main-table" className="table table-sm table-hover table-bordered text-justify main-table">
           <thead>
             <tr className="bg-primary text-light">
-              <th scope="col" style={{ fontWeight: 700, width: '80px' }}>DATE</th>
-              <th scope="col" style={{ width: '3.5rem' }}>MIN</th>
-              <th scope="col" style={{ width: '40px' }}>PTS</th>
-              <th scope="col" style={{ width: '40px' }}>REB</th>
-              <th scope="col" style={{ width: '40px' }}>AST</th>
-              <th scope="col" style={{ width: '40px' }}>STL</th>
-              <th scope="col" style={{ width: '40px' }}>BLK</th>
-              <th scope="col" style={{ width: '40px' }}>PF</th>
-              <th scope="col" style={{ width: '40px' }}>TO</th>
-              <th scope="col" style={{ width: '40px' }}>OREB</th>
-              <th scope="col" style={{ width: '40px' }}>DREB</th>
-              <th scope="col" style={{ width: '50px' }}>FG</th>
-              <th scope="col" style={{ width: '50px' }}>FG%</th>
-              <th scope="col" style={{ width: '50px' }}>FT</th>
-              <th scope="col" style={{ width: '50px' }}>FT%</th>
-              <th scope="col" style={{ width: '50px' }}>3P</th>
-              <th scope="col" style={{ width: '50px' }}>3P%</th>
-              <th scope="col" style={{ width: '50px' }}>GS</th>
-              <th scope="col" style={{ width: '50px' }}>FP</th>
-              <th scope="col" style={{ width: '7rem' }}>SCORE</th>
+              <th style={{ fontWeight: 700 }}>DATE</th>
+              <th>MIN</th>
+              <th>PTS</th>
+              <th>REB</th>
+              <th>AST</th>
+              <th>STL</th>
+              <th>BLK</th>
+              <th>PF</th>
+              <th>TO</th>
+              <th>OREB</th>
+              <th>DREB</th>
+              <th>FG</th>
+              <th>FG%</th>
+              <th>FT</th>
+              <th>FT%</th>
+              <th>3P</th>
+              <th>3P%</th>
+              <th>GS</th>
+              <th>FP</th>
+              <th>SCORE</th>
             </tr>
           </thead>
           <tbody>

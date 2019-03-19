@@ -14,6 +14,10 @@ a:hover {
   text-decoration: none;
 }
 
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: var(--grey-background);
+}
+
 .table-sm td {
   vertical-align: middle;
 }
@@ -598,21 +602,6 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
-}
-
-tbody {
-  overflow-y: scroll;
-  overflow-x: auto;
-}
-thead,
-tbody tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-}
-
-.table-hover > tbody > tr.no-hover:hover {
-  background-color: #ffffff;
 }
 
 .NotificationCard {
@@ -1445,6 +1434,7 @@ tbody tr {
 .PlayerModal .table-scroll th,
 .PlayerModal .table-scroll td {
   vertical-align: middle;
+  width: 50px;
 }
 .PlayerModal .table-scroll thead th {
   position: -webkit-sticky;
@@ -1474,6 +1464,10 @@ tbody tr {
 .PlayerModal thead th:first-child,
 .PlayerModal tfoot th:first-child {
   z-index: 5;
+}
+
+.PlayerModal th:nth-last-child(1) {
+  min-width: 100px;
 }
 
 .InfoModal__thead {

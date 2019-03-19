@@ -84,7 +84,7 @@ namespace fantasy_hoops.Database
 					else
 					{
 						oppId = hTeam;
-						score = (int)boxscore["basicGameData"]["hTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["vTeam"]["score"] + ";@";
+						score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";@";
 					}
 					if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
 						continue;
