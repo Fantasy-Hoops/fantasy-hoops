@@ -23,12 +23,20 @@ export default class Gamelog extends Component {
     if (this.props.loader) { return ''; }
 
     const rows = this.state.games.sort(this.compare).map((s) => {
-      const abbreviation = s.opponent ? s.opponent.abbreviation : '';
-      let score = '';
+      const abbreviation = s.opponent ? s.opponent.abbreviation : '?';
+      let resultLetter = '';
       if (!s.score) { return <div />; }
       const scoreTokens = s.score.split(';');
-      const str = scoreTokens[0].split('-');
-      if (parseInt(str[0], 10) > parseInt(str[1], 10)) { score = <span className="text-success">W</span>; } else score = <span className="text-danger">L</span>;
+      const teamPoints = scoreTokens[0].split('-');
+      if (scoreTokens[1] === 'vs') {
+        resultLetter = parseInt(teamPoints[1], 10) > parseInt(teamPoints[0], 10)
+          ? <span className="text-success">W</span>
+          : <span className="text-danger">L</span>;
+      } else {
+        resultLetter = parseInt(teamPoints[0], 10) > parseInt(teamPoints[1], 10)
+          ? <span className="text-success">W</span>
+          : <span className="text-danger">L</span>;
+      }
       return (
         <tr key={shortid()}>
           <th>
@@ -36,7 +44,7 @@ export default class Gamelog extends Component {
             <br />
             <span style={{ fontWeight: 900 }}>{scoreTokens[1] || 'vs'}</span>
             {' '}
-            {abbreviation || '?'}
+            {abbreviation}
           </th>
           <td>{s.min}</td>
           <td>{s.pts}</td>
@@ -69,7 +77,7 @@ export default class Gamelog extends Component {
           <td>{s.gs.toFixed(1)}</td>
           <td>{s.fp.toFixed(1)}</td>
           <td>
-            {score}
+            {resultLetter}
             {' '}
             {scoreTokens[0]}
           </td>
@@ -119,8 +127,8 @@ export default class Gamelog extends Component {
                 <th>BLK</th>
                 <th>PF</th>
                 <th>TO</th>
-                <th>OREB</th>
-                <th>DREB</th>
+                <th>ORB</th>
+                <th>DRB</th>
                 <th>FG</th>
                 <th>FG%</th>
                 <th>FT</th>
