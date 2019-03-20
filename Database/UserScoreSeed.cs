@@ -112,7 +112,7 @@ namespace fantasy_hoops.Database
                     .Where(x => x.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME)
                             && x.UserID.Equals(user.Id))
                     .Select(x => x.FP)
-                    .FirstOrDefault());
+                    .FirstOrDefault(), 1);
 
                 _usersPlayed.Push(new GameScorePushNotificationModel
                 {
