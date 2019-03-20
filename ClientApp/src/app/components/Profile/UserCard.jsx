@@ -12,7 +12,7 @@ export class UserCard extends Component {
   render() {
     const { user } = this.props;
     return (
-      <a href={`/profile/${user.userName}`} className="friend-card m-3" style={{ backgroundColor: `${user.color}`, width: '8rem' }}>
+      <a href={`/profile/${user.userName}`} className="UserCard" style={{ backgroundColor: `${user.color}` }}>
         <canvas className="header-bg" />
         <div className="avatar">
           <Img
@@ -22,8 +22,8 @@ export class UserCard extends Component {
             decode={false}
           />
         </div>
-        <div className="content badge badge-dark" style={{ marginTop: '1rem', marginBottom: '0.5rem', fontSize: '1rem' }}>
-          <span>{user.userName}</span>
+        <div className="UserCard__UserName content badge badge-dark">
+          <span className="UserCard__UserName--text">{user.userName}</span>
         </div>
       </a>
     );

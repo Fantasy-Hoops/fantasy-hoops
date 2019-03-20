@@ -38,21 +38,21 @@ export class Stats extends Component {
           />
         </div>
         <div className="col">
-          <h1 className="overflow-hidden">{stats.fullName}</h1>
-          <h5>{stats.position} | {stats.team.city + " " + stats.team.name}</h5>
-          <h5>#{stats.number}</h5>
+          <h1 className="PlayerModal__PlayerName overflow-hidden">{stats.fullName}</h1>
+          <h4>{stats.position} | {stats.team.city + " " + stats.team.name}</h4>
+          <h4>#{stats.number}</h4>
         </div>
         <div className="table-responsive">
           <table className="table text-right" style={{ maxWidth: '60%' }}>
             <thead>
               <tr>
-                <th scope="col" style={{ position: 'relative', backgroundColor: 'white', width: '5rem' }}><h6>FPPG</h6><h3>{stats.fppg.toFixed(1)}</h3></th>
-                <th scope="col" style={{ width: '5rem' }}><h6>PTS</h6><h3>{stats.pts}</h3></th>
-                <th scope="col" style={{ width: '5rem' }}><h6>REB</h6><h3>{stats.reb}</h3></th>
-                <th scope="col" style={{ width: '5rem' }}><h6>AST</h6><h3>{stats.ast}</h3></th>
-                <th scope="col" style={{ width: '5rem' }}><h6>STL</h6><h3>{stats.stl}</h3></th>
-                <th scope="col" style={{ width: '5rem' }}><h6>BLK</h6><h3>{stats.blk}</h3></th>
-                <th scope="col" style={{ width: '5rem' }}><h6>TOV</h6><h3>{stats.tov}</h3></th>
+                <th scope="col" style={{ position: 'relative', backgroundColor: 'white', width: '5rem' }}><h4>FPPG</h4><h1>{stats.fppg.toFixed(1)}</h1></th>
+                <th scope="col" style={{ width: '5rem' }}><h4>PTS</h4><h1>{stats.pts}</h1></th>
+                <th scope="col" style={{ width: '5rem' }}><h4>REB</h4><h1>{stats.reb}</h1></th>
+                <th scope="col" style={{ width: '5rem' }}><h4>AST</h4><h1>{stats.ast}</h1></th>
+                <th scope="col" style={{ width: '5rem' }}><h4>STL</h4><h1>{stats.stl}</h1></th>
+                <th scope="col" style={{ width: '5rem' }}><h4>BLK</h4><h1>{stats.blk}</h1></th>
+                <th scope="col" style={{ width: '5rem' }}><h4>TOV</h4><h1>{stats.tov}</h1></th>
               </tr>
             </thead>
           </table>

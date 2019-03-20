@@ -73,8 +73,8 @@ export default class Card extends PureComponent {
             </Link>
             <div title="Fantasy Points" className="UserLeaderboardCard__body-item UserLeaderboardCard__FP UserLeaderboardCard__FP--daily">
               {`${this.props.user.fp.toFixed(1)} `}
-              <span style={{ fontSize: '0.7rem', fontWeight: 400 }}>FP</span>
-              <div className="UserScoreCard__date" style={{ fontSize: '0.7rem' }}>{this.props.user.shortDate}</div>
+              <span style={{ fontSize: '1rem', fontWeight: 400 }}>FP</span>
+              <div className="UserScoreCard__date" style={{ fontSize: '1rem' }}>{this.props.user.shortDate}</div>
             </div>
             {this.getPlayers()}
           </div>
@@ -101,7 +101,7 @@ export default class Card extends PureComponent {
           <Link to={`/profile/${this.props.user.userName}`} className="UserLeaderboardCard__body-item UserLeaderboardCard__username">{this.props.user.userName}</Link>
           <div className="UserLeaderboardCard__body-item UserLeaderboardCard__FP UserLeaderboardCard__FP--grey">
             {`${this.props.user.fp.toFixed(1)} `}
-            <span style={{ fontSize: '0.7rem', fontWeight: 400 }}>FP</span>
+            <span style={{ fontSize: '1rem', fontWeight: 400 }}>FP</span>
           </div>
         </div>
       </div>

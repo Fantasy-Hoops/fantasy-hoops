@@ -75,7 +75,7 @@ export class Charts extends Component {
           defaultValue="Choose a category"
           onChange={this.handleChange}
         />
-        <div className='mt-3 mx-auto' style={{ maxWidth: '50rem', width: '100%' }} >
+        <div className='Charts mt-3 mx-auto'>
           {
             this.state.criteria === 'ovr'
               ? <div style={{ overflow: 'auto' }}><Radar data={this.getRadarData()} options={this.getRadarOptions()} /></div>

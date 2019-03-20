@@ -131,7 +131,7 @@ export class Leaderboard extends PureComponent {
             alt="Leaderboard Logo"
             width="60rem"
           />
-          <h3>Top 10 Season Performances</h3>
+          <h1>Top 10 Season Performances</h1>
         </div>
         <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
           <li className="nav-item">

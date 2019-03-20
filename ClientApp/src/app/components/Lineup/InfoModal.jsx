@@ -5,9 +5,9 @@ export default () => (
     <div className="modal-dialog" role="document">
       <div className="modal-content">
         <div className="modal-header">
-          <h3 className="modal-title" id="infoModalLabel">Scoring Info</h3>
+          <h1 className="modal-title" id="infoModalLabel">Scoring Info</h1>
           <a className="close" data-dismiss="modal" aria-label="Close">
-            <i style={{ fontSize: '1.5rem' }} width="50rem" className="fas fa-times" />
+            <i style={{ fontSize: '2.5rem' }} width="50rem" className="fas fa-times" />
           </a>
         </div>
         <div className="InfoModal modal-body">

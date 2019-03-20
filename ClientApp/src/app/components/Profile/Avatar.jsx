@@ -30,11 +30,11 @@ export class Avatar extends Component {
     return (
       <div>
         <div className="row mx-auto">
-          <h3 className="mt-3 mx-auto">{user.userName}</h3>
+          <div className="Profile__UserName mx-auto">{user.userName}</div>
         </div>
         <Img
           alt={user.userName}
-          className="mx-auto img-fluid img-circle d-block round-img"
+          className="Profile__Avatar mx-auto img-fluid img-circle d-block"
           style={{ maxWidth: '12rem' }}
           src={this.state.avatar}
           loader={<img src={require(`../../../content/images/imageLoader.gif`)} alt="Loader" />}

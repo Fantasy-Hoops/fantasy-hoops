@@ -22,17 +22,17 @@ export class NewsCard extends Component {
       }
     );
     return (
-      <div className="mb-5 mx-auto news-card card">
+      <div className="NewsCard mb-5 mx-auto news-card card">
         <div className="card-header bg-primary text-white">
-          <h5 className="card-title" style={{ marginBottom: '0' }}>
+          <h3 className="card-title">
             {this.props.news.title}
-          </h5>
+          </h3>
         </div>
         <span>
           <div className='position-absolute'>
             <Img
+              className="NewsCard__TeamLogo"
               alt={this.props.news.hTeam}
-              width="50px"
               src={[
                 `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.news.vTeam}.svg`,
                 defaultLogo
@@ -41,11 +41,11 @@ export class NewsCard extends Component {
             />
           </div>
         </span>
-        <span style={{ paddingLeft: '5rem' }}>
+        <span style={{ paddingLeft: '7rem' }}>
           <div className='position-absolute' >
             <Img
+              className="NewsCard__TeamLogo"
               alt={this.props.news.vTeam}
-              width="50px"
               src={[
                 `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.news.hTeam}.svg`,
                 defaultLogo
@@ -54,8 +54,8 @@ export class NewsCard extends Component {
             />
           </div>
         </span>
-        <div className="card-header text-muted" style={{ height: '3rem', paddingLeft: '3.5rem' }}>
-          VS.
+        <div className="NewsCard__Info card-header text-muted">
+          vs
           <span style={{ float: 'right' }}>
             {this.props.news.date}
           </span>

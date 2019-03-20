@@ -67,7 +67,7 @@ export class UserPool extends Component {
         <div className="search m-3 mb-4">
           <span className="fa fa-search" />
           <DebounceInput
-            className="form-control"
+            className="UserPool__Search form-control"
             type="search"
             name="search"
             placeholder="Search..."
