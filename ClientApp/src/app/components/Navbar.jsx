@@ -14,7 +14,7 @@ export default class Navbar extends Component {
     super(props);
 
     this.state = {
-      navHeight: '4.2rem'
+      navHeight: '3.6rem'
     };
   }
 
@@ -65,14 +65,14 @@ export default class Navbar extends Component {
             <ul className="dropdown-menu dropdown-menu-right">
               <h6 className="dropdown-header">Account</h6>
               <li>
-                <div className="navbar-login" style={{ width: '20rem' }}>
+                <div className="navbar-login">
                   <div className="row">
                     <div className="col-lg-4">
                       <p className="text-center">
                         <Link className="btn-no-outline" to="/profile">
                           <Img
-                            width="100rem"
-                            height="100rem"
+                            width="90rem"
+                            height="90rem"
                             alt={user.username}
                             src={avatar}
                           />
@@ -80,10 +80,12 @@ export default class Navbar extends Component {
                       </p>
                     </div>
                     <div className="col-lg-8">
-                      <a className="btn-no-outline text-dark" href="/profile"><h4 className="text-left"><strong>{user.username}</strong></h4></a>
+                      <a className="Navbar__user-dropdown--username btn-no-outline text-dark" href="/profile">
+                        <p className="text-left">{user.username}</p>
+                      </a>
                       <p className="text-left small">{user.email}</p>
                       <p className="text-left">
-                        <a role="button" href={`/profile/${user.username}/edit`} className="btn btn-outline-primary btn-block btn-sm">Edit profile</a>
+                        <a role="button" href={`/profile/${user.username}/edit`} className="btn btn-outline-primary btn-block">Edit profile</a>
                       </p>
                     </div>
                   </div>
@@ -91,7 +93,7 @@ export default class Navbar extends Component {
               </li>
               <li className="divider" />
               <li>
-                <div className="navbar-login navbar-login-session w-100">
+                <div className="navbar-login navbar-login-session">
                   <div className="row">
                     <div className="col-lg-12">
                       <p>
@@ -110,9 +112,9 @@ export default class Navbar extends Component {
     return (
       <div style={{ paddingTop: navHeight }}>
         <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
-          <Link className="navbar-brand btn-no-outline Header__Logo" to="/">
-            <img className="Header__Icon" src={require('../../content/images/logo.png')} width="35" height="35" alt="FH" />
-            <img className="Header__Title ml-2 mt-2" src={require('../../content/images/title.png')} height="30" alt="Fantasy Hoops" />
+          <Link className="navbar-brand btn-no-outline Navbar__Logo" to="/">
+            <img className="Navbar__Icon" src={require('../../content/images/logo.png')} width="35" height="35" alt="FH" />
+            <img className="Navbar__Title ml-2 mt-2" src={require('../../content/images/title.png')} height="30" alt="Fantasy Hoops" />
           </Link>
           <button
             className="navbar-toggler Header__Burger"

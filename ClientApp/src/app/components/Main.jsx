@@ -83,7 +83,6 @@ export default class Main extends Component {
             to="/lineup"
             className="btn btn-primary mt-4"
             role="button"
-            style={{ fontSize: '80%' }}
           >
             Play Now!
           </Link>

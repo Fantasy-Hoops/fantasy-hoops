@@ -250,19 +250,19 @@ export default class Leaderboard extends PureComponent {
             alt="Leaderboard Logo"
             width="60rem"
           />
-          <h3>Top Users</h3>
+          <h1>Top Users</h1>
         </div>
         <div className="row justify-content-center">
           <div className="col-xs">
             <div style={{ transform: 'scale(0.7, 0.7)' }}>
-              <label className="switch">
+              <label className="UserLeaderboard__FriendsOnly">
                 <input type="checkbox" checked={friendsOnly} onChange={this.toggleFriendsOnly} />
-                <span className="slider round" />
+                <span className="UserLeaderboard__FriendsOnly--slider round" />
               </label>
             </div>
           </div>
           <div className="col-xs pt-2">
-            <h6>Friends only</h6>
+            <div>Friends only</div>
           </div>
         </div>
         <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">

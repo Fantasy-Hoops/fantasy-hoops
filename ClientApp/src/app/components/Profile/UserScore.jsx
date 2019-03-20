@@ -28,7 +28,7 @@ export class UserScore extends PureComponent {
           <div className="UserScoreCard__body-item UserScoreCard__result">
             <div className="UserScoreCard__FP">
               {`${this.props.activity.fp.toFixed(1)} `}
-              <span style={{ fontSize: '0.7rem', fontWeight: 400, marginBottom: '0rem' }}>FP</span>
+              <span style={{ fontSize: '1rem', fontWeight: 400, marginBottom: '0rem' }}>FP</span>
             </div>
             <div className="UserScoreCard__date">{this.props.activity.shortDate}</div>
           </div>

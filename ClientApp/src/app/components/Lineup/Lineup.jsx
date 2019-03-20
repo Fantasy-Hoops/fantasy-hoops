@@ -176,7 +176,7 @@ export class Lineup extends Component {
       seconds = this.getFormattedDateString(seconds, 'second');
 
       return (
-        <span className="Lineup__countdown">
+        <span>
           Game starts in
 {" "}
           <strong>
@@ -220,7 +220,7 @@ export class Lineup extends Component {
           text={this.state.alertText}
         />
         <div className="Lineup--sticky">
-          <div className="text-center">
+          <div className="Lineup__countdown text-center">
             <Countdown
               date={this.getDate()}
               zeroPadTime={3}
