@@ -125,6 +125,17 @@ namespace fantasy_hoops.Repositories
                     || IsPlayerPriceIncorrect(model.CID, model.CPrice));
         }
 
+        public bool AreNotPlayingPlayers(SubmitLineupViewModel model)
+        {
+            return _context.Players
+                .Where(player => player.PlayerID == model.PgID
+                              || player.PlayerID == model.SgID
+                              || player.PlayerID == model.SfID
+                              || player.PlayerID == model.PfID
+                              || player.PlayerID == model.CID)
+                .Any(player => !player.IsPlaying);
+        }
+
         public bool IsUpdating(String userID)
         {
             // REMOVE AFTER FULL LINEUPS CHANGE
