@@ -18,7 +18,7 @@ namespace fantasy_hoops.Database
 {
 	public class InjuriesSeed
 	{
-		const int DAYS_TO_SAVE = 5;
+		const int DAYS_TO_SAVE = 2;
 		static DateTime dayFrom = DateTime.UtcNow.AddDays(-DAYS_TO_SAVE);
 		private static Stack<InjuryPushNotificationViewModel> lineupsAffected = new Stack<InjuryPushNotificationViewModel>();
 
@@ -57,7 +57,7 @@ namespace fantasy_hoops.Database
 			JArray injuries = GetInjuries();
 			foreach (JObject injury in injuries)
 			{
-				DateTime dateUTC = CommonFunctions.EasternToUTC(DateTime.Parse(injury["ModifiedDate"].ToString()));
+				DateTime dateUTC = CommonFunctions.EasternToUTC(DateTime.Parse(injury["ModifiedDate"].ToString())).AddHours(-1);
 				try
 				{
 					if (dayFrom.CompareTo(dateUTC) > 0)
