@@ -6,6 +6,7 @@
     "animate.css": "^3.7.0",
     "bootstrap": "^3.3.7",
     "chart.js": "^2.7.3",
+    "connected-react-router": "^6.3.2",
     "date-fns": "^2.0.0-alpha.27",
     "jquery": "^3.3.1",
     "jwt-decode": "^2.2.0",
