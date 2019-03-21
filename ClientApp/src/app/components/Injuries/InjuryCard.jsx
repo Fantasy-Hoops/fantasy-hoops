@@ -6,7 +6,7 @@ import { UTCNow } from '../../utils/UTCNow';
 import defaultLogo from '../../../content/images/defaultLogo.png';
 
 const InjuryCard = (props) => {
-  const { injury } = props;
+  const { injury, animated } = props;
   let status = '';
   if (injury.status.toLowerCase().includes('active')) {
     status = 'injury-active';
@@ -29,7 +29,7 @@ const InjuryCard = (props) => {
     />
   );
   return (
-    <div className="InjuryCardContainer inactive">
+    <div className={`InjuryCardContainer inactive ${animated}`}>
       <div className="InjuryCard">
         <div className="side front">
           <div className="InjuryCard__PlayerImage--background" style={{ backgroundColor: injury.player.team.color }}>
@@ -85,7 +85,7 @@ InjuryCard.propTypes = {
   injury: PropTypes.shape({
     status: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
+    description: PropTypes.string,
     date: PropTypes.string.isRequired,
     player: PropTypes.shape({
       nbaID: PropTypes.number.isRequired,
@@ -97,7 +97,12 @@ InjuryCard.propTypes = {
         color: PropTypes.string.isRequired
       }).isRequired
     }).isRequired
-  }).isRequired
+  }).isRequired,
+  animated: PropTypes.string
+};
+
+InjuryCard.defaultProps = {
+  animated: ''
 };
 
 export default InjuryCard;
