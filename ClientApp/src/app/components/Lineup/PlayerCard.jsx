@@ -80,7 +80,7 @@ export class PlayerCard extends Component {
         color = this.props.remaining < this.props.player.price ? 'red' : '';
       }
       return (
-        <div className={`PlayerCard card ${this.props.status === 1 ? 'm-1' : ''}`}>
+        <div className={`PlayerCard card ${this.props.status === 1 ? 'PlayerCard--pool' : ''}`}>
           <div className="PlayerCard__player-attributes">
             {this.props.status === 1 ? <div>
               <p className="PlayerCard__player-attributes--FPPG">{this.props.player.fppg.toFixed(1)}</p>

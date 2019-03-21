@@ -14,7 +14,6 @@ export default class Navbar extends Component {
     super(props);
 
     this.state = {
-      navHeight: '3.6rem'
     };
   }
 
@@ -30,7 +29,7 @@ export default class Navbar extends Component {
   }
 
   render() {
-    const { avatar, navHeight } = this.state;
+    const { avatar } = this.state;
     // Login button in case user is not signed in
     const login = (
       <ul className="nav navbar-nav ml-auto Header__Login">
@@ -110,71 +109,73 @@ export default class Navbar extends Component {
     }
 
     return (
-      <div style={{ paddingTop: navHeight }}>
-        <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
-          <Link className="navbar-brand btn-no-outline Navbar__Logo" to="/">
-            <img className="Navbar__Icon" src={require('../../content/images/logo.png')} width="35" height="35" alt="FH" />
-            <img className="Navbar__Title ml-2 mt-2" src={require('../../content/images/title.png')} height="30" alt="Fantasy Hoops" />
-          </Link>
-          <button
-            className="navbar-toggler Header__Burger"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-            tabIndex="-1"
-          >
-            <span className="navbar-toggler-icon" />
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul className="navbar-nav">
-              {isAuth()
-                && (
-                  <li className="nav-item">
-                    <div><Link className="nav-link btn-no-outline" to="/lineup">Lineup</Link></div>
-                  </li>
-                )
-              }
-              {isAuth()
-                && (
-                  <li className="nav-item dropdown">
-                    <a
-                      className="nav-link dropdown-toggle btn-no-outline"
-                      id="navbarDropdownMenuLink"
-                      data-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                    >
-                      Leaderboards
+      <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+        {window.location.pathname !== '/'
+          ? (
+            <Link className="navbar-brand btn-no-outline Navbar__Logo" to="/">
+              <img className="Navbar__Icon" src={require('../../content/images/logo.png')} width="35" height="35" alt="FH" />
+              <img className="Navbar__Title ml-2 mt-2" src={require('../../content/images/title.png')} height="30" alt="Fantasy Hoops" />
+            </Link>
+          )
+          : null}
+        <button
+          className="navbar-toggler Header__Burger"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNavDropdown"
+          aria-controls="navbarNavDropdown"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          tabIndex="-1"
+        >
+          <span className="navbar-toggler-icon" />
+        </button>
+        <div className="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul className="navbar-nav">
+            {isAuth()
+              && (
+                <li className="nav-item">
+                  <div><Link className="nav-link btn-no-outline" to="/lineup">Lineup</Link></div>
+                </li>
+              )
+            }
+            {isAuth()
+              && (
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle btn-no-outline"
+                    id="navbarDropdownMenuLink"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    Leaderboards
                     </a>
-                    <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                      <div><Link className="dropdown-item" to="/leaderboard/users">Top Users</Link></div>
-                      <div><Link className="dropdown-item" to="/leaderboard/players">Top NBA Players</Link></div>
-                      <div><Link className="dropdown-item" to="/leaderboard/season">Top Season Performers</Link></div>
-                    </div>
-                  </li>
-                )
-              }
-              <li className="nav-item">
-                <div><Link className="nav-link btn-no-outline" to="/injuries">Injuries</Link></div>
-              </li>
-              <li className="nav-item">
-                <div><Link className="nav-link btn-no-outline" to="/news">News</Link></div>
-              </li>
-              {isAuth()
-                && (
-                  <li className="nav-item">
-                    <div><Link className="nav-link btn-no-outline" to="/users">Users</Link></div>
-                  </li>
-                )
-              }
-            </ul>
-          </div>
-          {isAuth() ? profile : login}
-        </nav>
-      </div>
+                  <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <div><Link className="dropdown-item" to="/leaderboard/users">Top Users</Link></div>
+                    <div><Link className="dropdown-item" to="/leaderboard/players">Top NBA Players</Link></div>
+                    <div><Link className="dropdown-item" to="/leaderboard/season">Top Season Performers</Link></div>
+                  </div>
+                </li>
+              )
+            }
+            <li className="nav-item">
+              <div><Link className="nav-link btn-no-outline" to="/injuries">Injuries</Link></div>
+            </li>
+            <li className="nav-item">
+              <div><Link className="nav-link btn-no-outline" to="/news">News</Link></div>
+            </li>
+            {isAuth()
+              && (
+                <li className="nav-item">
+                  <div><Link className="nav-link btn-no-outline" to="/users">Users</Link></div>
+                </li>
+              )
+            }
+          </ul>
+        </div>
+        {isAuth() ? profile : login}
+      </nav>
     );
   }
 }

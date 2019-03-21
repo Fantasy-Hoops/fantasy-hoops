@@ -35,6 +35,7 @@ export default class Main extends Component {
     if (document.querySelector('.A2HS-Button')) {
       window.addEventListener('beforeinstallprompt', (e) => {
         const addBtn = document.querySelector('.A2HS-Button');
+        if (!addBtn) { return; }
         addBtn.style.display = 'none';
         // Prevent Chrome 67 and earlier from automatically showing the prompt
         e.preventDefault();
@@ -72,16 +73,16 @@ export default class Main extends Component {
       : require('../../content/images/backgrounds/nba.png');
     return (
       <div>
-        <button type="button" className="btn btn-success A2HS-Button">
+        <button type="button" className="btn btn-danger A2HS-Button">
           Add to home screen
         </button>
-        <h1 id="main-text" className="text-center title">
+        {/* <h1 id="main-text" className="text-center title">
           Fantasy Hoops
-        </h1>
-        <div className="text-center">
+        </h1> */}
+        <div className="Main__PlayNowButton text-center">
           <Link
             to="/lineup"
-            className="btn btn-primary mt-4"
+            className="btn btn-danger"
             role="button"
           >
             Play Now!
@@ -90,7 +91,7 @@ export default class Main extends Component {
         <div
           className="background-image"
           style={{
-            backgroundImage: `url(${image})`,
+            backgroundImage: `url(${require('../../content/images/FH.png')})`,
             backgroundPosition: 'top'
           }}
         />
