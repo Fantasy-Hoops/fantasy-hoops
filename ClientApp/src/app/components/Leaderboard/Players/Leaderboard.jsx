@@ -9,7 +9,7 @@ import { Loader } from '../../Loader';
 import { EmptyJordan } from '../../EmptyJordan';
 
 const { $ } = window;
-const LOAD_COUNT = 10;
+const LOAD_COUNT = 30;
 
 export class Leaderboard extends Component {
   constructor(props) {
@@ -79,7 +79,6 @@ export class Leaderboard extends Component {
 
   async switchTab(e) {
     const type = e.target.id.split(/-/)[0];
-
     if (this.state.activeTab === type) { return; }
 
     this.setState({ activeTab: type });
@@ -133,9 +132,9 @@ export class Leaderboard extends Component {
             alt="Leaderboard Logo"
             width="60rem"
           />
-          <h3>Top NBA Players</h3>
+          <h1>Top NBA Players</h1>
         </div>
-        <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist" style={{ width: '40%' }}>
+        <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
           <li className="nav-item">
             <Link className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" to="#daily" role="tab" onClick={this.switchTab}>Daily</Link>
           </li>
@@ -147,7 +146,7 @@ export class Leaderboard extends Component {
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
-          <div className="pt-4 pb-1 tab-pane fade show active animated slideInUp fast" id="daily" role="tabpanel">
+          <div className="pt-4 pb-1 tab-pane show active animated bounceInUp" id="daily" role="tabpanel">
             {!this.state.loader
               ? daily.length > 0
                 ? daily
@@ -157,7 +156,7 @@ export class Leaderboard extends Component {
               {seeMoreBtn}
             </div>
           </div>
-          <div className="pt-4 pb-1 tab-pane fade animated slideInUp fast" id="weekly" role="tabpanel">
+          <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="weekly" role="tabpanel">
             {!this.state.loader
               ? weekly.length > 0
                 ? weekly
@@ -167,7 +166,7 @@ export class Leaderboard extends Component {
               {seeMoreBtn}
             </div>
           </div>
-          <div className="pt-4 pb-1 tab-pane fade animated slideInUp fast" id="monthly" role="tabpanel">
+          <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="monthly" role="tabpanel">
             {!this.state.loader
               ? monthly.length > 0
                 ? monthly

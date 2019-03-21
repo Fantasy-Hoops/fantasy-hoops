@@ -18,22 +18,22 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet("player")]
-        public IEnumerable<Object> GetPlayerLeaderboard(int from = 0, int limit = 10, string type = "weekly")
+        public IEnumerable<Object> GetPlayerLeaderboard(int from = 0, int limit = 30, string type = "weekly")
         {
             return _repository.GetPlayerLeaderboard(from, limit, type).ToList();
         }
 
 
         [HttpGet("user")]
-        public IEnumerable<Object> GetUserLeaderboard(int from = 0, int limit = 10, string type = "weekly")
+        public IEnumerable<Object> GetUserLeaderboard(int from = 0, int limit = 10, string type = "weekly", string date = "")
         {
-            return _repository.GetUserLeaderboard(from, limit, type).ToList();
+            return _repository.GetUserLeaderboard(from, limit, type, date).ToList();
         }
 
         [HttpGet("user/{id}")]
-        public IEnumerable<Object> GetFriendsLeaderboard(string id, int from = 0, int limit = 10, string type = "weekly")
+        public IEnumerable<Object> GetFriendsLeaderboard(string id, int from = 0, int limit = 10, string type = "weekly", string date = "")
         {
-            return _repository.GetFriendsLeaderboard(id, from, limit, type).ToList();
+            return _repository.GetFriendsLeaderboard(id, from, limit, type, date).ToList();
         }
 
         [HttpGet("season/lineups")]

@@ -45,7 +45,7 @@ namespace fantasy_hoops.Repositories
                         x.Team.Name,
                         x.Team.Color
                     },
-                    Games = _context.Stats.Where(s => s.PlayerID == x.PlayerID)
+                    Games = x.Stats.Where(s => s.PlayerID == x.PlayerID)
                         .Select(s => new
                         {
                             s.StatsID,
@@ -61,13 +61,13 @@ namespace fantasy_hoops.Repositories
                             s.MIN,
                             s.FGM,
                             s.FGA,
-                            s.FGP,
+                            FGP = String.Format("{0:#.000}", (s.FGP / 100)),
                             s.TPM,
                             s.TPA,
-                            s.TPP,
+                            TPP = String.Format("{0:#.000}", (s.TPP / 100)),
                             s.FTM,
                             s.FTA,
-                            s.FTP,
+                            FTP = String.Format("{0:#.000}", (s.FTP / 100)),
                             s.DREB,
                             s.OREB,
                             s.TREB,
@@ -77,8 +77,8 @@ namespace fantasy_hoops.Repositories
                             s.FLS,
                             s.TOV,
                             s.PTS,
-                            s.GS,
-                            s.FP,
+                            GS = Math.Round(s.GS, 1),
+                            FP = Math.Round(s.FP, 1),
                             s.Price
                         })
                         .OrderByDescending(s => s.Date)
@@ -87,17 +87,12 @@ namespace fantasy_hoops.Repositories
 
         public IQueryable<object> GetStats(int id, int start, int count)
         {
-            double maxPoints = 0, maxAssists = 0, maxTurnovers = 0,
-            maxRebounds = 0, maxBlocks = 0, maxSteals = 0;
-            foreach (Player p in _context.Players)
-            {
-                maxPoints = Math.Max(maxPoints, p.PTS);
-                maxAssists = Math.Max(maxAssists, p.AST);
-                maxTurnovers = Math.Max(maxTurnovers, p.TOV);
-                maxRebounds = Math.Max(maxRebounds, p.REB);
-                maxBlocks = Math.Max(maxBlocks, p.BLK);
-                maxSteals = Math.Max(maxSteals, p.STL);
-            }
+            double maxPoints = _context.Players.Max(player => player.PTS),
+                   maxAssists = _context.Players.Max(player => player.AST),
+                   maxTurnovers = _context.Players.Max(player => player.TOV),
+                   maxRebounds = _context.Players.Max(player => player.REB),
+                   maxBlocks = _context.Players.Max(player => player.BLK),
+                   maxSteals = _context.Players.Max(player => player.STL);
 
             return _context.Players
                 .Where(x => x.NbaID == id)
@@ -137,7 +132,7 @@ namespace fantasy_hoops.Repositories
                         x.Team.Name,
                         x.Team.Color
                     },
-                    Games = _context.Stats.Where(s => s.PlayerID == x.PlayerID)
+                    Games = x.Stats
                     .OrderByDescending(s => s.Date)
                     .Skip(start)
                     .Take(count)
@@ -156,13 +151,13 @@ namespace fantasy_hoops.Repositories
                         s.MIN,
                         s.FGM,
                         s.FGA,
-                        s.FGP,
+                        FGP = String.Format("{0:#.000}", (s.FGP / 100)),
                         s.TPM,
                         s.TPA,
-                        s.TPP,
+                        TPP = String.Format("{0:#.000}", (s.TPP / 100)),
                         s.FTM,
                         s.FTA,
-                        s.FTP,
+                        FTP = String.Format("{0:#.000}", (s.FTP / 100)),
                         s.DREB,
                         s.OREB,
                         s.TREB,
@@ -172,8 +167,8 @@ namespace fantasy_hoops.Repositories
                         s.FLS,
                         s.TOV,
                         s.PTS,
-                        s.GS,
-                        s.FP,
+                        GS = Math.Round(s.GS, 1),
+                        FP = Math.Round(s.FP, 1),
                         s.Price
                     })
                 });

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Loader } from '../Loader';
 import { Stats } from './Stats';
-import { Gamelog } from './Gamelog';
+import Gamelog from './Gamelog';
 import { Charts } from './Charts';
 
 export class PlayerModal extends Component {
@@ -57,14 +57,12 @@ export class PlayerModal extends Component {
   render() {
     return (
       <div className="modal fade" id="playerModal" tabIndex="-1" role="dialog" aria-labelledby="playerModalLabel" aria-hidden="true">
-        <div className="modal-dialog modal-lg mx-auto" role="document">
+        <div className="PlayerModal modal-dialog modal-lg mx-auto" role="document">
           <div className="modal-content">
             <div className="modal-body">
-              <div className="text-right mr-2">
-                <a className="close" data-dismiss="modal" aria-label="Close" style={{ right: '0' }}>
-                  <span aria-hidden="true">&times;</span>
-                </a>
-              </div>
+              <a className="close" data-dismiss="modal" aria-label="Close">
+                <i style={{ fontSize: '2.5rem' }} width='50rem' className="fas fa-times" />
+              </a>
               {this.getContent()}
             </div>
           </div>

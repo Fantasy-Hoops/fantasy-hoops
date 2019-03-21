@@ -69,7 +69,7 @@ export class InfoPanel extends Component {
       if (this.props.readOnly)
         return '';
       else return (
-        <div className="pt-3">
+        <div className="pl-4 pt-3">
           <Link className="btn btn-outline-primary" to="/history" role="button">History</Link>
         </div>
       );
@@ -86,25 +86,25 @@ export class InfoPanel extends Component {
             </div>
             {user.description &&
               <div>
-                <h5>About</h5>
-                <p className='about-me'>
+                <h2>About</h2>
+                <p className='Profile__About'>
                   {user.description}
                 </p>
               </div>
             }
           </div>
           <div className="col-md-12">
-            <h5>Favorite team</h5>
+            <h2>Favorite team</h2>
             <div className="team-badge">
-              <h2><span className="badge badge-dark badge-pill"
+              <h1><span className="badge badge-dark badge-pill"
                 style={{ backgroundColor: user !== '' ? user.team.color : '' }}
               >
                 {user !== '' ? user.team.name : ''}
-              </span></h2>
+              </span></h1>
             </div>
           </div>
           <div className="col-md-12">
-            <h5 className="mt-2"><span className="fa fa-clock-o ion-clock"></span> Recent Activity</h5>
+            <h2 className="mt-2"><span className="fa fa-clock-o ion-clock"></span> Recent Activity</h2>
             {recentActivity()}
           </div>
         </div>

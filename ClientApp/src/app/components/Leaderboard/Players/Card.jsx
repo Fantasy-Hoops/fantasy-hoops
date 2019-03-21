@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Img from 'react-image';
 const $ = window.$;
 
-export class Card extends Component {
+export class Card extends PureComponent {
   constructor(props) {
     super(props);
     this.showModal = this.showModal.bind(this);
@@ -56,8 +56,8 @@ export class Card extends Component {
               className="PlayerLeaderboardCard__body-item PlayerLeaderboardCard__FP"
               style={{ paddingTop: `${this.props.season ? '9%' : '18%'}` }}
             >
-              {`${this.props.player.fp.toFixed(1)} `}<span style={{ fontSize: '0.7rem', fontWeight: 400 }}>FP</span>
-              {this.props.season ? <div className="UserScoreCard__date" style={{ fontSize: '0.7rem' }}>{this.props.player.shortDate}</div> : ''}
+              {`${this.props.player.fp.toFixed(1)} `}<span style={{ fontSize: '1rem', fontWeight: 400 }}>FP</span>
+              {this.props.season ? <div className="UserScoreCard__date" style={{ fontSize: '1rem' }}>{this.props.player.shortDate}</div> : ''}
             </div>
           </div>
         </a>

@@ -47,7 +47,8 @@ export class PlayerCard extends Component {
 
       let injuryStatus = '';
       if (this.props.player.injuryStatus.toLowerCase().includes('out')
-        || this.props.player.injuryStatus.toLowerCase().includes('injured')) { injuryStatus = 'injury-out'; }
+        || this.props.player.injuryStatus.toLowerCase().includes('injured')
+        || this.props.player.injuryStatus.toLowerCase().includes('suspended')) { injuryStatus = 'injury-out'; }
       else { injuryStatus = 'injury-questionable'; }
 
       let injuryBadge = '';
@@ -79,15 +80,14 @@ export class PlayerCard extends Component {
         color = this.props.remaining < this.props.player.price ? 'red' : '';
       }
       return (
-        <div className={`PlayerCard card ${this.props.status === 1 ? 'm-1' : ''}`}>
+        <div className={`PlayerCard card ${this.props.status === 1 ? 'PlayerCard--pool' : ''}`}>
           <div className="PlayerCard__player-attributes">
             {this.props.status === 1 ? <div>
               <p className="PlayerCard__player-attributes--FPPG">{this.props.player.fppg.toFixed(1)}</p>
               <p className="PlayerCard__player-attributes--FPPG-label">FPPG</p>
             </div> : ''}
             {this.props.status === 1 ? <div className="PlayerCard__player-attributes--opponent">
-              <span style={{ fontSize: "0.65rem" }}>vs. </span>
-              {this.props.player.team.opp.abbreviation}
+              {this.props.player.team.opp}
             </div> : ''}
             {this.props.status === 2 ? <div className="PlayerCard__player-attributes--position">{this.props.player.position}</div> : ''}
             <div

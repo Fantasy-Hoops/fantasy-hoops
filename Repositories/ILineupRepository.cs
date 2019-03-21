@@ -7,9 +7,9 @@ namespace fantasy_hoops.Repositories
     interface ILineupRepository
     {
 
-        IQueryable<Object> GetLineup(String id);
-        void AddPlayer(String userID, String position, int playerID);
-        void UpdatePlayer(String userID, String position, int playerID);
+        object GetLineup(String id);
+        void AddLineup(SubmitLineupViewModel model);
+        void UpdateLineup(SubmitLineupViewModel mode);
         int GetLineupPrice(SubmitLineupViewModel model);
         bool ArePricesCorrect(SubmitLineupViewModel model);
         bool IsUpdating(String userID);

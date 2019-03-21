@@ -143,31 +143,40 @@ namespace fantasy_hoops.Repositories
 
         private IQueryable<Object> GetRecentActivity(string id, int start, int count)
         {
-            var recentActivity = _context.Lineups
-                .Where(lineup => lineup.Calculated && lineup.UserID.Equals(id))
-                .GroupBy(lineup => new { lineup.UserID, lineup.Date })
-                .Select(result => new
-                {
-                    result.First().Date,
-                    longDate = result.First().Date.ToString("yyyy-MM-dd"),
-                    shortDate = result.First().Date.ToString("MMM. dd"),
-                    score = Math.Round(result.Sum(c => c.FP), 1),
-                    lineup = result.Select(lineup => new
-                    {
-                        lineup.Player.NbaID,
-                        lineup.Player.Position,
-                        teamColor = lineup.Player.Team.Color,
-                        lineup.Player.FullName,
-                        lineup.Player.FirstName,
-                        lineup.Player.LastName,
-                        lineup.Player.AbbrName,
-                        lineup.FP
-                    }).OrderBy(player => Array.IndexOf(CommonFunctions.PlayersOrder, player.Position))
-                })
+            return _context.UserLineups
+                .Where(lineup => lineup.IsCalculated && lineup.UserID.Equals(id))
                 .OrderByDescending(lineup => lineup.Date)
                 .Skip(start)
-                .Take(count);
-            return recentActivity;
+                .Take(count)
+                .Select(lineup => new
+                {
+                    lineup.UserID,
+                    lineup.User.UserName,
+                    longDate = lineup.Date.ToString("yyyy-MM-dd"),
+                    shortDate = lineup.Date.ToString("MMM. dd"),
+                    lineup.Date,
+                    lineup.FP,
+                    lineup = _context.Players
+                        .Where(player =>
+                            player.PlayerID == lineup.PgID
+                            || player.PlayerID == lineup.SgID
+                            || player.PlayerID == lineup.SfID
+                            || player.PlayerID == lineup.PfID
+                            || player.PlayerID == lineup.CID)
+                        .Select(player => new
+                        {
+                            player.NbaID,
+                            player.Position,
+                            teamColor = player.Team.Color,
+                            player.FullName,
+                            player.FirstName,
+                            player.LastName,
+                            player.AbbrName,
+                            FP = _context.Stats.Where(stats => stats.Date.Date == lineup.Date.Date
+                                && stats.PlayerID == player.PlayerID)
+                            .Select(stats => stats.FP).FirstOrDefault()
+                        }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
+                });
         }
 
         private int GetStreak(string id)
@@ -177,9 +186,9 @@ namespace fantasy_hoops.Repositories
 
         private decimal GetWeeklyScore(string id)
         {
-            decimal weekly = Convert.ToDecimal(_context.Lineups
-                    .Where(x => x.UserID.Equals(id) && x.Date >= date)
-                    .Select(x => x.FP).Sum());
+            decimal weekly = Convert.ToDecimal(_context.UserLineups
+                    .Where(lineup => lineup.UserID.Equals(id) && lineup.Date >= date)
+                    .Select(lineup => lineup.FP).Sum());
             if ((weekly % 1) == 0)
             {
                 return 0.0m + weekly;
@@ -193,9 +202,9 @@ namespace fantasy_hoops.Repositories
             var ranking = _context.Users.Select(x => new
             {
                 x.Id,
-                Score = _context.Lineups
-                    .Where(y => y.UserID.Equals(x.Id) && y.Date >= date)
-                    .Select(y => y.FP).Sum(),
+                Score = _context.UserLineups
+                    .Where(lineup => lineup.UserID.Equals(x.Id) && lineup.Date >= date)
+                    .Select(lineup => lineup.FP).Sum(),
                 Ranking = 0
             })
             .Where(x => x.Score > 0)

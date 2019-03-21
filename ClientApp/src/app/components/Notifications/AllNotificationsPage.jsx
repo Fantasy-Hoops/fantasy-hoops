@@ -66,6 +66,7 @@ export class AllNotificationsPage extends Component {
               imageSrc={[gameLogo]}
               title="The game has finished!"
               text={text}
+              imageClass="NotificationCard__Image"
               link="/profile"
             />
           );
@@ -83,6 +84,7 @@ export class AllNotificationsPage extends Component {
               title={notification.friend.userName}
               imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
               text={text}
+              imageClass="NotificationCard__Image"
               link={`/profile/${notification.friend.userName}`}
             />
           );
@@ -99,7 +101,7 @@ export class AllNotificationsPage extends Component {
                 `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${notification.player.nbaID}.png`,
                 require(`../../../content/images/positions/${notification.player.position.toLowerCase()}.png`)
               ]}
-              imageClass="InjuryCard__Image"
+              imageClass="NotificationCard__Image NotificationCard__Image--player"
               text={notification.injuryDescription}
               link="/lineup"
             />
@@ -132,12 +134,12 @@ export class AllNotificationsPage extends Component {
       : <button type="button" className="btn btn-primary mt-2" onClick={this.loadMore}>See more</button>;
     return (
       <div className="container bg-light pt-4">
-        <h3 className="text-center">
+        <h1 className="text-center">
           <i className="fa fa-bell" />
           {' '}
           User notifications
-        </h3>
-        <div className="mt-3 mb-3 mx-auto" style={{ width: '60%' }}>
+        </h1>
+        <div className="AllNotifications mt-3 mb-3 mx-auto">
           {notifications}
         </div>
         <div className="text-center">

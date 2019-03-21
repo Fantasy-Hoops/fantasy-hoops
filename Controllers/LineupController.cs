@@ -27,18 +27,20 @@ namespace fantasy_hoops.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(String id)
         {
-            return Ok(_repository.GetLineup(id).ToList());
+            return Ok(_repository.GetLineup(id));
         }
 
         [HttpPost("submit")]
         public IActionResult SubmitLineup([FromBody]SubmitLineupViewModel model)
         {
-            if(_repository.GetLineupPrice(model) > MAX_PRICE)
+            if (_repository.GetLineupPrice(model) > MAX_PRICE)
                 return StatusCode(422, "Lineup price exceeds the budget! Lineup was not submitted.");
             if (!_repository.ArePricesCorrect(model))
                 return StatusCode(422, "Wrong player prices! Lineup was not submitted.");
             if (!PlayerSeed.PLAYER_POOL_DATE.Equals(Database.NextGame.NEXT_GAME))
                 return StatusCode(500, "Player pool not updated! Try again in a moment.");
+            if (_repository.AreNotPlayingPlayers(model))
+                return StatusCode(422, "Player pool is outdated! Refresh the page.");
 
             _service.SubmitLineup(model);
 

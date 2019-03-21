@@ -7,7 +7,7 @@ import { parse } from '../../utils/auth';
 import { handleErrors } from '../../utils/errors';
 import { AlertNotification as Alert } from '../AlertNotification';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
-import { InfoModal } from './InfoModal';
+import InfoModal from './InfoModal';
 import { Loader } from '../Loader';
 import { EmptyJordan } from '../EmptyJordan';
 
@@ -97,7 +97,7 @@ export class Lineup extends Component {
       fetch(`${process.env.REACT_APP_SERVER_NAME}/api/lineup/${user.id}`)
         .then(res => res.json())
         .then((res) => {
-          res.forEach((selectedPlayer) => {
+          res.lineup.forEach((selectedPlayer) => {
             this.state.players.forEach((player) => {
               if (player.id == selectedPlayer.id) {
                 player.selected = true;
@@ -106,7 +106,7 @@ export class Lineup extends Component {
               }
             });
           });
-        });
+        }).catch(() => {});
       this.setState({
         loadedPlayers: true
       });
@@ -176,7 +176,7 @@ export class Lineup extends Component {
       seconds = this.getFormattedDateString(seconds, 'second');
 
       return (
-        <span className="Lineup__countdown">
+        <span>
           Game starts in
 {" "}
           <strong>
@@ -220,7 +220,7 @@ export class Lineup extends Component {
           text={this.state.alertText}
         />
         <div className="Lineup--sticky">
-          <div className="text-center">
+          <div className="Lineup__countdown text-center">
             <Countdown
               date={this.getDate()}
               zeroPadTime={3}

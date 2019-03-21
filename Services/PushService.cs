@@ -152,10 +152,9 @@ namespace fantasy_hoops.Services
                     new PushNotificationViewModel("Fantasy Hoops Reminder",
                         string.Format("Game is starting in less than 2 hours! Don't forget to set up your lineup!"));
             notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🏆 Lineup") };
-            var usersSelectedIDs = _context.Lineups
+            var usersSelectedIDs = _context.UserLineups
                 .Where(lineup => lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME)))
-                .GroupBy(u => u.UserID)
-                .Select(result => result.FirstOrDefault().UserID);
+                .Select(lineup => lineup.UserID);
             foreach (var user in await _context.Users
                 .Where(user => user.Streak > 0 && !usersSelectedIDs.Any(userID => userID.Equals(user.Id)))
                 .ToListAsync())

@@ -79,17 +79,16 @@ export class NotificationCard extends Component {
 
     const { isRead } = this.state;
     return (
-      <Link to={link} role="button" tabIndex={-1} onClick={this.readNotification} onKeyDown={this.readNotification} className={`card cursor-pointer link mx-auto NotificationCard${!isRead ? '--unread' : ''}`}>
+      <Link to={link} role="button" tabIndex={-1} onClick={this.readNotification} onKeyDown={this.readNotification} className={`card cursor-pointer mx-auto NotificationCard${!isRead ? '--unread' : ''}`}>
         <div className="card-body NotificationCard__Body">
-          <div className={`NotificationCard__Image ml-1 mr-1${circleImage ? ' notification-circle' : ''}`} style={bgStyle}>
+          <div className={`ml-1 mr-1${circleImage ? ' notification-circle' : ''}`} style={bgStyle}>
             <Img
               className={imageClass}
-              width={circleImage ? '50px' : '40px'}
               alt={imageAlt}
               src={image}
               loader={(
                 <img
-                  width="40px"
+                  width="4rem"
                   src={require('../../../content/images/imageLoader2.gif')}
                   alt="Loader"
                 />
@@ -98,15 +97,15 @@ export class NotificationCard extends Component {
             />
           </div>
           <div className="ml-2">
-            <h5 className="card-title NotificationCard__Title">
+            <div className="card-title NotificationCard__Title">
               {title}
-            </h5>
-            <p className="card-text NotificationCard__Text">
+            </div>
+            <div className="card-text NotificationCard__Text">
               {text}
-            </p>
-            <p className="NotificationCard__Date">
+            </div>
+            <div className="NotificationCard__Date">
               {moment(notificationDateUTC).from(UTCNow().Time)}
-            </p>
+            </div>
           </div>
         </div>
       </Link>

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20190317114535_UserLineup")]
+    partial class UserLineup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -413,8 +415,6 @@ namespace fantasy_hoops.Migrations
 
                     b.Property<int>("NbaID");
 
-                    b.Property<string>("NextOppFormatted");
-
                     b.Property<int?>("NextOpponentID");
 
                     b.HasKey("TeamID");
@@ -717,7 +717,7 @@ namespace fantasy_hoops.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("fantasy_hoops.Models.User", "User")
-                        .WithMany("UserLineups")
+                        .WithMany()
                         .HasForeignKey("UserID");
                 });
 

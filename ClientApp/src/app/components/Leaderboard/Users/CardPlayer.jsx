@@ -1,19 +1,20 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Img from 'react-image';
-const $ = window.$;
 
-export class CardPlayer extends Component {
+const { $ } = window;
+
+export default class CardPlayer extends PureComponent {
   constructor(props) {
     super(props);
     this.showModal = this.showModal.bind(this);
   }
 
   componentDidMount() {
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="tooltip"]').tooltip();
   }
 
   showModal() {
-    $('[data-toggle="tooltip"]').tooltip("hide");
+    $('[data-toggle="tooltip"]').tooltip('hide');
     this.props.showModal(this.props.player);
   }
 
@@ -27,11 +28,15 @@ export class CardPlayer extends Component {
           style={{ height: '100%' }}
         >
           <div
+            role="button"
+            tabIndex="-1"
             className="UserLeaderboardCard__player-photo--background"
             style={{ backgroundColor: this.props.player.teamColor }}
             data-toggle="modal"
             data-target="#playerModal"
-            onClick={this.showModal}>
+            onClick={this.showModal}
+            onKeyDown={this.showModal}
+          >
             <Img
               className="UserLeaderboardCard__player-photo--image"
               alt={this.props.player.fullName}
