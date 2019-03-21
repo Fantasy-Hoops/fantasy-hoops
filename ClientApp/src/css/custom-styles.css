@@ -74,7 +74,7 @@ a:hover {
 }
 
 .navbar {
-  height: 6.6rem;
+  min-height: 6.6rem;
 }
 
 .Navbar__Logo {
