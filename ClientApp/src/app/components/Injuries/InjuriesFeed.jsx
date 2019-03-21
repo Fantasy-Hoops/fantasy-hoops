@@ -35,7 +35,7 @@ export class InjuriesFeed extends Component {
     function transition() {
       if (this.classList.contains('active')) {
         this.classList.remove('active');
-      } else {
+      } else if (this.lastChild.lastChild.lastChild.innerHTML !== '') {
         this.classList.add('active');
       }
     }
@@ -60,13 +60,16 @@ export class InjuriesFeed extends Component {
       );
     }
 
-    const injuryCards = _.map(injuries, injury => (
-      <InjuryCard
-        key={shortid()}
-        injury={injury}
-        showModal={this.showModal}
-      />
-    ));
+    const injuryCards = _.map(injuries, (injury, index) => {
+      const animated = index === 0 ? 'animated pulse delay-2s' : '';
+      return (
+        <InjuryCard
+          key={shortid()}
+          injury={injury}
+          animated={animated}
+        />
+      );
+    });
     return (
       <div className="mt-3 container bg-light">
         <div className="row">{injuryCards}</div>

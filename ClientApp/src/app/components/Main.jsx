@@ -11,6 +11,7 @@ export default class Main extends Component {
   }
 
   async componentDidMount() {
+    document.querySelector('body').classList.add('Main__Background');
     if (isAuth()) {
       const user = parse();
       await fetch(
@@ -63,38 +64,34 @@ export default class Main extends Component {
     }
   }
 
+  componentWillUnmount() {
+    document.querySelector('body').classList.remove('Main__Background');
+  }
+
   render() {
     const { team } = this.state;
     if (team === '') {
       return <div />;
     }
-    const image = team
-      ? require(`../../content/images/backgrounds/${team.abbreviation.toLowerCase()}.png`)
-      : require('../../content/images/backgrounds/nba.png');
     return (
-      <div>
+      <div className="Main__Background">
         <button type="button" className="btn btn-danger A2HS-Button">
           Add to home screen
         </button>
-        {/* <h1 id="main-text" className="text-center title">
-          Fantasy Hoops
-        </h1> */}
-        <div className="Main__PlayNowButton text-center">
+        <div className="Main__LogoContainer">
+          <img
+            className="Main__Logo"
+            alt="Fantasy Hoops"
+            src={`${require('../../content/images/FH_Logo.png')}`}
+          />
           <Link
             to="/lineup"
-            className="btn btn-danger"
+            className="Main__PlayNowButton text-center btn btn-danger"
             role="button"
           >
             Play Now!
           </Link>
         </div>
-        <div
-          className="background-image"
-          style={{
-            backgroundImage: `url(${require('../../content/images/FH.png')})`,
-            backgroundPosition: 'top'
-          }}
-        />
       </div>
     );
   }

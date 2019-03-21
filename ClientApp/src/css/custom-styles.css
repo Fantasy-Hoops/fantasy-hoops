@@ -56,6 +56,11 @@ a:hover {
   font-size: 1.6rem;
 }
 
+.row {
+  margin-right: 0;
+  margin: left 0;
+}
+
 .progress {
   height: 1rem;
 }
@@ -66,6 +71,10 @@ a:hover {
 
 .table-sm td {
   vertical-align: middle;
+}
+
+.navbar {
+  height: 6.6rem;
 }
 
 .Navbar__Logo {
@@ -94,11 +103,8 @@ a:hover {
   padding: 1rem;
 }
 
-.background-image {
-  height: 93vh;
-  width: 100vw;
-  z-index: -1;
-  background-size: cover;
+.Main__Background {
+  background-color: var(--primary-color);
 }
 
 .A2HS-Button {
@@ -110,10 +116,29 @@ a:hover {
   border-color: #F15A29;
 }
 
+.Main__LogoContainer {
+  width: 70vw;
+  height: 50vh;
+  margin: 0 auto;
+  position: relative;
+}
+
+.Main__Logo {
+  margin: 0 auto;
+  width: 60%;
+  max-width: 50rem;
+  min-width: 25rem;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);  
+}
+
 .Main__PlayNowButton {
   position: absolute;
-  bottom: 30%;
+  bottom: -5rem;
   left: 50%;
+  transform: translateX(-50%);  
   transform: translateX(-50%);
   background-color: #F15A29;
   border-color: #F15A29;
@@ -167,7 +192,7 @@ a:hover {
 
 .NotificationCard--unread:hover {
   background-color: #e8e8e8;
-  border-left: .25rem solid green;
+  border-left: .25rem solid red;
   transition: background-color .3s, border-left .3s;
 }
 
@@ -292,7 +317,7 @@ a:hover {
   position: relative;
   padding: 0 1rem 0 1rem;
   margin-top: 1.5rem;
-  height: 9rem;
+  height: 50%;
   overflow: hidden;
   overflow-y: auto;
 }
@@ -1343,7 +1368,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   }
 }
 
-@media only screen and (min-width: 320px) {
+@media only screen and (min-width: 330px) {
   .Navbar__Title {
     display: inline-block;
     margin-left: .5rem;
@@ -1376,6 +1401,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   .Header__Burger {
     margin-right: .5rem;
     order: -10;
+    font-size: 1.6rem;
   }
 }
 
