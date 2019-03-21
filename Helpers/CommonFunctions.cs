@@ -22,6 +22,7 @@ namespace fantasy_hoops.Helpers
 
         public static DateTime EasternToUTC(DateTime eastern)
         {
+            TimeZoneInfo.ConvertTimeBySystemTimeZoneId(eastern, TimeZoneInfo.Local.Id);
             TimeZoneInfo easternZone = TimeZoneInfo.FindSystemTimeZoneById((Environment.GetEnvironmentVariable("TIME_ZONE_ID")));
             return TimeZoneInfo.ConvertTimeToUtc(eastern, easternZone);
         }
@@ -96,14 +97,14 @@ namespace fantasy_hoops.Helpers
                     ? 7
                     : dayOfWeek == 0 ? 6 : dayOfWeek - 1;
 
-                return easternDate.AddDays(-dayOffset);
+                return easternDate.AddDays(-dayOffset).Date;
             }
             if (type.Equals("monthly"))
             {
                 int dayOffset = dayOfMonth == 1 ? DaysInMonth() : dayOfMonth - 1;
-                return easternDate.AddDays(-dayOffset);
+                return easternDate.AddDays(-dayOffset).Date;
             }
-            return UTCToEastern(NextGame.PREVIOUS_GAME);
+            return UTCToEastern(NextGame.PREVIOUS_GAME).Date;
         }
 
         public static string GetSeasonYear()

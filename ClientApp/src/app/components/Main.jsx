@@ -11,6 +11,7 @@ export default class Main extends Component {
   }
 
   async componentDidMount() {
+    document.querySelector('body').classList.add('Main__Background');
     if (isAuth()) {
       const user = parse();
       await fetch(
@@ -35,6 +36,7 @@ export default class Main extends Component {
     if (document.querySelector('.A2HS-Button')) {
       window.addEventListener('beforeinstallprompt', (e) => {
         const addBtn = document.querySelector('.A2HS-Button');
+        if (!addBtn) { return; }
         addBtn.style.display = 'none';
         // Prevent Chrome 67 and earlier from automatically showing the prompt
         e.preventDefault();
@@ -62,39 +64,34 @@ export default class Main extends Component {
     }
   }
 
+  componentWillUnmount() {
+    document.querySelector('body').classList.remove('Main__Background');
+  }
+
   render() {
     const { team } = this.state;
     if (team === '') {
       return <div />;
     }
-    const image = team
-      ? require(`../../content/images/backgrounds/${team.abbreviation.toLowerCase()}.png`)
-      : require('../../content/images/backgrounds/nba.png');
     return (
-      <div>
-        <button type="button" className="btn btn-success A2HS-Button">
+      <div className="Main__Background">
+        <button type="button" className="btn btn-danger A2HS-Button">
           Add to home screen
         </button>
-        <h1 id="main-text" className="text-center title">
-          Fantasy Hoops
-        </h1>
-        <div className="text-center">
+        <div className="Main__LogoContainer">
+          <img
+            className="Main__Logo"
+            alt="Fantasy Hoops"
+            src={`${require('../../content/images/FH_Logo.png')}`}
+          />
           <Link
             to="/lineup"
-            className="btn btn-primary mt-4"
+            className="Main__PlayNowButton text-center btn btn-danger"
             role="button"
-            style={{ fontSize: '80%' }}
           >
             Play Now!
           </Link>
         </div>
-        <div
-          className="background-image"
-          style={{
-            backgroundImage: `url(${image})`,
-            backgroundPosition: 'top'
-          }}
-        />
       </div>
     );
   }

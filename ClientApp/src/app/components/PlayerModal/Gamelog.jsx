@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
 import moment from 'moment';
-import defaultLogo from '../../../content/images/defaultLogo.png';
 import { Loader } from '../Loader';
-import Img from 'react-image';
+
 const LOAD_COUNT = 10;
 
-export class Gamelog extends Component {
+export default class Gamelog extends Component {
   constructor(props) {
     super(props);
     this.compare = this.compare.bind(this);
@@ -17,7 +16,81 @@ export class Gamelog extends Component {
       nbaID: this.props.stats.nbaID,
       loadCounter: 0,
       loader: false
-    }
+    };
+  }
+
+  getRows() {
+    if (this.props.loader) { return ''; }
+
+    const rows = this.state.games.sort(this.compare).map((s) => {
+      const abbreviation = s.opponent ? s.opponent.abbreviation : '?';
+      let resultLetter = '';
+      if (!s.score) { return <div />; }
+      const scoreTokens = s.score.split(';');
+      const teamPoints = scoreTokens[0].split('-');
+      if (scoreTokens[1] === 'vs') {
+        resultLetter = parseInt(teamPoints[1], 10) > parseInt(teamPoints[0], 10)
+          ? <span className="text-success">W</span>
+          : <span className="text-danger">L</span>;
+      } else {
+        resultLetter = parseInt(teamPoints[0], 10) > parseInt(teamPoints[1], 10)
+          ? <span className="text-success">W</span>
+          : <span className="text-danger">L</span>;
+      }
+      return (
+        <tr key={shortid()}>
+          <th>
+            {moment(s.date).format('MMM. DD')}
+            <br />
+            <span style={{ fontWeight: 900 }}>{scoreTokens[1] || 'vs'}</span>
+            {' '}
+            {abbreviation}
+          </th>
+          <td>{s.min}</td>
+          <td>{s.pts}</td>
+          <td>{s.treb}</td>
+          <td>{s.ast}</td>
+          <td>{s.stl}</td>
+          <td>{s.blk}</td>
+          <td>{s.fls}</td>
+          <td>{s.tov}</td>
+          <td>{s.oreb}</td>
+          <td>{s.dreb}</td>
+          <td>
+            {s.fgm}
+            /
+            {s.fga}
+          </td>
+          <td>{s.fga !== 0 ? s.fgp : '-'}</td>
+          <td>
+            {s.ftm}
+            /
+            {s.fta}
+          </td>
+          <td>{s.fta !== 0 ? s.ftp : '-'}</td>
+          <td>
+            {s.tpm}
+            /
+            {s.tpa}
+          </td>
+          <td>{s.tpa !== 0 ? s.tpp : '-'}</td>
+          <td>{s.gs.toFixed(1)}</td>
+          <td>{s.fp.toFixed(1)}</td>
+          <td>
+            {resultLetter}
+            {' '}
+            {scoreTokens[0]}
+          </td>
+        </tr>
+      );
+    });
+    return rows;
+  }
+
+  compare(a, b) {
+    if (a.date < b.date) { return 1; }
+    if (a.date > b.date) { return -1; }
+    return 0;
   }
 
   async loadMore() {
@@ -26,10 +99,8 @@ export class Gamelog extends Component {
       loadCounter: this.state.loadCounter + 1
     });
     await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
+      .then(res => res.json())
+      .then((res) => {
         this.setState({
           games: this.state.games.concat(res.games),
           loader: false
@@ -38,117 +109,44 @@ export class Gamelog extends Component {
   }
 
   render() {
-    const btn = this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length
-      ? (
-        <div className="p-1 float-left">
-          <Loader show={this.state.loader} />
-        </div>
-      )
-      : <button className="btn btn-primary float-left m-2" onClick={this.loadMore}>See more</button>;
+    const btn = (!(this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length) && !this.state.loader)
+      ? <button type="button" className="btn btn-primary float-left mt-2" onClick={this.loadMore}>See more</button>
+      : <Loader show={this.state.loader} />;
     return (
-      <div className="table-responsive">
-        <table className="table table-sm table-hover table-bordered text-right">
-          <thead>
-            <tr className="bg-primary text-light">
-              <th scope="col" style={{ width: '6rem' }}>DATE</th>
-              <th scope="col" style={{ width: '4rem' }}>OPP</th>
-              <th scope="col" style={{ width: '6rem' }}>SCORE</th>
-              <th scope="col" style={{ width: '3rem' }}>MIN</th>
-              <th scope="col" style={{ width: '3rem' }}>FGM</th>
-              <th scope="col" style={{ width: '3rem' }}>FGA</th>
-              <th scope="col" style={{ width: '3rem' }}>FG%</th>
-              <th scope="col" style={{ width: '3rem' }}>3PM</th>
-              <th scope="col" style={{ width: '3rem' }}>3PA</th>
-              <th scope="col" style={{ width: '3rem' }}>3P%</th>
-              <th scope="col" style={{ width: '3rem' }}>FTM</th>
-              <th scope="col" style={{ width: '3rem' }}>FTA</th>
-              <th scope="col" style={{ width: '3rem' }}>FT%</th>
-              <th scope="col" style={{ width: '3rem' }}>DREB</th>
-              <th scope="col" style={{ width: '3rem' }}>OREB</th>
-              <th scope="col" style={{ width: '3rem' }}>TREB</th>
-              <th scope="col" style={{ width: '3rem' }}>AST</th>
-              <th scope="col" style={{ width: '3rem' }}>BLK</th>
-              <th scope="col" style={{ width: '3rem' }}>STL</th>
-              <th scope="col" style={{ width: '3rem' }}>FLS</th>
-              <th scope="col" style={{ width: '3rem' }}>TOV</th>
-              <th scope="col" style={{ width: '3rem' }}>PTS</th>
-              <th scope="col" style={{ width: '3rem' }}>GS</th>
-              <th scope="col" style={{ width: '3rem' }}>FP</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.getRows(btn)}
-          </tbody>
-        </table>
+      <div>
+        <div id="table-scroll" className="table-responsive table-scroll">
+          <table id="main-table" className="table table-sm table-hover text-right main-table">
+            <thead>
+              <tr className="bg-primary text-light">
+                <th className="GameLog__corner-cell">DATE</th>
+                <th>MIN</th>
+                <th>PTS</th>
+                <th>REB</th>
+                <th>AST</th>
+                <th>STL</th>
+                <th>BLK</th>
+                <th>PF</th>
+                <th>TO</th>
+                <th>ORB</th>
+                <th>DRB</th>
+                <th>FG</th>
+                <th>FG%</th>
+                <th>FT</th>
+                <th>FT%</th>
+                <th>3P</th>
+                <th>3P%</th>
+                <th>GS</th>
+                <th>FP</th>
+                <th>SCORE</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.getRows()}
+            </tbody>
+          </table>
+        </div>
+        {btn}
       </div>
     );
-  }
-
-  compare(a, b) {
-    if (a.date < b.date)
-      return 1;
-    if (a.date > b.date)
-      return -1;
-    return 0;
-  }
-
-  getRows(btn) {
-    if (this.props.loader)
-      return '';
-
-    const rows = this.state.games.sort(this.compare).map((s) => {
-      const abbreviation = s.opponent ? s.opponent.abbreviation : '';
-      let score = '';
-      if (!s.score)
-        return <div></div>;
-      var str = s.score.split('-');
-      if (parseInt(str[0], 10) > parseInt(str[1], 10))
-        score = <span className="text-success">W</span>;
-      else score = <span className="text-danger">L</span>;
-      return <tr key={shortid()} >
-        <td style={{ width: '6rem' }}>{moment(s.date).format("ddd MM/DD")}</td>
-        <td style={{ width: '4rem' }}>
-          <Img
-            width='40rem'
-            style={{ right: '0' }}
-            alt={abbreviation}
-            src={[
-              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${abbreviation}.svg`,
-              defaultLogo
-            ]}
-            loader={<img height='40px' src={require(`../../../content/images/imageLoader2.gif`)} alt="Loader" />}
-          />
-        </td>
-        <td style={{ width: '6rem' }}>{score} {s.score}</td>
-        <td style={{ width: '3rem' }}>{s.min}</td>
-        <td style={{ width: '3rem' }}>{s.fgm}</td>
-        <td style={{ width: '3rem' }}>{s.fga}</td>
-        <td style={{ width: '3rem' }}>{s.fgp}</td>
-        <td style={{ width: '3rem' }}>{s.tpm}</td>
-        <td style={{ width: '3rem' }}>{s.tpa}</td>
-        <td style={{ width: '3rem' }}>{s.tpp}</td>
-        <td style={{ width: '3rem' }}>{s.ftm}</td>
-        <td style={{ width: '3rem' }}>{s.fta}</td>
-        <td style={{ width: '3rem' }}>{s.ftp}</td>
-        <td style={{ width: '3rem' }}>{s.dreb}</td>
-        <td style={{ width: '3rem' }}>{s.oreb}</td>
-        <td style={{ width: '3rem' }}>{s.treb}</td>
-        <td style={{ width: '3rem' }}>{s.ast}</td>
-        <td style={{ width: '3rem' }}>{s.blk}</td>
-        <td style={{ width: '3rem' }}>{s.stl}</td>
-        <td style={{ width: '3rem' }}>{s.fls}</td>
-        <td style={{ width: '3rem' }}>{s.tov}</td>
-        <td style={{ width: '3rem' }}>{s.pts}</td>
-        <td style={{ width: '3rem' }}>{s.gs}</td>
-        <td style={{ width: '3rem' }}>{s.fp}</td>
-      </tr>;
-    });
-    if (!(this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length) || this.state.loader)
-      rows.push(
-        <tr className="no-hover" key={shortid()} style={{ height: '7rem' }}>
-          <td className="align-middle">{btn}</td>
-        </tr>
-      );
-    return rows;
   }
 }

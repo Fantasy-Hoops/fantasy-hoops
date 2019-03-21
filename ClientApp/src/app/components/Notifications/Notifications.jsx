@@ -57,6 +57,7 @@ export class Notifications extends Component {
               imageSrc={[gameLogo]}
               title="The game has finished!"
               text={text}
+              imageClass="NotificationCard__Image"
               link="/leaderboard/users"
             />
           );
@@ -74,6 +75,7 @@ export class Notifications extends Component {
               title={notification.friend.userName}
               imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendID}.png`, defaultPhoto]}
               text={text}
+              imageClass="NotificationCard__Image"
               link={`/profile/${notification.friend.userName}`}
             />
           );
@@ -90,7 +92,7 @@ export class Notifications extends Component {
                 `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${notification.player.nbaID}.png`,
                 require(`../../../content/images/positions/${notification.player.position.toLowerCase()}.png`)
               ]}
-              imageClass="InjuryCard__Image"
+              imageClass="NotificationCard__Image NotificationCard__Image--player"
               text={notification.injuryDescription}
               link="/lineup"
             />
@@ -127,10 +129,7 @@ export class Notifications extends Component {
 
     const badge = unreadCount > 0
       ? (
-        <span
-          className="badge badge-danger"
-          style={{ fontSize: '0.8rem', position: 'absolute', marginLeft: '-0.6rem' }}
-        >
+        <span className="Notifications__UnreadCounter badge badge-danger">
           {unreadCount}
         </span>
       )
@@ -139,17 +138,17 @@ export class Notifications extends Component {
     return (
       <li className="dropdown">
         <a
-          className="fa fa-bell text-light mt-1 mr-1 ml-3 nav-link dropdown-toggle no-arrow btn-no-outline"
+          className="fa fa-bell text-light mt-1 mr-1 ml-3 nav-link dropdown-toggle no-arrow btn-no-outline position-relative"
           id="navbarDropdownMenuLink"
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false"
-          style={{ fontSize: '2rem' }}
+          style={{ fontSize: '3rem' }}
         >
           {badge}
         </a>
-        <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink" style={{ width: '18rem' }}>
-          <h6 className="dropdown-header">
+        <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink" style={{ width: '26rem' }}>
+          <p className="Notifications__dropdown dropdown-header">
             Notifications
             <a
               role="link"
@@ -161,18 +160,18 @@ export class Notifications extends Component {
             >
               Mark All as Read
             </a>
-          </h6>
+          </p>
           <div style={{ marginBottom: '-0.5rem' }}>
             {notifications}
           </div>
-          <h6 className="dropdown-header text-center mt-2" style={{ height: '1.5rem' }}>
+          <p className="dropdown-header text-center mt-2">
             <Link
               className="btn-no-outline"
               to="/notifications"
             >
               See all
             </Link>
-          </h6>
+          </p>
         </div>
       </li>
     );
