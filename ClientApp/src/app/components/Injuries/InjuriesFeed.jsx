@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import shortid from 'shortid';
-import $ from 'jquery';
-import { InjuryCard } from './InjuryCard';
+import InjuryCard from './InjuryCard';
 import { Loader } from '../Loader';
-import { PlayerModal } from '../PlayerModal/PlayerModal';
 import { EmptyJordan } from '../EmptyJordan';
 
 export class InjuriesFeed extends Component {
@@ -16,23 +14,13 @@ export class InjuriesFeed extends Component {
 
     this.state = {
       injuries: [],
-      injuryLoader: true,
-      modalLoader: true,
-      renderChild: true
+      injuryLoader: true
     };
   }
 
   async componentDidMount() {
     this._isMounted = true;
 
-    $('#playerModal').on('hidden.bs.modal', () => {
-      if (this._isMounted) {
-        this.setState({
-          modalLoader: true,
-          renderChild: false
-        });
-      }
-    });
     await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/injuries`)
       .then(res => res.json())
       .then((res) => {
@@ -43,33 +31,20 @@ export class InjuriesFeed extends Component {
           });
         }
       });
-  }
+    const cards = document.querySelectorAll('.InjuryCard');
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  async showModal(player) {
-    if (this._isMounted) {
-      this.setState({ modalLoader: true });
+    function transition() {
+      if (this.classList.contains('active')) {
+        this.classList.remove('active');
+      } else {
+        this.classList.add('active');
+      }
     }
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${player.nbaID}`)
-      .then(res => res.json())
-      .then((res) => {
-        if (this._isMounted) {
-          this.setState({
-            stats: res,
-            modalLoader: false,
-            renderChild: true
-          });
-        }
-      });
+    cards.forEach(card => card.addEventListener('click', transition));
   }
 
   render() {
-    const {
-      injuries, injuryLoader, renderChild, modalLoader, stats
-    } = this.state;
+    const { injuries, injuryLoader } = this.state;
     if (injuryLoader) {
       return (
         <div className="m-5">
@@ -94,13 +69,8 @@ export class InjuriesFeed extends Component {
       />
     ));
     return (
-      <div className="container bg-light">
+      <div className="mt-3 container bg-light">
         <div className="row">{injuryCards}</div>
-        <PlayerModal
-          renderChild={renderChild}
-          loader={modalLoader}
-          stats={stats}
-        />
       </div>
     );
   }
