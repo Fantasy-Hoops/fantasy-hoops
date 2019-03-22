@@ -912,8 +912,8 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 }
 
 .UserScoreCard {
-  width: 60%;
   min-width: 28rem;
+  max-width: 45rem;
   height: 10rem;
 }
 
@@ -1293,7 +1293,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   z-index: 1;
   margin: auto;
   overflow: auto;
-  height: 50vh;
+  height: 40vh;
 }
 .PlayerModal #table-scroll  table {
   width: 100%;
