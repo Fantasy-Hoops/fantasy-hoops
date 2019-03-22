@@ -83,5 +83,3 @@ export const readAllNotifications = userId => axios.post(`${notificationsApiUrlB
 // Push Notifications requests
 export const sendPushNotification = (receiverId, notification) => axios.post(`${pushNotificationsApiUrlBase}/send/${receiverId}`, notification);
 export const getPushPublicKey = () => axios.get(`${pushNotificationsApiUrlBase}/vapidpublickey`);
-export const subscribe = (userId, subscription) => axios.post(`${pushNotificationsApiUrlBase}/subscribe/${userId}`, subscription);
-export const unsubscribe = subscription => axios.post(`${pushNotificationsApiUrlBase}/unsubscribe`, subscription);
