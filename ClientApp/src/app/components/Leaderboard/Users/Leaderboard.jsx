@@ -12,6 +12,7 @@ import leaderboardLogo from '../../../../content/images/leaderboard.png';
 import { Loader } from '../../Loader';
 import { EmptyJordan } from '../../EmptyJordan';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
+import { getUsersLeaderboard, getUserFriendsOnlyLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
 
 const loggedInUser = parse();
 const LOAD_COUNT = 10;
@@ -55,7 +56,7 @@ export default class Leaderboard extends PureComponent {
 
   async componentDidMount() {
     $(document).ready(() => {
-      $('[data-toggle=tooltip]').tooltip({ trigger: "hover" });
+      $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
     });
     $('#playerModal').on('hidden.bs.modal', () => {
       this.setState({
@@ -64,12 +65,11 @@ export default class Leaderboard extends PureComponent {
       });
     });
     const { showButton } = this.state;
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=daily`)
-      .then(res => res.json())
+    await getUsersLeaderboard({ type: 'daily' })
       .then((res) => {
-        showButton.daily = res.length === LOAD_COUNT;
+        showButton.daily = res.data.length === LOAD_COUNT;
         this.setState({
-          daily: res,
+          daily: res.data,
           activeTab: 'daily',
           loader: false
         });
@@ -84,23 +84,20 @@ export default class Leaderboard extends PureComponent {
   }
 
   async onDateChange(date) {
+    this.setState({ loader: true, daily: [], dailyFriends: [] });
     const { friendsOnly, showButton } = this.state;
     const dateFormat = moment(date).format('YYYYMMDD');
     const type = friendsOnly ? 'dailyFriends' : 'daily';
-    const url = friendsOnly
-      ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${loggedInUser.id}?type=daily&date=${dateFormat}`
-      : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=daily&date=${dateFormat}`;
 
-    this.setState({ loader: true });
-    await fetch(url)
-      .then(res => res.json())
-      .then((res) => {
-        showButton[type] = res.length === LOAD_COUNT;
-        this.setState({
-          [type]: res,
-          loader: false
-        });
-      });
+    const users = !friendsOnly
+      ? await getUsersLeaderboard({ type: 'daily', date: dateFormat })
+      : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: 'daily', date: dateFormat });
+
+    showButton[type] = users.data.length === LOAD_COUNT;
+    this.setState({
+      [type]: users.data,
+      loader: false
+    });
     this.setState({ date, dateFormat });
   }
 
@@ -110,24 +107,19 @@ export default class Leaderboard extends PureComponent {
     } = this.state;
     this.setState({ friendsOnly: !friendsOnly });
     const type = activeTab + (!friendsOnly ? 'Friends' : '');
-    const dateParam = dateFormat ? `&date=${dateFormat}` : '';
 
     if (this.state[type].length === 0) {
       this.setState({ loader: true });
 
-      const url = !friendsOnly
-        ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${loggedInUser.id}?type=${activeTab}${dateParam}`
-        : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTab}${dateParam}`;
+      const users = friendsOnly
+        ? await getUsersLeaderboard({ type: activeTab, date: dateFormat })
+        : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: activeTab, date: dateFormat });
 
-      await fetch(url)
-        .then(res => res.json())
-        .then((res) => {
-          showButton[type] = res.length === LOAD_COUNT;
-          this.setState({
-            [type]: res,
-            loader: false
-          });
-        });
+      showButton[type] = users.data.length === LOAD_COUNT;
+      this.setState({
+        [type]: users.data,
+        loader: false
+      });
     }
   }
 
@@ -137,27 +129,23 @@ export default class Leaderboard extends PureComponent {
     } = this.state;
     const activeTabURL = e.target.id.split(/-/)[0];
     const type = friendsOnly ? `${activeTabURL}Friends` : activeTabURL;
-    const dateParam = dateFormat ? `&date=${dateFormat}` : '';
 
     if (activeTab === activeTabURL) { return; }
 
     this.setState({ activeTab: activeTabURL });
 
     if (this.state[type].length === 0) {
-      const url = friendsOnly
-        ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${loggedInUser.id}?type=${activeTabURL}${dateParam}`
-        : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTabURL}${dateParam}`;
-
       this.setState({ loader: true });
-      await fetch(url)
-        .then(res => res.json())
-        .then((res) => {
-          showButton[type] = res.length === LOAD_COUNT;
-          this.setState({
-            [type]: res,
-            loader: false
-          });
-        });
+
+      const users = !friendsOnly
+        ? await getUsersLeaderboard({ type: activeTabURL, date: dateFormat })
+        : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: activeTabURL, date: dateFormat });
+
+      showButton[type] = users.data.length === LOAD_COUNT;
+      this.setState({
+        [type]: users.data,
+        loader: false
+      });
     }
   }
 
@@ -166,23 +154,18 @@ export default class Leaderboard extends PureComponent {
       activeTab, friendsOnly, showButton, dateFormat
     } = this.state;
     const type = friendsOnly ? `${activeTab}Friends` : activeTab;
-    const dateParam = dateFormat ? `&date=${dateFormat}` : '';
 
     this.setState({ loadMore: true });
 
-    const url = friendsOnly
-      ? `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user/${loggedInUser.id}?type=${activeTab}&from=${this.state[type].length}&limit=${LOAD_COUNT}${dateParam}`
-      : `${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/user?type=${activeTab}&from=${this.state[type].length}&limit=${LOAD_COUNT}${dateParam}`;
+    const users = !friendsOnly
+      ? await getUsersLeaderboard({ type: activeTab, from: this.state[type].length, limit: LOAD_COUNT, date: dateFormat })
+      : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: activeTab, from: this.state[type].length, limit: LOAD_COUNT, date: dateFormat });
 
-    await fetch(url)
-      .then(res => res.json())
-      .then((res) => {
-        showButton[type] = res.length === LOAD_COUNT;
-        this.setState({
-          [type]: this.state[type].concat(res),
-          loadMore: false
-        });
-      });
+    showButton[type] = users.data.length === LOAD_COUNT;
+    this.setState({
+      [type]: this.state[type].concat(users.data),
+      loader: false
+    });
   }
 
   seeMoreBtn(type) {
@@ -192,11 +175,10 @@ export default class Leaderboard extends PureComponent {
 
   async showModal(player) {
     this.setState({ modalLoader: true });
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${player.nbaID}`)
-      .then(res => res.json())
+    await getPlayerStats(player.nbaID)
       .then((res) => {
         this.setState({
-          stats: res,
+          stats: res.data,
           modalLoader: false,
           renderChild: true
         });
@@ -240,7 +222,7 @@ export default class Leaderboard extends PureComponent {
     const weeklyUsers = this.createUsers(friendsOnly ? weeklyFriends : weekly);
     const monthlyUsers = this.createUsers(friendsOnly ? monthlyFriends : monthly);
     const seeMoreBtn = loader || loadMore
-      ? <Loader show={loader || loadMore} />
+      ? <Loader show={loader} />
       : this.seeMoreBtn(activeType);
     return (
       <div className="container bg-light">

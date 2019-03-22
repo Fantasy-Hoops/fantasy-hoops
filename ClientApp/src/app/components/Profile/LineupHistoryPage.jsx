@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
+import _ from 'lodash';
 import { Loader } from '../Loader';
 import { UserScore } from './UserScore';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
 import icon from '../../../content/images/basketball-player-scoring.svg';
 import { parse } from '../../utils/auth';
-import _ from 'lodash';
-const $ = window.$;
+import { getPlayerStats } from '../../utils/networkFunctions';
+import { getUserData } from '../../utils/networkFunctions';
+
+const { $ } = window;
 const user = parse();
 const LOAD_COUNT = 5;
 
@@ -19,15 +22,15 @@ export class LineupHistory extends Component {
     this.state = {
       stats: '',
       loadCounter: 0,
-      user: user,
+      user,
       recentActivity: [],
       loader: true,
       modalLoader: true
-    }
+    };
   }
 
   setModal() {
-    $("#playerModal").on("hidden.bs.modal", () => {
+    $('#playerModal').on('hidden.bs.modal', () => {
       this.setState({
         modalLoader: true,
         renderChild: false
@@ -35,28 +38,26 @@ export class LineupHistory extends Component {
     });
   }
 
-  async showModal(player) {
-    $('[data-toggle="tooltip"]').tooltip("hide");
-    this.setState({ modalLoader: true })
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${player.nbaID}`)
-      .then(res => res.json())
-      .then(res => {
+  async componentDidMount() {
+    await getUserData(user.id, { count: 10 })
+      .then((res) => {
         this.setState({
-          stats: res,
-          modalLoader: false,
-          renderChild: true
+          recentActivity: res.data.recentActivity,
+          loader: false,
+          readOnly: false
         });
       });
   }
 
-  async componentDidMount() {
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/${user.id}?count=10`)
-      .then(res => res.json())
-      .then(res => {
+  async showModal(player) {
+    $('[data-toggle="tooltip"]').tooltip('hide');
+    this.setState({ modalLoader: true });
+    await getPlayerStats(player.nbaID)
+      .then((res) => {
         this.setState({
-          recentActivity: res.recentActivity,
-          loader: false,
-          readOnly: false
+          stats: res.data,
+          modalLoader: false,
+          renderChild: true
         });
       });
   }
@@ -66,13 +67,10 @@ export class LineupHistory extends Component {
       loadCounter: this.state.loadCounter + 1,
       loader: true
     });
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/${user.id}?start=${this.state.recentActivity.length}&count=${LOAD_COUNT}`)
-      .then(res => {
-        return res.json()
-      })
-      .then(res => {
+    await getUserData(user.id, { start: this.state.recentActivity.length, count: LOAD_COUNT })
+      .then((res) => {
         this.setState({
-          recentActivity: this.state.recentActivity.concat(res.recentActivity),
+          recentActivity: this.state.recentActivity.concat(res.data.recentActivity),
           loader: false
         });
       });
@@ -81,17 +79,15 @@ export class LineupHistory extends Component {
   render() {
     const recentActivity = _.map(
       this.state.recentActivity,
-      (activity) => {
-        return (
-          <UserScore
-            key={shortid()}
-            activity={activity}
-            showModal={this.showModal}
-            center='0 auto'
-            width='40%'
-          />
-        )
-      });
+      activity => (
+        <UserScore
+          key={shortid()}
+          activity={activity}
+          showModal={this.showModal}
+          center="0 auto"
+        />
+      )
+    );
 
     const btn = this.state.loadCounter * LOAD_COUNT + 10 > this.state.recentActivity.length
       ? ''
@@ -99,7 +95,11 @@ export class LineupHistory extends Component {
 
     return (
       <div className="container">
-        <h3 className="text-center pb-3"><span><img src={icon} width="65rem" alt="Basketball Player Scoring" /></span> Your lineup history</h3>
+        <h1 className="text-center pb-3">
+          <span><img src={icon} width="65rem" alt="Basketball Player Scoring" /></span>
+          {' '}
+          Your lineup history
+        </h1>
         {recentActivity}
         <Loader show={this.state.loader} />
         <div className="text-center">

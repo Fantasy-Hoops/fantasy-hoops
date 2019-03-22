@@ -8,6 +8,7 @@ import leaderboardLogo from '../../../../content/images/leaderboard.png';
 import { Loader } from '../../Loader';
 import { EmptyJordan } from '../../EmptyJordan';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
+import { getSeasonLineupsLeaderboard, getSeasonPlayersLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
 
 const { $ } = window;
 
@@ -36,11 +37,10 @@ export class Leaderboard extends PureComponent {
         renderChild: false
       });
     });
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/season/lineups`)
-      .then(res => res.json())
+    await getSeasonLineupsLeaderboard()
       .then((res) => {
         this.setState({
-          lineups: res,
+          lineups: res.data,
           loader: false
         });
       });
@@ -53,7 +53,7 @@ export class Leaderboard extends PureComponent {
     });
   }
 
-  switchTab(e) {
+  async switchTab(e) {
     const { activeTab } = this.state;
     const type = e.target.id.split(/-/)[0];
 
@@ -62,11 +62,10 @@ export class Leaderboard extends PureComponent {
     this.setState({ activeTab: type });
 
     if (this.state[type].length === 0) {
-      fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/season/${type}`)
-        .then(res => res.json())
+      await getSeasonPlayersLeaderboard()
         .then((res) => {
           this.setState({
-            [type]: res,
+            [type]: res.data,
             loader: false
           });
         });
@@ -75,11 +74,10 @@ export class Leaderboard extends PureComponent {
 
   async showModal(player) {
     this.setState({ modalLoader: true });
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${player.nbaID}`)
-      .then(res => res.json())
+    await getPlayerStats(player.nbaID)
       .then((res) => {
         this.setState({
-          stats: res,
+          stats: res.data,
           modalLoader: false,
           renderChild: true
         });

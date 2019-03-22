@@ -7,7 +7,7 @@ import { Loader } from '../Loader';
 import { EmptyJordan } from '../EmptyJordan';
 import defaultPhoto from '../../../content/images/default.png';
 import gameLogo from '../../../content/images/logo.png';
-
+import { getUserNotifications } from '../../utils/networkFunctions';
 
 const LOAD_COUNT = 5;
 const user = parse();
@@ -25,11 +25,10 @@ export class AllNotificationsPage extends Component {
   }
 
   async componentDidMount() {
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}?count=10`)
-      .then(res => res.json())
+    await getUserNotifications(user.id, { count: 10 })
       .then((res) => {
         this.setState({
-          userNotifications: res,
+          userNotifications: res.data,
           loader: false
         });
       });
@@ -116,11 +115,10 @@ export class AllNotificationsPage extends Component {
       loader: true,
       loadCounter: loadCounter + 1
     });
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}?start=${userNotifications.length}&count=${LOAD_COUNT}`)
-      .then(res => res.json())
+    await getUserNotifications(user.id, { start: userNotifications.length, count: LOAD_COUNT })
       .then((res) => {
         this.setState({
-          userNotifications: userNotifications.concat(res),
+          userNotifications: userNotifications.concat(res.data),
           loader: false
         });
       });

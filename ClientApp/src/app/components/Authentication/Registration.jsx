@@ -4,6 +4,7 @@ import { Input } from '../Inputs/Input';
 import { handleErrors } from '../../utils/errors';
 import { Alert } from '../Alert';
 import { isAuth } from '../../utils/auth';
+import { register } from '../../utils/networkFunctions';
 
 export class Registration extends Component {
   constructor(props) {
@@ -56,27 +57,19 @@ export class Registration extends Component {
       Password: this.state.password
     };
 
-    fetch('/api/user/register', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(res => handleErrors(res))
-      .then(res => res.text())
+    register(data)
       .then(res => {
         this.setState({
           showAlert: true,
           alertType: 'alert-success',
-          alertText: res
+          alertText: res.data
         });
       })
       .catch(err => {
         this.setState({
           showAlert: true,
           alertType: 'alert-danger',
-          alertText: err.message.substring(4)
+          alertText: err.response.data
         });
       });
   }

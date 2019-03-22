@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 export class Error extends Component {
   render() {
-    let status = _.map(this.props.status.split(''),
+    let status = _.map(this.props.status.toString().split(''),
       (letter) => {
         return (
           <span className="letter" key={shortid()}>

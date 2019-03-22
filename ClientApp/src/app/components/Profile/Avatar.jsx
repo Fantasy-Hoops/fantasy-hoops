@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ChangeAvatar } from '../Inputs/ChangeAvatar';
 import defaultPhoto from '../../../content/images/default.png';
-import { FriendRequest } from './FriendRequest';
+import FriendRequest from './FriendRequest';
 import Img from 'react-image';
 import { loadImage } from '../../utils/loadImage';
 const $ = window.$;

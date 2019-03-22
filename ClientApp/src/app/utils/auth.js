@@ -1,12 +1,4 @@
-import decode from 'jwt-decode'
-
-export const isAuth = () => {
-  const token = localStorage.getItem('accessToken');
-  if (!token)
-    return false;
-
-  return parse();
-}
+import decode from 'jwt-decode';
 
 export const parse = () => {
   const token = localStorage.getItem('accessToken');
@@ -15,23 +7,17 @@ export const parse = () => {
     if (decoded.exp > Date.now() / 1000) {
       return decoded;
     }
-    else {
-      localStorage.removeItem('accessToken');
-      return null;
-    }
-  }
-  catch (err) {
+
+    localStorage.removeItem('accessToken');
+    return null;
+  } catch (err) {
     return null;
   }
-}
+};
 
-export const logout = () => {
-  fetch('/api/user/logout', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-    }
-  })
-  localStorage.removeItem('accessToken');
-  window.location.replace("/");
-}
+export const isAuth = () => {
+  const token = localStorage.getItem('accessToken');
+  if (!token) { return false; }
+
+  return parse();
+};
