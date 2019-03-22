@@ -3,11 +3,12 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Img from 'react-image';
 import $ from 'jquery';
-import { isAuth, parse, logout } from '../utils/auth';
+import { isAuth, parse } from '../utils/auth';
 import defaultPhoto from '../../content/images/default.png';
 import { Notifications } from './Notifications/Notifications';
 import { loadImage } from '../utils/loadImage';
 import { registerPush } from '../utils/push';
+import { logout } from '../utils/networkFunctions';
 
 export default class Navbar extends Component {
   constructor(props) {
@@ -150,7 +151,7 @@ export default class Navbar extends Component {
                     aria-expanded="false"
                   >
                     Leaderboards
-                    </a>
+                  </a>
                   <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <div><Link className="dropdown-item" to="/leaderboard/users">Top Users</Link></div>
                     <div><Link className="dropdown-item" to="/leaderboard/players">Top NBA Players</Link></div>

@@ -5,6 +5,7 @@ import { Input } from '../Inputs/Input';
 import { handleErrors } from '../../utils/errors';
 import { Alert } from '../Alert';
 import { isAuth } from '../../utils/auth';
+import { login } from '../../utils/networkFunctions';
 
 export default class LoginPage extends Component {
   constructor(props) {
@@ -67,17 +68,9 @@ export default class LoginPage extends Component {
       Password: password
     };
 
-    fetch('/api/user/login', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(res => handleErrors(res))
-      .then(res => res.text())
+    login(data)
       .then((res) => {
-        localStorage.setItem('accessToken', res);
+        localStorage.setItem('accessToken', res.data);
 
         // If user was redirected to login because of authentication errors,
         // he is now being redirected back
@@ -91,7 +84,7 @@ export default class LoginPage extends Component {
         this.setState({
           showAlert: true,
           alertType: 'alert-danger',
-          alertText: err.message.substring(4)
+          alertText: err.response.data
         });
       });
   }

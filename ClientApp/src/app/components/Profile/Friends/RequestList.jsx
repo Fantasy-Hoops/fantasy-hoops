@@ -3,6 +3,11 @@ import shortid from 'shortid';
 import _ from 'lodash';
 import { parse } from '../../../utils/auth';
 import RequestCard from './RequestCard';
+import {
+  getUserFriendRequests,
+  acceptFriendRequest,
+  cancelFriendRequest
+} from '../../../utils/networkFunctions';
 
 export default class RequestList extends Component {
   constructor(props) {
@@ -12,15 +17,16 @@ export default class RequestList extends Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { user } = this.props;
 
-    fetch(`${process.env.REACT_APP_SERVER_NAME}/api/friendrequest/requests/${user.id}`)
-      .then(res => res.json())
-      .then(res => this.setState({ requests: res }));
+    await getUserFriendRequests(user.id)
+      .then((res) => {
+        this.setState({ requests: res });
+      });
   }
 
-  cancelRequest(receiver) {
+  async cancelRequest(receiver) {
     const sender = parse();
     if (!sender) {
       return;
@@ -30,18 +36,25 @@ export default class RequestList extends Component {
       senderID: sender.id,
       receiverID: receiver
     };
+    await cancelFriendRequest(model)
+      .then(() => window.location.reload);
+  }
 
-    fetch('/api/friendrequest/cancel', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(model)
-    })
+  async acceptRequest(receiver) {
+    const sender = parse();
+    if (!sender) {
+      return;
+    }
+
+    const model = {
+      senderID: receiver,
+      receiverID: sender.id
+    };
+    await acceptFriendRequest(model)
       .then(() => window.location.reload());
   }
 
-  acceptRequest(receiver) {
+  async declineRequest(receiver) {
     const sender = parse();
     if (!sender) {
       return;
@@ -52,34 +65,7 @@ export default class RequestList extends Component {
       receiverID: sender.id
     };
 
-    fetch('/api/friendrequest/accept', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(model)
-    })
-      .then(() => window.location.reload());
-  }
-
-  declineRequest(receiver) {
-    const sender = parse();
-    if (!sender) {
-      return;
-    }
-
-    const model = {
-      senderID: receiver,
-      receiverID: sender.id
-    };
-
-    fetch('/api/friendrequest/cancel', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(model)
-    })
+    await cancelFriendRequest(model)
       .then(() => window.location.reload());
   }
 

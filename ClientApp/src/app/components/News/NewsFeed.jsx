@@ -4,6 +4,7 @@ import shortid from 'shortid';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { NewsCard } from './NewsCard';
 import { Loader } from '../Loader';
+import { getNews } from '../../utils/networkFunctions';
 
 export class NewsFeed extends Component {
   _isMounted = false;
@@ -18,18 +19,17 @@ export class NewsFeed extends Component {
     this.fetchData = this.fetchData.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this._isMounted = true;
 
     this.setState({
       newsLoader: true
     });
-    fetch(`${process.env.REACT_APP_SERVER_NAME}/api/news`)
-      .then(res => res.json())
+    await getNews()
       .then((res) => {
         if (this._isMounted) {
           this.setState({
-            news: res,
+            news: res.data,
             newsLoader: false
           });
         }
@@ -40,7 +40,7 @@ export class NewsFeed extends Component {
     this._isMounted = false;
   }
 
-  fetchData() {
+  async fetchData() {
     const { news } = this.state;
     if (this._isMounted) {
       this.setState({
@@ -48,13 +48,12 @@ export class NewsFeed extends Component {
       });
     }
 
-    fetch(`${process.env.REACT_APP_SERVER_NAME}/api/news?start=${news.length}`)
-      .then(res => res.json())
+    await getNews({ start: news.length })
       .then((res) => {
         if (this._isMounted) {
           this.setState({
-            news: news.concat(res),
-            hasMore: res.length === 6,
+            news: news.concat(res.data),
+            hasMore: res.data.length === 6,
             newsLoader: false
           });
         }

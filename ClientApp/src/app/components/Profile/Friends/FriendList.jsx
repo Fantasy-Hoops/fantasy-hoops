@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import shortid from 'shortid';
 import _ from 'lodash';
 import { UserCard } from '../UserCard';
+import { getUserFriends } from '../../../utils/networkFunctions';
 
 export default class FriendList extends Component {
   constructor(props) {
@@ -14,11 +15,12 @@ export default class FriendList extends Component {
 
   async componentDidMount() {
     const { user } = this.props;
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/friends/${user.id}`)
-      .then(res => res.json())
-      .then(res => this.setState({
-        friends: res
-      }));
+    await getUserFriends(user.id)
+      .then((res) => {
+        this.setState({
+          friends: res.data
+        });
+      });
   }
 
   render() {

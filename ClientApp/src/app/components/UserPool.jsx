@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { DebounceInput } from 'react-debounce-input';
 import { UserCard } from './Profile/UserCard';
 import { Loader } from './Loader';
+import { getUsers } from '../utils/networkFunctions';
 
 export class UserPool extends Component {
   _isMounted = false;
@@ -18,13 +19,12 @@ export class UserPool extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user`)
-      .then(res => res.json())
+    await getUsers()
       .then((res) => {
         if (this._isMounted) {
           this.setState({
-            initialUsers: res,
-            users: res,
+            initialUsers: res.data,
+            users: res.data,
             loader: false
           });
         }

@@ -9,6 +9,7 @@ import { Friends } from './Friends/Friends';
 import { Error } from '../Error';
 import { handleErrors } from '../../utils/errors';
 import { Loader } from '../Loader';
+import { getUserData, getUserDataByName } from '../../utils/networkFunctions';
 
 export class UserProfile extends Component {
   _isMounted = false;
@@ -38,16 +39,14 @@ export class UserProfile extends Component {
     );
     if (match.params.name == null || loggedInAsSameUser) {
       const user = parse();
-      await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/${user.id}?count=5`)
-        .then(res => res.json())
+
+      await getUserData(user.id, { count: 10 })
         .then((res) => {
-          if (this._isMounted) {
-            this.setState({
-              user: res,
-              loader: false,
-              readOnly: false
-            });
-          }
+          this.setState({
+            user: res.data,
+            loader: false,
+            readOnly: false
+          });
         });
       this.editProfile();
     } else {
@@ -57,26 +56,22 @@ export class UserProfile extends Component {
           readOnly: true
         });
       }
-      await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/name/${userName}?count=5`)
-        .then(res => handleErrors(res))
-        .then(res => res.json())
+      await getUserDataByName(userName, { count: 5 })
         .then((res) => {
           if (this._isMounted) {
             this.setState({
-              user: res,
+              user: res.data,
               loader: false,
               readOnly: true
             });
           }
         })
         .catch((err) => {
-          const status = err.message.substring(0, 3);
-          const message = err.message.substring(4);
           if (this._isMounted) {
             this.setState({
               error: true,
-              errorStatus: status,
-              errorMessage: message,
+              errorStatus: err.response.status,
+              errorMessage: err.response.data,
               loader: false
             });
           }
@@ -127,9 +122,9 @@ export class UserProfile extends Component {
           </li>
           {!readOnly
             && (
-            <li className="nav-item">
-              <Link to="" data-target="#edit" data-toggle="tab" id="navLinkEdit" className="nav-link tab-no-outline">Edit</Link>
-            </li>
+              <li className="nav-item">
+                <Link to="" data-target="#edit" data-toggle="tab" id="navLinkEdit" className="nav-link tab-no-outline">Edit</Link>
+              </li>
             )
           }
         </ul>

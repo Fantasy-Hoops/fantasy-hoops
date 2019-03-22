@@ -7,6 +7,7 @@ import { handleErrors } from '../../utils/errors';
 import { NotificationCard } from './NotificationCard';
 import defaultPhoto from '../../../content/images/default.png';
 import gameLogo from '../../../content/images/logo.png';
+import { getUserNotifications, readAllNotifications } from '../../utils/networkFunctions';
 
 const user = parse();
 
@@ -22,12 +23,11 @@ export class Notifications extends Component {
   }
 
   async componentDidMount() {
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}`)
-      .then(res => res.json())
+    await getUserNotifications(user.id)
       .then((res) => {
         this.setState({
-          userNotifications: res,
-          unreadCount: res.filter(n => n.readStatus === false).length
+          userNotifications: res.data,
+          unreadCount: res.data.filter(n => n.readStatus === false).length
         });
       });
   }
@@ -104,21 +104,12 @@ export class Notifications extends Component {
 
   async readAll(e) {
     e.preventDefault();
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/readall/${user.id}`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      }
-    })
-      .then(res => handleErrors(res))
-      .then(res => res.text());
-
-    fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/${user.id}`)
-      .then(res => res.json())
+    await readAllNotifications(user.id);
+    await getUserNotifications(user.id)
       .then((res) => {
         this.setState({
-          userNotifications: res,
-          unreadCount: res.filter(n => n.readStatus === false).length
+          userNotifications: res.data,
+          unreadCount: res.data.filter(n => n.readStatus === false).length
         });
       });
   }

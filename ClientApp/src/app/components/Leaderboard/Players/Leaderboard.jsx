@@ -7,11 +7,12 @@ import leaderboardLogo from '../../../../content/images/leaderboard.png';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
 import { Loader } from '../../Loader';
 import { EmptyJordan } from '../../EmptyJordan';
+import { getPlayersLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
 
 const { $ } = window;
 const LOAD_COUNT = 30;
 
-export class Leaderboard extends Component {
+export default class Leaderboard extends Component {
   constructor(props) {
     super(props);
     this.showModal = this.showModal.bind(this);
@@ -35,22 +36,19 @@ export class Leaderboard extends Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     $('#playerModal').on('hidden.bs.modal', () => {
       this.setState({
         modalLoader: true,
         renderChild: false
       });
     });
-  }
 
-  async componentDidMount() {
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/player?type=daily`)
-      .then(res => res.json())
+    await getPlayersLeaderboard({ type: 'daily' })
       .then((res) => {
-        this.state.showButton.daily = res.length === LOAD_COUNT;
+        this.state.showButton.daily = res.data.length === LOAD_COUNT;
         this.setState({
-          daily: res,
+          daily: res.data,
           activeTab: 'daily',
           loader: false
         });
@@ -66,11 +64,10 @@ export class Leaderboard extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true });
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${player.nbaID}`)
-      .then(res => res.json())
+    await getPlayerStats(player.nbaID)
       .then((res) => {
         this.setState({
-          stats: res,
+          stats: res.data,
           modalLoader: false,
           renderChild: true
         });
@@ -86,12 +83,12 @@ export class Leaderboard extends Component {
     if (this.state[type].length === 0) {
       this.setState({ loader: true });
 
-      await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/player?type=${type}`)
-        .then(res => res.json())
+
+      await getPlayersLeaderboard({ type })
         .then((res) => {
-          this.state.showButton[type] = res.length === LOAD_COUNT;
+          this.state.showButton[type] = res.data.length === LOAD_COUNT;
           this.setState({
-            [type]: res,
+            [type]: res.data,
             loader: false
           });
         });
@@ -101,20 +98,33 @@ export class Leaderboard extends Component {
   async loadMore() {
     const type = this.state.activeTab;
     this.setState({ loadMore: true });
-
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/leaderboard/player?type=${type}&from=${this.state[type].length}&limit=${LOAD_COUNT}`)
-      .then(res => res.json())
+    await getPlayersLeaderboard({ type, from: this.state[type].length, limit: LOAD_COUNT })
       .then((res) => {
-        this.state.showButton[type] = res.length === LOAD_COUNT;
+        this.state.showButton[type] = res.data.length === LOAD_COUNT;
         this.setState({
-          [type]: this.state[type].concat(res),
+          [type]: this.state[type].concat(res.data),
           loadMore: false
         });
       });
   }
 
   seeMoreBtn(type) {
-    return this.state.showButton[type] ? <button className="btn btn-primary mt-2" onClick={this.loadMore}>See more</button> : '';
+    return this.state.showButton[type] ? <button type="button" className="btn btn-primary mt-2" onClick={this.loadMore}>See more</button> : '';
+  }
+
+  createPlayers(players) {
+    return _.map(
+      players,
+      (player, index) => (
+        <Card
+          index={index}
+          key={shortid()}
+          player={player}
+          showModal={this.showModal}
+          image={this.state[player.position]}
+        />
+      )
+    );
   }
 
   render() {
@@ -183,21 +193,6 @@ export class Leaderboard extends Component {
           stats={this.state.stats}
         />
       </div>
-    );
-  }
-
-  createPlayers(players) {
-    return _.map(
-      players,
-      (player, index) => (
-        <Card
-          index={index}
-          key={shortid()}
-          player={player}
-          showModal={this.showModal}
-          image={this.state[player.position]}
-        />
-      )
     );
   }
 }

@@ -4,6 +4,7 @@ import shortid from 'shortid';
 import InjuryCard from './InjuryCard';
 import { Loader } from '../Loader';
 import { EmptyJordan } from '../EmptyJordan';
+import { getInjuries } from '../../utils/networkFunctions';
 
 export class InjuriesFeed extends Component {
   _isMounted = false;
@@ -19,13 +20,11 @@ export class InjuriesFeed extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
-
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/injuries`)
-      .then(res => res.json())
+    await getInjuries()
       .then((res) => {
         if (this._isMounted) {
           this.setState({
-            injuries: res,
+            injuries: res.data,
             injuryLoader: false
           });
         }

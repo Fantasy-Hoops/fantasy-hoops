@@ -1,36 +1,16 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { isAuth, parse } from '../utils/auth';
 
 export default class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      team: ''
     };
   }
 
   async componentDidMount() {
     document.querySelector('body').classList.add('Main__Background');
-    if (isAuth()) {
-      const user = parse();
-      await fetch(
-        `${process.env.REACT_APP_SERVER_NAME}/api/user/team/${user.id}`
-      )
-        .then(res => res.json())
-        .then((res) => {
-          const { team } = res[0];
-          this.setState({
-            team
-          });
-        });
-    } else {
-      this.setState({
-        team: { abbreviation: 'nba' }
-      });
-    }
   }
-
   componentDidUpdate() {
     let deferredPrompt;
     if (document.querySelector('.A2HS-Button')) {
@@ -69,10 +49,6 @@ export default class Main extends Component {
   }
 
   render() {
-    const { team } = this.state;
-    if (team === '') {
-      return <div />;
-    }
     return (
       <div className="Main__Background">
         <button type="button" className="btn btn-danger A2HS-Button">

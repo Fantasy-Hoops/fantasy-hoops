@@ -10,6 +10,9 @@ import { PlayerModal } from '../PlayerModal/PlayerModal';
 import InfoModal from './InfoModal';
 import { Loader } from '../Loader';
 import { EmptyJordan } from '../EmptyJordan';
+import {
+  getNextGameInfo, getUserLineup, getPlayers, getPlayerStats, submitLineup
+} from '../../utils/networkFunctions';
 
 const { $ } = window;
 const budget = 300; // thousands
@@ -58,13 +61,12 @@ export class Lineup extends Component {
     this.setState({
       playerLoader: true
     });
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/lineup/nextGame`)
-      .then(res => res.json())
+    await getNextGameInfo()
       .then((res) => {
-        if (new Date(res.nextGame).getFullYear() !== 1) {
+        if (new Date(res.data.nextGame).getFullYear() !== 1) {
           this.setState({
-            nextGame: res.nextGame,
-            playerPoolDate: res.playerPoolDate,
+            nextGame: res.data.nextGame,
+            playerPoolDate: res.data.playerPoolDate,
             poolLoader: false
           });
         } else {
@@ -78,27 +80,26 @@ export class Lineup extends Component {
 
     if (!this.state.isGame) return;
 
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/player`)
-      .then(res => res.json())
+    await getPlayers()
       .then((res) => {
         this.setState({
-          players: res,
+          players: res.data,
           playerLoader: false
         });
+        this.filter('PG');
       });
-    this.filter('PG');
   }
 
-  componentDidUpdate() {
+  async componentDidUpdate() {
     if (!this.state.isGame) return;
 
     if (!this.state.loadedPlayers && this.state.players) {
       const user = parse();
-      fetch(`${process.env.REACT_APP_SERVER_NAME}/api/lineup/${user.id}`)
-        .then(res => res.json())
+      await getUserLineup(user.id)
         .then((res) => {
-          res.lineup.forEach((selectedPlayer) => {
-            this.state.players.forEach((player) => {
+          if (res.status !== 200) return;
+          res.data.lineup.map((selectedPlayer) => {
+            this.state.players.map((player) => {
               if (player.id == selectedPlayer.id) {
                 player.selected = true;
                 player.status = 2;
@@ -106,7 +107,7 @@ export class Lineup extends Component {
               }
             });
           });
-        }).catch(() => {});
+        });
       this.setState({
         loadedPlayers: true
       });
@@ -167,7 +168,7 @@ export class Lineup extends Component {
         this.state.submit = false;
         return <Completionist />;
       }
-      if (this.state.playerPoolDate !== this.state.nextGame) { return <h5>Please wait a moment until player pool is updated!</h5>; }
+      if (this.state.playerPoolDate !== this.state.nextGame) { return <div className="Lineup__countdown">Please wait a moment until player pool is updated!</div>; }
       this.state.submit = true;
 
       days = this.getFormattedDateString(days, 'day');
@@ -178,7 +179,7 @@ export class Lineup extends Component {
       return (
         <span>
           Game starts in
-{" "}
+          {' '}
           <strong>
             {days}
             {hours}
@@ -243,7 +244,7 @@ export class Lineup extends Component {
             {' '}
             {remaining}
             K
-                    </p>
+          </p>
           <ProgressBar players={this.state} />
           <div
             className="text-center mt-3 pb-3 mx-auto position-relative"
@@ -308,11 +309,10 @@ export class Lineup extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true });
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${player.id}`)
-      .then(res => res.json())
+    await getPlayerStats(player.id)
       .then((res) => {
         this.setState({
-          stats: res,
+          stats: res.data,
           modalLoader: false,
           renderChild: true
         });
@@ -334,7 +334,7 @@ export class Lineup extends Component {
     return playerPrice;
   }
 
-  handleSubmit(e) {
+  async handleSubmit(e) {
     e.preventDefault();
     const user = parse();
     const data = {
@@ -351,25 +351,17 @@ export class Lineup extends Component {
       CPrice: this.state.lineup.c.props.player.price
     };
 
-    fetch('/api/lineup/submit', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(res => handleErrors(res))
-      .then(res => res.text())
+    await submitLineup(data)
       .then((res) => {
         this.setState({
           alertType: 'success',
-          alertText: res
+          alertText: res.data
         });
       })
       .catch((err) => {
         this.setState({
           alertType: 'danger',
-          alertText: err.message
+          alertText: err.response.data
         });
       })
       .then(this.refs.alert.addNotification);

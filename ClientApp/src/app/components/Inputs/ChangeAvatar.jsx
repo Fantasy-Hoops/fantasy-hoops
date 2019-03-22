@@ -3,6 +3,7 @@ import Avatar from 'react-avatar-edit';
 import { parse } from '../../utils/auth';
 import { handleErrors } from '../../utils/errors'
 import { Alert } from '../Alert';
+import { uploadAvatar, clearAvatar } from '../../utils/networkFunctions';
 
 export class ChangeAvatar extends Component {
   constructor(props) {
@@ -60,27 +61,20 @@ export class ChangeAvatar extends Component {
       id: user.id,
       avatar: this.state.preview
     }
-    fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/uploadAvatar`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(res => handleErrors(res))
-      .then(res => res.text())
+
+    uploadAvatar(data)
       .then(res => {
         this.setState({
           showAlert: true,
           alertType: 'alert-success',
-          alertText: res
+          alertText: res.data
         });
       })
       .catch(err => {
         this.setState({
           showAlert: true,
           alertType: 'alert-danger',
-          alertText: err.message
+          alertText: err.response.data
         });
       });
   }
@@ -92,27 +86,20 @@ export class ChangeAvatar extends Component {
     const data = {
       id: user.id
     }
-    fetch(`${process.env.REACT_APP_SERVER_NAME}/api/user/clearAvatar`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then(res => handleErrors(res))
-      .then(res => res.text())
+
+    clearAvatar(data)
       .then(res => {
         this.setState({
           showAlert: true,
           alertType: 'alert-success',
-          alertText: res
+          alertText: res.data
         });
       })
       .catch(err => {
         this.setState({
           showAlert: true,
           alertType: 'alert-danger',
-          alertText: err.message
+          alertText: err.response.data
         });
       });
   }

@@ -754,7 +754,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .UserLeaderboardCard__user-ranking {
   text-align: left;
   font-weight: 700;
-  font-size: 2.4rem;
+  font-size: 2.3rem;
   color: var(--primary-color);
   padding-left: 1rem;
 }
@@ -872,7 +872,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .PlayerLeaderboardCard__player-ranking {
   text-align: left;
   font-weight: 700;
-  font-size: 2.5rem;
+  font-size: 2.3rem;
   color: var(--primary-color);
   padding-left: .7rem;
 }

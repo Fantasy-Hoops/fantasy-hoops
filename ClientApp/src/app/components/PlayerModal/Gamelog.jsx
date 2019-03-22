@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import shortid from 'shortid';
 import moment from 'moment';
 import { Loader } from '../Loader';
+import { getPlayerStats } from '../../utils/networkFunctions';
 
 const LOAD_COUNT = 10;
 
@@ -98,11 +99,10 @@ export default class Gamelog extends Component {
       loader: true,
       loadCounter: this.state.loadCounter + 1
     });
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/stats/${this.state.nbaID}?start=${this.state.games.length}&count=${LOAD_COUNT}`)
-      .then(res => res.json())
+    await getPlayerStats(this.state.nbaID, { start: this.state.games.length, count: LOAD_COUNT })
       .then((res) => {
         this.setState({
-          games: this.state.games.concat(res.games),
+          games: this.state.games.concat(res.data.games),
           loader: false
         });
       });

@@ -5,6 +5,7 @@ import Img from 'react-image';
 import moment from 'moment';
 import { UTCNow } from '../../utils/UTCNow';
 import { loadImage } from '../../utils/loadImage';
+import { readNotification } from '../../utils/networkFunctions';
 
 export class NotificationCard extends Component {
   _isMounted = false;
@@ -51,13 +52,7 @@ export class NotificationCard extends Component {
         isRead: true
       });
     }
-    await fetch(`${process.env.REACT_APP_SERVER_NAME}/api/notification/read`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(notification)
-    });
+    await readNotification(notification);
   }
 
   render() {
