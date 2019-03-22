@@ -22,7 +22,7 @@ export default class RequestList extends Component {
 
     await getUserFriendRequests(user.id)
       .then((res) => {
-        this.setState({ requests: res });
+        this.setState({ requests: res.data });
       });
   }
 
