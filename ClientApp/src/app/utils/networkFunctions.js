@@ -1,7 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 
-const apiUrlBase = `${process.env.REACT_APP_SERVER_NAME}api`;
+const apiUrlBase = `${process.env.REACT_APP_SERVER_NAME}/api`;
 
 const userApiUrlBase = `${apiUrlBase}/user`;
 const friendRequestApiUrlBase = `${apiUrlBase}/friendrequest`;

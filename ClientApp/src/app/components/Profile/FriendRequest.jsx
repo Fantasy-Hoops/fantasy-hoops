@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { parse } from '../../utils/auth';
-import { handleErrors } from '../../utils/errors';
 import { loadImage } from '../../utils/loadImage';
 import defaultImage from '../../../content/images/default.png';
 import { AlertNotification as Alert } from '../AlertNotification';

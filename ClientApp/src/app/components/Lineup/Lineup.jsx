@@ -4,7 +4,6 @@ import { PlayerPool } from './PlayerPool';
 import { PlayerCard } from './PlayerCard';
 import { ProgressBar } from './ProgressBar';
 import { parse } from '../../utils/auth';
-import { handleErrors } from '../../utils/errors';
 import { AlertNotification as Alert } from '../AlertNotification';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
 import InfoModal from './InfoModal';

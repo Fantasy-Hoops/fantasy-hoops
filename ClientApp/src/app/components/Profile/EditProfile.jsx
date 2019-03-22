@@ -4,7 +4,6 @@ import { Input } from '../Inputs/Input';
 import { Select } from '../Inputs/Select';
 import { parse } from '../../utils/auth';
 import { Alert } from '../Alert';
-import { handleErrors } from '../../utils/errors';
 import { editProfile, getTeams } from '../../utils/networkFunctions';
 
 export class EditProfile extends Component {

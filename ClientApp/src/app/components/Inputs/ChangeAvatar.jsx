@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Avatar from 'react-avatar-edit';
 import { parse } from '../../utils/auth';
-import { handleErrors } from '../../utils/errors'
 import { Alert } from '../Alert';
 import { uploadAvatar, clearAvatar } from '../../utils/networkFunctions';
 

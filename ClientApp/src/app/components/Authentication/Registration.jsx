@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Input } from '../Inputs/Input';
-import { handleErrors } from '../../utils/errors';
 import { Alert } from '../Alert';
 import { isAuth } from '../../utils/auth';
 import { register } from '../../utils/networkFunctions';
