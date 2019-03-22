@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import shortid from 'shortid';
 import _ from 'lodash';
 import { parse } from '../../utils/auth';
-import { handleErrors } from '../../utils/errors';
 import { NotificationCard } from './NotificationCard';
 import defaultPhoto from '../../../content/images/default.png';
 import gameLogo from '../../../content/images/logo.png';
