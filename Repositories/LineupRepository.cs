@@ -49,34 +49,6 @@ namespace fantasy_hoops.Repositories
             .FirstOrDefault();
         }
 
-        // REMOVE
-        public void AddPlayer(String userID, String position, int playerID)
-        {
-            var player = new Lineup
-            {
-                UserID = userID,
-                PlayerID = playerID,
-                Position = position,
-                Date = CommonFunctions.UTCToEastern(NextGame.NEXT_GAME),
-                Calculated = false
-            };
-            _context.Lineups.Add(player);
-        }
-
-        // REMOVE
-        public void UpdatePlayer(String userID, String position, int playerID)
-        {
-            var player = _context.Lineups
-                            .Where(x => x.UserID.Equals(userID)
-                                            && x.Position.Equals(position)
-                                            && x.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
-                            .FirstOrDefault();
-
-            player.PlayerID = playerID;
-            player.FP = 0.0;
-            player.Calculated = false;
-        }
-
         public void AddLineup(SubmitLineupViewModel model)
         {
             _context.UserLineups.Add(
@@ -138,16 +110,10 @@ namespace fantasy_hoops.Repositories
 
         public bool IsUpdating(String userID)
         {
-            // REMOVE AFTER FULL LINEUPS CHANGE
-            return (_context.UserLineups
+            return _context.UserLineups
                     .Where(x => x.UserID.Equals(userID)
-                                    && x.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
-                    .Any()
-                    ||
-                    _context.Lineups
-                    .Where(x => x.UserID.Equals(userID)
-                                    && x.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
-                    .Any());
+                        && x.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
+                    .Any();
         }
 
         private bool IsPlayerPriceIncorrect(int playerID, int price)

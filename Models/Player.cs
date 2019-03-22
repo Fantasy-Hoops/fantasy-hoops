@@ -34,6 +34,5 @@ namespace fantasy_hoops.Models
 
         public virtual Team Team { get; set; }
         public virtual ICollection<Stats> Stats { get; set; }
-        public virtual ICollection<Lineup> Lineups { get; set; }
     }
 }

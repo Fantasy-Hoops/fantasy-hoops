@@ -56,11 +56,9 @@ namespace fantasy_hoops.Database
                 JArray games = CommonFunctions.GetGames(date);
                 foreach (var game in games)
                 {
+                    SetNextOpponent(context, game);
                     var hTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
                     var vTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
-
-                    if (updatePrice)
-                        SetNextOpponent(context, game);
 
                     foreach (var player in hTeamPlayers.Union(vTeamPlayers))
                     {
