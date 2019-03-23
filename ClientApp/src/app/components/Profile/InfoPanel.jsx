@@ -48,7 +48,7 @@ export class InfoPanel extends Component {
     const liveBadge = user.currentLineup && user.currentLineup.isLive
       ? <span className="ml-2 badge badge-danger" style={{ fontSize: '1.3rem' }}>Live</span>
       : null;
-    return this.props.readOnly && user.currentLineup
+    return this.props.readOnly || !user.currentLineup
       ? null
       : (
         <div className="col-md-12">
