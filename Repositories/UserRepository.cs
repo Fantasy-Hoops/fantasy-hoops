@@ -35,6 +35,7 @@ namespace fantasy_hoops.Repositories
             }
 
             var activity = GetRecentActivity(id, start, count).ToList();
+            var currentLineup = GetCurrentLineup(id);
             int streak = GetStreak(id);
             decimal totalScore = GetWeeklyScore(id);
             int position = GetWeeklyRanking(id);
@@ -53,6 +54,7 @@ namespace fantasy_hoops.Repositories
                     team.Color
                 },
                 recentActivity = activity,
+                currentLineup,
                 Streak = streak,
                 Position = position,
                 TotalScore = totalScore
@@ -139,6 +141,46 @@ namespace fantasy_hoops.Repositories
             return _context.Users
                 .Where(x => x.Email.ToLower().Equals(email.ToLower()))
                 .Any();
+        }
+
+        private object GetCurrentLineup(string id)
+        {
+            return _context.UserLineups
+                    .Where(lineup => lineup.UserID.Equals(id)
+                    && ((lineup.Date.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
+                        || lineup.Date.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date)
+                    && !lineup.IsCalculated)
+                    .Select(lineup => new
+                    {
+                        lineup.UserID,
+                        lineup.User.UserName,
+                        longDate = lineup.Date.ToString("yyyy-MM-dd"),
+                        shortDate = lineup.Date.ToString("MMM. dd"),
+                        lineup.Date,
+                        lineup.FP,
+                        lineup = _context.Players
+                        .Where(player =>
+                            player.PlayerID == lineup.PgID
+                            || player.PlayerID == lineup.SgID
+                            || player.PlayerID == lineup.SfID
+                            || player.PlayerID == lineup.PfID
+                            || player.PlayerID == lineup.CID)
+                        .Select(player => new
+                        {
+                            player.NbaID,
+                            player.Position,
+                            teamColor = player.Team.Color,
+                            player.FullName,
+                            player.FirstName,
+                            player.LastName,
+                            player.AbbrName,
+                            FP = _context.Stats.Where(stats => stats.Date.Date == lineup.Date.Date
+                                && stats.PlayerID == player.PlayerID)
+                            .Select(stats => stats.FP).FirstOrDefault()
+                        }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position)),
+                        isLive = lineup.Date.Date == NextGame.PREVIOUS_GAME.Date && !lineup.IsCalculated
+                    })
+                    .FirstOrDefault();
         }
 
         private IQueryable<Object> GetRecentActivity(string id, int start, int count)

@@ -914,7 +914,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .UserScoreCard {
   min-width: 28rem;
   max-width: 45rem;
-  height: 10rem;
+  height: 9rem;
 }
 
 .UserScoreCard__body {
@@ -977,6 +977,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 }
 
 .UserScoreCard__result {
+  position: relative;
   width: 100%;
   height: 100%;
   border-left: .01rem solid #acacac;
@@ -984,16 +985,25 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 }
 
 .UserScoreCard__FP {
-  margin-top: 25%;
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 100%;
+  transform: translate(-50%, -50%);
   text-align: center;
-  font-size: 1.9rem;
+  font-size: 2.1rem;
   font-weight: 700;
 }
 
 .UserScoreCard__date {
+  position: absolute;
+  left: 50%;
+  top: 70%;
+  width: 100%;
+  transform: translate(-50%, -50%);
   margin: 0;
   text-align: center;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 400;
 }
 
@@ -1458,6 +1468,9 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   .PlayerCard__player-injury-badge--lineup {
     padding: .1rem;
     font-size: .7rem;
+  }
+  .UserScoreCard__FP {
+    font-size: 1.5rem;
   }
 }
 
