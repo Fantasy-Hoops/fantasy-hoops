@@ -6,6 +6,7 @@ import shortid from 'shortid';
 import CardPlayer from './CardPlayer';
 import defaultPhoto from '../../../../content/images/default.png';
 import { loadImage } from '../../../utils/loadImage';
+import Routes from '../../../routes/routes';
 
 export default class Card extends PureComponent {
   _isMounted = false;
@@ -57,7 +58,7 @@ export default class Card extends PureComponent {
             <div className="UserLeaderboardCard__body-item UserLeaderboardCard__user-ranking UserLeaderboardCard__user-ranking--daily">
               {this.props.index + 1}
             </div>
-            <Link to={`/profile/${this.props.user.userName}`} className="UserLeaderboardCard__body-item UserLeaderboardCard__user-photo">
+            <Link to={`${Routes.PROFILE}/${this.props.user.userName}`} className="UserLeaderboardCard__body-item UserLeaderboardCard__user-photo">
               <Img
                 className="UserLeaderboardCard__user-photo--image"
                 alt={this.props.user.userName}
@@ -66,7 +67,7 @@ export default class Card extends PureComponent {
               />
             </Link>
             <Link
-              to={`/profile/${this.props.user.userName}`}
+              to={`${Routes.PROFILE}/${this.props.user.userName}`}
               className="UserLeaderboardCard__body-item UserLeaderboardCard__username UserLeaderboardCard__username--daily"
             >
               {this.props.user.userName}
@@ -89,7 +90,7 @@ export default class Card extends PureComponent {
             {this.props.index + 1}
           </div>
           <div className="UserLeaderboardCard__body-item">
-            <Link to={`/profile/${this.props.user.userName}`}>
+            <Link to={`${Routes.PROFILE}/${this.props.user.userName}`}>
               <Img
                 className="UserLeaderboardCard__user-photo--image"
                 alt={this.props.user.userName}
@@ -98,7 +99,7 @@ export default class Card extends PureComponent {
               />
             </Link>
           </div>
-          <Link to={`/profile/${this.props.user.userName}`} className="UserLeaderboardCard__body-item UserLeaderboardCard__username">{this.props.user.userName}</Link>
+          <Link to={`${Routes.PROFILE}/${this.props.user.userName}`} className="UserLeaderboardCard__body-item UserLeaderboardCard__username">{this.props.user.userName}</Link>
           <div className="UserLeaderboardCard__body-item UserLeaderboardCard__FP UserLeaderboardCard__FP--grey">
             {`${this.props.user.fp.toFixed(1)} `}
             <span style={{ fontSize: '1rem', fontWeight: 400 }}>FP</span>

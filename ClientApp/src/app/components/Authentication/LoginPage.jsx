@@ -5,6 +5,7 @@ import { Input } from '../Inputs/Input';
 import { Alert } from '../Alert';
 import { isAuth } from '../../utils/auth';
 import { login } from '../../utils/networkFunctions';
+import Routes from '../../routes/routes';
 
 export default class LoginPage extends Component {
   constructor(props) {
@@ -120,7 +121,7 @@ export default class LoginPage extends Component {
             />
           </div>
           <button type="submit" id="login" disabled className="btn btn-outline-primary btn-block">Log in</button>
-          <Link to="/register" className="btn btn-success btn-block">Sign up</Link>
+          <Link to={Routes.REGISTER} className="btn btn-success btn-block">Sign up</Link>
         </form>
       </div>
     );
