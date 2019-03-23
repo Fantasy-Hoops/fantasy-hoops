@@ -43,21 +43,57 @@ export class InfoPanel extends Component {
       });
   }
 
+  getCurrentLineup() {
+    const { user } = this.props;
+    const liveBadge = user.currentLineup && user.currentLineup.isLive
+      ? <span className="ml-2 badge badge-danger" style={{ fontSize: '1.3rem' }}>Live</span>
+      : null;
+    return this.props.readOnly && user.currentLineup
+      ? null
+      : (
+        <div className="col-md-12">
+          <h2 className="mt-2 d-inline-block">
+            <span className="fa fa-clock-o ion-clock" />
+            {' '}
+            Current Lineup
+            {' '}
+          </h2>
+          {liveBadge}
+          <UserScore
+            key={shortid()}
+            activity={user.currentLineup}
+            showModal={this.showModal}
+          />
+        </div>
+      );
+  }
+
   render() {
     const { user } = this.props;
     const recentActivity = () => {
       if (!this.props.loader) {
-        const recentActivity = _.map(
+        const activity = _.map(
           user.recentActivity,
-          activity => (
+          lineup => (
             <UserScore
               key={shortid()}
-              activity={activity}
+              activity={lineup}
               showModal={this.showModal}
             />
           )
         );
-        return recentActivity;
+        return activity.length > 0
+          ? (
+            <div className="col-md-12">
+              <h2 className="mt-2">
+                <span className="fa fa-clock-o ion-clock" />
+                {' '}
+                Recent Activity
+              </h2>
+              {activity}
+            </div>
+          )
+          : null;
       }
       return (
         <div className="p-5">
@@ -125,18 +161,11 @@ export class InfoPanel extends Component {
                 >
                   {user !== '' ? user.team.name : ''}
                 </span>
-
               </h1>
             </div>
           </div>
-          <div className="col-md-12">
-            <h2 className="mt-2">
-              <span className="fa fa-clock-o ion-clock" />
-              {' '}
-              Recent Activity
-            </h2>
-            {recentActivity()}
-          </div>
+          {this.getCurrentLineup()}
+          {recentActivity()}
         </div>
         <PlayerModal
           renderChild={this.state.renderChild}
@@ -148,3 +177,5 @@ export class InfoPanel extends Component {
     );
   }
 }
+
+export default InfoPanel;

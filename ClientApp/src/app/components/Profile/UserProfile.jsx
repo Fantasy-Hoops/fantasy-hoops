@@ -39,7 +39,7 @@ export class UserProfile extends Component {
     if (match.params.name == null || loggedInAsSameUser) {
       const user = parse();
 
-      await getUserData(user.id, { count: 10 })
+      await getUserData(user.id, { count: 5 })
         .then((res) => {
           this.setState({
             user: res.data,
