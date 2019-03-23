@@ -33,8 +33,12 @@ export class InjuriesFeed extends Component {
 
     function transition() {
       if (this.classList.contains('active')) {
+        this.lastChild.classList.add('overflow-hidden');
+        this.lastChild.classList.remove('overflow-auto');
         this.classList.remove('active');
       } else if (this.lastChild.lastChild.lastChild.innerHTML !== '') {
+        this.lastChild.classList.add('overflow-auto');
+        this.lastChild.classList.remove('overflow-hidden');
         this.classList.add('active');
       }
     }
@@ -70,7 +74,7 @@ export class InjuriesFeed extends Component {
       );
     });
     return (
-      <div className="mt-3 container bg-light">
+      <div className="p-0 mt-3 container bg-light">
         <div className="row">{injuryCards}</div>
       </div>
     );
