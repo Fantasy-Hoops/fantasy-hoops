@@ -70,7 +70,7 @@ const InjuryCard = (props) => {
             {moment(injuryDateUTC).from(UTCNow().Time)}
           </span>
         </div>
-        <div className="side back">
+        <div className="side back overflow-hidden">
           <div className="InjuryCard__BackInfo">
             <div className="InjuryCard__PlayerName InjuryCard__PlayerName--back">{injury.player.fullName}</div>
             <p className="Injury__Description">{injury.description}</p>

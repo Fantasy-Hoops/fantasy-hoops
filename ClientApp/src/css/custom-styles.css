@@ -249,7 +249,7 @@ a:hover {
   min-height: 10rem;
   -webkit-perspective: 100rem;
           perspective: 100rem;
-  margin: 0 auto;
+  margin: .5rem auto;
 }
 
 .InjuryCardContainer .active {
