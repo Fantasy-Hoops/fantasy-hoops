@@ -75,7 +75,7 @@ export default class Card extends PureComponent {
             <div title="Fantasy Points" className="UserLeaderboardCard__body-item UserLeaderboardCard__FP UserLeaderboardCard__FP--daily">
               {`${this.props.user.fp.toFixed(1)} `}
               <span style={{ fontSize: '1rem', fontWeight: 400 }}>FP</span>
-              <div className="UserScoreCard__date" style={{ fontSize: '1rem' }}>{this.props.user.shortDate}</div>
+              <div className="UserLeaderboardCard__Date">{this.props.user.shortDate}</div>
             </div>
             {this.getPlayers()}
           </div>
