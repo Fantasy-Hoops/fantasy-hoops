@@ -31,6 +31,7 @@ module.exports = {
     'global-require': 'off',
     'no-underscore-dangle': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
-    'import/no-dynamic-require': 'off'
+    'import/no-dynamic-require': 'off',
+    'no-tabs': 0
   },
 };

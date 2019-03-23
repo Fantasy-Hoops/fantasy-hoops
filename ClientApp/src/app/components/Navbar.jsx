@@ -9,6 +9,7 @@ import { Notifications } from './Notifications/Notifications';
 import { loadImage } from '../utils/loadImage';
 import { registerPush } from '../utils/push';
 import { logout } from '../utils/networkFunctions';
+import Routes from '../routes/routes';
 
 export default class Navbar extends Component {
   constructor(props) {
@@ -35,7 +36,7 @@ export default class Navbar extends Component {
     const login = (
       <ul className="nav navbar-nav ml-auto Header__Login">
         <li className="nav-item">
-          <Link className="nav-link btn-no-outline" to="/login">Login</Link>
+          <Link className="nav-link btn-no-outline" to={Routes.LOGIN}>Login</Link>
         </li>
       </ul>
     );
@@ -69,7 +70,7 @@ export default class Navbar extends Component {
                   <div className="row">
                     <div className="col-lg-4">
                       <p className="text-center">
-                        <Link className="btn-no-outline" to="/profile">
+                        <Link className="btn-no-outline" to={Routes.PROFILE}>
                           <Img
                             width="90rem"
                             height="90rem"
@@ -113,7 +114,7 @@ export default class Navbar extends Component {
       <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
         {window.location.pathname !== '/'
           ? (
-            <Link className="navbar-brand btn-no-outline Navbar__Logo" to="/">
+            <Link className="navbar-brand btn-no-outline Navbar__Logo" to={Routes.MAIN}>
               <img className="Navbar__Icon" src={require('../../content/images/logo.png')} width="35" height="35" alt="FH" />
               <img className="Navbar__Title ml-2 mt-2" src={require('../../content/images/title.png')} height="30" alt="Fantasy Hoops" />
             </Link>
@@ -136,7 +137,7 @@ export default class Navbar extends Component {
             {isAuth()
               && (
                 <li className="nav-item">
-                  <div><Link className="nav-link btn-no-outline" to="/lineup">Lineup</Link></div>
+                  <div><Link className="nav-link btn-no-outline" to={Routes.LINEUP}>Lineup</Link></div>
                 </li>
               )
             }
@@ -153,23 +154,23 @@ export default class Navbar extends Component {
                     Leaderboards
                   </a>
                   <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <div><Link className="dropdown-item" to="/leaderboard/users">Top Users</Link></div>
-                    <div><Link className="dropdown-item" to="/leaderboard/players">Top NBA Players</Link></div>
-                    <div><Link className="dropdown-item" to="/leaderboard/season">Top Season Performers</Link></div>
+                    <div><Link className="dropdown-item" to={Routes.LEADERBOARD_USERS}>Top Users</Link></div>
+                    <div><Link className="dropdown-item" to={Routes.LEADERBOARD_PLAYERS}>Top NBA Players</Link></div>
+                    <div><Link className="dropdown-item" to={Routes.LEADERBOARD_SEASON}>Top Season Performers</Link></div>
                   </div>
                 </li>
               )
             }
             <li className="nav-item">
-              <div><Link className="nav-link btn-no-outline" to="/injuries">Injuries</Link></div>
+              <div><Link className="nav-link btn-no-outline" to={Routes.INJURIES}>Injuries</Link></div>
             </li>
             <li className="nav-item">
-              <div><Link className="nav-link btn-no-outline" to="/news">News</Link></div>
+              <div><Link className="nav-link btn-no-outline" to={Routes.NEWS}>News</Link></div>
             </li>
             {isAuth()
               && (
                 <li className="nav-item">
-                  <div><Link className="nav-link btn-no-outline" to="/users">Users</Link></div>
+                  <div><Link className="nav-link btn-no-outline" to={Routes.USER_POOL}>Users</Link></div>
                 </li>
               )
             }

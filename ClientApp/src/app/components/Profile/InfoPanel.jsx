@@ -6,6 +6,7 @@ import { UserScore } from './UserScore';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
 import { Loader } from '../Loader';
 import { getPlayerStats } from '../../utils/networkFunctions';
+import Routes from '../../routes/routes';
 
 const { $ } = window;
 
@@ -69,7 +70,7 @@ export class InfoPanel extends Component {
       if (this.props.readOnly) { return ''; }
       return (
         <div className="pl-4 pt-3">
-          <Link className="btn btn-outline-primary" to="/history" role="button">History</Link>
+          <Link className="btn btn-outline-primary" to={Routes.LINEUP_HISTORY} role="button">History</Link>
         </div>
       );
     };
@@ -86,14 +87,14 @@ export class InfoPanel extends Component {
                 {' '}
                 {user.streak}
               </div>
-              <Link to="/leaderboard/users" className="m-1 badge badge-danger">
+              <Link to={Routes.LEADERBOARD_USERS} className="m-1 badge badge-danger">
                 <i className="fa fa-trophy" />
                 {' '}
                 Weekly Ranking:
                 {' '}
                 {user.position}
               </Link>
-              <Link to="/leaderboard/users" className="m-1 badge badge-info">
+              <Link to={Routes.LEADERBOARD_USERS} className="m-1 badge badge-info">
                 <i className="fa fa-basketball-ball" />
                 {' '}
                 Weekly Score:

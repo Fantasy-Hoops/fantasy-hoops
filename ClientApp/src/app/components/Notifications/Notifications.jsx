@@ -7,6 +7,7 @@ import { NotificationCard } from './NotificationCard';
 import defaultPhoto from '../../../content/images/default.png';
 import gameLogo from '../../../content/images/logo.png';
 import { getUserNotifications, readAllNotifications } from '../../utils/networkFunctions';
+import Routes from '../../routes/routes';
 
 const user = parse();
 
@@ -157,7 +158,7 @@ export class Notifications extends Component {
           <p className="dropdown-header text-center mt-2">
             <Link
               className="btn-no-outline"
-              to="/notifications"
+              to={Routes.ALL_NOTIFICATIONS}
             >
               See all
             </Link>

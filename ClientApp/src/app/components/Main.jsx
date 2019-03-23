@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import Routes from '../routes/routes';
 
 export default class Main extends Component {
   constructor(props) {
@@ -61,7 +62,7 @@ export default class Main extends Component {
             src={`${require('../../content/images/FH_Logo.png')}`}
           />
           <Link
-            to="/lineup"
+            to={Routes.LINEUP}
             className="Main__PlayNowButton text-center btn btn-danger"
             role="button"
           >

@@ -4,6 +4,7 @@ import { Input } from '../Inputs/Input';
 import { Alert } from '../Alert';
 import { isAuth } from '../../utils/auth';
 import { register } from '../../utils/networkFunctions';
+import Routes from '../../routes/routes';
 
 export class Registration extends Component {
   constructor(props) {
@@ -138,7 +139,7 @@ export class Registration extends Component {
         <div className="mt-1">
           <small style={{ color: 'hsl(0, 0%, 45%)' }}>
             Already on Fantasy Hoops?
-            <Link to="/login"> Sign In</Link>
+            <Link to={Routes.LOGIN}> Sign In</Link>
           </small>
         </div>
       </div>

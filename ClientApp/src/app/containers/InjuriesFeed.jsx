@@ -1,36 +1,28 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import shortid from 'shortid';
-import InjuryCard from './InjuryCard';
-import { Loader } from '../Loader';
-import { EmptyJordan } from '../EmptyJordan';
-import { getInjuries } from '../../utils/networkFunctions';
+import InjuryCard from '../components/Injuries/InjuryCard';
+import { Loader } from '../components/Loader';
+import { EmptyJordan } from '../components/EmptyJordan';
+import * as actionCreators from '../actions/injuries';
 
-export class InjuriesFeed extends Component {
-  _isMounted = false;
+const mapStateToProps = state => ({
+  injuries: state.injuriesContainer.injuries,
+  injuryLoader: state.injuriesContainer.injuryLoader
+});
 
-  constructor(props) {
-    super(props);
+const mapDispatchToProps = dispatch => bindActionCreators(actionCreators, dispatch);
 
-    this.state = {
-      injuries: [],
-      injuryLoader: true
-    };
-  }
-
+export class InjuriesContainer extends Component {
   async componentDidMount() {
-    this._isMounted = true;
-    await getInjuries()
-      .then((res) => {
-        if (this._isMounted) {
-          this.setState({
-            injuries: res.data,
-            injuryLoader: false
-          });
-        }
-      });
-    const cards = document.querySelectorAll('.InjuryCard');
+    const { loadInjuries } = this.props;
 
+    await loadInjuries();
+
+    const cards = document.querySelectorAll('.InjuryCard');
     function transition() {
       if (this.classList.contains('active')) {
         this.lastChild.classList.add('overflow-hidden');
@@ -46,7 +38,7 @@ export class InjuriesFeed extends Component {
   }
 
   render() {
-    const { injuries, injuryLoader } = this.state;
+    const { injuries, injuryLoader } = this.props;
     if (injuryLoader) {
       return (
         <div className="m-5">
@@ -55,7 +47,7 @@ export class InjuriesFeed extends Component {
       );
     }
 
-    if (injuries.length === 0) {
+    if (injuries && injuries.length === 0) {
       return (
         <div className="p-5">
           <EmptyJordan message="No injuries report today..." />
@@ -65,13 +57,7 @@ export class InjuriesFeed extends Component {
 
     const injuryCards = _.map(injuries, (injury, index) => {
       const animated = index === 0 ? 'animated pulse delay-2s' : '';
-      return (
-        <InjuryCard
-          key={shortid()}
-          injury={injury}
-          animated={animated}
-        />
-      );
+      return <InjuryCard key={shortid()} injury={injury} animated={animated} />;
     });
     return (
       <div className="p-0 mt-3 container bg-light">
@@ -81,4 +67,14 @@ export class InjuriesFeed extends Component {
   }
 }
 
-export default InjuriesFeed;
+InjuriesContainer.propTypes = {
+  loadInjuries: PropTypes.func.isRequired,
+  injuries: PropTypes.arrayOf(
+    PropTypes.shape({
+      injuryID: PropTypes.number.isRequired
+    })
+  ).isRequired,
+  injuryLoader: PropTypes.bool.isRequired
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(InjuriesContainer);
