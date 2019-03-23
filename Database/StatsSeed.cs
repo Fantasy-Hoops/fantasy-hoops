@@ -55,9 +55,6 @@ namespace fantasy_hoops.Database
             string gameDate = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
             JArray games = CommonFunctions.GetGames(gameDate);
 
-            if (!IsFinished(context, games))
-                return;
-
             foreach (JObject game in games)
             {
                 string bsUrl = "http://data.nba.net/10s/prod/v1/" + gameDate + "/" + game["gameId"] + "_boxscore.json";
@@ -71,9 +68,10 @@ namespace fantasy_hoops.Database
                 foreach (var player in (JArray)players)
                 {
                     int oppId;
-                    string score = "";
+
                     if (!context.Players.Any(x => x.NbaID.Equals((int)player["personId"])))
                         continue;
+                    string score = "";
                     if ((int)player["teamId"] == hTeam)
                     {
                         oppId = vTeam;
@@ -91,9 +89,18 @@ namespace fantasy_hoops.Database
             }
             context.SaveChangesAsync();
 
-            JobManager.AddJob(() => UserScoreSeed.Initialize(context),
-                    s => s.WithName("userScore")
-                    .ToRunNow());
+            if (!IsFinished(context, games))
+            {
+                JobManager.AddJob(() => StatsSeed.Initialize(context),
+                    s => s.WithName("statsSeed")
+                    .ToRunOnceIn(5).Minutes());
+            }
+            else
+            {
+                JobManager.AddJob(() => UserScoreSeed.Initialize(context),
+                        s => s.WithName("userScore")
+                        .ToRunNow());
+            }
         }
 
         private static void AddToDatabase(GameContext context, JToken player, DateTime date, int oppId, string score)
@@ -125,10 +132,11 @@ namespace fantasy_hoops.Database
             };
 
             statsObj.Player = context.Players.Where(x => x.NbaID == (int)player["personId"]).FirstOrDefault();
-            var sth = statsObj.Player.PlayerID;
-            bool shouldAdd = !context.Stats.Any(x => x.Date.Equals(date) && x.PlayerID == statsObj.Player.PlayerID);
+            var dbStats = context.Stats
+                .Where(stats => stats.Date.Date.Equals(date.Date) && stats.PlayerID == statsObj.Player.PlayerID)
+                .FirstOrDefault();
 
-            if (shouldAdd)
+            if (dbStats == null)
             {
                 statsObj.GS = _scoreService.GetGameScore(statsObj.PTS, statsObj.FGM, statsObj.DREB, statsObj.OREB,
                         statsObj.STL, statsObj.AST, statsObj.BLK, statsObj.FGA, statsObj.FTA - statsObj.FTM,
@@ -139,6 +147,36 @@ namespace fantasy_hoops.Database
 
                 statsObj.Price = _scoreService.GetPrice(statsObj.Player);
                 context.Stats.AddAsync(statsObj);
+            }
+            else
+            {
+                dbStats.Score = score;
+                dbStats.MIN = statsObj.MIN;
+                dbStats.FGM = statsObj.FGM;
+                dbStats.FGA = statsObj.FGA;
+                dbStats.FGP = statsObj.FGP;
+                dbStats.TPM = statsObj.TPA;
+                dbStats.TPP = statsObj.TPP;
+                dbStats.FTM = statsObj.FTM;
+                dbStats.FTA = statsObj.FTA;
+                dbStats.FTP = statsObj.FTP;
+                dbStats.DREB = statsObj.DREB;
+                dbStats.OREB = statsObj.OREB;
+                dbStats.TREB = statsObj.TREB;
+                dbStats.AST = statsObj.AST;
+                dbStats.BLK = statsObj.BLK;
+                dbStats.STL = statsObj.STL;
+                dbStats.FLS = statsObj.FLS;
+                dbStats.TOV = statsObj.TOV;
+                dbStats.PTS = statsObj.PTS;
+                dbStats.GS = _scoreService.GetGameScore(statsObj.PTS, statsObj.FGM, statsObj.DREB, statsObj.OREB,
+                        statsObj.STL, statsObj.AST, statsObj.BLK, statsObj.FGA, statsObj.FTA - statsObj.FTM,
+                        statsObj.FLS, statsObj.TOV);
+
+                dbStats.FP = _scoreService.GetFantasyPoints(statsObj.PTS, statsObj.DREB, statsObj.OREB,
+                        statsObj.AST, statsObj.STL, statsObj.BLK, statsObj.TOV);
+
+                dbStats.Price = _scoreService.GetPrice(statsObj.Player);
             }
         }
     }
