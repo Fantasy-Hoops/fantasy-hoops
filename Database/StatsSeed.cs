@@ -96,7 +96,7 @@ namespace fantasy_hoops.Database
 
             if (!IsFinished(context, games))
             {
-                int minutesDelay = countOfActivatedGames == 0 ? 5 : 0;
+                int minutesDelay = countOfActivatedGames == 0 ? 5 : 1;
                 JobManager.AddJob(() => Initialize(context),
                     s => s.WithName("statsSeed")
                     .ToRunOnceIn(minutesDelay).Minutes());
