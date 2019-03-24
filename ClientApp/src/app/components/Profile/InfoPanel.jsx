@@ -46,7 +46,7 @@ export class InfoPanel extends Component {
   getCurrentLineup() {
     const { user } = this.props;
     const liveBadge = user.currentLineup && user.currentLineup.isLive
-      ? <span className="ml-2 badge badge-danger" style={{ fontSize: '1.3rem' }}>Live</span>
+      ? <span className="ml-2 badge badge-danger" style={{ fontSize: '1.2rem' }}>LIVE</span>
       : null;
     return this.props.readOnly || !user.currentLineup
       ? null
@@ -63,6 +63,7 @@ export class InfoPanel extends Component {
             key={shortid()}
             activity={user.currentLineup}
             showModal={this.showModal}
+            current
           />
         </div>
       );
@@ -116,12 +117,13 @@ export class InfoPanel extends Component {
         <div className="row mx-auto">
           <div className="col-md-12">
             <div className="mx-auto mb-2">
-              <div className="m-1 badge badge-success">
+              <div className="m-1 badge badge-indigo">
                 <i className="fa fa-medal" />
                 {' '}
                 Record:
                 {' '}
                 {user.userRecord}
+                FP
               </div>
               <div className="m-1 badge badge-warning">
                 <i className="fa fa-fire" />
