@@ -29,7 +29,9 @@ export default class Gamelog extends Component {
       if (!s.score) { return <div />; }
       const scoreTokens = s.score.split(';');
       const teamPoints = scoreTokens[0].split('-');
-      if (scoreTokens[1] === 'vs') {
+      if (scoreTokens[2] === 'LIVE') {
+        resultLetter = <span className="GameLog__LiveBadge badge badge-danger">LIVE</span>;
+      } else if (scoreTokens[1] === 'vs') {
         resultLetter = parseInt(teamPoints[1], 10) > parseInt(teamPoints[0], 10)
           ? <span className="text-green">W</span>
           : <span className="text-red">L</span>;
@@ -58,21 +60,15 @@ export default class Gamelog extends Component {
           <td>{s.oreb}</td>
           <td>{s.dreb}</td>
           <td>
-            {s.fgm}
-            /
-            {s.fga}
+            {`${s.fgm}/${s.fga}`}
           </td>
           <td>{s.fga !== 0 ? s.fgp : '-'}</td>
           <td>
-            {s.ftm}
-            /
-            {s.fta}
+            {`${s.ftm}/${s.ftm}`}
           </td>
           <td>{s.fta !== 0 ? s.ftp : '-'}</td>
           <td>
-            {s.tpm}
-            /
-            {s.tpa}
+            {`${s.tpm}/${s.tpa}`}
           </td>
           <td>{s.tpa !== 0 ? s.tpp : '-'}</td>
           <td>{s.gs.toFixed(1)}</td>
