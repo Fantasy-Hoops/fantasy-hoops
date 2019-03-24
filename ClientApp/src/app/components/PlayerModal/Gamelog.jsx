@@ -31,12 +31,12 @@ export default class Gamelog extends Component {
       const teamPoints = scoreTokens[0].split('-');
       if (scoreTokens[1] === 'vs') {
         resultLetter = parseInt(teamPoints[1], 10) > parseInt(teamPoints[0], 10)
-          ? <span className="text-success">W</span>
-          : <span className="text-danger">L</span>;
+          ? <span className="text-green">W</span>
+          : <span className="text-red">L</span>;
       } else {
         resultLetter = parseInt(teamPoints[0], 10) > parseInt(teamPoints[1], 10)
-          ? <span className="text-success">W</span>
-          : <span className="text-danger">L</span>;
+          ? <span className="text-green">W</span>
+          : <span className="text-red">L</span>;
       }
       return (
         <tr key={shortid()}>

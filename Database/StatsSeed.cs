@@ -57,6 +57,8 @@ namespace fantasy_hoops.Database
 
             foreach (JObject game in games)
             {
+                if (!(bool)game["isGameActivated"])
+                    continue;
                 string bsUrl = "http://data.nba.net/10s/prod/v1/" + gameDate + "/" + game["gameId"] + "_boxscore.json";
                 JObject boxscore = GetBoxscore(bsUrl);
                 if (boxscore["stats"] == null)
@@ -93,7 +95,7 @@ namespace fantasy_hoops.Database
             {
                 JobManager.AddJob(() => StatsSeed.Initialize(context),
                     s => s.WithName("statsSeed")
-                    .ToRunOnceIn(5).Minutes());
+                    .ToRunOnceIn(10).Seconds());
             }
             else
             {
