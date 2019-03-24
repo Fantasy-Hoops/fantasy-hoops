@@ -1368,6 +1368,39 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   font-size: 1rem;
 }
 
+.alertPulse-css {
+  margin: .5rem;
+  cursor: pointer;
+  box-shadow: 0 0 0 rgba(231,76,60, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(231,76,60, 0.4);
+  }
+  70% {
+      -webkit-box-shadow: 0 0 0 .7rem rgba(204,169,44, 0);
+  }
+  100% {
+      -webkit-box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+  }
+}
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(231,76,60, 0.4);
+    box-shadow: 0 0 0 0 rgba(231,76,60, 0.4);
+  }
+  70% {
+      -moz-box-shadow: 0 0 0 .7rem rgba(204,169,44, 0);
+      box-shadow: 0 0 0 .7rem rgba(204,169,44, 0);
+  }
+  100% {
+      -moz-box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+      box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+  }
+}
+
 @media screen and (min-width: 568px) {
   #main-text {
     font-size: 82px;
