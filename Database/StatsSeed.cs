@@ -161,7 +161,8 @@ namespace fantasy_hoops.Database
                 dbStats.FGM = statsObj.FGM;
                 dbStats.FGA = statsObj.FGA;
                 dbStats.FGP = statsObj.FGP;
-                dbStats.TPM = statsObj.TPA;
+                dbStats.TPM = statsObj.TPM;
+                dbStats.TPA = statsObj.TPA;
                 dbStats.TPP = statsObj.TPP;
                 dbStats.FTM = statsObj.FTM;
                 dbStats.FTA = statsObj.FTA;
