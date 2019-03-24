@@ -30,7 +30,7 @@ export default class Gamelog extends Component {
       const scoreTokens = s.score.split(';');
       const teamPoints = scoreTokens[0].split('-');
       if (scoreTokens[2] === 'LIVE') {
-        resultLetter = <span className="GameLog__LiveBadge badge badge-danger">LIVE</span>;
+        resultLetter = <span className="GameLog__LiveBadge alertPulse-css badge badge-danger">LIVE</span>;
       } else if (scoreTokens[1] === 'vs') {
         resultLetter = parseInt(teamPoints[1], 10) > parseInt(teamPoints[0], 10)
           ? <span className="text-green">W</span>
