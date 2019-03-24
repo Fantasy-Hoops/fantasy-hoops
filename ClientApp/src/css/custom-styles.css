@@ -504,7 +504,7 @@ a:hover {
 }
 
 .Profile__About {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   display: block;
   word-wrap: break-word;
 }
@@ -1346,8 +1346,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 }
 
 .PlayerModal #table-scroll th:nth-last-child(1) {
-  width: 90px;
-  min-width: 90px;
+  min-width: 10rem;
 }
 
 .Charts {
@@ -1363,6 +1362,10 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .GameLog__corner-cell {
   background-color: var(--primary-color) !important;
   font-weight: 700 !important;
+}
+
+.GameLog__LiveBadge {
+  font-size: 1rem;
 }
 
 @media screen and (min-width: 568px) {

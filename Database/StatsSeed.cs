@@ -54,11 +54,13 @@ namespace fantasy_hoops.Database
         {
             string gameDate = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
             JArray games = CommonFunctions.GetGames(gameDate);
-
+            int countOfActivatedGames = 0;
             foreach (JObject game in games)
             {
-                if (!(bool)game["isGameActivated"])
+                if (!(bool)game["isGameActivated"] && (int)game["statusNum"] != 3)
                     continue;
+
+                countOfActivatedGames++;
                 string bsUrl = "http://data.nba.net/10s/prod/v1/" + gameDate + "/" + game["gameId"] + "_boxscore.json";
                 JObject boxscore = GetBoxscore(bsUrl);
                 if (boxscore["stats"] == null)
@@ -74,15 +76,16 @@ namespace fantasy_hoops.Database
                     if (!context.Players.Any(x => x.NbaID.Equals((int)player["personId"])))
                         continue;
                     string score = "";
+                    string liveToken = (int)game["statusNum"] != 3 ? ";LIVE" : "";
                     if ((int)player["teamId"] == hTeam)
                     {
                         oppId = vTeam;
-                        score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";vs";
+                        score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";vs" + liveToken;
                     }
                     else
                     {
                         oppId = hTeam;
-                        score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";@";
+                        score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";@" + liveToken;
                     }
                     if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
                         continue;
@@ -93,9 +96,10 @@ namespace fantasy_hoops.Database
 
             if (!IsFinished(context, games))
             {
-                JobManager.AddJob(() => StatsSeed.Initialize(context),
+                int minutesDelay = countOfActivatedGames == 0 ? 5 : 0;
+                JobManager.AddJob(() => Initialize(context),
                     s => s.WithName("statsSeed")
-                    .ToRunOnceIn(10).Seconds());
+                    .ToRunOnceIn(minutesDelay).Minutes());
             }
             else
             {

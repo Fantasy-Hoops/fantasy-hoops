@@ -52,12 +52,9 @@ export class InfoPanel extends Component {
       ? null
       : (
         <div className="col-md-12">
-          <h2 className="mt-2 d-inline-block">
-            <span className="fa fa-clock-o ion-clock" />
-            {' '}
-            Current Lineup
-            {' '}
-          </h2>
+          <h3 className="mt-2 d-inline-block">
+            {' Current Lineup'}
+          </h3>
           {liveBadge}
           <UserScore
             key={shortid()}
@@ -86,11 +83,10 @@ export class InfoPanel extends Component {
         return activity.length > 0
           ? (
             <div className="col-md-12">
-              <h2 className="mt-2">
-                <span className="fa fa-clock-o ion-clock" />
-                {' '}
-                Recent Activity
-              </h2>
+              <h3 className="mt-2">
+                <span className="fa fa-history" />
+                {' Recent Activity'}
+              </h3>
               {activity}
             </div>
           )
@@ -119,40 +115,26 @@ export class InfoPanel extends Component {
             <div className="mx-auto mb-2">
               <div className="m-1 badge badge-indigo">
                 <i className="fa fa-medal" />
-                {' '}
-                Record:
-                {' '}
-                {user.userRecord}
-                FP
+                {` Record: ${user.userRecord} FP`}
               </div>
               <div className="m-1 badge badge-warning">
                 <i className="fa fa-fire" />
-                {' '}
-                Streak:
-                {' '}
-                {user.streak}
+                {` Streak: ${user.streak}`}
               </div>
+              <br />
               <Link to={Routes.LEADERBOARD_USERS} className="m-1 badge badge-danger">
                 <i className="fa fa-trophy" />
-                {' '}
-                Weekly Ranking:
-                {' '}
-                {user.position}
+                {` Weekly Ranking: ${user.position}`}
               </Link>
               <Link to={Routes.LEADERBOARD_USERS} className="m-1 badge badge-info">
                 <i className="fa fa-basketball-ball" />
-                {' '}
-                Weekly Score:
-                {' '}
-                {Math.round(user.totalScore * 100) / 100}
-                {' '}
-                FP
+                {` Weekly Score: ${Math.round(user.totalScore * 100) / 100} FP`}
               </Link>
             </div>
             {user.description
               && (
                 <div>
-                  <h2>About</h2>
+                  <h3>About</h3>
                   <p className="Profile__About">
                     {user.description}
                   </p>
@@ -161,7 +143,7 @@ export class InfoPanel extends Component {
             }
           </div>
           <div className="col-md-12">
-            <h2>Favorite team</h2>
+            <h3>Favorite team</h3>
             <div className="team-badge">
               <h1>
                 <span
