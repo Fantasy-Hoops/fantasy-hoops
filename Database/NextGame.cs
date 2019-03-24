@@ -56,8 +56,11 @@ namespace fantasy_hoops.Database
                         s => s.WithName("seed")
                         .ToRunOnceAt(NEXT_GAME.AddMinutes(-5)));
 
-                if (DateTime.UtcNow < PREVIOUS_LAST_GAME.AddHours(2).AddMinutes(30)
-                    && bool.Parse(Environment.GetEnvironmentVariable("UPDATE_PLAYER_SEED")))
+                if (DateTime.UtcNow < PREVIOUS_LAST_GAME.AddHours(2).AddMinutes(30))
+                    JobManager.AddJob(() => StatsSeed.Initialize(context),
+                        s => s.WithName("statsSeed")
+                        .ToRunNow());
+                else
                     JobManager.AddJob(() => StatsSeed.Initialize(context),
                         s => s.WithName("statsSeed")
                         .ToRunOnceAt(nextRun.AddHours(2).AddMinutes(30)));
