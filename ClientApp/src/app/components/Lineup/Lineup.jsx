@@ -7,7 +7,6 @@ import { parse } from '../../utils/auth';
 import { AlertNotification as Alert } from '../AlertNotification';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
 import InfoModal from './InfoModal';
-import { Loader } from '../Loader';
 import { EmptyJordan } from '../EmptyJordan';
 import {
   getNextGameInfo, getUserLineup, getPlayers, getPlayerStats, submitLineup
@@ -143,7 +142,7 @@ export class Lineup extends Component {
     if (this.state.poolLoader) {
       return (
         <div className="p-5">
-          <Loader show={this.state.poolLoader} />
+          <div className="Loader" />
         </div>
       );
     }
@@ -268,7 +267,7 @@ export class Lineup extends Component {
             </button>
           </div>
         </div>
-        <Loader show={this.state.playerLoader} />
+        {this.state.playerLoader ? <div className="Loader" /> : null}
         {playerPool()}
         <PlayerModal
           renderChild={this.state.renderChild}

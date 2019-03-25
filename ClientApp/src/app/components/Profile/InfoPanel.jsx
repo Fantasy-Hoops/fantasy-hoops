@@ -4,7 +4,6 @@ import _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { UserScore } from './UserScore';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
-import { Loader } from '../Loader';
 import { getPlayerStats } from '../../utils/networkFunctions';
 import Routes from '../../routes/routes';
 
@@ -94,7 +93,7 @@ export class InfoPanel extends Component {
       }
       return (
         <div className="p-5">
-          <Loader show={this.props.loader} />
+          <div className="Loader" />
         </div>
       );
     };

@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import history from '../utils/history';
-import injuriesContainer from './injuries';
+import injuriesContainerReducer from './injuries';
+import newsContainerReducer from './news';
 
 export default combineReducers({
   router: connectRouter(history),
-  injuriesContainer
+  injuriesContainerReducer,
+  newsContainerReducer
 });

@@ -9,7 +9,6 @@ import moment from 'moment';
 import { parse } from '../../../utils/auth';
 import Card from './Card';
 import leaderboardLogo from '../../../../content/images/leaderboard.png';
-import { Loader } from '../../Loader';
 import { EmptyJordan } from '../../EmptyJordan';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
 import { getUsersLeaderboard, getUserFriendsOnlyLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
@@ -222,7 +221,7 @@ export default class Leaderboard extends PureComponent {
     const weeklyUsers = this.createUsers(friendsOnly ? weeklyFriends : weekly);
     const monthlyUsers = this.createUsers(friendsOnly ? monthlyFriends : monthly);
     const seeMoreBtn = loader || loadMore
-      ? <Loader show={loader} />
+      ? <div className="Loader" />
       : this.seeMoreBtn(activeType);
     return (
       <div className="container bg-light">

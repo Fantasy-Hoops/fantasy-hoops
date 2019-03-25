@@ -32,6 +32,7 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'import/no-dynamic-require': 'off',
-    'no-tabs': 0
+    'no-tabs': 0,
+    'no-mixed-spaces-and-tabs': 'off'
   },
 };

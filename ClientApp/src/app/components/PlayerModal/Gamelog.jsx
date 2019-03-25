@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
 import moment from 'moment';
-import { Loader } from '../Loader';
 import { getPlayerStats } from '../../utils/networkFunctions';
 
 const LOAD_COUNT = 10;
@@ -107,7 +106,7 @@ export default class Gamelog extends Component {
   render() {
     const btn = (!(this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length) && !this.state.loader)
       ? <button type="button" className="btn btn-primary float-left mt-2" onClick={this.loadMore}>See more</button>
-      : <Loader show={this.state.loader} />;
+      : <div className="Loader" />;
     return (
       <div>
         <div id="table-scroll" className="table-responsive table-scroll">
