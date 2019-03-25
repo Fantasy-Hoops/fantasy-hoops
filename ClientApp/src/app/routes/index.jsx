@@ -11,7 +11,7 @@ import NewsFeed from '../containers/NewsFeedContainer';
 import UserLeaderboard from '../components/Leaderboard/Users/Leaderboard';
 import PlayerLeaderboard from '../components/Leaderboard/Players/Leaderboard';
 import { Leaderboard as SeasonLeaderboard } from '../components/Leaderboard/Season/Leaderboard';
-import { UserPool } from '../components/UserPool';
+import UserPool from '../containers/UserPoolContainer';
 import Main from '../components/Main';
 import { AllNotificationsPage } from '../components/Notifications/AllNotificationsPage';
 import { LineupHistory } from '../components/Profile/LineupHistoryPage';
