@@ -7,7 +7,7 @@ const initialState = {
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
-    case Injuries.GET_INJURIES:
+    case Injuries.LOAD_INJURIES:
       return {
         ...state,
         injuries: action.injuries,

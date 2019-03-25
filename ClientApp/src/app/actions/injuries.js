@@ -4,7 +4,7 @@ import { getInjuries } from '../utils/networkFunctions';
 export const loadInjuries = () => async (dispatch) => {
   await getInjuries().then((res) => {
     dispatch({
-      type: Injuries.GET_INJURIES,
+      type: Injuries.LOAD_INJURIES,
       injuries: res.data,
       injuryLoader: false
     });

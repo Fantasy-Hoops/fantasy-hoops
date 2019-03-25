@@ -65,6 +65,14 @@ a:hover {
   min-height: 6.6rem;
 }
 
+.Loader {
+  margin: 0 auto;
+  width: 6rem;
+  height: 6rem;
+  background-image: url('../content/images/ballLoader.svg');
+  background-size: 6rem 6rem;
+}
+
 .Navbar__Logo {
   order: -2;
 }

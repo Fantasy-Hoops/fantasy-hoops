@@ -3,7 +3,6 @@ import _ from 'lodash';
 import shortid from 'shortid';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { NewsCard } from './NewsCard';
-import { Loader } from '../Loader';
 import { getNews } from '../../utils/networkFunctions';
 
 export class NewsFeed extends Component {
@@ -76,7 +75,7 @@ export class NewsFeed extends Component {
             dataLength={news.length}
             next={this.fetchData}
             hasMore={hasMore}
-            loader={<Loader show={newsLoader} />}
+            loader={<div className="Loader" />}
           >
             {newsCards}
           </InfiniteScroll>

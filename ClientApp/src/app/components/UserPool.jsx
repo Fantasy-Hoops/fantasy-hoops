@@ -3,7 +3,6 @@ import shortid from 'shortid';
 import _ from 'lodash';
 import { DebounceInput } from 'react-debounce-input';
 import { UserCard } from './Profile/UserCard';
-import { Loader } from './Loader';
 import { getUsers } from '../utils/networkFunctions';
 
 export class UserPool extends Component {
@@ -49,7 +48,7 @@ export class UserPool extends Component {
 
   render() {
     const { loader, users } = this.state;
-    if (loader && !this._isMounted) { return <div className="m-5"><Loader show={loader} /></div>; }
+    if (loader && !this._isMounted) { return <div className="m-5"><div className="Loader" /></div>; }
 
 
     const userCards = _.map(
