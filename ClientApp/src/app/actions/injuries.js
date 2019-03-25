@@ -5,8 +5,7 @@ export const loadInjuries = () => async (dispatch) => {
   await getInjuries().then((res) => {
     dispatch({
       type: Injuries.LOAD_INJURIES,
-      injuries: res.data,
-      injuryLoader: false
+      injuries: res.data
     });
   });
 };

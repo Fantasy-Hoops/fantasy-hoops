@@ -11,7 +11,7 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         injuries: action.injuries,
-        injuryLoader: action.injuryLoader
+        injuryLoader: false
       };
     default:
       return state;
