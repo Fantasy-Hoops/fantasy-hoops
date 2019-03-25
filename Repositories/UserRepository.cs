@@ -230,15 +230,21 @@ namespace fantasy_hoops.Repositories
 
         private decimal GetUserRecord(string id)
         {
-            decimal record = Convert.ToDecimal(_context.Users
+            var userLineup = _context.Users
                 .Where(user => user.Id.Equals(id))
                 .SelectMany(user => user.UserLineups)
                 .OrderByDescending(lineup => lineup.FP)
-                .FirstOrDefault().FP);
+                .FirstOrDefault();
+
+            if (userLineup == null)
+                return 0.0m;
+
+            decimal record = Convert.ToDecimal(userLineup.FP);
 
             if ((record % 1) == 0)
                 return 0.0m + record;
-            return Convert.ToDecimal(record);
+
+            return record;
         }
 
         private decimal GetWeeklyScore(string id)

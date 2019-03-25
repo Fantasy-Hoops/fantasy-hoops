@@ -1346,7 +1346,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 }
 
 .PlayerModal #table-scroll th:nth-last-child(1) {
-  min-width: 10rem;
+  min-width: 11rem;
 }
 
 .Charts {
@@ -1365,7 +1365,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 }
 
 .GameLog__LiveBadge {
-  font-size: 1rem;
+  font-size: .9rem;
 }
 
 .alertPulse-css {
