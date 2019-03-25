@@ -16,17 +16,24 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionCreators, dispatch);
 
-
 export class NewsFeedContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.handleLoadMore = this.handleLoadMore.bind(this);
+  }
+
   async componentDidMount() {
     const { loadNews } = this.props;
     await loadNews();
   }
 
+  async handleLoadMore() {
+    const { news, loadMoreNews } = this.props;
+    await loadMoreNews(news.length);
+  }
+
   render() {
-    const {
-      news, hasMore, loadMoreNews
-    } = this.props;
+    const { news, hasMore } = this.props;
     const newsCards = _.map(news,
       newsObj => (
         <NewsCard
@@ -39,7 +46,7 @@ export class NewsFeedContainer extends Component {
         <div className="center col">
           <InfiniteScroll
             dataLength={news.length}
-            next={loadMoreNews}
+            next={this.handleLoadMore}
             hasMore={hasMore}
             loader={<div className="Loader" />}
           >
