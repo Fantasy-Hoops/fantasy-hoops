@@ -1292,6 +1292,26 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   border-left: 0.1rem solid rgba(0, 0, 0, .15);
 }
 
+.RequestCard__Buttons__Pending {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.RequestCard__Buttons__Pending__Accept {
+  margin-bottom: 6px;
+}
+
+@media screen and (min-width: 510px) {
+  .RequestCard__Buttons__Pending {
+    flex-direction: row;
+  }
+
+  .RequestCard__Buttons__Pending__Accept {
+    margin-bottom: 0px;
+    margin-left: 12px;
+  }
+}  
+
 #playerModal {
   margin: 0;
 }
