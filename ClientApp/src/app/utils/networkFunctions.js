@@ -25,11 +25,16 @@ const createParameters = (parameters) => {
 // User requests
 export const register = data => axios.post(`${userApiUrlBase}/register`, data);
 export const login = data => axios.post(`${userApiUrlBase}/login`, data);
-export const logout = () => axios.get(`${userApiUrlBase}/logout`, { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } })
-  .then(() => {
-    localStorage.removeItem('accessToken');
-    window.location.replace('/');
+export const logout = () => {
+  fetch(`${userApiUrlBase}/logout`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+    }
   });
+  localStorage.removeItem('accessToken');
+  window.location.replace('/');
+};
 export const editProfile = data => axios.put(`${userApiUrlBase}/editProfile`, data);
 export const uploadAvatar = data => axios.post(`${userApiUrlBase}/uploadAvatar`, data);
 export const clearAvatar = data => axios.post(`${userApiUrlBase}/clearAvatar`, data);

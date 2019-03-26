@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
 import moment from 'moment';
-import { Loader } from '../Loader';
 import { getPlayerStats } from '../../utils/networkFunctions';
 
 const LOAD_COUNT = 10;
@@ -29,14 +28,16 @@ export default class Gamelog extends Component {
       if (!s.score) { return <div />; }
       const scoreTokens = s.score.split(';');
       const teamPoints = scoreTokens[0].split('-');
-      if (scoreTokens[1] === 'vs') {
+      if (scoreTokens[2] === 'LIVE') {
+        resultLetter = <span className="GameLog__LiveBadge alertPulse-css badge badge-danger">LIVE</span>;
+      } else if (scoreTokens[1] === 'vs') {
         resultLetter = parseInt(teamPoints[1], 10) > parseInt(teamPoints[0], 10)
-          ? <span className="text-success">W</span>
-          : <span className="text-danger">L</span>;
+          ? <span className="text-green">W</span>
+          : <span className="text-red">L</span>;
       } else {
         resultLetter = parseInt(teamPoints[0], 10) > parseInt(teamPoints[1], 10)
-          ? <span className="text-success">W</span>
-          : <span className="text-danger">L</span>;
+          ? <span className="text-green">W</span>
+          : <span className="text-red">L</span>;
       }
       return (
         <tr key={shortid()}>
@@ -58,21 +59,15 @@ export default class Gamelog extends Component {
           <td>{s.oreb}</td>
           <td>{s.dreb}</td>
           <td>
-            {s.fgm}
-            /
-            {s.fga}
+            {`${s.fgm}/${s.fga}`}
           </td>
           <td>{s.fga !== 0 ? s.fgp : '-'}</td>
           <td>
-            {s.ftm}
-            /
-            {s.fta}
+            {`${s.ftm}/${s.ftm}`}
           </td>
           <td>{s.fta !== 0 ? s.ftp : '-'}</td>
           <td>
-            {s.tpm}
-            /
-            {s.tpa}
+            {`${s.tpm}/${s.tpa}`}
           </td>
           <td>{s.tpa !== 0 ? s.tpp : '-'}</td>
           <td>{s.gs.toFixed(1)}</td>
@@ -111,7 +106,7 @@ export default class Gamelog extends Component {
   render() {
     const btn = (!(this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length) && !this.state.loader)
       ? <button type="button" className="btn btn-primary float-left mt-2" onClick={this.loadMore}>See more</button>
-      : <Loader show={this.state.loader} />;
+      : <div className="Loader" />;
     return (
       <div>
         <div id="table-scroll" className="table-responsive table-scroll">

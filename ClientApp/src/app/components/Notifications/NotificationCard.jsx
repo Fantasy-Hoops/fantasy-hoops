@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import Img from 'react-image';
 import moment from 'moment';
 import { UTCNow } from '../../utils/UTCNow';
@@ -74,7 +73,7 @@ export class NotificationCard extends Component {
 
     const { isRead } = this.state;
     return (
-      <Link to={link} role="button" tabIndex={-1} onClick={this.readNotification} onKeyDown={this.readNotification} className={`card cursor-pointer mx-auto NotificationCard${!isRead ? '--unread' : ''}`}>
+      <a href={link} role="button" tabIndex={-1} onClick={this.readNotification} onKeyDown={this.readNotification} className={`card cursor-pointer mx-auto NotificationCard${!isRead ? '--unread' : ''}`}>
         <div className="card-body NotificationCard__Body">
           <div className={`ml-1 mr-1${circleImage ? ' notification-circle' : ''}`} style={bgStyle}>
             <Img
@@ -103,7 +102,7 @@ export class NotificationCard extends Component {
             </div>
           </div>
         </div>
-      </Link>
+      </a>
     );
   }
 }

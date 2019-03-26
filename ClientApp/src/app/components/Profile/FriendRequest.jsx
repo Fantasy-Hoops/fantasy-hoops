@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { parse } from '../../utils/auth';
 import { loadImage } from '../../utils/loadImage';
 import defaultImage from '../../../content/images/default.png';
@@ -12,26 +12,24 @@ import {
   removeFriendRequest
 } from '../../utils/networkFunctions';
 
-export default class FriendRequest extends Component {
+export default class FriendRequest extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      status: '-2',
+      status: -2,
       alertText: '',
       alertType: ''
     };
   }
 
-  async componentDidUpdate(prevProps, prevState) {
-    if (prevProps === this.props) { return; }
-
+  async componentDidMount() {
     const sender = parse();
     if (!sender || !this.props.user) { return; }
 
     const receiver = this.props.user;
     if (receiver.id === sender.id) {
       this.setState({
-        status: '-2'
+        status: -2
       });
       return;
     }
@@ -61,7 +59,7 @@ export default class FriendRequest extends Component {
     await sendFriendRequest(model)
       .then((res) => {
         this.setState({
-          status: '0',
+          status: 0,
           alertType: 'success',
           alertText: res.data
         });
@@ -105,7 +103,7 @@ export default class FriendRequest extends Component {
     await acceptFriendRequest(model)
       .then((res) => {
         this.setState({
-          status: '1',
+          status: 1,
           alertType: 'success',
           alertText: res.data
         });
@@ -131,7 +129,7 @@ export default class FriendRequest extends Component {
     await cancelFriendRequest(model)
       .then((res) => {
         this.setState({
-          status: '3',
+          status: 3,
           alertType: 'success',
           alertText: res.data
         });
@@ -157,7 +155,7 @@ export default class FriendRequest extends Component {
     await removeFriendRequest(model)
       .then((res) => {
         this.setState({
-          status: '3',
+          status: 3,
           alertType: 'success',
           alertText: res.data
         });
@@ -177,41 +175,41 @@ export default class FriendRequest extends Component {
   }
 
   render() {
-    let btn;
+    let btn = null;
     switch (this.state.status) {
-      case '-2':
+      case -2:
         break;
-      case '0':
+      case 0:
         btn = (
           <button
             type="button"
             onMouseEnter={e => this.changeButton(e, 'btn-danger', 'Cancel Request')}
             onMouseLeave={e => this.changeButton(e, 'btn-warning', 'Pending Request')}
-            onClick={e => this.cancelFriendRequest(this.props.user)}
+            onClick={() => this.cancelFriendRequest(this.props.user)}
             className="btn btn-warning mx-auto"
           >
-            Pending Request
+            {'Pending Request'}
           </button>
         );
         break;
-      case '1':
+      case 1:
         btn = (
           <button
             type="button"
             onMouseEnter={e => this.changeButton(e, 'btn-danger', 'Remove Friend')}
-            onMouseLeave={e => this.changeButton(e, 'btn-success', 'Friends')}
-            onClick={e => this.removeFriend(this.props.user)}
-            className="btn btn-success mx-auto"
+            onMouseLeave={e => this.changeButton(e, 'btn-info', 'Friends')}
+            onClick={() => this.removeFriend(this.props.user)}
+            className="btn btn-info mx-auto"
           >
-            Friends
+            {'Friends'}
           </button>
         );
         break;
-      case '200':
-        btn = <button type="button" onClick={e => this.acceptFriendRequest(this.props.user)} className="btn btn-outline-success mx-auto">Accept Request</button>;
+      case 200:
+        btn = <button type="button" onClick={() => this.acceptFriendRequest(this.props.user)} className="btn btn-outline-info mx-auto">Accept Request</button>;
         break;
       default:
-        btn = <button type="button" onClick={e => this.sendFriendRequest(this.props.user)} className="btn btn-outline-secondary mx-auto">Send Friend Request</button>;
+        btn = <button type="button" onClick={() => this.sendFriendRequest(this.props.user)} className="btn btn-outline-secondary mx-auto">Send Friend Request</button>;
         break;
     }
 

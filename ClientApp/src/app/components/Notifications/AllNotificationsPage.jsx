@@ -3,7 +3,6 @@ import shortid from 'shortid';
 import _ from 'lodash';
 import { parse } from '../../utils/auth';
 import { NotificationCard } from './NotificationCard';
-import { Loader } from '../Loader';
 import { EmptyJordan } from '../EmptyJordan';
 import defaultPhoto from '../../../content/images/default.png';
 import gameLogo from '../../../content/images/logo.png';
@@ -143,7 +142,7 @@ export class AllNotificationsPage extends Component {
         <div className="text-center">
           {!loader ? btn : ''}
         </div>
-        <Loader show={loader} />
+        {loader ? <div className="Loader" /> : null}
       </div>
     );
   }

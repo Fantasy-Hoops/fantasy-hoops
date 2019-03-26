@@ -1,3 +1,3 @@
 export default {
-  GET_INJURIES: 'GET_INJURIES'
+  LOAD_INJURIES: 'LOAD_INJURIES'
 };

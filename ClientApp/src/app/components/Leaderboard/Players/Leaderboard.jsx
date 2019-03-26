@@ -5,7 +5,6 @@ import _ from 'lodash';
 import { Card } from './Card';
 import leaderboardLogo from '../../../../content/images/leaderboard.png';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
-import { Loader } from '../../Loader';
 import { EmptyJordan } from '../../EmptyJordan';
 import { getPlayersLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
 
@@ -132,7 +131,7 @@ export default class Leaderboard extends Component {
     const weekly = this.createPlayers(this.state.weekly);
     const monthly = this.createPlayers(this.state.monthly);
     const seeMoreBtn = this.state.loader || this.state.loadMore
-      ? <Loader show={this.state.loader || this.state.loadMore} />
+      ? <div className="Loader" />
       : this.seeMoreBtn(this.state.activeTab);
     return (
       <div className="container bg-light">

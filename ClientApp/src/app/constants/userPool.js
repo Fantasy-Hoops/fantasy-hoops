@@ -1,0 +1,4 @@
+export default {
+  LOAD_USER_POOL: 'LOAD_USER_POOL',
+  FILTER_USERS: 'FILTER_USERS'
+};
