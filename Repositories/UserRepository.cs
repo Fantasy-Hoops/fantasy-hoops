@@ -39,6 +39,7 @@ namespace fantasy_hoops.Repositories
             int streak = GetStreak(id);
             decimal totalScore = GetWeeklyScore(id);
             int position = GetWeeklyRanking(id);
+            decimal userRecord = GetUserRecord(id);
 
             var profile = _context.Users.Where(x => x.Id.Equals(id)).Select(x => new
             {
@@ -57,7 +58,8 @@ namespace fantasy_hoops.Repositories
                 currentLineup,
                 Streak = streak,
                 Position = position,
-                TotalScore = totalScore
+                TotalScore = totalScore,
+                userRecord
             });
             return profile;
         }
@@ -226,15 +228,32 @@ namespace fantasy_hoops.Repositories
             return _context.Users.Where(u => u.Id.Equals(id)).FirstOrDefault().Streak;
         }
 
+        private decimal GetUserRecord(string id)
+        {
+            var userLineup = _context.Users
+                .Where(user => user.Id.Equals(id))
+                .SelectMany(user => user.UserLineups)
+                .OrderByDescending(lineup => lineup.FP)
+                .FirstOrDefault();
+
+            if (userLineup == null)
+                return 0.0m;
+
+            decimal record = Convert.ToDecimal(userLineup.FP);
+
+            if ((record % 1) == 0)
+                return 0.0m + record;
+
+            return record;
+        }
+
         private decimal GetWeeklyScore(string id)
         {
             decimal weekly = Convert.ToDecimal(_context.UserLineups
                     .Where(lineup => lineup.UserID.Equals(id) && lineup.Date >= date)
                     .Select(lineup => lineup.FP).Sum());
             if ((weekly % 1) == 0)
-            {
                 return 0.0m + weekly;
-            }
             return Convert.ToDecimal(weekly);
         }
 

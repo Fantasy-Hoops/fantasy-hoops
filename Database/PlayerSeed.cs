@@ -34,6 +34,11 @@ namespace fantasy_hoops.Database
             Task.Run(() => Calculate(context, updatePrice)).Wait();
             NextGame.NEXT_GAME_CLIENT = NextGame.NEXT_GAME;
             PLAYER_POOL_DATE = NextGame.NEXT_GAME;
+
+            if (updatePrice)
+                JobManager.AddJob(() => StatsSeed.Initialize(context),
+                    s => s.WithName("statsSeed")
+                    .ToRunOnceIn(15).Minutes());
         }
 
         private static JObject GetPlayer(int id)

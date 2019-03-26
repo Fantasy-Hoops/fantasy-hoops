@@ -5,21 +5,19 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import shortid from 'shortid';
 import InjuryCard from '../components/Injuries/InjuryCard';
-import { Loader } from '../components/Loader';
 import { EmptyJordan } from '../components/EmptyJordan';
 import * as actionCreators from '../actions/injuries';
 
 const mapStateToProps = state => ({
-  injuries: state.injuriesContainer.injuries,
-  injuryLoader: state.injuriesContainer.injuryLoader
+  injuries: state.injuriesContainerReducer.injuries,
+  injuryLoader: state.injuriesContainerReducer.injuryLoader
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionCreators, dispatch);
 
-export class InjuriesContainer extends Component {
+export class InjuriesFeedContainer extends Component {
   async componentDidMount() {
     const { loadInjuries } = this.props;
-
     await loadInjuries();
 
     const cards = document.querySelectorAll('.InjuryCard');
@@ -42,7 +40,7 @@ export class InjuriesContainer extends Component {
     if (injuryLoader) {
       return (
         <div className="m-5">
-          <Loader show={injuryLoader} />
+          <div className="Loader" />
         </div>
       );
     }
@@ -67,7 +65,7 @@ export class InjuriesContainer extends Component {
   }
 }
 
-InjuriesContainer.propTypes = {
+InjuriesFeedContainer.propTypes = {
   loadInjuries: PropTypes.func.isRequired,
   injuries: PropTypes.arrayOf(
     PropTypes.shape({
@@ -77,4 +75,4 @@ InjuriesContainer.propTypes = {
   injuryLoader: PropTypes.bool.isRequired
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(InjuriesContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(InjuriesFeedContainer);

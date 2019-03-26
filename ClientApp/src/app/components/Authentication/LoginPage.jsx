@@ -121,7 +121,7 @@ export default class LoginPage extends Component {
             />
           </div>
           <button type="submit" id="login" disabled className="btn btn-outline-primary btn-block">Log in</button>
-          <Link to={Routes.REGISTER} className="btn btn-success btn-block">Sign up</Link>
+          <Link to={Routes.REGISTER} className="btn btn-info btn-block">Sign up</Link>
         </form>
       </div>
     );

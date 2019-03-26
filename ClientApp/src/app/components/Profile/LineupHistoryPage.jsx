@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
 import _ from 'lodash';
-import { Loader } from '../Loader';
 import { UserScore } from './UserScore';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
-import icon from '../../../content/images/basketball-player-scoring.svg';
 import { parse } from '../../utils/auth';
 import { getPlayerStats } from '../../utils/networkFunctions';
 import { getUserData } from '../../utils/networkFunctions';
@@ -95,13 +93,13 @@ export class LineupHistory extends Component {
 
     return (
       <div className="container">
-        <h1 className="text-center pb-3">
-          <span><img src={icon} width="65rem" alt="Basketball Player Scoring" /></span>
+        <h1 className="text-center p-3">
+          <span className="fa fa-history" />
           {' '}
           Your lineup history
         </h1>
         {recentActivity}
-        <Loader show={this.state.loader} />
+        {this.state.loader ? <div className="Loader" /> : null}
         <div className="text-center">
           {!this.state.loader ? btn : ''}
         </div>

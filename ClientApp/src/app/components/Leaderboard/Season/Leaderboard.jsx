@@ -5,7 +5,6 @@ import _ from 'lodash';
 import UserCard from '../Users/Card';
 import { Card as PlayerCard } from '../Players/Card';
 import leaderboardLogo from '../../../../content/images/leaderboard.png';
-import { Loader } from '../../Loader';
 import { EmptyJordan } from '../../EmptyJordan';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
 import { getSeasonLineupsLeaderboard, getSeasonPlayersLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
@@ -146,7 +145,7 @@ export class Leaderboard extends PureComponent {
                 ? lineupCards.length > 0
                   ? lineupCards
                   : <EmptyJordan message="Such empty..." />
-                : <Loader show={this.state.loader} />}
+                : <div className="Loader" />}
             </div>
           </div>
           <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="players" role="tabpanel">
@@ -155,7 +154,7 @@ export class Leaderboard extends PureComponent {
                 ? playerCards.length > 0
                   ? playerCards
                   : <EmptyJordan message="Such empty..." />
-                : <Loader show={this.state.loader} />}
+                : <div className="Loader" />}
             </div>
           </div>
         </div>

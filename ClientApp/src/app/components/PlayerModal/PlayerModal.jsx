@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Loader } from '../Loader';
 import { Stats } from './Stats';
 import Gamelog from './Gamelog';
 import { Charts } from './Charts';
@@ -27,7 +26,7 @@ export class PlayerModal extends Component {
     if (this.props.loader) {
       return (
         <div className="p-5">
-          <Loader show={this.props.loader} />
+          <div className="Loader" />
         </div>
       );
     }

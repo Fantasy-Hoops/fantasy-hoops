@@ -7,7 +7,6 @@ import { EditProfile } from './EditProfile';
 import { InfoPanel } from './InfoPanel';
 import { Friends } from './Friends/Friends';
 import { Error } from '../Error';
-import { Loader } from '../Loader';
 import { getUserData, getUserDataByName } from '../../utils/networkFunctions';
 
 export class UserProfile extends Component {
@@ -137,7 +136,7 @@ export class UserProfile extends Component {
     if (loader) {
       return (
         <div className="mx-auto mt-5">
-          <Loader show={loader} />
+          <div className="Loader" />
         </div>
       );
     }

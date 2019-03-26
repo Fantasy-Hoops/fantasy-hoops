@@ -20,15 +20,15 @@ export default () => (
             <tbody style={{ height: 'auto', overflow: 'auto' }}>
               <tr>
                 <th scope="row" className="text-left">Points</th>
-                <td className="text-right text-success">1 FP</td>
+                <td className="text-right text-green">1 FP</td>
               </tr>
               <tr>
                 <th scope="row" className="text-left">Assists</th>
-                <td className="text-right text-success">1.5 FP</td>
+                <td className="text-right text-green">1.5 FP</td>
               </tr>
               <tr>
                 <th scope="row" className="text-left">Turnovers</th>
-                <td className="text-right text-danger">-1 FP</td>
+                <td className="text-right text-red">-1 FP</td>
               </tr>
             </tbody>
             <thead className="bg-secondary" style={{ width: '100%' }}>
@@ -41,15 +41,15 @@ export default () => (
             <tbody style={{ height: 'auto', overflow: 'auto' }}>
               <tr>
                 <th scope="row" className="text-left">Rebounds</th>
-                <td className="text-right text-success">1.2 FP</td>
+                <td className="text-right text-green">1.2 FP</td>
               </tr>
               <tr>
                 <th scope="row" className="text-left">Steals</th>
-                <td className="text-right text-success">3 FP</td>
+                <td className="text-right text-green">3 FP</td>
               </tr>
               <tr>
                 <th scope="row" className="text-left">Blocks</th>
-                <td className="text-right text-success">3 FP</td>
+                <td className="text-right text-green">3 FP</td>
               </tr>
             </tbody>
           </table>
