@@ -12,6 +12,7 @@ import leaderboardLogo from '../../../../content/images/leaderboard.png';
 import { EmptyJordan } from '../../EmptyJordan';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
 import { getUsersLeaderboard, getUserFriendsOnlyLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
+import { getWeek } from '../../../utils/date';
 
 const loggedInUser = parse();
 const LOAD_COUNT = 10;
@@ -27,6 +28,7 @@ export default class Leaderboard extends PureComponent {
     this.loadMore = this.loadMore.bind(this);
     this.showModal = this.showModal.bind(this);
     this.onDateChange = this.onDateChange.bind(this);
+    this.onWeekChange = this.onWeekChange.bind(this);
 
     this.state = {
       activeTab: 'daily',
@@ -49,13 +51,23 @@ export default class Leaderboard extends PureComponent {
       },
       stats: '',
       modalLoader: true,
-      renderChild: false
+      renderChild: false,
+      date: new Date(),
+      week: new Date(),
+      weekNumber: getWeek(new Date())
     };
   }
 
   async componentDidMount() {
     $(document).ready(() => {
       $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
+      // Get the value of Start and End of Week
+      $('#weeklyDatePicker').on('change', (e) => {
+        const value = $('#weeklyDatePicker').val();
+        const firstDate = moment(value, 'MM-DD-YYYY').day(0).format('MM-DD-YYYY');
+        const lastDate = moment(value, 'MM-DD-YYYY').day(6).format('MM-DD-YYYY');
+        $('#weeklyDatePicker').val(`${firstDate} - ${lastDate}`);
+      });
     });
     $('#playerModal').on('hidden.bs.modal', () => {
       this.setState({
@@ -70,7 +82,7 @@ export default class Leaderboard extends PureComponent {
         this.setState({
           daily: res.data,
           activeTab: 'daily',
-          loader: false
+          loader: false,
         });
       });
     await this.setState({
@@ -83,6 +95,11 @@ export default class Leaderboard extends PureComponent {
   }
 
   async onDateChange(date) {
+    if (!date) {
+      this.setState({ date });
+      return;
+    }
+
     this.setState({ loader: true, daily: [], dailyFriends: [] });
     const { friendsOnly, showButton } = this.state;
     const dateFormat = moment(date).format('YYYYMMDD');
@@ -95,14 +112,41 @@ export default class Leaderboard extends PureComponent {
     showButton[type] = users.data.length === LOAD_COUNT;
     this.setState({
       [type]: users.data,
+      loader: false,
+      date,
+      dateFormat
+    });
+  }
+
+  async onWeekChange(date) {
+    if (!date) {
+      this.setState({ week: date });
+      return;
+    }
+    const weekNumber = getWeek(date);
+    if (weekNumber === this.state.weekNumber) { return; }
+
+    this.setState({ loader: true, weekly: [], weeklyFriends: [] });
+
+    const { friendsOnly, activeTab } = this.state;
+    const type = activeTab + (friendsOnly ? 'Friends' : '');
+    const users = !friendsOnly
+      ? await getUsersLeaderboard({ type: 'weekly', weekNumber })
+      : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: 'weekly', weekNumber });
+
+    const sunday = new Date(moment(date).day(7));
+    const today = new Date;
+    this.setState({
+      week: today <= sunday ? today : sunday,
+      weekNumber,
+      [type]: users.data,
       loader: false
     });
-    this.setState({ date, dateFormat });
   }
 
   async toggleFriendsOnly() {
     const {
-      friendsOnly, activeTab, showButton, dateFormat
+      friendsOnly, activeTab, showButton, dateFormat, weekNumber
     } = this.state;
     this.setState({ friendsOnly: !friendsOnly });
     const type = activeTab + (!friendsOnly ? 'Friends' : '');
@@ -111,8 +155,8 @@ export default class Leaderboard extends PureComponent {
       this.setState({ loader: true });
 
       const users = friendsOnly
-        ? await getUsersLeaderboard({ type: activeTab, date: dateFormat })
-        : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: activeTab, date: dateFormat });
+        ? await getUsersLeaderboard({ type: activeTab, date: dateFormat, weekNumber })
+        : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: activeTab, date: dateFormat, weekNumber });
 
       showButton[type] = users.data.length === LOAD_COUNT;
       this.setState({
@@ -150,15 +194,19 @@ export default class Leaderboard extends PureComponent {
 
   async loadMore() {
     const {
-      activeTab, friendsOnly, showButton, dateFormat
+      activeTab, friendsOnly, showButton, dateFormat, weekNumber
     } = this.state;
     const type = friendsOnly ? `${activeTab}Friends` : activeTab;
 
     this.setState({ loadMore: true });
 
     const users = !friendsOnly
-      ? await getUsersLeaderboard({ type: activeTab, from: this.state[type].length, limit: LOAD_COUNT, date: dateFormat })
-      : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: activeTab, from: this.state[type].length, limit: LOAD_COUNT, date: dateFormat });
+      ? await getUsersLeaderboard({
+        type: activeTab, from: this.state[type].length, limit: LOAD_COUNT, date: dateFormat, weekNumber
+      })
+      : await getUserFriendsOnlyLeaderboard(loggedInUser.id, {
+        type: activeTab, from: this.state[type].length, limit: LOAD_COUNT, date: dateFormat, weekNumber
+      });
 
     showButton[type] = users.data.length === LOAD_COUNT;
     this.setState({
@@ -200,6 +248,9 @@ export default class Leaderboard extends PureComponent {
   }
 
   render() {
+    const minDate = new Date('2019-02-24');
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() - 1);
     const {
       friendsOnly,
       activeTab,
@@ -267,17 +318,12 @@ export default class Leaderboard extends PureComponent {
                     placeholderText="Select the date..."
                     locale={enGB}
                     onChange={this.onDateChange}
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    disabledKeyboardNavigation
+                    isClearable
                     selected={this.state.date}
                   />
-                  <a
-                    className="position-absolute"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Works properly only from February 24"
-                    style={{ top: '0.3rem', left: '-2rem' }}
-                  >
-                    <i className="fa fa-info mx-auto" aria-hidden="true" />
-                  </a>
                 </div>
               )
               : null}
@@ -291,6 +337,25 @@ export default class Leaderboard extends PureComponent {
             </div>
           </div>
           <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="weekly" role="tabpanel">
+            {!this.state.loader
+              ? (
+                <div className="WeeklyDatePicker">
+                  <DatePicker
+                    id="weeklyDatePicker"
+                    className="input-group-text"
+                    placeholderText="Select the week..."
+                    locale={enGB}
+                    dateFormat="'Week' ww"
+                    onChange={this.onWeekChange}
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    disabledKeyboardNavigation
+                    isClearable
+                    selected={this.state.week}
+                  />
+                </div>
+              )
+              : null}
             {!loader
               ? weeklyUsers.length > 0
                 ? weeklyUsers

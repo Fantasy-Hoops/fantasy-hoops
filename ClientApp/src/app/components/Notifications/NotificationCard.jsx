@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Img from 'react-image';
 import moment from 'moment';
-import { UTCNow } from '../../utils/UTCNow';
+import { UTCNow } from '../../utils/date';
 import { loadImage } from '../../utils/loadImage';
 import { readNotification } from '../../utils/networkFunctions';
 

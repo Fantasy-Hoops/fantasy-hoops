@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Img from 'react-image';
-import { UTCNow } from '../../utils/UTCNow';
+import { UTCNow } from '../../utils/date';
 import defaultLogo from '../../../content/images/defaultLogo.png';
 
 const InjuryCard = (props) => {

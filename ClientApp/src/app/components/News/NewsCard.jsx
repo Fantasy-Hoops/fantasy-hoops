@@ -93,7 +93,7 @@ export class NewsCard extends PureComponent {
             </span>
 
           </div>
-          <label htmlFor={this.props.news.id} className="btn btn-outline-secondary read-more-trigger" />
+          <label htmlFor={this.props.news.id} className="read-more-trigger" />
         </div>
       </div>
     );
