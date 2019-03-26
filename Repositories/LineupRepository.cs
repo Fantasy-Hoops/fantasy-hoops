@@ -22,7 +22,7 @@ namespace fantasy_hoops.Repositories
         public object GetLineup(string id)
         {
             return _context.UserLineups
-            .Where(lineup => lineup.UserID.Equals(id) && lineup.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
+            .Where(lineup => lineup.UserID.Equals(id) && lineup.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
             .Select(lineup => new
             {
                 lineup = _context.Players
@@ -54,7 +54,7 @@ namespace fantasy_hoops.Repositories
             _context.UserLineups.Add(
                     new UserLineup
                     {
-                        Date = CommonFunctions.UTCToEastern(NextGame.NEXT_GAME),
+                        Date = CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date,
                         UserID = model.UserID,
                         PgID = model.PgID,
                         SgID = model.SgID,
@@ -68,7 +68,7 @@ namespace fantasy_hoops.Repositories
         {
             var userLineup = _context.UserLineups
                     .Where(lineup => lineup.UserID.Equals(model.UserID)
-                                    && lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))).FirstOrDefault();
+                                    && lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)).FirstOrDefault();
             userLineup.PgID = model.PgID;
             userLineup.SgID = model.SgID;
             userLineup.SfID = model.SfID;
@@ -112,7 +112,7 @@ namespace fantasy_hoops.Repositories
         {
             return _context.UserLineups
                     .Where(x => x.UserID.Equals(userID)
-                        && x.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
+                        && x.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
                     .Any();
         }
 

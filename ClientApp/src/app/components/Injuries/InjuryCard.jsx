@@ -32,7 +32,13 @@ const InjuryCard = (props) => {
     <div className={`InjuryCardContainer inactive ${animated}`}>
       <div className="InjuryCard">
         <div className="side front">
-          <div className="InjuryCard__PlayerImage--background" style={{ backgroundColor: injury.player.team.color }}>
+          <div className="InjuryCard__PlayerImage--background">
+            <canvas
+              className="PlayerCard__background"
+              style={{ backgroundColor: `${injury.player.team.color}` }}
+              width="260"
+              height="190"
+            />
             <div className="InjuryCard__PlayerPosition badge">
               {injury.player.position}
             </div>
@@ -49,7 +55,7 @@ const InjuryCard = (props) => {
               }
               loader={(
                 <img
-                  width="100%"
+                  className="InjuryCard__loader"
                   src={require('../../../content/images/imageLoader2.gif')}
                   alt="Loader"
                 />

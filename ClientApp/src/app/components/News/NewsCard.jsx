@@ -1,26 +1,40 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Scroll from 'react-scroll';
 import shortid from 'shortid';
 import _ from 'lodash';
 import Img from 'react-image';
 import defaultLogo from '../../../content/images/defaultLogo.png';
 
-export class NewsCard extends Component {
+export class NewsCard extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       checked: false
-    }
+    };
     this.handleCheck = this.handleCheck.bind(this);
   }
 
-  render() {
-    const size = 2;
-    let paragraphs = _.map(this.props.news.paragraphs,
-      (paragraph) => {
-        return <p key={shortid()}>{paragraph}</p>
+  handleCheck(e) {
+    if (this.state.checked) {
+      const div = e.target.parentElement.parentElement;
+      const position = div.getBoundingClientRect().top - 80;
+      const duration = (position * -1) / 15;
+      if (position < 0) {
+        Scroll.animateScroll.scrollMore(position, {
+          duration,
+          smooth: true
+        });
       }
-    );
+    }
+    this.setState({
+      checked: !this.state.checked
+    });
+  }
+
+  render() {
+    const size = 3;
+    const paragraphs = _.map(this.props.news.paragraphs,
+      paragraph => <p key={shortid()}>{paragraph}</p>);
     return (
       <div className="NewsCard mb-5 mx-auto news-card card">
         <div className="card-header bg-primary text-white">
@@ -29,7 +43,7 @@ export class NewsCard extends Component {
           </h3>
         </div>
         <span>
-          <div className='position-absolute'>
+          <div className="position-absolute">
             <Img
               className="NewsCard__TeamLogo"
               alt={this.props.news.hTeam}
@@ -37,12 +51,12 @@ export class NewsCard extends Component {
                 `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.news.vTeam}.svg`,
                 defaultLogo
               ]}
-              loader={<img height='50px' src={require(`../../../content/images/imageLoader.gif`)} alt="Loader" />}
+              loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader" />}
             />
           </div>
         </span>
         <span style={{ paddingLeft: '7rem' }}>
-          <div className='position-absolute' >
+          <div className="position-absolute">
             <Img
               className="NewsCard__TeamLogo"
               alt={this.props.news.vTeam}
@@ -50,11 +64,13 @@ export class NewsCard extends Component {
                 `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${this.props.news.hTeam}.svg`,
                 defaultLogo
               ]}
-              loader={<img height='50px' src={require(`../../../content/images/imageLoader.gif`)} alt="Loader" />}
+              loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader" />}
             />
           </div>
         </span>
         <div className="NewsCard__Info card-header text-muted">
+
+
           vs
           <span style={{ float: 'right' }}>
             {this.props.news.date}
@@ -77,26 +93,11 @@ export class NewsCard extends Component {
             </span>
 
           </div>
-          <label htmlFor={this.props.news.id} className="read-more-trigger"></label>
+          <label htmlFor={this.props.news.id} className="btn btn-outline-secondary read-more-trigger" />
         </div>
       </div>
     );
   }
-
-  handleCheck(e) {
-    if (this.state.checked) {
-      const div = e.target.parentElement.parentElement;
-      const position = div.getBoundingClientRect().top - 80;
-      const duration = (position * -1) / 15;
-      if (position < 0) {
-        Scroll.animateScroll.scrollMore(position, {
-          duration: duration,
-          smooth: true
-        });
-      }
-    }
-    this.setState({
-      checked: !this.state.checked
-    });
-  }
 }
+
+export default NewsCard;

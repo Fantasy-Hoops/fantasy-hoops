@@ -121,14 +121,19 @@ namespace fantasy_hoops.Database
                 vTeamID = (int)newsObj["vTeamID"]
             };
 
-            bool shouldAdd = !await context.News.AnyAsync(x => x.Title.Equals((string)newsObj["title"])
-            && x.Date.Equals(DateTime.Parse(newsObj["pubDateUTC"].ToString())));
+            bool shouldAdd = context.News.Any(x => x.Title.Equals((string)newsObj["title"]));
 
             if (nObj == null || !shouldAdd)
                 return;
             await context.News.AddAsync(nObj);
 
             JArray paragraphs = (JArray)newsObj["paragraphs"];
+
+            string firstParagraph = paragraphs[0]["paragraph"].ToString();
+            int beginIndex = firstParagraph.IndexOf("(AP)");
+
+            if (beginIndex != -1)
+                paragraphs[0]["paragraph"] = firstParagraph.Substring(beginIndex + 5);
             int i = 0;
             foreach (var parObj in paragraphs)
             {

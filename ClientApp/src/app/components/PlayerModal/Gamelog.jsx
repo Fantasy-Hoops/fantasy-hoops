@@ -29,7 +29,7 @@ export default class Gamelog extends Component {
       const scoreTokens = s.score.split(';');
       const teamPoints = scoreTokens[0].split('-');
       if (scoreTokens[2] === 'LIVE') {
-        resultLetter = <span className="GameLog__LiveBadge alertPulse-css badge badge-danger">LIVE</span>;
+        resultLetter = <span className="GameLog__LiveBadge LiveBadge--pulse badge badge-danger">LIVE</span>;
       } else if (scoreTokens[1] === 'vs') {
         resultLetter = parseInt(teamPoints[1], 10) > parseInt(teamPoints[0], 10)
           ? <span className="text-green">W</span>
@@ -104,9 +104,10 @@ export default class Gamelog extends Component {
   }
 
   render() {
-    const btn = (!(this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length) && !this.state.loader)
+    const btn = (!(this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length)
+      && !this.state.loader)
       ? <button type="button" className="btn btn-primary float-left mt-2" onClick={this.loadMore}>See more</button>
-      : <div className="Loader" />;
+      : this.state.loader ? <div className="Loader" /> : null;
     return (
       <div>
         <div id="table-scroll" className="table-responsive table-scroll">

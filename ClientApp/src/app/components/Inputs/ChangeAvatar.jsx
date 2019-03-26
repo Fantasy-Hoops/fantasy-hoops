@@ -132,7 +132,7 @@ export class ChangeAvatar extends Component {
               {!this.state.preview ? clearAvatar : ''}
             </div>
             <div className="modal-footer mx-auto">
-              <button disabled={false} id="save" onClick={this.handleSubmit} type="button" className="btn btn-success">Save changes</button>
+              <button disabled={false} id="save" onClick={this.handleSubmit} type="button" className="btn btn-info">Save changes</button>
               <button type="button" className="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
           </div>

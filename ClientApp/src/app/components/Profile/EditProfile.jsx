@@ -53,7 +53,7 @@ export class EditProfile extends Component {
     }
     const btn = document.getElementById('submit');
     if (document.querySelectorAll('.is-invalid').length !== 0) {
-      btn.className = 'btn btn-success';
+      btn.className = 'btn btn-info';
       btn.disabled = true;
       return;
     }
@@ -63,13 +63,13 @@ export class EditProfile extends Component {
       if (!forms[i].required)
         continue;
       if (forms[i].value.length === 0) {
-        btn.className = 'btn btn-success';
+        btn.className = 'btn btn-info';
         btn.disabled = true;
         return;
       }
     }
 
-    btn.className = 'btn btn-success';
+    btn.className = 'btn btn-info';
     btn.disabled = false;
   }
 
