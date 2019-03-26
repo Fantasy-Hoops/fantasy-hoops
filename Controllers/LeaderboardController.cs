@@ -25,15 +25,15 @@ namespace fantasy_hoops.Controllers
 
 
         [HttpGet("user")]
-        public IEnumerable<Object> GetUserLeaderboard(int from = 0, int limit = 10, string type = "weekly", string date = "")
+        public IEnumerable<Object> GetUserLeaderboard(int from = 0, int limit = 10, string type = "weekly", string date = "", int weekNumber = -1)
         {
-            return _repository.GetUserLeaderboard(from, limit, type, date).ToList();
+            return _repository.GetUserLeaderboard(from, limit, type, date, weekNumber).ToList();
         }
 
         [HttpGet("user/{id}")]
-        public IEnumerable<Object> GetFriendsLeaderboard(string id, int from = 0, int limit = 10, string type = "weekly", string date = "")
+        public IEnumerable<Object> GetFriendsLeaderboard(string id, int from = 0, int limit = 10, string type = "weekly", string date = "", int weekNumber = -1)
         {
-            return _repository.GetFriendsLeaderboard(id, from, limit, type, date).ToList();
+            return _repository.GetFriendsLeaderboard(id, from, limit, type, date, weekNumber).ToList();
         }
 
         [HttpGet("season/lineups")]

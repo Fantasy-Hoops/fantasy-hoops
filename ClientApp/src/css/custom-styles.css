@@ -113,8 +113,7 @@ a:hover {
 }
 
 .Main__LogoContainer {
-  width: 70vw;
-  height: 50vh;
+  height: 48vh;
   margin: 0 auto;
   position: relative;
 }
@@ -647,7 +646,9 @@ input[type="search"]:focus {
   display: inline-block;
   padding: 0 .5em;
   font-size: .9em;
+  color:var(--grey-text);
   line-height: 2;
+  border: .1rem solid #ddd;
   border-radius: 25rem;
 }
 
@@ -709,11 +710,6 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   transform: translateX(26px);
 }
 
-.react-datepicker {
-  transform: scale(1.6, 1.6);
-  margin-top: 5rem;
-}
-
 .DatePicker {
   position: relative;
   margin: 0 auto;
@@ -721,10 +717,44 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   width: 18rem;
 }
 
+.WeeklyDatePicker {
+  position: relative;
+  margin: 0 auto;
+  margin-bottom: .8rem;
+  width: 18rem;
+}
+
+.react-datepicker {
+  transform: scale(1.6, 1.6);
+  margin-top: 5rem;
+}
+
+.react-datepicker__day--selected {
+ background: var(--primary-color)
+}
+
+.DatePicker .react-datepicker__day:hover {
+  background: var(--secondary-color);
+  color: #fff;
+}
+
+.react-datepicker__close-icon::after {
+  background: var(--secondary-color);
+}
+
+.WeeklyDatePicker .react-datepicker__week:hover {
+  background-color: var(--grey-text);
+}
+
+.WeeklyDatePicker .react-datepicker__day:hover {
+  background-color: var(--grey-text);
+}
+
 .UserLeaderboardCard {
   margin: 0 auto;
   margin-bottom: .2rem;
-  width: 40%;
+  width: 100%;
+  max-width: 45rem;
   min-width: 29rem;
   height: 7rem;
 }
@@ -831,18 +861,18 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 }
 
 .UserLeaderboardCard__player-photo--background {
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 4rem;
+  height: 4rem;
   overflow: hidden;
   border-radius: 50%;
   margin: 0 auto;
 }
 
 .UserLeaderboardCard__player-photo--image {
-  width: 6rem;
+  width: 5.5rem;
   overflow: hidden;
-  margin-left: -.8rem;
-  margin-bottom: -2rem;
+  margin-left: -.7rem;
+  margin-bottom: -1.5rem;
 }
 
 .UserLeaderboardCard__player-lastname {
