@@ -40,7 +40,7 @@ namespace fantasy_hoops.Database
             {
                 int teamNbaId = (int)team["reference"];
 
-                if (await dbTeams.AnyAsync(t => t.NbaID == teamNbaId))
+                if (dbTeams.Any(t => t.NbaID == teamNbaId))
                     goto Roster;
 
                 var teamObj = new Team
@@ -62,7 +62,7 @@ namespace fantasy_hoops.Database
                         continue;
                     int playerNbaId = (int)player["reference"];
                     bool gLeagueStatus = player["status"].ToString().Equals("D-LEAGUE") ? true : false;
-                    if (await dbPlayers.AnyAsync(p => p.NbaID == playerNbaId))
+                    if (dbPlayers.Any(p => p.NbaID == playerNbaId))
                     {
                         Player dbPlayer = dbPlayers.Where(p => p.NbaID == playerNbaId).FirstOrDefault();
                         if (dbPlayer.Team == null)

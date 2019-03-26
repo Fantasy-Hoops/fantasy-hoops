@@ -31,14 +31,10 @@ namespace fantasy_hoops.Database
             }
 
             _scoreService = new ScoreService();
-            Task.Run(() => Calculate(context, updatePrice)).Wait();
+            if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")))
+                Task.Run(() => Calculate(context, updatePrice)).Wait();
             NextGame.NEXT_GAME_CLIENT = NextGame.NEXT_GAME;
             PLAYER_POOL_DATE = NextGame.NEXT_GAME;
-
-            if (updatePrice)
-                JobManager.AddJob(() => StatsSeed.Initialize(context),
-                    s => s.WithName("statsSeed")
-                    .ToRunOnceIn(15).Minutes());
         }
 
         private static JObject GetPlayer(int id)
@@ -54,58 +50,55 @@ namespace fantasy_hoops.Database
 
         private static async Task Calculate(GameContext context, bool updatePrice)
         {
-            if (bool.Parse(Environment.GetEnvironmentVariable("UPDATE_PLAYER_SEED")))
+            await context.Players.ForEachAsync(p => p.IsPlaying = false);
+            string date = GetDate();
+            JArray games = CommonFunctions.GetGames(date);
+            foreach (var game in games)
             {
-                await context.Players.ForEachAsync(p => p.IsPlaying = false);
-                string date = GetDate();
-                JArray games = CommonFunctions.GetGames(date);
-                foreach (var game in games)
-                {
-                    SetNextOpponent(context, game);
-                    var hTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
-                    var vTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
+                SetNextOpponent(context, game);
+                var hTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
+                var vTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
 
-                    foreach (var player in hTeamPlayers.Union(vTeamPlayers))
+                foreach (var player in hTeamPlayers.Union(vTeamPlayers))
+                {
+                    JObject p = GetPlayer(player.NbaID);
+                    if (p == null)
                     {
-                        JObject p = GetPlayer(player.NbaID);
-                        if (p == null)
-                        {
-                            player.Price = PRICE_FLOOR;
-                            continue;
-                        }
-                        int gamesPlayed = 0;
-                        JToken stats = null;
-                        if (!(p["pl"]["ca"] == null || p["pl"]["ca"]["sa"] == null))
-                        {
-                            stats = p["pl"]["ca"]["sa"].Last;
-                            gamesPlayed = (int)stats["gp"];
-                        }
-                        player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
-                        player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
-                        player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
-                        player.STL = gamesPlayed <= 0 ? 0 : (double)stats["stl"];
-                        player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["blk"];
-                        player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["tov"];
-                        player.GP = gamesPlayed;
-                        player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
-                        if (updatePrice)
-                            player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(context, player);
-                        player.IsPlaying = IsPlaying(player);
+                        player.Price = PRICE_FLOOR;
+                        continue;
                     }
+                    int gamesPlayed = 0;
+                    JToken stats = null;
+                    if (!(p["pl"]["ca"] == null || p["pl"]["ca"]["sa"] == null))
+                    {
+                        stats = p["pl"]["ca"]["sa"].Last;
+                        gamesPlayed = (int)stats["gp"];
+                    }
+                    player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
+                    player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
+                    player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
+                    player.STL = gamesPlayed <= 0 ? 0 : (double)stats["stl"];
+                    player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["blk"];
+                    player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["tov"];
+                    player.GP = gamesPlayed;
+                    player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
+                    if (updatePrice)
+                        player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(player);
+                    player.IsPlaying = IsPlaying(player);
                 }
-                await context.SaveChangesAsync();
             }
+            await context.SaveChangesAsync();
         }
 
         private static bool IsPlaying(Player player)
         {
             // Don't show players out for more that 5 days
             if ((player.StatusDate.HasValue
-                && (player.StatusDate.Value.AddDays(5) < NextGame.NEXT_GAME)
-                && (player.Status.ToLower().Contains("out")
-                 || player.Status.ToLower().Contains("injured")))
-                || player.IsInGLeague
-                || player.Position.Equals("NA"))
+                    && (player.StatusDate.Value.AddDays(5) < NextGame.NEXT_GAME)
+                    && (player.Status.ToLower().Contains("out")
+                     || player.Status.ToLower().Contains("injured")))
+                    || player.IsInGLeague
+                    || player.Position.Equals("NA"))
                 return false;
             return true;
         }
@@ -120,7 +113,7 @@ namespace fantasy_hoops.Database
             return Math.Round((1 * p.PTS) + (1.2 * p.REB) + (1.5 * p.AST) + (3 * p.STL) + (3 * p.BLK) - (1 * p.TOV), 2);
         }
 
-        private static int Price(GameContext context, Player p)
+        public static int Price(Player p)
         {
             int price = _scoreService.GetPrice(p);
             if (price < PRICE_FLOOR)

@@ -42,7 +42,7 @@ export class NewsFeedContainer extends Component {
         />
       ));
     return (
-      <div className="container bg-light pt-5">
+      <div className="container bg-light p-0 pt-5">
         <div className="center col">
           <InfiniteScroll
             dataLength={news.length}

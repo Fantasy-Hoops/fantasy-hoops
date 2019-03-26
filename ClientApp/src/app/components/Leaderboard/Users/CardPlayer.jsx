@@ -22,10 +22,10 @@ export default class CardPlayer extends PureComponent {
     return (
       <div className="UserLeaderboardCard__body-item UserLeaderboardCard__player">
         <a
+          className="UserLeaderboardCard__player-tooltip"
           data-toggle="tooltip"
           data-placement="top"
           title="Click for stats"
-          style={{ height: '100%' }}
         >
           <div
             role="button"

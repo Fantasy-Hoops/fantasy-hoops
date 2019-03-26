@@ -11,7 +11,7 @@ export const Friends = (props) => {
     && parse().username.toLowerCase() === user.userName.toLowerCase());
   return (
     <div className="tab-pane" id="friends">
-      <div className="container">
+      <div className="container p-2">
         {loggedInAsSameUser && (
           <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li className="nav-item">
