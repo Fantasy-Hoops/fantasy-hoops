@@ -30,9 +30,9 @@ export const RequestCard = (props) => {
                 <button type="button" onClick={() => cancel(id)} className="btn btn-outline-danger">Cancel Request</button>
               )
               : (
-                <div>
+                <div className="RequestCard__Buttons__Pending">
                   <button type="button" onClick={() => decline(id)} className="btn btn-outline-danger">Decline Request</button>
-                  <button type="button" onClick={() => accept(id)} className="btn btn-info ml-3">Accept Request</button>
+                  <button type="button" onClick={() => accept(id)} className="btn btn-info RequestCard__Buttons__Pending__Accept">Accept Request</button>
                 </div>
               )
           }
