@@ -107,8 +107,15 @@ a:hover {
 .Main__TopPlayers {
   z-index: 5;
   position: absolute;
-  left: 1.6rem;
-  bottom: -45vh;
+  top: 55vh;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media screen and (min-width: 568px) {
+  .Main__TopPlayers {
+    top: 65vh;
+  }
 }
 
 .Main__TopPlayersHeading {
@@ -126,9 +133,15 @@ a:hover {
 }
 
 .Main__LogoContainer {
-  height: 35vh;
+  height: 40vh;
   margin: 0 auto;
   position: relative;
+}
+
+@media screen and (min-width: 568px) {
+  .Main__LogoContainer {
+    height: 55vh;
+  }
 }
 
 .Main__Logo {
