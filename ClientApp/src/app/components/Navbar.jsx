@@ -20,6 +20,9 @@ export default class Navbar extends Component {
   }
 
   async componentDidMount() {
+    $('#NavbarLogo').on('click', () => {
+      $('.navbar-collapse').removeClass('show');
+    });
     $('.navbar-nav>li>div').on('click', () => {
       $('.navbar-collapse').removeClass('show');
     });
@@ -86,7 +89,7 @@ export default class Navbar extends Component {
                       </a>
                       <p className="text-left small">{user.email}</p>
                       <p className="text-left">
-                        <a role="button" href={`/profile/${user.username}/edit`} className="btn btn-outline-primary btn-block">Edit profile</a>
+                        <Link to={`/profile/${user.username}/edit`} className="btn btn-outline-primary btn-block">Edit profile</Link>
                       </p>
                     </div>
                   </div>
@@ -114,7 +117,7 @@ export default class Navbar extends Component {
       <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
         {window.location.pathname !== '/'
           ? (
-            <Link className="navbar-brand btn-no-outline Navbar__Logo" to={Routes.MAIN}>
+            <Link id="NavbarLogo" className="navbar-brand btn-no-outline Navbar__Logo" to={Routes.MAIN}>
               <img className="Navbar__Icon" src={require('../../content/images/logo.png')} width="35" height="35" alt="FH" />
               <img className="Navbar__Title ml-2 mt-2" src={require('../../content/images/title.png')} height="30" alt="Fantasy Hoops" />
             </Link>
@@ -151,7 +154,7 @@ export default class Navbar extends Component {
                     aria-haspopup="true"
                     aria-expanded="false"
                   >
-                    Leaderboards
+                    {'Leaderboards'}
                   </a>
                   <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <div><Link className="dropdown-item" to={Routes.LEADERBOARD_USERS}>Top Users</Link></div>

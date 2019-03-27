@@ -30,18 +30,6 @@ export class InfoPanel extends Component {
     });
   }
 
-  async showModal(player) {
-    this.setState({ modalLoader: true });
-    await getPlayerStats(player.nbaID)
-      .then((res) => {
-        this.setState({
-          stats: res.data,
-          modalLoader: false,
-          renderChild: true
-        });
-      });
-  }
-
   getCurrentLineup() {
     const { user } = this.props;
     const liveBadge = user.currentLineup && user.currentLineup.isLive
@@ -63,6 +51,18 @@ export class InfoPanel extends Component {
           />
         </div>
       );
+  }
+
+  async showModal(player) {
+    this.setState({ modalLoader: true });
+    await getPlayerStats(player.nbaID)
+      .then((res) => {
+        this.setState({
+          stats: res.data,
+          modalLoader: false,
+          renderChild: true
+        });
+      });
   }
 
   render() {

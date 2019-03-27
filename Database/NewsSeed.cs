@@ -121,7 +121,7 @@ namespace fantasy_hoops.Database
                 vTeamID = (int)newsObj["vTeamID"]
             };
 
-            bool shouldAdd = context.News.Any(x => x.Title.Equals((string)newsObj["title"]));
+            bool shouldAdd = context.News.Any(x => !x.Title.Equals((string)newsObj["title"]));
 
             if (nObj == null || !shouldAdd)
                 return;

@@ -1,17 +1,40 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import shortid from 'shortid';
+import _ from 'lodash';
+import $ from 'jquery';
 import Routes from '../routes/routes';
+import { Card } from './Leaderboard/Players/Card';
+import { getPlayersLeaderboard } from '../utils/networkFunctions';
 
 export default class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      daily: []
     };
   }
 
   async componentDidMount() {
+    $('#PlayNowBtn').on('click', () => {
+      $('.navbar-collapse').removeClass('show');
+    });
     document.querySelector('body').classList.add('Main__Background');
+    await getPlayersLeaderboard({ type: 'daily', limit: 3 })
+      .then((res) => {
+        this.setState({
+          daily: res.data
+        });
+      });
+    await this.setState({
+      PG: require('../../content/images/positions/pg.png'),
+      SG: require('../../content/images/positions/sg.png'),
+      SF: require('../../content/images/positions/sf.png'),
+      PF: require('../../content/images/positions/pf.png'),
+      C: require('../../content/images/positions/c.png')
+    });
   }
+
   componentDidUpdate() {
     let deferredPrompt;
     if (document.querySelector('.A2HS-Button')) {
@@ -49,12 +72,39 @@ export default class Main extends Component {
     document.querySelector('body').classList.remove('Main__Background');
   }
 
+  createPlayers(players) {
+    return _.map(
+      players,
+      (player, index) => (
+        <Card
+          className="Main__TopPlayersCard"
+          index={index}
+          key={shortid()}
+          player={player}
+          showModal={this.showModal}
+          image={this.state[player.position]}
+        />
+      )
+    );
+  }
+
   render() {
+    const { daily } = this.state;
+    const topPlayers = daily
+      ? (
+        <div className="Main__TopPlayers">
+          <h2 className="Main__TopPlayersHeading">Top NBA Players Today</h2>
+          {this.createPlayers(daily)}
+        </div>
+      )
+      : null;
     return (
       <div className="Main__Background">
-        <button type="button" className="btn btn-danger A2HS-Button">
-          Add to home screen
+        <button type="button" className="btn btn-outline-success A2HS-Button">
+          <i className="far fa-bookmark" />
+          {' Save'}
         </button>
+        {topPlayers}
         <div className="Main__LogoContainer">
           <img
             className="Main__Logo"
@@ -62,11 +112,12 @@ export default class Main extends Component {
             src={`${require('../../content/images/FH_Logo.png')}`}
           />
           <Link
+            id="PlayNowBtn"
             to={Routes.LINEUP}
             className="Main__PlayNowButton text-center btn btn-danger"
             role="button"
           >
-            Play Now!
+            {'Play Now!'}
           </Link>
         </div>
       </div>
