@@ -153,7 +153,7 @@ namespace fantasy_hoops.Services
                         string.Format("Game is starting in less than 2 hours! Don't forget to set up your lineup!"));
             notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🏆 Lineup") };
             var usersSelectedIDs = _context.UserLineups
-                .Where(lineup => lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME)))
+                .Where(lineup => lineup.Date.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date))
                 .Select(lineup => lineup.UserID);
             foreach (var user in await _context.Users
                 .Where(user => user.Streak > 0 && !usersSelectedIDs.Any(userID => userID.Equals(user.Id)))

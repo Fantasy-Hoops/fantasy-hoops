@@ -63,7 +63,7 @@ export default class Gamelog extends Component {
           </td>
           <td>{s.fga !== 0 ? s.fgp : '-'}</td>
           <td>
-            {`${s.ftm}/${s.ftm}`}
+            {`${s.ftm}/${s.fta}`}
           </td>
           <td>{s.fta !== 0 ? s.ftp : '-'}</td>
           <td>

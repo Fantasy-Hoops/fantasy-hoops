@@ -29,8 +29,25 @@ export class UserProfile extends Component {
 
   async componentDidMount() {
     this._isMounted = true;
+    this.loadUser(this.props);
+  }
 
-    const { match } = this.props;
+  async componentWillReceiveProps(nextProps) {
+    this.setState({ loader: true });
+    this.props = nextProps;
+    this.loadUser(nextProps);
+    const friendsTab = document.getElementById('friends');
+    friendsTab.classList.remove('active');
+    const profileTab = document.getElementById('profile');
+    profileTab.classList.add('active');
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  async loadUser(props) {
+    const { match } = props;
     const loggedInAsSameUser = (
       match.params.name != null && parse()
         .username.toLowerCase() === match.params.name.toLowerCase()
@@ -75,10 +92,6 @@ export class UserProfile extends Component {
           }
         });
     }
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
   }
 
   editProfile() {

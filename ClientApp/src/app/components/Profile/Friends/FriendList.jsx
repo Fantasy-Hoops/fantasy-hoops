@@ -23,6 +23,17 @@ export default class FriendList extends Component {
       });
   }
 
+  async componentWillReceiveProps(nextProps) {
+    if (this.props === nextProps) { return; }
+    const { user } = nextProps;
+    await getUserFriends(user.id)
+      .then((res) => {
+        this.setState({
+          friends: res.data
+        });
+      });
+  }
+
   render() {
     const { friends } = this.state;
     const allFriends = _.map(friends,

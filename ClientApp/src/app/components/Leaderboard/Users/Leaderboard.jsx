@@ -211,7 +211,7 @@ export default class Leaderboard extends PureComponent {
     showButton[type] = users.data.length === LOAD_COUNT;
     this.setState({
       [type]: this.state[type].concat(users.data),
-      loader: false
+      loadMore: false
     });
   }
 

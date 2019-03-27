@@ -2,7 +2,7 @@
   --primary-color: #2c3e50;
   --secondary-color: #F1592A;
   --tertiary-color: #ecf0f1;
-  --grey-text: #696969;
+  --grey-text: #939598;
   --grey-background: #f5f5f5;
 }
 
@@ -100,29 +100,40 @@ a:hover {
 }
 
 .Main__Background {
+  position: relative;
   background-color: var(--primary-color);
+}
+
+.Main__TopPlayers {
+  z-index: 5;
+  position: absolute;
+  left: 1.6rem;
+  bottom: -45vh;
+}
+
+.Main__TopPlayersHeading {
+  color: var(--grey-background);
+  opacity: .7;
+  font-weight: 700;
 }
 
 .A2HS-Button {
   display: none;
   position: absolute;
   left: 1.6rem;
-  top: 7.5rem;
-  background-color: #F15A29;
-  border-color: #F15A29;
+  top: .5rem;
+  z-index: 5;
 }
 
 .Main__LogoContainer {
-  height: 48vh;
+  height: 35vh;
   margin: 0 auto;
   position: relative;
 }
 
 .Main__Logo {
   margin: 0 auto;
-  width: 60%;
-  max-width: 50rem;
-  min-width: 25rem;
+  height: 95%;
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -896,9 +907,21 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .PlayerLeaderboardCard {
   margin: 0 auto;
   margin-bottom: .2rem;
-  width: 35%;
-  min-width: 28rem;
+  width: 100%;
+  max-width: 45rem;
+  min-width: 29rem;
   height: 6rem;
+}
+
+.Main__TopPlayersCard {
+  width: 100%;
+  max-width: 50rem;
+  pointer-events: none;
+  height: 4.5rem;
+}
+
+.Main__TopPlayersCard--FP {
+  padding-top: 10rem !important;
 }
 
 .PlayerLeaderboardCard__body {
@@ -943,6 +966,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   color: var(--primary-color);
   font-weight: 400;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .PlayerLeaderboardCard__FP {
@@ -957,9 +981,18 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   font-weight: 700;
 }
 
+.PlayerLeaderboardCard__FP--text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+}
+
 .UserScoreCard {
-  min-width: 28rem;
+  width: 100%;
   max-width: 45rem;
+  min-width: 29rem;
   height: 9rem;
 }
 
@@ -1012,7 +1045,9 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   color: var(--primary-color);
   margin: .1rem 0 0 0;
   white-space: nowrap;
-  width: 85%;
+  overflow: hidden;
+  width: 100%;
+  text-overflow: ellipsis;
 }
 
 .UserScoreCard__player-FP {

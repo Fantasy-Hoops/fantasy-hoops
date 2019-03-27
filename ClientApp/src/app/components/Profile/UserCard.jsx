@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Img from 'react-image';
+import { Link } from 'react-router-dom';
 
 export class UserCard extends Component {
   constructor(props) {
@@ -12,7 +13,7 @@ export class UserCard extends Component {
   render() {
     const { user } = this.props;
     return (
-      <a href={`/profile/${user.userName}`} className="UserCard" style={{ backgroundColor: `${user.color}` }}>
+      <Link to={`/profile/${user.userName}`} className="UserCard" style={{ backgroundColor: `${user.color}` }}>
         <canvas className="header-bg" />
         <div className="avatar">
           <Img
@@ -25,7 +26,7 @@ export class UserCard extends Component {
         <div className="UserCard__UserName content badge badge-dark">
           <span className="UserCard__UserName--text">{user.userName}</span>
         </div>
-      </a>
+      </Link>
     );
   }
 }

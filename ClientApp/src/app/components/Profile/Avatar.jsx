@@ -15,7 +15,7 @@ export class Avatar extends Component {
   }
 
   async componentDidMount() {
-    const user = this.props.user;
+    const { user } = this.props;
     this.setState({
       avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.id}.png`, defaultPhoto)
     });
@@ -23,8 +23,16 @@ export class Avatar extends Component {
     $('#changeImage').on('hidden.bs.modal', () => this.refs.changeAvatar.clear());
   }
 
+  async componentWillReceiveProps(nextProps) {
+    if (this.props === nextProps) { return; }
+    const { user } = nextProps;
+    this.setState({
+      avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.id}.png`, defaultPhoto)
+    });
+  }
+
   render() {
-    const user = this.props.user;
+    const { user, readOnly } = this.props;
     return (
       <div>
         <div className="row mx-auto">
@@ -37,8 +45,8 @@ export class Avatar extends Component {
           src={this.state.avatar}
           loader={<img src={require('../../../content/images/imageLoader.gif')} alt="Loader" />}
         />
-        <FriendRequest user={this.props.user} readOnly={this.props.readOnly} />
-        {!this.props.readOnly
+        <FriendRequest user={user} readOnly={readOnly} />
+        {!readOnly
           && (
             <div className="row">
               <button type="button" className="btn btn-outline-primary mx-auto" data-toggle="modal" data-target="#changeImage">
