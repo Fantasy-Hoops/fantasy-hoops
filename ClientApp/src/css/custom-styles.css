@@ -119,8 +119,7 @@ a:hover {
 }
 
 .Main__TopPlayersHeading {
-  color: var(--grey-background);
-  opacity: .7;
+  color: var(--grey-text);
   font-weight: 700;
 }
 
@@ -133,7 +132,7 @@ a:hover {
 }
 
 .Main__LogoContainer {
-  height: 40vh;
+  height: 35vh;
   margin: 0 auto;
   position: relative;
 }
@@ -159,8 +158,6 @@ a:hover {
   left: 50%;
   transform: translateX(-50%);  
   transform: translateX(-50%);
-  background-color: #F15A29;
-  border-color: #F15A29;
 }
 
 #main-text {

@@ -114,7 +114,7 @@ export default class Main extends Component {
           <Link
             id="PlayNowBtn"
             to={Routes.LINEUP}
-            className="Main__PlayNowButton text-center btn btn-danger"
+            className="Main__PlayNowButton text-center btn btn-outline-success"
             role="button"
           >
             {'Play Now!'}
