@@ -90,7 +90,7 @@ export default class Main extends Component {
 
   render() {
     const { daily } = this.state;
-    const topPlayers = daily
+    const topPlayers = daily && daily.length > 0
       ? (
         <div className="Main__TopPlayers">
           <h2 className="Main__TopPlayersHeading">Top NBA Players Today</h2>

@@ -52,7 +52,7 @@ export default class Leaderboard extends PureComponent {
       stats: '',
       modalLoader: true,
       renderChild: false,
-      date: new Date(),
+      date: null,
       week: new Date(),
       weekNumber: getWeek(new Date())
     };
@@ -76,7 +76,7 @@ export default class Leaderboard extends PureComponent {
       });
     });
     const { showButton } = this.state;
-    await getUsersLeaderboard({ type: 'daily' })
+    await getUsersLeaderboard({ type: 'daily', date: '' })
       .then((res) => {
         showButton.daily = res.data.length === LOAD_COUNT;
         this.setState({

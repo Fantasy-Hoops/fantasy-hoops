@@ -51,10 +51,12 @@ namespace fantasy_hoops.Repositories
 
         public IEnumerable<object> GetUserLeaderboard(int from, int limit, string type, string date, int weekNumber)
         {
+            DateTime previousECT = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME);
+
             date = date.Length == 0
-                ? DateTime.UtcNow < NextGame.PREVIOUS_LAST_GAME
-                    ? NextGame.PREVIOUS_GAME.AddDays(-1).ToString("yyyyMMdd")
-                    : NextGame.PREVIOUS_GAME.ToString("yyyyMMdd")
+                ? DateTime.UtcNow < CommonFunctions.UTCToEastern(NextGame.PREVIOUS_LAST_GAME)
+                    ? previousECT.AddDays(-1).ToString("yyyyMMdd")
+                    : previousECT.ToString("yyyyMMdd")
                 : date;
 
             DateTime dateTime = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
