@@ -57,7 +57,7 @@ namespace fantasy_hoops.Repositories
                 ? DateTime.UtcNow < NextGame.PREVIOUS_LAST_GAME
                     ? previousECT.AddDays(-1)
                     : previousECT
-                : CommonFunctions.UTCToEastern(DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture));
+                : DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
             switch (type)
             {
                 case "daily":
@@ -135,7 +135,7 @@ namespace fantasy_hoops.Repositories
                 ? DateTime.UtcNow < NextGame.PREVIOUS_LAST_GAME
                     ? previousECT.AddDays(-1)
                     : previousECT
-                : CommonFunctions.UTCToEastern(DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture));
+                : DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
 
             var loggedInUser = _context.Users.Where(u => u.Id.Equals(id));
             var friendsOnly = _context.FriendRequests
