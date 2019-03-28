@@ -61,10 +61,9 @@ namespace fantasy_hoops.Repositories
             switch (type)
             {
                 case "daily":
-                    var dailyStats = _context.Stats.Where(stats => stats.Date >= dateTime.Date && stats.Date <= dateTime.AddDays(1).Date);
-
+                    var dailyStats = _context.Stats.Where(stats => stats.Date.Equals(dateTime.Date));
                     return _context.UserLineups
-                    .Where(lineup => lineup.IsCalculated && lineup.Date >= dateTime.Date && lineup.Date <= dateTime.AddDays(1).Date)
+                    .Where(lineup => lineup.IsCalculated && lineup.Date.Equals(dateTime.Date))
                     .OrderByDescending(lineup => lineup.FP)
                     .Select(lineup => new
                     {
@@ -151,11 +150,11 @@ namespace fantasy_hoops.Repositories
             switch (type)
             {
                 case "daily":
-                    var dailyStats = _context.Stats.Where(stats => stats.Date >= dateTime.Date && stats.Date <= dateTime.AddDays(1).Date);
+                    var dailyStats = _context.Stats.Where(stats => stats.Date.Equals(dateTime.Date));
 
                     return friendsOnly
                         .SelectMany(user => user.UserLineups)
-                        .Where(lineup => lineup.Date >= dateTime && lineup.Date <= dateTime.AddDays(1).Date && lineup.IsCalculated)
+                        .Where(lineup => lineup.Date.Equals(dateTime.Date) && lineup.IsCalculated)
                     .Select(lineup => new
                     {
                         lineup.UserID,
@@ -180,7 +179,7 @@ namespace fantasy_hoops.Repositories
                                 player.FirstName,
                                 player.LastName,
                                 player.AbbrName,
-                                FP = player.Stats.Where(stats => stats.Date.Date == lineup.Date.Date)
+                                FP = player.Stats.Where(stats => stats.Date.Equals(lineup.Date))
                                     .Select(stats => stats.FP).FirstOrDefault()
                             }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
                     })
