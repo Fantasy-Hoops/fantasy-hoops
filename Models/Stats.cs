@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace fantasy_hoops.Models
 {
     public class Stats
     {
         public int StatsID { get; set; }
+        [Column(TypeName = "Date")]
         public DateTime Date { get; set; }
         public string Score { get; set; }
         public string MIN { get; set; }

@@ -33,8 +33,8 @@ namespace fantasy_hoops.Database
         private static async Task Update(GameContext context)
         {
             WebPushClient _webPushClient = new WebPushClient();
-            var todayStats = context.Stats.Where(stats => stats.Date.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date);
-            var allLineups = context.UserLineups.Where(x => x.Date.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date && !x.IsCalculated)
+            var todayStats = context.Stats.Where(stats => stats.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date));
+            var allLineups = context.UserLineups.Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date) && !x.IsCalculated)
                 .ToList();
 
             if (allLineups.Count == 0)
@@ -55,7 +55,7 @@ namespace fantasy_hoops.Database
             }
 
             var usersPlayed = context.UserLineups
-                .Where(x => x.Date.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date)
+                .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date))
                 .Select(x => x.User)
                 .Distinct();
 
@@ -65,7 +65,7 @@ namespace fantasy_hoops.Database
             {
                 user.Streak++;
                 var userScore = Math.Round(allLineups
-                    .Where(x => x.Date.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date
+                    .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date)
                             && x.UserID.Equals(user.Id))
                     .Select(x => x.FP)
                     .FirstOrDefault(), 1);

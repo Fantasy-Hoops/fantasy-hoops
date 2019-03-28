@@ -9,6 +9,7 @@ namespace fantasy_hoops.Models
     public class UserLineup
     {
         public int ID { get; set; }
+        [Column(TypeName = "Date")]
         public DateTime Date { get; set; }
         public string UserID { get; set; }
         public int PgID { get; set; }
