@@ -24,7 +24,7 @@ namespace fantasy_hoops.Repositories
                     Paragraphs = x.Paragraphs
                                     .OrderBy(p => p.ParagraphNumber)
                                     .Select(y => y.Content).ToList(),
-                    date = x.Date.ToString("yyyy-MM-dd"),
+                    date = x.Date.ToString("MM/dd/yyyy"),
                     hTeam = _context.Teams.Where(y => y.NbaID == x.hTeamID).FirstOrDefault().Abbreviation,
                     vTeam = _context.Teams.Where(y => y.NbaID == x.vTeamID).FirstOrDefault().Abbreviation
                 })

@@ -110,7 +110,7 @@ namespace fantasy_hoops.Database
 		private static async Task UpdateNotifications(GameContext context, Injuries injury, string statusBefore, string statusAfter)
 		{
 			foreach (var lineup in context.UserLineups
-							.Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME))
+							.Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
 							&& (x.PgID == injury.PlayerID
 									|| x.SgID == injury.PlayerID
 									|| x.SfID == injury.PlayerID

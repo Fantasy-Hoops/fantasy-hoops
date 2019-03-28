@@ -53,13 +53,11 @@ namespace fantasy_hoops.Repositories
         {
             DateTime previousECT = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME);
 
-            date = date.Length == 0
-                ? DateTime.UtcNow < CommonFunctions.UTCToEastern(NextGame.PREVIOUS_LAST_GAME)
-                    ? previousECT.AddDays(-1).ToString("yyyyMMdd")
-                    : previousECT.ToString("yyyyMMdd")
-                : date;
-
-            DateTime dateTime = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
+            DateTime dateTime = date.Length == 0
+                ? DateTime.UtcNow < NextGame.PREVIOUS_LAST_GAME
+                    ? previousECT.AddDays(-1)
+                    : previousECT
+                : CommonFunctions.UTCToEastern(DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture));
             switch (type)
             {
                 case "daily":
@@ -132,11 +130,13 @@ namespace fantasy_hoops.Repositories
 
         public IEnumerable<object> GetFriendsLeaderboard(string id, int from, int limit, string type, string date, int weekNumber)
         {
-            date = date.Length == 0
+            DateTime previousECT = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME);
+
+            DateTime dateTime = date.Length == 0
                 ? DateTime.UtcNow < NextGame.PREVIOUS_LAST_GAME
-                    ? NextGame.PREVIOUS_GAME.AddDays(-1).ToString("yyyyMMdd")
-                    : NextGame.PREVIOUS_GAME.ToString("yyyyMMdd")
-                : date;
+                    ? previousECT.AddDays(-1)
+                    : previousECT
+                : CommonFunctions.UTCToEastern(DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture));
 
             var loggedInUser = _context.Users.Where(u => u.Id.Equals(id));
             var friendsOnly = _context.FriendRequests
@@ -147,9 +147,6 @@ namespace fantasy_hoops.Repositories
                 .Include(u => u.Receiver)
                 .Where(f => f.SenderID.Equals(loggedInUser.FirstOrDefault().Id) && f.Status == Models.RequestStatus.ACCEPTED)
                 .Select(u => u.Receiver)).Concat(loggedInUser);
-
-            //DateTime date = CommonFunctions.GetDate(type);
-            DateTime dateTime = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
 
             switch (type)
             {
@@ -194,7 +191,7 @@ namespace fantasy_hoops.Repositories
                 case "weekly":
                     int week = weekNumber != -1
                         ? weekNumber
-                        : CommonFunctions.GetIso8601WeekOfYear(DateTime.UtcNow);
+                        : CommonFunctions.GetIso8601WeekOfYear(CommonFunctions.UTCToEastern(DateTime.UtcNow));
                     return friendsOnly
                         .SelectMany(user => user.UserLineups)
                         .Where(lineup => lineup.IsCalculated && CommonFunctions.GetIso8601WeekOfYear(lineup.Date) == week)
@@ -257,7 +254,7 @@ namespace fantasy_hoops.Repositories
                             player.FirstName,
                             player.LastName,
                             player.AbbrName,
-                            FP = player.Stats.Where(stats => stats.Date.Date == lineup.Date.Date)
+                            FP = player.Stats.Where(stats => stats.Date.Equals(lineup.Date))
                                 .Select(stats => stats.FP).FirstOrDefault()
                         }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
                 });

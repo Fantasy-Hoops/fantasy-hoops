@@ -67,7 +67,7 @@ namespace fantasy_hoops.Database
                     continue;
                 int hTeam = (int)boxscore["basicGameData"]["hTeam"]["teamId"];
                 int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
-                DateTime date = CommonFunctions.UTCToEastern(DateTime.Parse((string)boxscore["basicGameData"]["startTimeUTC"]));
+                DateTime date = DateTime.Parse((string)boxscore["basicGameData"]["startDateEastern"]);
                 var players = boxscore["stats"]["activePlayers"];
                 foreach (var player in (JArray)players)
                 {
@@ -139,7 +139,7 @@ namespace fantasy_hoops.Database
 
             statsObj.Player = context.Players.Where(x => x.NbaID == (int)player["personId"]).FirstOrDefault();
             var dbStats = context.Stats
-                .Where(stats => stats.Date.Date.Equals(date.Date) && stats.PlayerID == statsObj.Player.PlayerID)
+                .Where(stats => stats.Date.Equals(date) && stats.PlayerID == statsObj.Player.PlayerID)
                 .FirstOrDefault();
 
             if (dbStats == null)

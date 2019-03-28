@@ -22,7 +22,7 @@ namespace fantasy_hoops.Repositories
         public object GetLineup(string id)
         {
             return _context.UserLineups
-            .Where(lineup => lineup.UserID.Equals(id) && lineup.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
+            .Where(lineup => lineup.UserID.Equals(id) && lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date))
             .Select(lineup => new
             {
                 lineup = _context.Players
@@ -112,7 +112,7 @@ namespace fantasy_hoops.Repositories
         {
             return _context.UserLineups
                     .Where(x => x.UserID.Equals(userID)
-                        && x.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
+                        && x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date))
                     .Any();
         }
 
