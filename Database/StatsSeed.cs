@@ -6,6 +6,7 @@ using fantasy_hoops.Models;
 using fantasy_hoops.Helpers;
 using FluentScheduler;
 using fantasy_hoops.Services;
+using System.Globalization;
 
 namespace fantasy_hoops.Database
 {
@@ -67,7 +68,7 @@ namespace fantasy_hoops.Database
                     continue;
                 int hTeam = (int)boxscore["basicGameData"]["hTeam"]["teamId"];
                 int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
-                DateTime date = DateTime.Parse((string)boxscore["basicGameData"]["startDateEastern"]);
+                DateTime date = DateTime.ParseExact((string)boxscore["basicGameData"]["startDateEastern"], "yyyyMMdd", CultureInfo.InvariantCulture);
                 var players = boxscore["stats"]["activePlayers"];
                 foreach (var player in (JArray)players)
                 {
