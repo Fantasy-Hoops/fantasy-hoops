@@ -180,7 +180,7 @@ namespace fantasy_hoops.Repositories
                                 && stats.PlayerID == player.PlayerID)
                             .Select(stats => stats.FP).FirstOrDefault()
                         }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position)),
-                        isLive = lineup.Date.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME.Date) && !lineup.IsCalculated
+                        isLive = lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date) && !lineup.IsCalculated
                     })
                     .FirstOrDefault();
         }
