@@ -31,7 +31,7 @@ export default function configureRoutes() {
           <Route path={Routes.INJURIES} component={InjuriesFeed} />
           <Route path={Routes.NEWS} component={NewsFeed} />
           <PrivateRoute exact path={Routes.LEADERBOARD_USERS} component={UserLeaderboard} />
-          <PrivateRoute exact path={Routes.LEADERBOARD_PLAYERS} component={PlayerLeaderboard} />
+          <Route exact path={Routes.LEADERBOARD_PLAYERS} component={PlayerLeaderboard} />
           <PrivateRoute exact path={Routes.LEADERBOARD_SEASON} component={SeasonLeaderboard} />
           <PrivateRoute path={Routes.USER_POOL} component={UserPool} />
           <PrivateRoute path={Routes.ALL_NOTIFICATIONS} component={AllNotificationsPage} />
