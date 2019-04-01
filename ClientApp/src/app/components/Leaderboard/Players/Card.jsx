@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import Img from 'react-image';
+
 const $ = window.$;
 
 export class Card extends PureComponent {
@@ -9,12 +10,13 @@ export class Card extends PureComponent {
   }
 
   componentDidMount() {
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="tooltip"]').tooltip();
   }
 
   showModal() {
-    $('[data-toggle="tooltip"]').tooltip("hide");
-    this.props.showModal(this.props.player);
+    $('[data-toggle="tooltip"]').tooltip('hide');
+    const { showModal, player } = this.props;
+    showModal(player);
   }
 
   render() {
@@ -27,21 +29,24 @@ export class Card extends PureComponent {
           title="Click for stats"
           style={{ height: '100%' }}
         >
-          <div className="PlayerLeaderboardCard__body card-body"
+          <div
+            className="PlayerLeaderboardCard__body card-body"
             data-toggle="modal"
             data-target="#playerModal"
             onClick={this.showModal}
-            style={{ cursor: 'pointer' }}>
+            style={{ cursor: 'pointer' }}
+          >
             <div className="PlayerLeaderboardCard__body-item PlayerLeaderboardCard__player-ranking">
               {this.props.index + 1}
             </div>
             <div className="PlayerLeaderboardCard__body-item">
               <div
                 className="PlayerLeaderboardCard__player-photo--background"
-                style={{ backgroundColor: `${this.props.player.teamColor}`, cursor: 'pointer' }}>
+                style={{ backgroundColor: `${this.props.player.teamColor}`, cursor: 'pointer' }}
+              >
                 <Img
                   className="PlayerLeaderboardCard__player-photo--image"
-                  alt={`${this.props.player.fullName}`}
+                  alt=""
                   src={[
                     `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.nbaID}.png`,
                     this.props.image
@@ -55,7 +60,8 @@ export class Card extends PureComponent {
             </div>
             <div className="PlayerLeaderboardCard__body-item PlayerLeaderboardCard__FP">
               <div className="PlayerLeaderboardCard__FP--text">
-                {`${this.props.player.fp.toFixed(1)} `}<span style={{ fontSize: '1rem', fontWeight: 400 }}>FP</span>
+                {`${this.props.player.fp.toFixed(1)} `}
+                <span style={{ fontSize: '1rem', fontWeight: 400 }}>FP</span>
                 {this.props.season ? <div className="UserScoreCard__date" style={{ fontSize: '1rem' }}>{this.props.player.shortDate}</div> : ''}
               </div>
             </div>
@@ -65,3 +71,5 @@ export class Card extends PureComponent {
     );
   }
 }
+
+export default Card;

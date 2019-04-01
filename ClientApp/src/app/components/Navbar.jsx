@@ -170,6 +170,13 @@ export default class Navbar extends Component {
             <li className="nav-item">
               <div><Link className="nav-link btn-no-outline" to={Routes.NEWS}>News</Link></div>
             </li>
+            {!isAuth()
+              && (
+                <li className="nav-item">
+                  <div><Link className="nav-link btn-no-outline" to={Routes.LEADERBOARD_PLAYERS}>Top NBA Players</Link></div>
+                </li>
+              )
+            }
             {isAuth()
               && (
                 <li className="nav-item">
