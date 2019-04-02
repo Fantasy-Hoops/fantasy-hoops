@@ -27,18 +27,29 @@ namespace fantasy_hoops.Database
                 .Seconds());
                 return;
             }
-            Task.Run(() => Update(context)).Wait();
+            Update(context);
         }
 
-        private static async Task Update(GameContext context)
+        private static void Update(GameContext context)
         {
             WebPushClient _webPushClient = new WebPushClient();
-            var todayStats = context.Stats.Where(stats => stats.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date));
-            var allLineups = context.UserLineups.Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date) && !x.IsCalculated)
+
+            var todayStats = context.Stats
+                .Where(stats => stats.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date))
+                .Select(stats => new { stats.PlayerID, stats.FP });
+
+            var allLineups = context.UserLineups
+                .Where(lineup => lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date) && !lineup.IsCalculated)
+                .Include(lineup => lineup.User)
                 .ToList();
 
             if (allLineups.Count == 0)
                 return;
+
+            context.Users
+                .Except(allLineups.Select(lineup => lineup.User))
+                .ToList()
+                .ForEach(user => user.Streak = 0);
 
             foreach (var lineup in allLineups)
             {
@@ -52,41 +63,26 @@ namespace fantasy_hoops.Database
                     .Select(stats => stats.FP)
                     .Sum(), 1);
                 lineup.IsCalculated = true;
-            }
 
-            var usersPlayed = context.UserLineups
-                .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date))
-                .Select(x => x.User)
-                .Distinct();
-
-            await context.Users.Except(usersPlayed).ForEachAsync(u => u.Streak = 0);
-
-            foreach (var user in usersPlayed)
-            {
-                user.Streak++;
-                var userScore = Math.Round(allLineups
-                    .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date)
-                            && x.UserID.Equals(user.Id))
-                    .Select(x => x.FP)
-                    .FirstOrDefault(), 1);
+                lineup.User.Streak = 11;
 
                 _usersPlayed.Push(new GameScorePushNotificationModel
                 {
-                    UserID = user.Id,
-                    Score = userScore
+                    UserID = lineup.User.Id,
+                    Score = lineup.FP
                 });
 
                 var gs = new GameScoreNotification
                 {
-                    UserID = user.Id,
+                    UserID = lineup.User.Id,
                     ReadStatus = false,
                     DateCreated = DateTime.UtcNow,
-                    Score = userScore
+                    Score = lineup.FP
                 };
-                await context.GameScoreNotifications.AddAsync(gs);
+                context.GameScoreNotifications.Add(gs);
             }
-            await context.SaveChangesAsync();
-            await SendPushNotifications(context);
+            context.SaveChanges();
+            Task.Run(() => SendPushNotifications(context));
         }
 
         private static async Task SendPushNotifications(GameContext context)

@@ -62,7 +62,7 @@ export class Card extends PureComponent {
               <div className="PlayerLeaderboardCard__FP--text">
                 {`${this.props.player.fp.toFixed(1)} `}
                 <span style={{ fontSize: '1rem', fontWeight: 400 }}>FP</span>
-                {this.props.season ? <div className="UserScoreCard__date" style={{ fontSize: '1rem' }}>{this.props.player.shortDate}</div> : ''}
+                {this.props.season ? <div className="UserScoreCard__date">{this.props.player.shortDate}</div> : ''}
               </div>
             </div>
           </div>

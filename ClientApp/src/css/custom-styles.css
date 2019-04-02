@@ -1087,12 +1087,6 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 }
 
 .UserScoreCard__date {
-  position: absolute;
-  left: 50%;
-  top: 70%;
-  width: 100%;
-  transform: translate(-50%, -50%);
-  margin: 0;
   text-align: center;
   font-size: 1.2rem;
   font-weight: 400;
