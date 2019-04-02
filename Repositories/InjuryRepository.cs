@@ -16,6 +16,7 @@ namespace fantasy_hoops.Repositories
         public IQueryable<Object> GetInjuries()
         {
             return _context.Injuries
+                .Where(injury => injury.Date > DateTime.UtcNow.AddDays(-2))
                 .Select(x => new {
                     x.InjuryID,
                     date = x.Date,
