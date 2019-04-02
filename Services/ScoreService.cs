@@ -36,7 +36,7 @@ namespace fantasy_hoops.Services
         public int GetPrice(Player p)
         {
             double GSavg = 0;
-            if (_context.Stats.Where(x => x.Player.NbaID == p.NbaID).Count() < 1)
+            if (!_context.Stats.Any(stats => stats.Player.NbaID == p.NbaID))
                 return PlayerSeed.PRICE_FLOOR;
 
             try

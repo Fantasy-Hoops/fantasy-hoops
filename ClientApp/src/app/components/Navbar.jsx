@@ -84,9 +84,9 @@ export default class Navbar extends Component {
                       </p>
                     </div>
                     <div className="col-lg-8">
-                      <a className="Navbar__user-dropdown--username btn-no-outline text-dark" href="/profile">
+                      <Link className="Navbar__user-dropdown--username btn-no-outline text-dark" to="/profile">
                         <p className="text-left">{user.username}</p>
-                      </a>
+                      </Link>
                       <p className="text-left small">{user.email}</p>
                       <p className="text-left">
                         <Link to={`/profile/${user.username}/edit`} className="btn btn-outline-primary btn-block">Edit profile</Link>
