@@ -160,6 +160,7 @@ export default class Navbar extends Component {
                     <div><Link className="dropdown-item" to={Routes.LEADERBOARD_USERS}>Top Users</Link></div>
                     <div><Link className="dropdown-item" to={Routes.LEADERBOARD_PLAYERS}>Top NBA Players</Link></div>
                     <div><Link className="dropdown-item" to={Routes.LEADERBOARD_SEASON}>Top Season Performers</Link></div>
+                    <div><Link className="dropdown-item" to={Routes.LEADERBOARD_SELECTED}>Most Selected  NBA Players</Link></div>
                   </div>
                 </li>
               )

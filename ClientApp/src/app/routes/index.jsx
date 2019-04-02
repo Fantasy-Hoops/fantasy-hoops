@@ -10,6 +10,7 @@ import LoginPage from '../components/Authentication/LoginPage';
 import NewsFeed from '../containers/NewsFeedContainer';
 import UserLeaderboard from '../components/Leaderboard/Users/Leaderboard';
 import PlayerLeaderboard from '../components/Leaderboard/Players/Leaderboard';
+import SelectedLeaderboard from '../components/Leaderboard/Selected/Leaderboard';
 import { Leaderboard as SeasonLeaderboard } from '../components/Leaderboard/Season/Leaderboard';
 import UserPool from '../containers/UserPoolContainer';
 import Main from '../components/Main';
@@ -32,6 +33,7 @@ export default function configureRoutes() {
           <Route path={Routes.NEWS} component={NewsFeed} />
           <PrivateRoute exact path={Routes.LEADERBOARD_USERS} component={UserLeaderboard} />
           <Route exact path={Routes.LEADERBOARD_PLAYERS} component={PlayerLeaderboard} />
+          <Route exact path={Routes.LEADERBOARD_SELECTED} component={SelectedLeaderboard} />
           <PrivateRoute exact path={Routes.LEADERBOARD_SEASON} component={SeasonLeaderboard} />
           <PrivateRoute path={Routes.USER_POOL} component={UserPool} />
           <PrivateRoute path={Routes.ALL_NOTIFICATIONS} component={AllNotificationsPage} />

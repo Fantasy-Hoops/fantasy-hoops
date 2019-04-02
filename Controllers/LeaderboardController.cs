@@ -47,5 +47,11 @@ namespace fantasy_hoops.Controllers
         {
             return _repository.GetSeasonPlayers();
         }
+
+        [HttpGet("selected/players")]
+        public Object GetMostSelectedPlayers(int from = 0, int count = 10)
+        {
+            return _repository.GetMostSelectedPlayers(from, count);
+        }
     }
 }
