@@ -1,6 +1,7 @@
 ﻿using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -273,8 +274,76 @@ namespace fantasy_hoops.Repositories
                     p.Player.FullName,
                     p.Player.AbbrName,
                     p.FP
-
                 });
+        }
+
+        public IQueryable<object> GetMostSelectedPlayers(int from, int count)
+        {
+            var pg = _context.UserLineups
+                .Where(lineup => lineup.Date < NextGame.PREVIOUS_GAME)
+                .Select(lineup => new
+                {
+                    PlayerID = lineup.PgID,
+                    lineup.Pg.NbaID,
+                    lineup.Pg.AbbrName,
+                    TeamColor = lineup.Pg.Team.Color
+                });
+            var sg = _context.UserLineups
+                .Where(lineup => lineup.Date < NextGame.PREVIOUS_GAME)
+                .Select(lineup => new
+                {
+                    PlayerID = lineup.SgID,
+                    lineup.Sg.NbaID,
+                    lineup.Sg.AbbrName,
+                    TeamColor = lineup.Sg.Team.Color
+                });
+            var sf = _context.UserLineups
+                .Where(lineup => lineup.Date < NextGame.PREVIOUS_GAME)
+                .Select(lineup => new
+                {
+                    PlayerID = lineup.SfID,
+                    lineup.Sf.NbaID,
+                    lineup.Sf.AbbrName,
+                    TeamColor = lineup.Sf.Team.Color
+                });
+
+            var pf = _context.UserLineups
+                .Where(lineup => lineup.Date < NextGame.PREVIOUS_GAME)
+                .Select(lineup => new
+                {
+                    PlayerID = lineup.PfID,
+                    lineup.Pf.NbaID,
+                    lineup.Pf.AbbrName,
+                    TeamColor = lineup.Pf.Team.Color
+                });
+
+            var c = _context.UserLineups
+                .Where(lineup => lineup.Date < NextGame.PREVIOUS_GAME)
+                .Select(lineup => new
+                {
+                    PlayerID = lineup.CID,
+                    lineup.C.NbaID,
+                    lineup.C.AbbrName,
+                    TeamColor = lineup.C.Team.Color
+                });
+
+            return pg
+                .Concat(sg)
+                .Concat(sf)
+                .Concat(pf)
+                .Concat(c)
+                .Select(lineup => lineup)
+                .GroupBy(lineup => lineup.PlayerID)
+                .Select(res => new
+                 {
+                    res.First().NbaID,
+                    res.First().AbbrName,
+                    res.First().TeamColor,
+                    Count = res.Count()
+                 })
+                .OrderByDescending(player => player.Count)
+                .Skip(from)
+                .Take(count);
         }
     }
 }
