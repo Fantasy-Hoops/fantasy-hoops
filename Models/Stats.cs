@@ -6,6 +6,7 @@ namespace fantasy_hoops.Models
     public class Stats
     {
         public int StatsID { get; set; }
+        public int GameID { get; set; }
         [Column(TypeName = "Date")]
         public DateTime Date { get; set; }
         public string Score { get; set; }
@@ -35,5 +36,8 @@ namespace fantasy_hoops.Models
         public int Price { get; set; }
 
         public virtual Player Player { get; set; }
+
+        [ForeignKey("GameID")]
+        public virtual Game Game { get; set; }
     }
 }
