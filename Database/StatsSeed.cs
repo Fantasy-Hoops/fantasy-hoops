@@ -71,6 +71,16 @@ namespace fantasy_hoops.Database
                 int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
                 DateTime date = DateTime.ParseExact((string)boxscore["basicGameData"]["startDateEastern"], "yyyyMMdd", CultureInfo.InvariantCulture);
                 var players = boxscore["stats"]["activePlayers"];
+                Game gameObj = new Game
+                {
+                    Date = date,
+                    HomeTeamID = hTeam,
+                    HomeScore = (int)boxscore["basicGameData"]["hTeam"]["score"],
+                    AwayTeamID = vTeam,
+                    AwayScore = (int)boxscore["basicGameData"]["vTeam"]["score"]
+                };
+                context.Games.Add(gameObj);
+
                 foreach (var player in (JArray)players)
                 {
                     int oppId;
@@ -91,7 +101,7 @@ namespace fantasy_hoops.Database
                     }
                     if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
                         continue;
-                    await AddToDatabase(context, player, date, oppId, score);
+                    await AddToDatabase(context, player, gameObj.GameID, date, oppId, score);
                 }
                 await context.SaveChangesAsync();
             }
@@ -111,10 +121,11 @@ namespace fantasy_hoops.Database
             }
         }
 
-        private static async Task AddToDatabase(GameContext context, JToken player, DateTime date, int oppId, string score)
+        private static async Task AddToDatabase(GameContext context, JToken player, int gameID, DateTime date, int oppId, string score)
         {
             Stats statsObj = new Stats
             {
+                GameID = gameID,
                 Date = date,
                 OppID = oppId,
                 Score = score,
@@ -168,6 +179,7 @@ namespace fantasy_hoops.Database
             }
             else
             {
+                dbStats.GameID = gameID;
                 dbStats.Score = score;
                 dbStats.MIN = statsObj.MIN;
                 dbStats.FGM = statsObj.FGM;
