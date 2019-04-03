@@ -64,7 +64,7 @@ namespace fantasy_hoops.Database
                     .Sum(), 1);
                 lineup.IsCalculated = true;
 
-                lineup.User.Streak = 11;
+                lineup.User.Streak++;
 
                 _usersPlayed.Push(new GameScorePushNotificationModel
                 {
