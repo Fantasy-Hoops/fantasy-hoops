@@ -51,10 +51,11 @@ namespace fantasy_hoops.Database
 
         private static async Task Extract(GameContext context)
         {
-            JArray injuries = GetInjuries();
-            foreach (JObject injury in injuries
+            int seasonYear = int.Parse(CommonFunctions.GetSeasonYear());
+            IEnumerable<JToken> injuries = GetInjuries()
                 .Where(inj => inj.Value<string>("ModifiedDate") == null
-                    || DateTime.Parse(inj.Value<string>("ModifiedDate")).Year >= int.Parse(CommonFunctions.GetSeasonYear())))
+                    || DateTime.Parse(inj.Value<string>("ModifiedDate")).Year >= seasonYear).AsEnumerable();
+            foreach (JToken injury in injuries)
             {
                 int NbaID;
                 if (injury.Value<int?>("PrimarySourceKey") == null)
@@ -111,7 +112,12 @@ namespace fantasy_hoops.Database
             }
             else
             {
-                dbInjury = injuryObj;
+                dbInjury.Title = injuryObj.Title;
+                dbInjury.Status = injuryObj.Status;
+                dbInjury.Injury = injuryObj.Injury;
+                dbInjury.Description = injuryObj.Description;
+                dbInjury.Date = injuryObj.Date;
+                dbInjury.Link = injuryObj.Link;
             }
 
             string statusBefore = injuryPlayer.Status;
