@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { Card } from './Card';
 import leaderboardLogo from '../../../../content/images/leaderboard.png';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
-import { EmptyJordan } from '../../EmptyJordan';
+import EmptyJordan from '../../EmptyJordan';
 import { getSelectedPlayersLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
 
 const { $ } = window;

@@ -12,5 +12,6 @@ export default {
   LEADERBOARD_SELECTED: '/leaderboard/selected/players',
   USER_POOL: '/users',
   ALL_NOTIFICATIONS: '/notifications',
-  LINEUP_HISTORY: '/history'
+  LINEUP_HISTORY: '/history',
+  BLOG: '/blog'
 };

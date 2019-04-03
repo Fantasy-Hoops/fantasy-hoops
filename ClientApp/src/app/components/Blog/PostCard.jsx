@@ -1,0 +1,38 @@
+import React from 'react';
+import moment from 'moment';
+import Img from 'react-image';
+import defaultPhoto from '../../../content/images/default.png';
+
+const PostCard = (props) => {
+  const { post } = props;
+  console.log(post);
+  return (
+    <div className="NewsCard mt-5 mx-auto news-card card">
+      <div className="card-header bg-primary text-white">
+        <h3 className="card-title">
+          {post.title}
+        </h3>
+      </div>
+      <div className="card-header text-muted">
+        <Img
+          className="Blog__AuthorImage"
+          alt=""
+          src={[
+            `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${post.author.id}.png`,
+            defaultPhoto
+          ]}
+          loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader" />}
+        />
+        {post.author.userName}
+        <span style={{ float: 'right' }}>
+          {moment(post.createdAt).format('MM/DD/YYYY HH:mm')}
+        </span>
+      </div>
+      <div className="card-body">
+        {post.body}
+      </div>
+    </div>
+  );
+};
+
+export default PostCard;

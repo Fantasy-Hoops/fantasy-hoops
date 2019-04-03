@@ -16,6 +16,7 @@ import UserPool from '../containers/UserPoolContainer';
 import Main from '../components/Main';
 import { AllNotificationsPage } from '../components/Notifications/AllNotificationsPage';
 import { LineupHistory } from '../components/Profile/LineupHistoryPage';
+import Blog from '../containers/BlogContainer';
 import Routes from './routes';
 
 export default function configureRoutes() {
@@ -38,6 +39,7 @@ export default function configureRoutes() {
           <PrivateRoute path={Routes.USER_POOL} component={UserPool} />
           <PrivateRoute path={Routes.ALL_NOTIFICATIONS} component={AllNotificationsPage} />
           <PrivateRoute path={Routes.LINEUP_HISTORY} component={LineupHistory} />
+          <Route exact path={Routes.BLOG} component={Blog} />
         </Switch>
       </main>
     </div>

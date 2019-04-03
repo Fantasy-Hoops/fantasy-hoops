@@ -3,7 +3,7 @@ import shortid from 'shortid';
 import _ from 'lodash';
 import { parse } from '../../utils/auth';
 import { NotificationCard } from './NotificationCard';
-import { EmptyJordan } from '../EmptyJordan';
+import EmptyJordan from '../EmptyJordan';
 import defaultPhoto from '../../../content/images/default.png';
 import gameLogo from '../../../content/images/logo.png';
 import { getUserNotifications } from '../../utils/networkFunctions';
