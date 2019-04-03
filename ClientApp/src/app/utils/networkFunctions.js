@@ -11,6 +11,7 @@ const leaderboardApiUrlBase = `${apiUrlBase}/leaderboard`;
 const statsApiUrlBase = `${apiUrlBase}/stats`;
 const notificationsApiUrlBase = `${apiUrlBase}/notification`;
 const pushNotificationsApiUrlBase = `${apiUrlBase}/push`;
+const blogApiUrlBase = `${apiUrlBase}/blog`;
 
 const createParameters = (parameters) => {
   if (parameters === undefined) return '';
@@ -89,3 +90,7 @@ export const readAllNotifications = userId => axios.post(`${notificationsApiUrlB
 // Push Notifications requests
 export const sendPushNotification = (receiverId, notification) => axios.post(`${pushNotificationsApiUrlBase}/send/${receiverId}`, notification);
 export const getPushPublicKey = () => axios.get(`${pushNotificationsApiUrlBase}/vapidpublickey`);
+
+// Blog requests
+export const submitPost = post => axios.post(`${blogApiUrlBase}/submit`, post);
+export const getPosts = () => axios.get(`${blogApiUrlBase}`);

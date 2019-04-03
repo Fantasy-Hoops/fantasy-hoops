@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import shortid from 'shortid';
 import InjuryCard from '../components/Injuries/InjuryCard';
-import { EmptyJordan } from '../components/EmptyJordan';
+import EmptyJordan from '../components/EmptyJordan';
 import * as actionCreators from '../actions/injuries';
 
 const mapStateToProps = state => ({
