@@ -146,30 +146,6 @@ namespace fantasy_hoops.Migrations
                     b.ToTable("FriendRequests");
                 });
 
-            modelBuilder.Entity("fantasy_hoops.Models.Game", b =>
-                {
-                    b.Property<int>("GameID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("AwayScore");
-
-                    b.Property<int>("AwayTeamID");
-
-                    b.Property<DateTime?>("Date");
-
-                    b.Property<int>("HomeScore");
-
-                    b.Property<int>("HomeTeamID");
-
-                    b.HasKey("GameID");
-
-                    b.HasIndex("AwayTeamID");
-
-                    b.HasIndex("HomeTeamID");
-
-                    b.ToTable("Games");
-                });
-
             modelBuilder.Entity("fantasy_hoops.Models.Injuries", b =>
                 {
                     b.Property<int>("InjuryID")
@@ -364,8 +340,6 @@ namespace fantasy_hoops.Migrations
 
                     b.Property<double>("GS");
 
-                    b.Property<int>("GameID");
-
                     b.Property<string>("MIN");
 
                     b.Property<int>("OREB");
@@ -393,8 +367,6 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("TREB");
 
                     b.HasKey("StatsID");
-
-                    b.HasIndex("GameID");
 
                     b.HasIndex("PlayerID");
 
@@ -621,19 +593,6 @@ namespace fantasy_hoops.Migrations
                         .HasForeignKey("SenderID");
                 });
 
-            modelBuilder.Entity("fantasy_hoops.Models.Game", b =>
-                {
-                    b.HasOne("fantasy_hoops.Models.Team", "AwayTeam")
-                        .WithMany()
-                        .HasForeignKey("AwayTeamID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("fantasy_hoops.Models.Team", "HomeTeam")
-                        .WithMany()
-                        .HasForeignKey("HomeTeamID")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("fantasy_hoops.Models.Injuries", b =>
                 {
                     b.HasOne("fantasy_hoops.Models.Player", "Player")
@@ -674,11 +633,6 @@ namespace fantasy_hoops.Migrations
 
             modelBuilder.Entity("fantasy_hoops.Models.Stats", b =>
                 {
-                    b.HasOne("fantasy_hoops.Models.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("fantasy_hoops.Models.Player", "Player")
                         .WithMany("Stats")
                         .HasForeignKey("PlayerID")
