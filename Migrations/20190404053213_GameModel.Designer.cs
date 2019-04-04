@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20190404053213_GameModel")]
+    partial class GameModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -364,8 +366,6 @@ namespace fantasy_hoops.Migrations
 
                     b.Property<double>("GS");
 
-                    b.Property<int>("GameID");
-
                     b.Property<string>("MIN");
 
                     b.Property<int>("OREB");
@@ -393,8 +393,6 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("TREB");
 
                     b.HasKey("StatsID");
-
-                    b.HasIndex("GameID");
 
                     b.HasIndex("PlayerID");
 
@@ -674,11 +672,6 @@ namespace fantasy_hoops.Migrations
 
             modelBuilder.Entity("fantasy_hoops.Models.Stats", b =>
                 {
-                    b.HasOne("fantasy_hoops.Models.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("fantasy_hoops.Models.Player", "Player")
                         .WithMany("Stats")
                         .HasForeignKey("PlayerID")
