@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import Img from 'react-image';
+import markdown from 'markdown';
 import defaultPhoto from '../../../content/images/default.png';
 
 const PostCard = (props) => {
@@ -25,12 +26,14 @@ const PostCard = (props) => {
         />
         {post.author.userName}
         <span style={{ float: 'right' }}>
-          {moment(post.createdAt).format('MM/DD/YYYY HH:mm')}
+          {moment(post.createdAt).format('MM/DD/YYYY')}
         </span>
       </div>
-      <div className="card-body" style={{ whiteSpace: 'pre-line' }}>
-        {post.body}
-      </div>
+      <div
+        className="card-body"
+        style={{ whiteSpace: 'pre-line' }}
+        dangerouslySetInnerHTML={{ __html: markdown.parse(post.body) }}
+      />
     </div>
   );
 };

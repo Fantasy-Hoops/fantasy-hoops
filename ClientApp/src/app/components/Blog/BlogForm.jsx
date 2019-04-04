@@ -4,10 +4,15 @@ import _ from 'lodash';
 import {
 	Formik, Form, Field
 } from 'formik';
+import $ from 'jquery';
 import { parse } from '../../utils/auth';
 import { blogValidation } from '../../utils/validation';
+import 'markdown-toolbar';
 
 const author = parse();
+$(document).ready(() => {
+	$('.toolbar').markdownToolbar();
+});
 
 const BlogForm = props => (
 	<>
@@ -59,7 +64,7 @@ const BlogForm = props => (
 							<div className="form-group">
 								<label htmlFor="post-body">Body</label>
 								<Field
-									className={`form-control ${errors.body && 'is-invalid'}`}
+									className={`toolbar form-control ${errors.body && 'is-invalid'}`}
 									id="post-body"
 									component="textarea"
 									rows="10"
