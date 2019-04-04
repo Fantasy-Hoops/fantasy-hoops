@@ -74,9 +74,9 @@ namespace fantasy_hoops.Database
                 Game gameObj = new Game
                 {
                     Date = date,
-                    HomeTeamID = hTeam,
+                    HomeTeamID = context.Teams.Where(team => team.NbaID == hTeam).FirstOrDefault().TeamID,
                     HomeScore = (int)boxscore["basicGameData"]["hTeam"]["score"],
-                    AwayTeamID = vTeam,
+                    AwayTeamID = context.Teams.Where(team => team.NbaID == vTeam).FirstOrDefault().TeamID,
                     AwayScore = (int)boxscore["basicGameData"]["vTeam"]["score"]
                 };
                 context.Games.Add(gameObj);
@@ -101,7 +101,7 @@ namespace fantasy_hoops.Database
                     }
                     if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
                         continue;
-                    await AddToDatabase(context, player, gameObj.GameID, date, oppId, score);
+                    await AddToDatabase(context, player, gameObj, date, oppId, score);
                 }
                 await context.SaveChangesAsync();
             }
@@ -121,11 +121,11 @@ namespace fantasy_hoops.Database
             }
         }
 
-        private static async Task AddToDatabase(GameContext context, JToken player, int gameID, DateTime date, int oppId, string score)
+        private static async Task AddToDatabase(GameContext context, JToken player, Game game, DateTime date, int oppId, string score)
         {
             Stats statsObj = new Stats
             {
-                GameID = gameID,
+                Game = game,
                 Date = date,
                 OppID = oppId,
                 Score = score,
@@ -179,7 +179,7 @@ namespace fantasy_hoops.Database
             }
             else
             {
-                dbStats.GameID = gameID;
+                dbStats.Game = game;
                 dbStats.Score = score;
                 dbStats.MIN = statsObj.MIN;
                 dbStats.FGM = statsObj.FGM;

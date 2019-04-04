@@ -13,6 +13,7 @@ namespace fantasy_hoops.Models
         [Key]
         public int GameID { get; set; }
 
+        [Column(TypeName = "Date")]
         public DateTime? Date { get; set; }
 
         public int HomeTeamID { get; set; }
