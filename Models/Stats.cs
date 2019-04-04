@@ -6,7 +6,7 @@ namespace fantasy_hoops.Models
     public class Stats
     {
         public int StatsID { get; set; }
-        public int GameID { get; set; }
+        public int? GameID { get; set; }
         [Column(TypeName = "Date")]
         public DateTime Date { get; set; }
         public string Score { get; set; }
