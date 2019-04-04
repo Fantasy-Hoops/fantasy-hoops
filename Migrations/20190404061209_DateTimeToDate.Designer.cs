@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20190404061209_DateTimeToDate")]
+    partial class DateTimeToDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -309,6 +311,29 @@ namespace fantasy_hoops.Migrations
                     b.HasIndex("TeamID");
 
                     b.ToTable("Players");
+                });
+
+            modelBuilder.Entity("fantasy_hoops.Models.Post", b =>
+                {
+                    b.Property<int>("PostID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AuthorID");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<DateTime>("ModifiedAt");
+
+                    b.Property<string>("Title");
+
+                    b.HasKey("PostID");
+
+                    b.HasIndex("AuthorID");
+
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.PushSubscription", b =>
@@ -664,6 +689,13 @@ namespace fantasy_hoops.Migrations
                         .WithMany("Players")
                         .HasForeignKey("TeamID")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("fantasy_hoops.Models.Post", b =>
+                {
+                    b.HasOne("fantasy_hoops.Models.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorID");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.PushSubscription", b =>
