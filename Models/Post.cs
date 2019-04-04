@@ -10,7 +10,6 @@ namespace fantasy_hoops.Models
     {
         public int PostID { get; set; }
         public string Title { get; set; }
-        [Column(TypeName = "text")]
         public string Body { get; set; }
         public string AuthorID { get; set; }
         public DateTime CreatedAt { get; set; }
