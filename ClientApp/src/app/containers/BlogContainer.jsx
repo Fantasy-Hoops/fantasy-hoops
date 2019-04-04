@@ -33,7 +33,7 @@ export class BlogContainer extends Component {
     return (
       <div className="container">
         <div className="row pt-5">
-          <div className="col-12 col-lg-6 offset-lg-3">
+          <div className="col-12 col-lg-9 mx-auto">
             {blogForm}
             <BlogPosts {...this.props} />
           </div>
@@ -42,5 +42,9 @@ export class BlogContainer extends Component {
     );
   }
 }
+
+BlogContainer.propTypes = {
+  loadPosts: PropTypes.func.isRequired
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(BlogContainer);
