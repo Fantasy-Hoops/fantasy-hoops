@@ -24,5 +24,12 @@ namespace fantasy_hoops.Services
 
             await _context.SaveChangesAsync();
         }
+
+        public async void DeletePost(int id)
+        {
+            _repository.DeletePost(id);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

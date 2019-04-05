@@ -23,6 +23,7 @@ namespace fantasy_hoops.Repositories
             return _context.Posts
                 .Select(post => new
                 {
+                    id = post.PostID,
                     post.Title,
                     post.Body,
                     Author = new
@@ -47,6 +48,19 @@ namespace fantasy_hoops.Repositories
                         CreatedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow),
                         ModifiedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow)
                     });
+        }
+
+        public bool PostExists(int id)
+        {
+            return _context.Posts.Any(post => post.PostID == id);
+        }
+
+        public void DeletePost(int id)
+        {
+            Post postToDelete = _context.Posts
+                .Where(post => post.PostID == id)
+                .FirstOrDefault();
+            _context.Posts.Remove(postToDelete);
         }
     }
 }

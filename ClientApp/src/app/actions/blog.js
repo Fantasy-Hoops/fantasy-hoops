@@ -1,5 +1,5 @@
 import Blog from '../constants/blog';
-import { getPosts, submitPost } from '../utils/networkFunctions';
+import { getPosts, submitPost, deletePost } from '../utils/networkFunctions';
 
 export const loadPosts = () => async (dispatch) => {
   await getPosts().then((res) => {
@@ -11,15 +11,27 @@ export const loadPosts = () => async (dispatch) => {
 };
 
 export const savePost = post => async (dispatch) => {
-  await submitPost(post).then(() => {
-    dispatch({
-      type: Blog.SUBMIT_POST
-    });
-  });
-  await getPosts().then((res) => {
-    dispatch({
-      type: Blog.LOAD_POSTS,
-      posts: res.data
-    });
-  });
+  const response = await submitPost(post);
+  dispatch({ type: Blog.SUBMIT_POST });
+  if (response.status === 200) {
+    setTimeout(() => getPosts().then((res) => {
+      dispatch({
+        type: Blog.LOAD_POSTS,
+        posts: res.data
+      });
+    }), 1000);
+  }
+};
+
+export const removePost = id => async (dispatch) => {
+  const response = await deletePost(id);
+  dispatch({ type: Blog.DELETE_POST });
+  if (response.status === 200) {
+    setTimeout(() => getPosts().then((res) => {
+      dispatch({
+        type: Blog.LOAD_POSTS,
+        posts: res.data
+      });
+    }), 1000);
+  }
 };

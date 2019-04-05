@@ -92,5 +92,6 @@ export const sendPushNotification = (receiverId, notification) => axios.post(`${
 export const getPushPublicKey = () => axios.get(`${pushNotificationsApiUrlBase}/vapidpublickey`);
 
 // Blog requests
-export const submitPost = post => axios.post(`${blogApiUrlBase}/submit`, post);
+export const submitPost = post => axios.post(`${blogApiUrlBase}`, post);
 export const getPosts = () => axios.get(`${blogApiUrlBase}`);
+export const deletePost = id => axios.delete(`${blogApiUrlBase}?id=${id}`);
