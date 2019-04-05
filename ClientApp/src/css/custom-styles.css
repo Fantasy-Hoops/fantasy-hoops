@@ -184,6 +184,10 @@ a:hover {
   margin-right: 1rem;
 }
 
+.PostCard__Body img {
+  max-width: 100%;
+}
+
 .toolbar-group {
   display: inline;
 }

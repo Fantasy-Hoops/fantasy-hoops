@@ -8,7 +8,7 @@ import defaultPhoto from '../../../content/images/default.png';
 const PostCard = (props) => {
   const { post } = props;
   return (
-    <div className="card mt-5 mb-5">
+    <div className="PostCard card mt-5 mb-5">
       <div className="card-header bg-primary text-white">
         <h3 className="card-title">
           {post.title}
@@ -30,8 +30,7 @@ const PostCard = (props) => {
         </span>
       </div>
       <div
-        className="card-body"
-        style={{ whiteSpace: 'pre-line' }}
+        className="PostCard__Body card-body"
         dangerouslySetInnerHTML={{ __html: markdown.parse(post.body) }}
       />
     </div>
