@@ -9,5 +9,6 @@ namespace fantasy_hoops.Services
     interface IBlogService
     {
         void SubmitPost(SubmitPostViewModel model);
+        void DeletePost(int id);
     }
 }

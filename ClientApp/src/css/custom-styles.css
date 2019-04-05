@@ -218,6 +218,14 @@ a:hover {
   height: 100%;
 }
 
+.markdown-preview img {
+  max-width: 100%;
+}
+
+.form-control.is-invalid {
+  background-image: none;
+}
+
 .Notifications__UnreadCounter {
   font-size: 1.1rem;
   position: absolute;

@@ -18,11 +18,20 @@ export class BlogContainer extends Component {
   constructor(props) {
     super(props);
     this.user = parse();
+    this.handleRemove = this.handleRemove.bind(this);
   }
 
   async componentDidMount() {
     const { loadPosts } = this.props;
     await loadPosts();
+  }
+
+  handleRemove(post) {
+    const response = window.confirm(`Are you sure want to delete '${post.title}' post?`);
+    if (response === true) {
+      const { removePost } = this.props;
+      removePost(post.id);
+    }
   }
 
   render() {
@@ -35,7 +44,7 @@ export class BlogContainer extends Component {
         <div className="row pt-5">
           <div className="col-12 col-lg-9 mx-auto">
             {blogForm}
-            <BlogPosts user={this.user} {...this.props} />
+            <BlogPosts user={this.user} {...this.props} handleRemove={this.handleRemove} />
           </div>
         </div>
       </div>

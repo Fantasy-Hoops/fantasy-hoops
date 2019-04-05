@@ -29,11 +29,21 @@ namespace fantasy_hoops.Controllers
             return _repository.GetPosts();
         }
 
-        [HttpPost("submit")]
+        [HttpPost]
         public IActionResult SubmitPost([FromBody]SubmitPostViewModel model)
         {
             _service.SubmitPost(model);
-            return Ok("Lineup was updated successfully");
+            return Ok("Post was submitted successfully.");
+        }
+
+        [HttpDelete]
+        public IActionResult DeletePost([FromQuery]int id)
+        {
+            if (!_repository.PostExists(id))
+                return StatusCode(404, "Post not found.");
+
+            _service.DeletePost(id);
+            return Ok("Deleted successfully.");
         }
     }
 }
