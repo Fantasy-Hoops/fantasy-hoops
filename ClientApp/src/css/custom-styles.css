@@ -179,6 +179,22 @@ a:hover {
   margin-top: 40%;
 }
 
+.PostCard__Title {
+  margin-bottom: 0;
+}
+
+.PostCard__Dots {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  cursor: pointer;
+}
+
+.PostCard__MenuItem:hover {
+  background: var(--grey-background);
+  cursor: pointer;
+}
+
 .PostCard__AuthorImage {
   width: 2.5rem;
   margin-right: 1rem;
