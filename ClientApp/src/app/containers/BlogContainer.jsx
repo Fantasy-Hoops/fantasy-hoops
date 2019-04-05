@@ -35,7 +35,7 @@ export class BlogContainer extends Component {
         <div className="row pt-5">
           <div className="col-12 col-lg-9 mx-auto">
             {blogForm}
-            <BlogPosts {...this.props} />
+            <BlogPosts user={this.user} {...this.props} />
           </div>
         </div>
       </div>

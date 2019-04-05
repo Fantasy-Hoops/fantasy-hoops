@@ -6,8 +6,8 @@ import PostCard from './PostCard';
 import EmptyJordan from '../EmptyJordan';
 
 const BlogPosts = (props) => {
-  const { posts, blogLoader } = props;
-  const postCards = _.map(posts, post => (<PostCard key={shortid()} post={post} />));
+  const { posts, blogLoader, user } = props;
+  const postCards = _.map(posts, post => (<PostCard key={shortid()} post={post} user={user} />));
   if (blogLoader) {
     return <div className="Loader" />;
   }

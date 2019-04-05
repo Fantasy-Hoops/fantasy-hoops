@@ -93,12 +93,12 @@ namespace fantasy_hoops.Database
         private static bool IsPlaying(Player player)
         {
             // Don't show players out for more that 5 days
-            if ((player.StatusDate.HasValue
-                    && (player.StatusDate.Value.AddDays(5) < NextGame.NEXT_GAME)
-                    && (player.Status.ToLower().Contains("out")
-                     || player.Status.ToLower().Contains("injured")))
-                    || player.IsInGLeague
-                    || player.Position.Equals("NA"))
+            if ((((player.StatusDate.HasValue && player.StatusDate.Value.AddDays(5) < NextGame.NEXT_GAME)
+                || !player.StatusDate.HasValue)
+                && (player.Status.ToLower().Contains("out")
+                || player.Status.ToLower().Contains("injured")))
+                || player.IsInGLeague
+                || player.Position.Equals("NA"))
                 return false;
             return true;
         }

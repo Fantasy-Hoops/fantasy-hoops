@@ -78,6 +78,28 @@ namespace fantasy_hoops.Repositories
                 .FirstOrDefault();
         }
 
+        public IQueryable<object> Roles(string id)
+        {
+            return _context.UserRoles
+                .Where(userRole => userRole.UserId.Equals(id))
+                .Join(_context.Roles,
+                    userRole => userRole.RoleId,
+                    role => role.Id,
+                    (userRole, role) => role.NormalizedName);
+        }
+
+        public bool IsAdmin(string userIdid)
+        {
+            string adminRoleId = _context.Roles
+                .Where(role => role.NormalizedName.Equals("Admin"))
+                .Select(role => role.Id)
+                .FirstOrDefault();
+
+            return _context.UserRoles
+                .Where(userRole => userRole.UserId.Equals(userIdid))
+                .Any(role => role.RoleId.Equals(adminRoleId));
+        }
+
         public IQueryable<Object> GetFriends(string id)
         {
             var friends = _context.FriendRequests

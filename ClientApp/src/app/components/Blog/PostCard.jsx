@@ -4,15 +4,19 @@ import moment from 'moment';
 import Img from 'react-image';
 import markdown from 'markdown';
 import defaultPhoto from '../../../content/images/default.png';
+import PostCardMenu from './PostCardMenu';
+
+const canEdit = user => user && user.isAdmin === 'True';
 
 const PostCard = (props) => {
-  const { post } = props;
+  const { post, user } = props;
   return (
     <div className="PostCard card mt-5 mb-5">
-      <div className="card-header bg-primary text-white">
-        <h3 className="card-title">
+      <div className="card-header bg-primary text-white dropleft no-arrow">
+        <h3 className="PostCard__Title card-title">
           {post.title}
         </h3>
+        {canEdit(user) ? <PostCardMenu /> : null}
       </div>
       <div className="card-header text-muted">
         <Img

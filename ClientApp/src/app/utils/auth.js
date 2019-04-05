@@ -21,3 +21,5 @@ export const isAuth = () => {
 
   return parse();
 };
+
+export const isAdmin = isAuth() ? parse().isAdmin === 'True' : false;
