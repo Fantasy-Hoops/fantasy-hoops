@@ -204,24 +204,6 @@ a:hover {
   max-width: 100%;
 }
 
-.toolbar-group {
-  display: inline;
-}
-
-.toolbar-item {
-  padding: 0 .5rem;
-}
-
-.markdown-preview {
-  background:var(--grey-background);
-  width: 100%;
-  height: 100%;
-}
-
-.markdown-preview img {
-  max-width: 100%;
-}
-
 .form-control.is-invalid {
   background-image: none;
 }
@@ -328,6 +310,7 @@ a:hover {
   width: 100%;
   height: 100%;
   cursor: pointer;
+  backface-visibility: hidden;
   -moz-backface-visibility: hidden;
   -webkit-transform-style: preserve-3d;
           transform-style: preserve-3d;
@@ -473,6 +456,7 @@ a:hover {
 .info::-webkit-scrollbar-track,
 .back::-webkit-scrollbar-track
 {
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 	border-radius: 1rem;
 	background-color: #F5F5F5;
@@ -489,6 +473,7 @@ a:hover {
 .back::-webkit-scrollbar-thumb
 {
 	border-radius: 1rem;
+	box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	background-color: #A5A5A5;
 }

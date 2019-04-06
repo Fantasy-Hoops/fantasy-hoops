@@ -18,7 +18,15 @@ class BlogPosts extends PureComponent {
 
   render() {
     const { posts, blogLoader, user } = this.props;
-    const postCards = _.map(posts, post => (<PostCard key={shortid()} post={post} user={user} handleRemove={this.handleRemove} />));
+    const postCards = _.map(posts,
+      post => (
+        <PostCard
+          key={shortid()}
+          post={post}
+          user={user}
+          handleRemove={this.handleRemove}
+        />
+      ));
     if (blogLoader) {
       return <div className="Loader" />;
     }
@@ -29,5 +37,23 @@ class BlogPosts extends PureComponent {
     );
   }
 }
+
+BlogPosts.propTypes = {
+  handleRemove: PropTypes.func.isRequired,
+  blogLoader: PropTypes.bool.isRequired,
+  user: PropTypes.shape({
+    userName: PropTypes.string
+  }).isRequired,
+  posts: PropTypes.arrayOf(PropTypes.shape({
+    post: PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      body: PropTypes.string.isRequired,
+      author: PropTypes.shape({
+        userName: PropTypes.string.isRequired,
+        id: PropTypes.string.isRequired
+      }).isRequired
+    }).isRequired
+  })).isRequired
+};
 
 export default BlogPosts;

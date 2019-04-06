@@ -53,7 +53,8 @@ export class BlogContainer extends Component {
 }
 
 BlogContainer.propTypes = {
-  loadPosts: PropTypes.func.isRequired
+  loadPosts: PropTypes.func.isRequired,
+  removePost: PropTypes.func.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BlogContainer);

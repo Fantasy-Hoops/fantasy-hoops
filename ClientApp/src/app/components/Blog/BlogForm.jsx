@@ -8,6 +8,7 @@ import $ from 'jquery';
 import { parse } from '../../utils/auth';
 import { blogValidation } from '../../utils/validation';
 import 'markdown-toolbar';
+import './markdown-toolbar.css';
 
 const author = parse();
 
@@ -38,6 +39,8 @@ class BlogForm extends PureComponent {
 						validationSchema={blogValidation}
 						onSubmit={(values, actions) => {
 							actions.setSubmitting(true);
+							const preview = document.getElementsByClassName('markdown-preview')[0];
+							preview.innerHTML = null;
 							const { savePost } = this.props;
 							savePost({ title: values.title, body: values.body, authorID: author.id });
 							actions.resetForm({});
