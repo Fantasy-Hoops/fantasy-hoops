@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20190403171658_BlogModel")]
+    partial class BlogModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -144,31 +146,6 @@ namespace fantasy_hoops.Migrations
                     b.HasIndex("SenderID");
 
                     b.ToTable("FriendRequests");
-                });
-
-            modelBuilder.Entity("fantasy_hoops.Models.Game", b =>
-                {
-                    b.Property<int>("GameID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("AwayScore");
-
-                    b.Property<int>("AwayTeamID");
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("Date");
-
-                    b.Property<int>("HomeScore");
-
-                    b.Property<int>("HomeTeamID");
-
-                    b.HasKey("GameID");
-
-                    b.HasIndex("AwayTeamID");
-
-                    b.HasIndex("HomeTeamID");
-
-                    b.ToTable("Games");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.Injuries", b =>
@@ -318,7 +295,8 @@ namespace fantasy_hoops.Migrations
 
                     b.Property<string>("AuthorID");
 
-                    b.Property<string>("Body");
+                    b.Property<string>("Body")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -387,8 +365,6 @@ namespace fantasy_hoops.Migrations
 
                     b.Property<double>("GS");
 
-                    b.Property<int?>("GameID");
-
                     b.Property<string>("MIN");
 
                     b.Property<int>("OREB");
@@ -416,8 +392,6 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("TREB");
 
                     b.HasKey("StatsID");
-
-                    b.HasIndex("GameID");
 
                     b.HasIndex("PlayerID");
 
@@ -644,19 +618,6 @@ namespace fantasy_hoops.Migrations
                         .HasForeignKey("SenderID");
                 });
 
-            modelBuilder.Entity("fantasy_hoops.Models.Game", b =>
-                {
-                    b.HasOne("fantasy_hoops.Models.Team", "AwayTeam")
-                        .WithMany()
-                        .HasForeignKey("AwayTeamID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("fantasy_hoops.Models.Team", "HomeTeam")
-                        .WithMany()
-                        .HasForeignKey("HomeTeamID")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("fantasy_hoops.Models.Injuries", b =>
                 {
                     b.HasOne("fantasy_hoops.Models.Player", "Player")
@@ -704,10 +665,6 @@ namespace fantasy_hoops.Migrations
 
             modelBuilder.Entity("fantasy_hoops.Models.Stats", b =>
                 {
-                    b.HasOne("fantasy_hoops.Models.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameID");
-
                     b.HasOne("fantasy_hoops.Models.Player", "Player")
                         .WithMany("Stats")
                         .HasForeignKey("PlayerID")

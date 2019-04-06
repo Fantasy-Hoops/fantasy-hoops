@@ -185,6 +185,9 @@ export default class Navbar extends Component {
                 </li>
               )
             }
+            <li className="nav-item">
+              <div><Link className="nav-link btn-no-outline" to={Routes.BLOG}>Blog</Link></div>
+            </li>
           </ul>
         </div>
         {isAuth() ? profile : login}
