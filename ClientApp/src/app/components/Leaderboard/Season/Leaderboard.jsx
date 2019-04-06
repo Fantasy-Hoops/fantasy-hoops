@@ -5,7 +5,7 @@ import _ from 'lodash';
 import UserCard from '../Users/Card';
 import { Card as PlayerCard } from '../Players/Card';
 import leaderboardLogo from '../../../../content/images/leaderboard.png';
-import { EmptyJordan } from '../../EmptyJordan';
+import EmptyJordan from '../../EmptyJordan';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
 import { getSeasonLineupsLeaderboard, getSeasonPlayersLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
 

@@ -74,6 +74,8 @@ namespace fantasy_hoops.Services
         public string RequestToken(string username)
         {
             var user = _repository.GetUserByName(username);
+            var roles = _repository.Roles(user.Id);
+            bool isAdmin = _repository.IsAdmin(user.Id);
 
             var claims = new[]
             {
@@ -81,7 +83,9 @@ namespace fantasy_hoops.Services
                 new Claim("username", user.UserName),
                 new Claim("email", user.Email),
                 new Claim("description", user.Description ??""),
-                new Claim("team", user.Team != null ? user.Team.Name : "")
+                new Claim("team", user.Team != null ? user.Team.Name : ""),
+                new Claim("roles", string.Join(";", roles)),
+                new Claim("isAdmin", isAdmin.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Tai yra raktas musu saugumo sistemai, kuo ilgesnis tuo geriau?"));

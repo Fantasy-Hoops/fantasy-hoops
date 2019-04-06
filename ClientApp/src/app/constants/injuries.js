@@ -1,3 +1,3 @@
 export default {
-  LOAD_INJURIES: 'LOAD_INJURIES'
+  LOAD_INJURIES: '@@injuries/LOAD_INJURIES'
 };

@@ -33,6 +33,9 @@ module.exports = {
     'jsx-a11y/anchor-is-valid': 'off',
     'import/no-dynamic-require': 'off',
     'no-tabs': 0,
-    'no-mixed-spaces-and-tabs': 'off'
+    'no-mixed-spaces-and-tabs': 'off',
+    'react/jsx-indent': 'off',
+    'indent': 'off',
+    'react/jsx-indent-props': 'off'
   },
 };

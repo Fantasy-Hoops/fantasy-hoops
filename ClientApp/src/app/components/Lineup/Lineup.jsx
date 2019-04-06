@@ -7,7 +7,7 @@ import { parse } from '../../utils/auth';
 import { AlertNotification as Alert } from '../AlertNotification';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
 import InfoModal from './InfoModal';
-import { EmptyJordan } from '../EmptyJordan';
+import EmptyJordan from '../EmptyJordan';
 import {
   getNextGameInfo, getUserLineup, getPlayers, getPlayerStats, submitLineup
 } from '../../utils/networkFunctions';

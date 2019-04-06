@@ -9,7 +9,7 @@ import moment from 'moment';
 import { parse } from '../../../utils/auth';
 import Card from './Card';
 import leaderboardLogo from '../../../../content/images/leaderboard.png';
-import { EmptyJordan } from '../../EmptyJordan';
+import EmptyJordan from '../../EmptyJordan';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
 import { getUsersLeaderboard, getUserFriendsOnlyLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
 import { getWeek } from '../../../utils/date';
