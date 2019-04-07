@@ -123,11 +123,11 @@ namespace fantasy_hoops.Database
             string statusBefore = injuryPlayer.Status;
             string statusAfter = injuryObj.Status;
 
-            injuryPlayer.Status = injuryObj.Status;
-            injuryPlayer.StatusDate = dateUTC;
-
             if (!statusBefore.Equals(statusAfter))
                 await UpdateNotifications(context, injuryObj, statusBefore, statusAfter);
+
+            injuryPlayer.Status = injuryObj.Status;
+            injuryPlayer.StatusDate = dateUTC;
         }
 
         private static async Task UpdateNotifications(GameContext context, Injuries injury, string statusBefore, string statusAfter)
