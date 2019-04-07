@@ -115,6 +115,11 @@ namespace fantasy_hoops.Database
             }
             else
             {
+                context.Stats
+                    .ToList()
+                    .RemoveAll(stats => stats.Score.Contains("LIVE"));
+                context.SaveChanges();
+
                 JobManager.AddJob(() => UserScoreSeed.Initialize(context),
                                 s => s.WithName("userScore")
                                 .ToRunNow());
