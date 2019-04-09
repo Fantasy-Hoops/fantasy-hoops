@@ -71,15 +71,9 @@ namespace fantasy_hoops.Database
                 int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
                 DateTime date = DateTime.ParseExact((string)boxscore["basicGameData"]["startDateEastern"], "yyyyMMdd", CultureInfo.InvariantCulture);
                 var players = boxscore["stats"]["activePlayers"];
-                Game gameObj = new Game
-                {
-                    Date = date,
-                    HomeTeamID = context.Teams.Where(team => team.NbaID == hTeam).FirstOrDefault().TeamID,
-                    HomeScore = (int)boxscore["basicGameData"]["hTeam"]["score"],
-                    AwayTeamID = context.Teams.Where(team => team.NbaID == vTeam).FirstOrDefault().TeamID,
-                    AwayScore = (int)boxscore["basicGameData"]["vTeam"]["score"]
-                };
-                context.Games.Add(gameObj);
+                int homeScore = (int)boxscore["basicGameData"]["hTeam"]["score"];
+                int awayScore = (int)boxscore["basicGameData"]["vTeam"]["score"];
+                Game gameObj = GetGame(context, date, hTeam, vTeam, homeScore, awayScore);
 
                 foreach (var player in (JArray)players)
                 {
@@ -116,8 +110,7 @@ namespace fantasy_hoops.Database
             else
             {
                 context.Stats
-                    .ToList()
-                    .RemoveAll(stats => stats.Score.Contains("LIVE"));
+                    .RemoveRange(context.Stats.Where(stat => stat.Score.Contains("LIVE")));
                 context.SaveChanges();
 
                 JobManager.AddJob(() => UserScoreSeed.Initialize(context),
@@ -214,6 +207,33 @@ namespace fantasy_hoops.Database
 
                 dbStats.Price = playerPrice;
             }
+        }
+
+        private static Game GetGame(GameContext context, DateTime date, int homeTeamId, int awayTeamId, int homeScore, int awayScore)
+        {
+            Team homeTeam = context.Teams.Where(team => team.NbaID == homeTeamId).FirstOrDefault();
+            Team awayTeam = context.Teams.Where(team => team.NbaID == awayTeamId).FirstOrDefault();
+
+            Game gameObj = context.Games.Where(game => game.Date.Equals(date) && game.HomeTeam.Equals(homeTeam) && game.AwayTeam.Equals(awayTeam)).FirstOrDefault();
+            if (gameObj != null)
+            {
+                gameObj.HomeScore = homeScore;
+                gameObj.AwayScore = awayScore;
+            }
+            else
+            {
+                gameObj = new Game
+                {
+                    Date = date,
+                    HomeTeam = homeTeam,
+                    HomeScore = homeScore,
+                    AwayTeam = awayTeam,
+                    AwayScore = awayScore
+                };
+                context.Games.Add(gameObj);
+            }
+
+            return gameObj;
         }
     }
 }
