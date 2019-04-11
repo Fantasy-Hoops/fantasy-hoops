@@ -1343,7 +1343,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   white-space: nowrap;
   overflow: hidden;
   padding: .2rem;
-  font-size: 1.8rem;
+  font-size: 1.7rem;
   font-weight: 700;
   color: var(--primary-color);
   margin: 0;
