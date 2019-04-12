@@ -100,6 +100,7 @@ namespace fantasy_hoops.Database
                 Link = injury.Value<string>("Link") != null ? (string)injury["Link"] : null
             };
             injuryObj.Player = injuryPlayer;
+            injuryObj.PlayerID = injuryPlayer.PlayerID;
 
             var dbInjury = context.Injuries
                     .Where(inj => inj.Player.NbaID == (int)injury["PrimarySourceKey"])
