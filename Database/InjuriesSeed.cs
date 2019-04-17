@@ -62,17 +62,24 @@ namespace fantasy_hoops.Database
                     continue;
                 NbaID = (int)injury["PrimarySourceKey"];
 
+                DateTime? dateModified = new DateTime?();
+                if (injury.Value<string>("ModifiedDate") != null)
+                {
+                    dateModified = DateTime.Parse(injury["ModifiedDate"].ToString());
+                    dateModified = dateModified.Value.IsDaylightSavingTime()
+                        ? dateModified.Value.AddHours(-1)
+                        : dateModified;
+                }
+
                 if (context.Injuries
-                    .Any(inj => inj.Player.NbaID == NbaID
-                        && inj.Status.Equals((string)injury["PlayerStatus"])))
+                    .Where(inj => inj.Player.NbaID == NbaID)
+                    .Any(inj => inj.Status.Equals((string)injury["PlayerStatus"])
+                        && dateModified == inj.Date))
                     continue;
 
-                DateTime? dateUTC = injury.Value<string>("ModifiedDate") != null
-                    ? CommonFunctions.EasternToUTC(DateTime.Parse(injury["ModifiedDate"].ToString())).AddHours(-1)
-                    : (DateTime?)null;
                 try
                 {
-                    await AddToDatabaseAsync(context, injury, dateUTC);
+                    await AddToDatabaseAsync(context, injury, dateModified);
                 }
                 catch (Exception)
                 {
@@ -83,7 +90,7 @@ namespace fantasy_hoops.Database
             await SendPushNotifications(context);
         }
 
-        private static async Task AddToDatabaseAsync(GameContext context, JToken injury, DateTime? dateUTC)
+        private static async Task AddToDatabaseAsync(GameContext context, JToken injury, DateTime? dateModified)
         {
             Player injuryPlayer = context.Players.Where(x => x.NbaID == (int)injury["PrimarySourceKey"]).FirstOrDefault();
 
@@ -96,7 +103,7 @@ namespace fantasy_hoops.Database
                 Status = injury.Value<string>("PlayerStatus") != null ? (string)injury["PlayerStatus"] : null,
                 Injury = injury.Value<string>("Injury") != null ? (string)injury["Injury"] : null,
                 Description = injury.Value<string>("News") != null ? (string)injury["News"] : null,
-                Date = dateUTC,
+                Date = dateModified,
                 Link = injury.Value<string>("Link") != null ? (string)injury["Link"] : null
             };
             injuryObj.Player = injuryPlayer;
@@ -128,7 +135,7 @@ namespace fantasy_hoops.Database
                 await UpdateNotifications(context, injuryObj, statusBefore, statusAfter);
 
             injuryPlayer.Status = injuryObj.Status;
-            injuryPlayer.StatusDate = dateUTC;
+            injuryPlayer.StatusDate = dateModified;
         }
 
         private static async Task UpdateNotifications(GameContext context, Injuries injury, string statusBefore, string statusAfter)
