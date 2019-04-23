@@ -115,7 +115,8 @@ namespace fantasy_hoops.Database
 
                 JobManager.AddJob(() => UserScoreSeed.Initialize(context),
                                 s => s.WithName("userScore")
-                                .ToRunNow());
+                                .ToRunOnceIn(30)
+                                .Seconds());
             }
         }
 
