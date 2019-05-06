@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
@@ -79,7 +79,7 @@ namespace fantasy_hoops.Database
             await context.SaveChangesAsync();
         }
 
-        public static async Task GetRecaps(GameContext context, string date, JArray games)
+        private static async Task GetRecaps(GameContext context, string date, JArray games)
         {
             JArray news = new JArray();
             foreach (JObject game in games)
@@ -121,7 +121,7 @@ namespace fantasy_hoops.Database
                 vTeamID = (int)newsObj["vTeamID"]
             };
 
-            bool shouldAdd = context.News.Any(x => !x.Title.Equals((string)newsObj["title"]));
+            bool shouldAdd = !context.News.Any(x => x.Title.Equals((string)newsObj["title"]));
 
             if (nObj == null || !shouldAdd)
                 return;
