@@ -20,6 +20,7 @@ using WebPush;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace fantasy_hoops
 {
@@ -32,8 +33,8 @@ namespace fantasy_hoops
 
         public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-            this.HostingEnvironment = env;
-            this.Configuration = configuration;
+            Configuration = configuration;
+            HostingEnvironment = env;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -69,6 +70,15 @@ namespace fantasy_hoops
             DotEnv.Config(true, ".env");
 #if DEBUG
             DotEnv.Config(false, ".env.development");
+
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new Info
+                {
+                    Version = "v1",
+                    Title = "FH API",
+                    Description = "Fantasy Hoops API"
+                });
+            });
 #endif
 
             ConfigureAuth(services);
@@ -149,6 +159,11 @@ namespace fantasy_hoops
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger(c => c.RouteTemplate = "swagger/{documentName}/swagger.json");
+                app.UseSwaggerUI(c => {
+                    c.RoutePrefix = "swagger";
+                    c.SwaggerEndpoint("v1/swagger.json", "FH API V1");
+                });
             }
             else
             {
@@ -157,15 +172,6 @@ namespace fantasy_hoops
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                OnPrepareResponse = ctx =>
-                {
-                    const int cacheExpirationInSeconds = 60 * 60 * 24 * 30; //one month
-                    ctx.Context.Response.Headers[HeaderNames.CacheControl] =
-                        "public,max-age=" + cacheExpirationInSeconds;
-                }
-            });
             app.UseSpaStaticFiles();
 
             app.UseMvc(routes =>
