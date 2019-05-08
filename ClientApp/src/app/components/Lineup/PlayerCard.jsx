@@ -8,8 +8,6 @@ import PF from '../../../content/images/positions/pf_po.png';
 import C from '../../../content/images/positions/c_po.png';
 import defaultLogo from '../../../content/images/defaultLogo.png';
 
-const { $ } = window;
-
 export class PlayerCard extends Component {
   constructor() {
     super();
@@ -26,10 +24,6 @@ export class PlayerCard extends Component {
     this.select = this.select.bind(this);
     this.showModal = this.showModal.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
-  }
-
-  componentDidMount() {
-    $('[data-toggle="tooltip"]').tooltip();
   }
 
   render() {
@@ -100,7 +94,13 @@ export class PlayerCard extends Component {
               {`${this.props.player.price}K`}
             </div>
           </div>
-          <div className="PlayerCard__image" onClick={this.props.status === 2 ? this.filter : undefined}>
+          <div
+            data-toggle={this.props.status === 1 ? "modal" : null}
+            data-target={this.props.status === 1 ? "#playerModal" : null}
+            style={{ cursor: 'pointer' }}
+            className="PlayerCard__image" onClick={this.props.status === 2 ? this.filter : this.showModal}
+            title={this.props.status === 1 ? "Click for stats" : null}
+          >
             <canvas
               className="PlayerCard__background"
               style={{ backgroundColor: `${this.props.player.team.teamColor}` }}
@@ -113,28 +113,27 @@ export class PlayerCard extends Component {
           </div>
           {buttonState}
           <div className="PlayerCard__player-name">
-            <a
-              data-toggle="tooltip"
-              data-placement="top"
+            <p
+              data-toggle="modal"
+              data-target="#playerModal"
+              className={`PlayerCard__player-name${this.props.status === 2 || this.props.status === 0 ? '--lineup' : ''}`}
+              onClick={this.showModal}
+              style={{ cursor: 'pointer' }}
               title="Click for stats"
             >
-              <p
-                data-toggle="modal"
-                data-target="#playerModal"
-                className={`PlayerCard__player-name${this.props.status === 2 || this.props.status === 0 ? '--lineup' : ''}`}
-                onClick={this.showModal}
-                style={{ cursor: 'pointer' }}
-              >
-                {this.props.player.abbrName}
-              </p>
-            </a>
+              {this.props.player.abbrName}
+            </p>
           </div>
-        </div>
+        </div >
       );
     }
 
     return (
-      <div onClick={this.filter} className="PlayerCard card position-relative" tabIndex="1">
+      <div
+        onClick={this.filter}
+        className="PlayerCard card position-relative"
+        tabIndex="-1"
+        style={{ cursor: 'pointer' }}>
         <canvas
           className="PlayerCard__background"
           width="260"
@@ -160,7 +159,6 @@ export class PlayerCard extends Component {
   }
 
   async showModal() {
-    $('[data-toggle="tooltip"]').tooltip('hide');
     await this.props.showModal(this.props.player);
   }
 

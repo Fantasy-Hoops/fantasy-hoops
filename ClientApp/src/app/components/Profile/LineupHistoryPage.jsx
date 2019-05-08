@@ -48,7 +48,6 @@ export class LineupHistory extends Component {
   }
 
   async showModal(player) {
-    $('[data-toggle="tooltip"]').tooltip('hide');
     this.setState({ modalLoader: true });
     await getPlayerStats(player.nbaID)
       .then((res) => {

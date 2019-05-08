@@ -60,7 +60,6 @@ export default class Leaderboard extends PureComponent {
 
   async componentDidMount() {
     $(document).ready(() => {
-      $('[data-toggle=tooltip]').tooltip({ trigger: 'hover' });
       // Get the value of Start and End of Week
       $('#weeklyDatePicker').on('change', (e) => {
         const value = $('#weeklyDatePicker').val();
