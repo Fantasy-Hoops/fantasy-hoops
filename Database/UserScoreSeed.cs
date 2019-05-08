@@ -1,4 +1,4 @@
-﻿using fantasy_hoops.Helpers;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Services;
@@ -46,44 +46,41 @@ namespace fantasy_hoops.Database
 			if (allLineups.Count == 0)
 				return;
 
-			context.Users
-					.Except(allLineups.Select(lineup => lineup.User))
-					.ToList()
-					.ForEach(user => user.Streak = 0);
+            context.Users
+                    .Except(allLineups.Select(lineup => lineup.User))
+                    .ToList()
+                    .ForEach(user => user.Streak = 0);
 
-			foreach (var lineup in allLineups)
+            foreach (var lineup in allLineups)
 			{
-				lineup.FP =
+                var selectedPlayers = new List<int> { lineup.PgID, lineup.SgID, lineup.SfID, lineup.PfID, lineup.CID };
+                lineup.FP =
 						Math.Round(todayStats
-						.Where(stats => stats.PlayerID == lineup.PgID
-								|| stats.PlayerID == lineup.SgID
-								|| stats.PlayerID == lineup.SfID
-								|| stats.PlayerID == lineup.PfID
-								|| stats.PlayerID == lineup.CID)
+						.Where(stats => selectedPlayers.Contains(stats.PlayerID))
 						.Select(stats => stats.FP)
 						.Sum(), 1);
-				lineup.IsCalculated = true;
+                lineup.IsCalculated = true;
 
-				lineup.User.Streak++;
+                lineup.User.Streak++;
 
-				_usersPlayed.Push(new GameScorePushNotificationModel
-				{
-					UserID = lineup.User.Id,
-					Score = lineup.FP
-				});
+                _usersPlayed.Push(new GameScorePushNotificationModel
+                {
+                    UserID = lineup.User.Id,
+                    Score = lineup.FP
+                });
 
-				var gs = new GameScoreNotification
-				{
-					UserID = lineup.User.Id,
-					ReadStatus = false,
-					DateCreated = DateTime.UtcNow,
-					Score = lineup.FP
-				};
-				context.GameScoreNotifications.Add(gs);
-			}
+                var gs = new GameScoreNotification
+                {
+                    UserID = lineup.User.Id,
+                    ReadStatus = false,
+                    DateCreated = DateTime.UtcNow,
+                    Score = lineup.FP
+                };
+                context.GameScoreNotifications.Add(gs);
+            }
 			context.SaveChanges();
-			Task.Run(() => SendPushNotifications(context));
-		}
+            Task.Run(() => SendPushNotifications(context));
+        }
 
 		private static async Task SendPushNotifications(GameContext context)
 		{
