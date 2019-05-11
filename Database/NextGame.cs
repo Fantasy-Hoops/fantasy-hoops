@@ -150,7 +150,7 @@ namespace fantasy_hoops.Database
             {
                 offset++;
                 gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
-                        .AddDays(offset).ToString("yyyyMMdd");
+                        .AddDays(1).ToString("yyyyMMdd");
                 SetNextGame(gameDate);
             }
         }
