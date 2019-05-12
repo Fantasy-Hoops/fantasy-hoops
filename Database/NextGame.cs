@@ -57,16 +57,6 @@ namespace fantasy_hoops.Database
                                 s => s.WithName("seed")
                                 .ToRunOnceAt(NEXT_GAME.AddMinutes(-5)));
 
-                    // If previous game isn't finished run StatsSeed now
-                    if (DateTime.UtcNow < PREVIOUS_LAST_GAME.AddHours(2).AddMinutes(30))
-                        JobManager.AddJob(() => StatsSeed.Initialize(context),
-                                s => s.WithName("statsSeed")
-                                .ToRunNow());
-                    else // If previous game is finished, run 15min after next game starts
-                        JobManager.AddJob(() => StatsSeed.Initialize(context),
-                                s => s.WithName("statsSeed")
-                                .ToRunOnceAt(NEXT_GAME.AddMinutes(15)));
-
                     // 10 hours after previous last game if project ran before that time
                     // 10 hours after next last game if project ran after that time
                     DateTime previewsRuntime = PREVIOUS_LAST_GAME.AddHours(10);
@@ -99,6 +89,19 @@ namespace fantasy_hoops.Database
                         .Hours());
                 offset = 0;
                 Task.Run(() => SetPlayersNotPlaying(context)).Wait();
+            }
+
+            if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")))
+            {
+                // If previous game isn't finished run StatsSeed now
+                if (DateTime.UtcNow < PREVIOUS_LAST_GAME.AddHours(2).AddMinutes(30))
+                    JobManager.AddJob(() => StatsSeed.Initialize(context),
+                            s => s.WithName("statsSeed")
+                            .ToRunNow());
+                else // If previous game is finished, run 15min after next game starts
+                    JobManager.AddJob(() => StatsSeed.Initialize(context),
+                            s => s.WithName("statsSeed")
+                            .ToRunOnceAt(NEXT_GAME.AddMinutes(15)));
             }
         }
 
