@@ -18,6 +18,7 @@ import { AllNotificationsPage } from '../components/Notifications/AllNotificatio
 import { LineupHistory } from '../components/Profile/LineupHistoryPage';
 import Blog from '../containers/BlogContainer';
 import Routes from './routes';
+import { Error } from '../components/Error';
 
 export default function configureRoutes() {
   return (
@@ -40,6 +41,7 @@ export default function configureRoutes() {
           <PrivateRoute path={Routes.ALL_NOTIFICATIONS} component={AllNotificationsPage} />
           <PrivateRoute path={Routes.LINEUP_HISTORY} component={LineupHistory} />
           <Route exact path={Routes.BLOG} component={Blog} />
+          <Route render={() => <Error status={404} message="Page not found" />} />
         </Switch>
       </main>
     </div>
