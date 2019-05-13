@@ -28,7 +28,7 @@ namespace fantasy_hoops.Database
             NEXT_GAME_CLIENT = NEXT_GAME;
         }
 
-        public static void Initialize(GameContext context, bool updatePrices = true)
+        public static void Initialize(GameContext context, bool updatePrices = true, bool runStatsSeed = false)
         {
             string gameDate = GetDate();
 
@@ -38,7 +38,7 @@ namespace fantasy_hoops.Database
 
             if (offset < GAME_OFFSET)
             {
-                JobManager.AddJob(() => Initialize(context),
+                JobManager.AddJob(() => Initialize(context, runStatsSeed: true),
                         s => s.WithName(NEXT_GAME.ToLongDateString())
                         .ToRunOnceAt(NEXT_GAME));
 
@@ -91,7 +91,7 @@ namespace fantasy_hoops.Database
                 Task.Run(() => SetPlayersNotPlaying(context)).Wait();
             }
 
-            if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")))
+            if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")) && runStatsSeed)
             {
                 // If previous game isn't finished run StatsSeed now
                 if (DateTime.UtcNow < PREVIOUS_LAST_GAME.AddHours(2).AddMinutes(30))
