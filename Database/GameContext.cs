@@ -32,7 +32,7 @@ namespace fantasy_hoops.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySql(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+            optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
         }
     }
 }

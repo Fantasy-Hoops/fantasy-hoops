@@ -32,37 +32,37 @@ namespace fantasy_hoops.Migrations
                         column: x => x.CID,
                         principalTable: "Players",
                         principalColumn: "PlayerID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_UserLineups_Players_PfID",
                         column: x => x.PfID,
                         principalTable: "Players",
                         principalColumn: "PlayerID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_UserLineups_Players_PgID",
                         column: x => x.PgID,
                         principalTable: "Players",
                         principalColumn: "PlayerID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_UserLineups_Players_SfID",
                         column: x => x.SfID,
                         principalTable: "Players",
                         principalColumn: "PlayerID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_UserLineups_Players_SgID",
                         column: x => x.SgID,
                         principalTable: "Players",
                         principalColumn: "PlayerID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_UserLineups_AspNetUsers_UserID",
                         column: x => x.UserID,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
