@@ -1,11 +1,11 @@
 ﻿import React, { Component } from 'react';
 import Scroll from 'react-scroll';
 import Img from 'react-image';
-import PG from '../../../content/images/positions/pg_po.png';
-import SG from '../../../content/images/positions/sg_po.png';
-import SF from '../../../content/images/positions/sf_po.png';
-import PF from '../../../content/images/positions/pf_po.png';
-import C from '../../../content/images/positions/c_po.png';
+import PG from '../../../content/images/positions/pg.png';
+import SG from '../../../content/images/positions/sg.png';
+import SF from '../../../content/images/positions/sf.png';
+import PF from '../../../content/images/positions/pf.png';
+import C from '../../../content/images/positions/c.png';
 import defaultLogo from '../../../content/images/defaultLogo.png';
 
 export class PlayerCard extends Component {

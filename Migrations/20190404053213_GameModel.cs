@@ -28,13 +28,13 @@ namespace fantasy_hoops.Migrations
                         column: x => x.AwayTeamID,
                         principalTable: "Teams",
                         principalColumn: "TeamID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Games_Teams_HomeTeamID",
                         column: x => x.HomeTeamID,
                         principalTable: "Teams",
                         principalColumn: "TeamID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
