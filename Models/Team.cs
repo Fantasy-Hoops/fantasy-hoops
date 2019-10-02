@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace fantasy_hoops.Models
 {
     public class Team
     {
-
+        [Key]
         public int TeamID { get; set; }
         public int NbaID { get; set; }
         public String Name { get; set; }

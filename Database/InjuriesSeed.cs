@@ -51,7 +51,7 @@ namespace fantasy_hoops.Database
 
         private static async Task Extract(GameContext context)
         {
-            int seasonYear = int.Parse(CommonFunctions.GetSeasonYear());
+            int seasonYear = int.Parse(CommonFunctions.SEASON_YEAR);
             IEnumerable<JToken> injuries = GetInjuries()
                 .Where(inj => inj.Value<string>("ModifiedDate") == null
                     || DateTime.Parse(inj.Value<string>("ModifiedDate")).Year >= seasonYear).AsEnumerable();

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace fantasy_hoops.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialMSSQL : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,7 +27,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     NewsID = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Title = table.Column<string>(nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
                     hTeamID = table.Column<int>(nullable: false),
@@ -43,16 +43,24 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     TeamID = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     NbaID = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     City = table.Column<string>(nullable: true),
                     Abbreviation = table.Column<string>(nullable: true),
-                    Color = table.Column<string>(nullable: true)
+                    Color = table.Column<string>(nullable: true),
+                    NextOpponentID = table.Column<int>(nullable: true),
+                    NextOppFormatted = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Teams", x => x.TeamID);
+                    table.ForeignKey(
+                        name: "FK_Teams_Teams_NextOpponentID",
+                        column: x => x.NextOpponentID,
+                        principalTable: "Teams",
+                        principalColumn: "TeamID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -60,7 +68,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     RoleId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -81,7 +89,8 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     ParagraphID = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ParagraphNumber = table.Column<int>(nullable: false),
                     Content = table.Column<string>(nullable: true),
                     NewsID = table.Column<int>(nullable: false)
                 },
@@ -117,7 +126,8 @@ namespace fantasy_hoops.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     FavoriteTeamId = table.Column<int>(nullable: false),
-                    TeamID = table.Column<int>(nullable: true)
+                    TeamID = table.Column<int>(nullable: true),
+                    Streak = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -131,14 +141,45 @@ namespace fantasy_hoops.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Games",
+                columns: table => new
+                {
+                    GameID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Date = table.Column<DateTime>(type: "Date", nullable: true),
+                    HomeTeamID = table.Column<int>(nullable: false),
+                    HomeScore = table.Column<int>(nullable: false),
+                    AwayTeamID = table.Column<int>(nullable: false),
+                    AwayScore = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Games", x => x.GameID);
+                    table.ForeignKey(
+                        name: "FK_Games_Teams_AwayTeamID",
+                        column: x => x.AwayTeamID,
+                        principalTable: "Teams",
+                        principalColumn: "TeamID",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_Games_Teams_HomeTeamID",
+                        column: x => x.HomeTeamID,
+                        principalTable: "Teams",
+                        principalColumn: "TeamID",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Players",
                 columns: table => new
                 {
                     PlayerID = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     NbaID = table.Column<int>(nullable: false),
+                    FullName = table.Column<string>(nullable: true),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
+                    AbbrName = table.Column<string>(nullable: true),
                     Position = table.Column<string>(nullable: true),
                     Number = table.Column<int>(nullable: false),
                     GP = table.Column<int>(nullable: false),
@@ -153,7 +194,8 @@ namespace fantasy_hoops.Migrations
                     TeamID = table.Column<int>(nullable: false),
                     IsPlaying = table.Column<bool>(nullable: false),
                     StatusDate = table.Column<DateTime>(nullable: true),
-                    Status = table.Column<string>(nullable: false)
+                    Status = table.Column<string>(nullable: false),
+                    IsInGLeague = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -171,7 +213,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -256,7 +298,7 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     ID = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Date = table.Column<DateTime>(nullable: false),
                     SenderID = table.Column<string>(nullable: true),
                     ReceiverID = table.Column<string>(nullable: true),
@@ -280,17 +322,61 @@ namespace fantasy_hoops.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    PostID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Title = table.Column<string>(nullable: true),
+                    Body = table.Column<string>(nullable: true),
+                    AuthorID = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    ModifiedAt = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.PostID);
+                    table.ForeignKey(
+                        name: "FK_Posts_AspNetUsers_AuthorID",
+                        column: x => x.AuthorID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PushSubscriptions",
+                columns: table => new
+                {
+                    P256Dh = table.Column<string>(nullable: false),
+                    UserID = table.Column<string>(nullable: true),
+                    Endpoint = table.Column<string>(nullable: false),
+                    ExpirationTime = table.Column<double>(nullable: true),
+                    Auth = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PushSubscriptions", x => x.P256Dh);
+                    table.ForeignKey(
+                        name: "FK_PushSubscriptions_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Injuries",
                 columns: table => new
                 {
                     InjuryID = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     PlayerID = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Status = table.Column<string>(nullable: true),
                     Injury = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    Date = table.Column<DateTime>(nullable: false),
+                    Date = table.Column<DateTime>(nullable: true),
                     Link = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -305,41 +391,11 @@ namespace fantasy_hoops.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Lineups",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Date = table.Column<DateTime>(nullable: false),
-                    UserID = table.Column<string>(nullable: true),
-                    PlayerID = table.Column<int>(nullable: false),
-                    Position = table.Column<string>(nullable: true),
-                    FP = table.Column<double>(nullable: false),
-                    Calculated = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Lineups", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Lineups_Players_PlayerID",
-                        column: x => x.PlayerID,
-                        principalTable: "Players",
-                        principalColumn: "PlayerID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Lineups_AspNetUsers_UserID",
-                        column: x => x.UserID,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Notifications",
                 columns: table => new
                 {
                     NotificationID = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserID = table.Column<string>(nullable: true),
                     ReadStatus = table.Column<bool>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false),
@@ -379,8 +435,9 @@ namespace fantasy_hoops.Migrations
                 columns: table => new
                 {
                     StatsID = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Date = table.Column<DateTime>(nullable: false),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    GameID = table.Column<int>(nullable: true),
+                    Date = table.Column<DateTime>(type: "Date", nullable: false),
                     Score = table.Column<string>(nullable: true),
                     MIN = table.Column<string>(nullable: true),
                     FGM = table.Column<int>(nullable: false),
@@ -411,11 +468,74 @@ namespace fantasy_hoops.Migrations
                 {
                     table.PrimaryKey("PK_Stats", x => x.StatsID);
                     table.ForeignKey(
+                        name: "FK_Stats_Games_GameID",
+                        column: x => x.GameID,
+                        principalTable: "Games",
+                        principalColumn: "GameID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Stats_Players_PlayerID",
                         column: x => x.PlayerID,
                         principalTable: "Players",
                         principalColumn: "PlayerID",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserLineups",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Date = table.Column<DateTime>(type: "Date", nullable: false),
+                    UserID = table.Column<string>(nullable: true),
+                    PgID = table.Column<int>(nullable: false),
+                    SgID = table.Column<int>(nullable: false),
+                    SfID = table.Column<int>(nullable: false),
+                    PfID = table.Column<int>(nullable: false),
+                    CID = table.Column<int>(nullable: false),
+                    FP = table.Column<double>(nullable: false),
+                    IsCalculated = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLineups", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_UserLineups_Players_CID",
+                        column: x => x.CID,
+                        principalTable: "Players",
+                        principalColumn: "PlayerID",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_UserLineups_Players_PfID",
+                        column: x => x.PfID,
+                        principalTable: "Players",
+                        principalColumn: "PlayerID",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_UserLineups_Players_PgID",
+                        column: x => x.PgID,
+                        principalTable: "Players",
+                        principalColumn: "PlayerID",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_UserLineups_Players_SfID",
+                        column: x => x.SfID,
+                        principalTable: "Players",
+                        principalColumn: "PlayerID",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_UserLineups_Players_SgID",
+                        column: x => x.SgID,
+                        principalTable: "Players",
+                        principalColumn: "PlayerID",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_UserLineups_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -427,7 +547,8 @@ namespace fantasy_hoops.Migrations
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
-                unique: true);
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -453,7 +574,8 @@ namespace fantasy_hoops.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true);
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_TeamID",
@@ -471,19 +593,19 @@ namespace fantasy_hoops.Migrations
                 column: "SenderID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Games_AwayTeamID",
+                table: "Games",
+                column: "AwayTeamID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Games_HomeTeamID",
+                table: "Games",
+                column: "HomeTeamID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Injuries_PlayerID",
                 table: "Injuries",
                 column: "PlayerID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Lineups_PlayerID",
-                table: "Lineups",
-                column: "PlayerID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Lineups_UserID",
-                table: "Lineups",
-                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_UserID",
@@ -511,9 +633,59 @@ namespace fantasy_hoops.Migrations
                 column: "TeamID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Posts_AuthorID",
+                table: "Posts",
+                column: "AuthorID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PushSubscriptions_UserID",
+                table: "PushSubscriptions",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stats_GameID",
+                table: "Stats",
+                column: "GameID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Stats_PlayerID",
                 table: "Stats",
                 column: "PlayerID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Teams_NextOpponentID",
+                table: "Teams",
+                column: "NextOpponentID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLineups_CID",
+                table: "UserLineups",
+                column: "CID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLineups_PfID",
+                table: "UserLineups",
+                column: "PfID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLineups_PgID",
+                table: "UserLineups",
+                column: "PgID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLineups_SfID",
+                table: "UserLineups",
+                column: "SfID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLineups_SgID",
+                table: "UserLineups",
+                column: "SgID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLineups_UserID",
+                table: "UserLineups",
+                column: "UserID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -540,28 +712,37 @@ namespace fantasy_hoops.Migrations
                 name: "Injuries");
 
             migrationBuilder.DropTable(
-                name: "Lineups");
-
-            migrationBuilder.DropTable(
                 name: "Notifications");
 
             migrationBuilder.DropTable(
                 name: "Paragraphs");
 
             migrationBuilder.DropTable(
+                name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "PushSubscriptions");
+
+            migrationBuilder.DropTable(
                 name: "Stats");
+
+            migrationBuilder.DropTable(
+                name: "UserLineups");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "News");
 
             migrationBuilder.DropTable(
+                name: "Games");
+
+            migrationBuilder.DropTable(
                 name: "Players");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Teams");

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
@@ -9,15 +10,16 @@ using fantasy_hoops.Database;
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20190226143318_AddGLeagueStatus")]
-    partial class AddGLeagueStatus
+    [Migration("20191002121126_InitialMSSQL")]
+    partial class InitialMSSQL
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -37,7 +39,8 @@ namespace fantasy_hoops.Migrations
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasName("RoleNameIndex");
+                        .HasName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
                 });
@@ -45,7 +48,8 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ClaimType");
 
@@ -64,7 +68,8 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ClaimType");
 
@@ -129,7 +134,8 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.FriendRequest", b =>
                 {
                     b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Date");
 
@@ -148,12 +154,39 @@ namespace fantasy_hoops.Migrations
                     b.ToTable("FriendRequests");
                 });
 
+            modelBuilder.Entity("fantasy_hoops.Models.Game", b =>
+                {
+                    b.Property<int>("GameID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AwayScore");
+
+                    b.Property<int>("AwayTeamID");
+
+                    b.Property<DateTime?>("Date")
+                        .HasColumnType("Date");
+
+                    b.Property<int>("HomeScore");
+
+                    b.Property<int>("HomeTeamID");
+
+                    b.HasKey("GameID");
+
+                    b.HasIndex("AwayTeamID");
+
+                    b.HasIndex("HomeTeamID");
+
+                    b.ToTable("Games");
+                });
+
             modelBuilder.Entity("fantasy_hoops.Models.Injuries", b =>
                 {
                     b.Property<int>("InjuryID")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Date");
+                    b.Property<DateTime?>("Date");
 
                     b.Property<string>("Description");
 
@@ -174,36 +207,11 @@ namespace fantasy_hoops.Migrations
                     b.ToTable("Injuries");
                 });
 
-            modelBuilder.Entity("fantasy_hoops.Models.Lineup", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<bool>("Calculated");
-
-                    b.Property<DateTime>("Date");
-
-                    b.Property<double>("FP");
-
-                    b.Property<int>("PlayerID");
-
-                    b.Property<string>("Position");
-
-                    b.Property<string>("UserID");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("PlayerID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("Lineups");
-                });
-
             modelBuilder.Entity("fantasy_hoops.Models.News", b =>
                 {
                     b.Property<int>("NewsID")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Date");
 
@@ -221,7 +229,8 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.Notification", b =>
                 {
                     b.Property<int>("NotificationID")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("DateCreated");
 
@@ -244,7 +253,8 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.Paragraph", b =>
                 {
                     b.Property<int>("ParagraphID")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Content");
 
@@ -262,7 +272,8 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.Player", b =>
                 {
                     b.Property<int>("PlayerID")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<double>("AST");
 
@@ -314,10 +325,56 @@ namespace fantasy_hoops.Migrations
                     b.ToTable("Players");
                 });
 
+            modelBuilder.Entity("fantasy_hoops.Models.Post", b =>
+                {
+                    b.Property<int>("PostID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AuthorID");
+
+                    b.Property<string>("Body");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<DateTime>("ModifiedAt");
+
+                    b.Property<string>("Title");
+
+                    b.HasKey("PostID");
+
+                    b.HasIndex("AuthorID");
+
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("fantasy_hoops.Models.PushSubscription", b =>
+                {
+                    b.Property<string>("P256Dh")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Auth")
+                        .IsRequired();
+
+                    b.Property<string>("Endpoint")
+                        .IsRequired();
+
+                    b.Property<double?>("ExpirationTime");
+
+                    b.Property<string>("UserID");
+
+                    b.HasKey("P256Dh");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("PushSubscriptions");
+                });
+
             modelBuilder.Entity("fantasy_hoops.Models.Stats", b =>
                 {
                     b.Property<int>("StatsID")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("AST");
 
@@ -325,7 +382,8 @@ namespace fantasy_hoops.Migrations
 
                     b.Property<int>("DREB");
 
-                    b.Property<DateTime>("Date");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("Date");
 
                     b.Property<int>("FGA");
 
@@ -344,6 +402,8 @@ namespace fantasy_hoops.Migrations
                     b.Property<double>("FTP");
 
                     b.Property<double>("GS");
+
+                    b.Property<int?>("GameID");
 
                     b.Property<string>("MIN");
 
@@ -373,6 +433,8 @@ namespace fantasy_hoops.Migrations
 
                     b.HasKey("StatsID");
 
+                    b.HasIndex("GameID");
+
                     b.HasIndex("PlayerID");
 
                     b.ToTable("Stats");
@@ -381,7 +443,8 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.Team", b =>
                 {
                     b.Property<int>("TeamID")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Abbreviation");
 
@@ -393,7 +456,13 @@ namespace fantasy_hoops.Migrations
 
                     b.Property<int>("NbaID");
 
+                    b.Property<string>("NextOppFormatted");
+
+                    b.Property<int?>("NextOpponentID");
+
                     b.HasKey("TeamID");
+
+                    b.HasIndex("NextOpponentID");
 
                     b.ToTable("Teams");
                 });
@@ -451,11 +520,54 @@ namespace fantasy_hoops.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex");
+                        .HasName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("TeamID");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("fantasy_hoops.Models.UserLineup", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CID");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("Date");
+
+                    b.Property<double>("FP");
+
+                    b.Property<bool>("IsCalculated");
+
+                    b.Property<int>("PfID");
+
+                    b.Property<int>("PgID");
+
+                    b.Property<int>("SfID");
+
+                    b.Property<int>("SgID");
+
+                    b.Property<string>("UserID");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CID");
+
+                    b.HasIndex("PfID");
+
+                    b.HasIndex("PgID");
+
+                    b.HasIndex("SfID");
+
+                    b.HasIndex("SgID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("UserLineups");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.GameScoreNotification", b =>
@@ -551,24 +663,25 @@ namespace fantasy_hoops.Migrations
                         .HasForeignKey("SenderID");
                 });
 
+            modelBuilder.Entity("fantasy_hoops.Models.Game", b =>
+                {
+                    b.HasOne("fantasy_hoops.Models.Team", "AwayTeam")
+                        .WithMany()
+                        .HasForeignKey("AwayTeamID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("fantasy_hoops.Models.Team", "HomeTeam")
+                        .WithMany()
+                        .HasForeignKey("HomeTeamID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("fantasy_hoops.Models.Injuries", b =>
                 {
                     b.HasOne("fantasy_hoops.Models.Player", "Player")
                         .WithMany()
                         .HasForeignKey("PlayerID")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("fantasy_hoops.Models.Lineup", b =>
-                {
-                    b.HasOne("fantasy_hoops.Models.Player", "Player")
-                        .WithMany("Lineups")
-                        .HasForeignKey("PlayerID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("fantasy_hoops.Models.User", "User")
-                        .WithMany("Lineups")
-                        .HasForeignKey("UserID");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.Notification", b =>
@@ -594,12 +707,37 @@ namespace fantasy_hoops.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("fantasy_hoops.Models.Post", b =>
+                {
+                    b.HasOne("fantasy_hoops.Models.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorID");
+                });
+
+            modelBuilder.Entity("fantasy_hoops.Models.PushSubscription", b =>
+                {
+                    b.HasOne("fantasy_hoops.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
+                });
+
             modelBuilder.Entity("fantasy_hoops.Models.Stats", b =>
                 {
+                    b.HasOne("fantasy_hoops.Models.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameID");
+
                     b.HasOne("fantasy_hoops.Models.Player", "Player")
                         .WithMany("Stats")
                         .HasForeignKey("PlayerID")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("fantasy_hoops.Models.Team", b =>
+                {
+                    b.HasOne("fantasy_hoops.Models.Team", "NextOpponent")
+                        .WithMany()
+                        .HasForeignKey("NextOpponentID");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.User", b =>
@@ -607,6 +745,38 @@ namespace fantasy_hoops.Migrations
                     b.HasOne("fantasy_hoops.Models.Team", "Team")
                         .WithMany("Users")
                         .HasForeignKey("TeamID");
+                });
+
+            modelBuilder.Entity("fantasy_hoops.Models.UserLineup", b =>
+                {
+                    b.HasOne("fantasy_hoops.Models.Player", "C")
+                        .WithMany()
+                        .HasForeignKey("CID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("fantasy_hoops.Models.Player", "Pf")
+                        .WithMany()
+                        .HasForeignKey("PfID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("fantasy_hoops.Models.Player", "Pg")
+                        .WithMany()
+                        .HasForeignKey("PgID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("fantasy_hoops.Models.Player", "Sf")
+                        .WithMany()
+                        .HasForeignKey("SfID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("fantasy_hoops.Models.Player", "Sg")
+                        .WithMany()
+                        .HasForeignKey("SgID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("fantasy_hoops.Models.User", "User")
+                        .WithMany("UserLineups")
+                        .HasForeignKey("UserID");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.Notifications.FriendRequestNotification", b =>
