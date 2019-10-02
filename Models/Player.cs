@@ -7,7 +7,7 @@ namespace fantasy_hoops.Models
 {
     public class Player
     {
-
+        [Key]
         public int PlayerID { get; set; }
         public int NbaID { get; set; }
         public String FullName { get; set; }

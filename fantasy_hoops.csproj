@@ -48,8 +48,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations - Copy\20191002121002_InitialMSSQL.cs" />
+    <Compile Remove="Migrations - Copy\20191002121002_InitialMSSQL.Designer.cs" />
     <Compile Remove="Migrations\20190209210804_Initial.cs" />
     <Compile Remove="Migrations\20190209210804_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20191002120047_TeamId.cs" />
+    <Compile Remove="Migrations\20191002120047_TeamId.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

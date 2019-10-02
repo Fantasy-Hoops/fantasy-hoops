@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,8 @@ namespace fantasy_hoops.Models
 {
     public class UserLineup
     {
+
+        [Key]
         public int ID { get; set; }
         [Column(TypeName = "Date")]
         public DateTime Date { get; set; }

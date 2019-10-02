@@ -56,75 +56,76 @@ namespace fantasy_hoops.Database
                 Team dbTeam = dbTeams.Where(t => t.NbaID == teamNbaId).FirstOrDefault();
                 List<JToken> roster = GetRoster((string)team["id"]);
                 System.Threading.Thread.Sleep(1000);
-                foreach (var player in roster)
-                {
-                    if (player["reference"] == null)
-                        continue;
-                    int playerNbaId = (int)player["reference"];
-                    bool gLeagueStatus = player["status"].ToString().Equals("D-LEAGUE") ? true : false;
-                    if (dbPlayers.Any(p => p.NbaID == playerNbaId))
+                    foreach (var player in roster)
                     {
-                        Player dbPlayer = dbPlayers.Where(p => p.NbaID == playerNbaId).FirstOrDefault();
-                        if (dbPlayer.Team == null)
-                            dbPlayer.Team = dbTeam;
-
-                        // UPDATE EXISTING
-                        if (dbPlayer.Team.NbaID == teamNbaId)
-                        {
-                            dbPlayer.IsInGLeague = gLeagueStatus;
+                        if (player["reference"] == null)
                             continue;
+                        int playerNbaId = (int)player["reference"];
+                        bool gLeagueStatus = player["status"].ToString().Equals("D-LEAGUE") ? true : false;
+                        if (dbPlayers.Any(p => p.NbaID == playerNbaId))
+                        {
+                            Player dbPlayer = dbPlayers.Where(p => p.NbaID == playerNbaId).FirstOrDefault();
+                            if (dbPlayer.Team == null)
+                                dbPlayer.Team = dbTeam;
+
+                            // UPDATE EXISTING
+                            if (dbPlayer.Team.NbaID == teamNbaId)
+                            {
+                                dbPlayer.IsInGLeague = gLeagueStatus;
+                                continue;
+                            }
+                            else
+                            {
+                                var newTeam = dbTeams.Where(t => t.NbaID == teamNbaId).FirstOrDefault();
+                                dbPlayer.Team = newTeam;
+                                if (player["jersey_number"] != null)
+                                    dbPlayer.Number = (int)player["jersey_number"];
+                                dbPlayer.IsInGLeague = gLeagueStatus;
+                            }
                         }
                         else
                         {
-                            var newTeam = dbTeams.Where(t => t.NbaID == teamNbaId).FirstOrDefault();
-                            dbPlayer.Team = newTeam;
-                            dbPlayer.Number = (int)player["jersey_number"];
-                            dbPlayer.IsInGLeague = gLeagueStatus;
-                        }
-                    }
-                    else
-                    {
-                        // ADD NEW
-                        try
-                        {
-                            string abbrName = "";
-                            if (player["first_name"] != null
-                                && player["first_name"].ToString().Length > 1)
-                                abbrName = string.Format("{0}. {1}", player["first_name"].ToString()[0], player["last_name"].ToString());
-                            else
-                                abbrName = player["last_name"].ToString();
-                            var playerObj = new Player
+                            // ADD NEW
+                            try
                             {
-                                FullName = (string)player["full_name"],
-                                FirstName = (string)player["first_name"],
-                                LastName = (string)player["last_name"],
-                                AbbrName = abbrName,
-                                Position = (string)player["primary_position"],
-                                NbaID = (int)player["reference"],
-                                Number = (int)player["jersey_number"],
-                                Price = PlayerSeed.PRICE_FLOOR,
-                                FPPG = 0.0,
-                                PTS = 0.0,
-                                REB = 0.0,
-                                AST = 0.0,
-                                STL = 0.0,
-                                BLK = 0.0,
-                                TeamID = dbTeam.TeamID,
-                                Team = dbTeam,
-                                IsPlaying = false,
-                                Status = "Active",
-                                IsInGLeague = gLeagueStatus
-                            };
-                            await dbPlayers.AddAsync(playerObj);
-                            if (playerObj.Position.Equals("NA"))
-                                await PushService.Instance.Value.SendAdminNotification(new PushNotificationViewModel("Fantasy Hoops Notification", string.Format("Player '{0}' with position {1} was added to database.", playerObj.FullName, playerObj.Position)));
-                        }
-                        catch (ArgumentNullException)
-                        {
-                            continue;
+                                string abbrName = "";
+                                if (player["first_name"] != null
+                                    && player["first_name"].ToString().Length > 1)
+                                    abbrName = string.Format("{0}. {1}", player["first_name"].ToString()[0], player["last_name"].ToString());
+                                else
+                                    abbrName = player["last_name"].ToString();
+                                var playerObj = new Player
+                                {
+                                    FullName = (string)player["full_name"],
+                                    FirstName = (string)player["first_name"],
+                                    LastName = (string)player["last_name"],
+                                    AbbrName = abbrName,
+                                    Position = (string)player["primary_position"],
+                                    NbaID = (int)player["reference"],
+                                    Number = (int)player["jersey_number"],
+                                    Price = PlayerSeed.PRICE_FLOOR,
+                                    FPPG = 0.0,
+                                    PTS = 0.0,
+                                    REB = 0.0,
+                                    AST = 0.0,
+                                    STL = 0.0,
+                                    BLK = 0.0,
+                                    TeamID = dbTeam.TeamID,
+                                    Team = dbTeam,
+                                    IsPlaying = false,
+                                    Status = "Active",
+                                    IsInGLeague = gLeagueStatus
+                                };
+                                await dbPlayers.AddAsync(playerObj);
+                                if (playerObj.Position.Equals("NA"))
+                                    await PushService.Instance.Value.SendAdminNotification(new PushNotificationViewModel("Fantasy Hoops Notification", string.Format("Player '{0}' with position {1} was added to database.", playerObj.FullName, playerObj.Position)));
+                            }
+                            catch (ArgumentNullException)
+                            {
+                                continue;
+                            }
                         }
                     }
-                }
             }
             await context.SaveChangesAsync();
         }
@@ -132,7 +133,7 @@ namespace fantasy_hoops.Database
         private static async Task<List<JToken>> GetTeams()
         {
             HttpWebResponse webResponse = null;
-            string teamsURL = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + CommonFunctions.GetSeasonYear()
+            string teamsURL = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + 2018
                 + "/REG/rankings.json?api_key=" + Environment.GetEnvironmentVariable("API_KEY");
             try
             {
@@ -152,11 +153,11 @@ namespace fantasy_hoops.Database
             }
             if (webResponse != null)
             {
-                string expiration = webResponse.Headers.Get(3);
-                int callsLeft = 1000 - (int.Parse(webResponse.Headers.Get(12)) + 30);
-                PushNotificationViewModel notification =
-                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API calls left: " + callsLeft);
-                await PushService.Instance.Value.SendAdminNotification(notification);
+               string expiration = webResponse.Headers.Get(3);
+               int callsLeft = 1000 - (int.Parse(webResponse.Headers.Get(12)) + 30);
+               PushNotificationViewModel notification =
+                   new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API calls left: " + callsLeft);
+               await PushService.Instance.Value.SendAdminNotification(notification);
             }
             string responseString = CommonFunctions.ResponseToString(webResponse);
             List<JToken> teams = new List<JToken>();
