@@ -66,15 +66,15 @@ namespace fantasy_hoops.Database
                 if (injury.Value<string>("ModifiedDate") != null)
                 {
                     dateModified = DateTime.Parse(injury["ModifiedDate"].ToString());
-                    dateModified = dateModified.Value.IsDaylightSavingTime()
-                        ? dateModified.Value.AddHours(-1)
-                        : dateModified;
+                    //dateModified = dateModified.Value.IsDaylightSavingTime()
+                    //    ? dateModified.Value.AddHours(-1)
+                    //    : dateModified;
                 }
 
                 if (context.Injuries
                     .Where(inj => inj.Player.NbaID == NbaID)
                     .Any(inj => inj.Status.Equals((string)injury["PlayerStatus"])
-                        && dateModified == inj.Date))
+                        && dateModified.Equals(inj.Date)))
                     continue;
 
                 try
