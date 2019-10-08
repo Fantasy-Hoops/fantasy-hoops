@@ -18,7 +18,7 @@ namespace fantasy_hoops.Database
 {
     public class InjuriesSeed
     {
-        private static Stack<InjuryPushNotificationViewModel> lineupsAffected = new Stack<InjuryPushNotificationViewModel>();
+        private static readonly Stack<InjuryPushNotificationViewModel> lineupsAffected = new Stack<InjuryPushNotificationViewModel>();
 
         public static void Initialize(GameContext context)
         {
@@ -87,7 +87,7 @@ namespace fantasy_hoops.Database
                 }
             }
             await context.SaveChangesAsync();
-            await SendPushNotifications(context);
+            await SendPushNotifications();
         }
 
         private static async Task AddToDatabaseAsync(GameContext context, JToken injury, DateTime? dateModified)
@@ -173,17 +173,18 @@ namespace fantasy_hoops.Database
             }
         }
 
-        private static async Task SendPushNotifications(GameContext context)
+        private static async Task SendPushNotifications()
         {
-            WebPushClient _webPushClient = new WebPushClient();
             while (lineupsAffected.Count > 0)
             {
                 var lineup = lineupsAffected.Pop();
                 PushNotificationViewModel notification =
                                 new PushNotificationViewModel(lineup.FullName,
-                                                string.Format("Status changed from {0} to {1}!", lineup.StatusBefore, lineup.StatusAfter));
-                notification.Image = Environment.GetEnvironmentVariable("IMAGES_SERVER_NAME") + "/content/images/players/" + lineup.PlayerNbaID + ".png";
-                notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🤾🏾‍♂️ Lineup") };
+                                                string.Format("Status changed from {0} to {1}!", lineup.StatusBefore, lineup.StatusAfter))
+                                {
+                                    Image = Environment.GetEnvironmentVariable("IMAGES_SERVER_NAME") + "/content/images/players/" + lineup.PlayerNbaID + ".png",
+                                    Actions = new List<NotificationAction> { new NotificationAction("lineup", "🤾🏾‍♂️ Lineup") }
+                                };
                 await PushService.Instance.Value.Send(lineup.UserID, notification);
             }
         }
