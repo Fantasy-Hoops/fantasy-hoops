@@ -156,7 +156,7 @@ namespace fantasy_hoops.Database
             if (statsPlayer == null)
                 return;
 
-            statsObj.PlayerID = statsPlayer.PlayerID;
+			statsObj.Player = statsPlayer;
             int playerPrice = _scoreService.GetPrice(statsPlayer);
 
             var dbStats = context.Stats
@@ -213,7 +213,11 @@ namespace fantasy_hoops.Database
         private static Game GetGame(GameContext context, DateTime date, int homeTeamId, int awayTeamId, int homeScore, int awayScore)
         {
             Team homeTeam = context.Teams.Where(team => team.NbaID == homeTeamId).FirstOrDefault();
+			if (homeTeam == null)
+				homeTeam = CommonFunctions.GetUnknownTeam(context);
             Team awayTeam = context.Teams.Where(team => team.NbaID == awayTeamId).FirstOrDefault();
+			if (awayTeam == null)
+				awayTeam = CommonFunctions.GetUnknownTeam(context);
 
             Game gameObj = context.Games.Where(game => game.Date.Equals(date) && game.HomeTeam.Equals(homeTeam) && game.AwayTeam.Equals(awayTeam)).FirstOrDefault();
             if (gameObj != null)

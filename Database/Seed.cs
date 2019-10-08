@@ -65,11 +65,13 @@ namespace fantasy_hoops.Database
                         if (dbPlayers.Any(p => p.NbaID == playerNbaId))
                         {
                             Player dbPlayer = dbPlayers.Where(p => p.NbaID == playerNbaId).FirstOrDefault();
-                            if (dbPlayer.Team == null)
+                            if (dbPlayer.Team == null) {
                                 dbPlayer.Team = dbTeam;
+							context.SaveChanges();
+                            }
 
                             // UPDATE EXISTING
-                            if (dbPlayer.Team.NbaID == teamNbaId)
+                        if (dbPlayer.TeamID == dbTeam.TeamID)
                             {
                                 dbPlayer.IsInGLeague = gLeagueStatus;
                                 continue;
@@ -151,14 +153,14 @@ namespace fantasy_hoops.Database
                 await PushService.Instance.Value.SendAdminNotification(notification);
                 return new List<JToken>();
             }
-            if (webResponse != null)
-            {
-               string expiration = webResponse.Headers.Get(3);
-               int callsLeft = 1000 - (int.Parse(webResponse.Headers.Get(12)) + 30);
-               PushNotificationViewModel notification =
-                   new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API calls left: " + callsLeft);
-               await PushService.Instance.Value.SendAdminNotification(notification);
-            }
+            //if (webResponse != null)
+            //{
+            //   string expiration = webResponse.Headers.Get(3);
+            //   int callsLeft = 1000 - (int.Parse(webResponse.Headers.Get(12)) + 30);
+            //   PushNotificationViewModel notification =
+            //       new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API calls left: " + callsLeft);
+            //   await PushService.Instance.Value.SendAdminNotification(notification);
+            //}
             string responseString = CommonFunctions.ResponseToString(webResponse);
             List<JToken> teams = new List<JToken>();
             JObject json = JObject.Parse(responseString);

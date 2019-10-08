@@ -1,4 +1,5 @@
 ﻿using fantasy_hoops.Database;
+using fantasy_hoops.Models;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -134,5 +135,10 @@ namespace fantasy_hoops.Helpers
 			// Return the week of our adjusted day
 			return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
 		}
+
+        public static Team GetUnknownTeam(GameContext _context)
+        {
+            return _context.Teams.Where(t => t.NbaID == 0).FirstOrDefault();
+        }
 	}
 }
