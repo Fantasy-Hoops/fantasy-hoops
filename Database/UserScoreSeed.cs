@@ -15,7 +15,7 @@ namespace fantasy_hoops.Database
 {
     public class UserScoreSeed
     {
-        private static Stack<GameScorePushNotificationModel> _usersPlayed = new Stack<GameScorePushNotificationModel>();
+        private static readonly Stack<GameScorePushNotificationModel> _usersPlayed = new Stack<GameScorePushNotificationModel>();
 
         public static void Initialize(GameContext context)
         {
@@ -79,19 +79,20 @@ namespace fantasy_hoops.Database
                 context.GameScoreNotifications.Add(gs);
             }
             context.SaveChanges();
-            Task.Run(() => SendPushNotifications(context));
+            Task.Run(() => SendPushNotifications());
         }
 
-        private static async Task SendPushNotifications(GameContext context)
+        private static async Task SendPushNotifications()
         {
-            WebPushClient _webPushClient = new WebPushClient();
             while (_usersPlayed.Count > 0)
             {
                 var user = _usersPlayed.Pop();
                 PushNotificationViewModel notification =
                         new PushNotificationViewModel("Fantasy Hoops Game Score",
-                                string.Format("Game has finished! Your lineup scored {0} FP", user.Score));
-                notification.Actions = new List<NotificationAction> { new NotificationAction("leaderboard", "🏆 Leaderboard") };
+                                string.Format("Game has finished! Your lineup scored {0} FP", user.Score))
+                        {
+                            Actions = new List<NotificationAction> { new NotificationAction("leaderboard", "🏆 Leaderboard") }
+                        };
                 await PushService.Instance.Value.Send(user.UserID, notification);
             }
         }
