@@ -108,7 +108,7 @@ namespace fantasy_hoops.Database
 			{
 				JobManager.AddJob(() => Initialize(context),
 												s => s.WithName("statsSeed")
-												.ToRunOnceAt(NextGame.NEXT_GAME));
+												.ToRunOnceAt(NextGame.NEXT_GAME.AddMinutes(5)));
 				return;
 			}
 
@@ -132,7 +132,7 @@ namespace fantasy_hoops.Database
 
 				JobManager.AddJob(() => Initialize(context),
 												s => s.WithName("statsSeed")
-												.ToRunOnceAt(NextGame.NEXT_GAME));
+												.ToRunOnceAt(NextGame.NEXT_GAME.AddMinutes(5)));
 			}
 		}
 
