@@ -54,7 +54,7 @@ namespace fantasy_hoops.Database
             int seasonYear = int.Parse(CommonFunctions.SEASON_YEAR);
             IEnumerable<JToken> injuries = GetInjuries()
                 .Where(inj => inj.Value<string>("ModifiedDate") == null
-                    || DateTime.Parse(inj.Value<string>("ModifiedDate")).Year >= seasonYear).AsEnumerable();
+                    || DateTime.Parse(inj.Value<string>("ModifiedDate")) >= new DateTime(seasonYear, 8, 1)).AsEnumerable();
             foreach (JToken injury in injuries)
             {
                 int NbaID;
