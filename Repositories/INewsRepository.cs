@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace fantasy_hoops.Repositories
 {
-    interface INewsRepository
+    public interface INewsRepository
     {
 
         IQueryable<Object> GetNews(int start, int count);

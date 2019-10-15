@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace fantasy_hoops.Repositories
 {
-    interface IInjuryRepository
+    public interface IInjuryRepository
     {
 
         IQueryable<Object> GetInjuries();

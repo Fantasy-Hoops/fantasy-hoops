@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace fantasy_hoops.Services
 {
-    interface IBlogService
+    public interface IBlogService
     {
         void SubmitPost(SubmitPostViewModel model);
         void DeletePost(int id);

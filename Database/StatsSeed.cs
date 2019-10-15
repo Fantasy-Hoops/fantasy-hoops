@@ -14,20 +14,20 @@ namespace fantasy_hoops.Database
 	public class StatsSeed
 	{
 
-		private static ScoreService _scoreService;
+		private static IScoreService _scoreService;
 
-		public static void Initialize(GameContext context)
-		{
-			if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("statsSeed")))
+		public static void Initialize(GameContext context, IScoreService scoreService)
+        {
+            _scoreService = scoreService;
+            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("statsSeed")))
 			{
-				JobManager.AddJob(() => Initialize(context),
+				JobManager.AddJob(() => Initialize(context, _scoreService),
 				s => s.WithName("statsSeed")
 				.ToRunOnceIn(30)
 				.Seconds());
 				return;
 			}
 
-			_scoreService = new ScoreService();
 			Task.Run(() => Calculate(context)).Wait();
 		}
 
@@ -43,7 +43,7 @@ namespace fantasy_hoops.Database
 		{
 			if (games.Any(g => (int)g["statusNum"] != 3 || (bool)g["isGameActivated"]))
 			{
-				JobManager.AddJob(() => Initialize(context),
+				JobManager.AddJob(() => Initialize(context, _scoreService),
 				s => s.WithName("statsSeed")
 				.ToRunOnceIn(5)
 				.Minutes());
@@ -106,7 +106,7 @@ namespace fantasy_hoops.Database
 
 			if (!isAnyGameStarted)
 			{
-				JobManager.AddJob(() => Initialize(context),
+				JobManager.AddJob(() => Initialize(context, _scoreService),
 												s => s.WithName("statsSeed")
 												.ToRunOnceIn(5).Minutes());
 				return;
@@ -115,7 +115,7 @@ namespace fantasy_hoops.Database
 			if (!IsFinished(context, games))
 			{
 				int minutesDelay = countOfActivatedGames == 0 ? 5 : 1;
-				JobManager.AddJob(() => Initialize(context),
+				JobManager.AddJob(() => Initialize(context, _scoreService),
 								s => s.WithName("statsSeed")
 								.ToRunOnceIn(minutesDelay).Minutes());
 			}
@@ -130,7 +130,7 @@ namespace fantasy_hoops.Database
 												.ToRunOnceIn(30)
 												.Seconds());
 
-				JobManager.AddJob(() => Initialize(context),
+				JobManager.AddJob(() => Initialize(context, _scoreService),
 												s => s.WithName("statsSeed")
 												.ToRunOnceAt(NextGame.NEXT_GAME.AddMinutes(5)));
 			}

@@ -17,20 +17,21 @@ namespace fantasy_hoops.Database
 		public static DateTime PLAYER_POOL_DATE = DateTime.UtcNow;
 		public static int PRICE_FLOOR = 10;
 
-		private static ScoreService _scoreService;
+		private static IScoreService _scoreService;
 
-		public static void Initialize(GameContext context, bool updatePrice)
+		public static void Initialize(GameContext context, IScoreService scoreService, bool updatePrice)
 		{
-			if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("playerSeed")))
+            _scoreService = scoreService;
+
+            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("playerSeed")))
 			{
-				JobManager.AddJob(() => Initialize(context, updatePrice),
+				JobManager.AddJob(() => Initialize(context, _scoreService, updatePrice),
 				s => s.WithName("playerSeed")
 				.ToRunOnceIn(30)
 				.Seconds());
 				return;
 			}
 
-			_scoreService = new ScoreService();
 			if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")))
 				Task.Run(() => Calculate(context, updatePrice)).Wait();
 			NextGame.NEXT_GAME_CLIENT = NextGame.NEXT_GAME;

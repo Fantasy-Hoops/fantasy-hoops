@@ -23,12 +23,19 @@ namespace fantasy_hoops.Database
 		private const int GAME_OFFSET = 10;
 		private static int offset = 0;
 
-		public static void SetClientTime()
+        private readonly IScoreService _scoreService;
+
+        public NextGame(IScoreService scoreService)
+        {
+            _scoreService = scoreService;
+        }
+
+        public static void SetClientTime()
 		{
 			NEXT_GAME_CLIENT = NEXT_GAME;
 		}
 
-		public static void Initialize(GameContext context, bool updatePrices = true)
+		public void Initialize(GameContext context, bool updatePrices = true)
 		{
 			string gameDate = GetDate();
 
@@ -77,7 +84,7 @@ namespace fantasy_hoops.Database
 				}
 
 
-				JobManager.AddJob(() => PlayerSeed.Initialize(context, updatePrices),
+				JobManager.AddJob(() => PlayerSeed.Initialize(context, _scoreService, updatePrices),
 								 s => s.WithName("playerSeed")
 								 .ToRunNow());
 			}
@@ -91,7 +98,7 @@ namespace fantasy_hoops.Database
 				Task.Run(() => SetPlayersNotPlaying(context)).Wait();
 			}
 
-			JobManager.AddJob(() => StatsSeed.Initialize(context),
+			JobManager.AddJob(() => StatsSeed.Initialize(context, _scoreService),
 							s => s.WithName("statsSeed")
 							.ToRunNow());
 		}

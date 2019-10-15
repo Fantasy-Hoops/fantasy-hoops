@@ -1,5 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
@@ -9,8 +9,8 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
     <AssemblyName>fantasy_hoops</AssemblyName>
     <RootNamespace>fantasy_hoops</RootNamespace>
+    <UserSecretsId>e41963f6-d9d6-4732-b053-c5cec53f6da9</UserSecretsId>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="dotenv.net" Version="1.0.4" />
     <PackageReference Include="FluentScheduler" Version="5.3.0" />
@@ -40,13 +40,11 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.4.0" />
     <PackageReference Include="WebPush" Version="1.0.11" />
   </ItemGroup>
-
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Content Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Migrations - Copy\20191002121002_InitialMSSQL.cs" />
     <Compile Remove="Migrations - Copy\20191002121002_InitialMSSQL.Designer.cs" />
@@ -57,15 +55,12 @@
     <Compile Remove="Migrations\20191023142301_AddAvatarURL.cs" />
     <Compile Remove="Migrations\20191023142301_AddAvatarURL.Designer.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <None Include=".env" CopyToOutputDirectory="Always" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Models\Notifications\" />
   </ItemGroup>
-
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
@@ -75,20 +70,17 @@
     <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
   </Target>
-
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
-
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
       <DistFiles Include="$(SpaRoot)build\**" />
-      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+      <ResolvedFileToPublish Include="@(DistFiles-&gt;'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
         <RelativePath>%(DistFiles.Identity)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
-
 </Project>

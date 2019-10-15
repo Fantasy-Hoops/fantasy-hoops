@@ -11,11 +11,11 @@ namespace fantasy_hoops.Controllers
     public class NewsController
     {
 
-        private readonly NewsRepository _repository;
+        private readonly INewsRepository _repository;
 
-        public NewsController()
+        public NewsController(INewsRepository repository)
         {
-            _repository = new NewsRepository(new GameContext());
+            _repository = repository;
         }
 
         [HttpGet]

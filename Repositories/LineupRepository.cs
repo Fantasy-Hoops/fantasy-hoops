@@ -120,5 +120,19 @@ namespace fantasy_hoops.Repositories
         {
             return _context.Players.Where(pg => pg.PlayerID == playerID).Select(p => p.Price).FirstOrDefault() != price;
         }
+
+        public IEnumerable<string> GetUserSelectedIds()
+        {
+            return _context.UserLineups
+                .Where(lineup => lineup.Date.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date))
+                .Select(lineup => lineup.UserID);
+        }
+
+        public IEnumerable<User> UsersNotSelected(IEnumerable<string> usersSelectedIDs)
+        {
+            return _context.Users
+                .Where(user => user.Streak > 0 && !usersSelectedIDs.Any(userID => userID.Equals(user.Id)))
+                .ToList();
+        }
     }
 }

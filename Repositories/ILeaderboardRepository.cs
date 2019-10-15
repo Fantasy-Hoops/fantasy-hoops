@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace fantasy_hoops.Repositories
 {
-    interface ILeaderboardRepository
+    public interface ILeaderboardRepository
     {
 
         IEnumerable<Object> GetPlayerLeaderboard(int from, int limit, string type);

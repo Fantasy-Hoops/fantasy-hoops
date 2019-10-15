@@ -16,15 +16,13 @@ namespace fantasy_hoops.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        private readonly GameContext _context;
-        private readonly UserRepository _repository;
-        private readonly UserService _service;
+        private readonly IUserRepository _repository;
+        private readonly IUserService _service;
 
-        public UserController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserController(IUserRepository repository, IUserService service, UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            _context = new GameContext();
-            _repository = new UserRepository(_context);
-            _service = new UserService(_context, userManager, signInManager);
+            _repository = repository;
+            _service = service;
         }
 
         [HttpPost("login")]
@@ -108,7 +106,7 @@ namespace fantasy_hoops.Controllers
         public async Task<IActionResult> EditProfile([FromBody]EditProfileViewModel model)
         {
             // No duplicate usernames
-            if (_context.Users.Where(x => x.UserName.ToLower().Equals(model.UserName.ToLower()) && !x.Id.Equals(model.Id)).Any())
+            if (_repository.IsDuplicateUserName(model.Id, model.Email))
                 return StatusCode(409, "Username is already taken!");
 
             // Check for username length
@@ -116,7 +114,7 @@ namespace fantasy_hoops.Controllers
                 return StatusCode(422, "Username must be between 4 and 11 symbols long!");
 
             // No duplicate emails
-            if (_context.Users.Where(x => x.Email.ToLower().Equals(model.Email.ToLower()) && !x.Id.Equals(model.Id)).Any())
+            if (_repository.IsDuplicateEmail(model.Id, model.Email))
                 return StatusCode(409, "Email already has an user associated to it!");
 
             // Check if email is valid

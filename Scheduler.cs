@@ -1,4 +1,5 @@
 ﻿using fantasy_hoops.Database;
+using fantasy_hoops.Services;
 using FluentScheduler;
 using System;
 using System.Linq;
@@ -8,7 +9,23 @@ namespace fantasy_hoops
 {
 	public class Scheduler
 	{
-		public static async Task Run(GameContext _context)
+
+        private readonly GameContext _context;
+        private readonly IScoreService _scoreService;
+        private static readonly Lazy<Scheduler> INSTANCE = new Lazy<Scheduler>();
+
+        private Scheduler(GameContext context, IScoreService scoreService)
+        {
+            _context = context;
+            _scoreService = scoreService;
+        }
+
+        public static Lazy<Scheduler> Instance
+        {
+            get { return INSTANCE; }
+        }
+
+        public async Task Run()
 		{
 			if (_context.Teams.Count() < 30)
 				await Task.Run(() => Seed.Initialize(_context));
@@ -18,7 +35,9 @@ namespace fantasy_hoops
 			JobManager.Initialize(registry);
 			JobManager.UseUtcTime();
 
-			JobManager.AddJob(() => NextGame.Initialize(_context, false),
+            NextGame nextGame = new NextGame(_scoreService);
+
+			JobManager.AddJob(() => nextGame.Initialize(_context, false),
 					s => s.WithName("nextGame")
 					.ToRunNow());
 
