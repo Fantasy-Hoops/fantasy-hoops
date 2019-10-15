@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace fantasy_hoops.Repositories
 {
-    interface IPlayerRepository
+    public interface IPlayerRepository
     {
 
         IQueryable<Object> GetActivePlayers();

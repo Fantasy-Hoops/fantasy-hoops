@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace fantasy_hoops.Services
 {
-    interface ILineupService
+    public interface ILineupService
     {
 
         void SubmitLineup(SubmitLineupViewModel model);

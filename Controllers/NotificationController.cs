@@ -10,13 +10,11 @@ namespace fantasy_hoops.Controllers
     public class NotificationController : Controller
     {
 
-        private readonly GameContext context;
-        private readonly NotificationRepository _repository;
+        private readonly INotificationRepository _repository;
 
-        public NotificationController()
+        public NotificationController(INotificationRepository repository)
         {
-            context = new GameContext();
-            _repository = new NotificationRepository(context);
+            _repository = repository;
         }
 
         [HttpGet]

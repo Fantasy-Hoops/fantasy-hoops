@@ -21,13 +21,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
 using Swashbuckle.AspNetCore.Swagger;
+using fantasy_hoops.Repositories;
 
 namespace fantasy_hoops
 {
     public class Startup
     {
-        private GameContext _context;
-
         public IHostingEnvironment HostingEnvironment { get; private set; }
         public IConfiguration Configuration { get; private set; }
 
@@ -35,10 +34,24 @@ namespace fantasy_hoops
         {
             Configuration = configuration;
             HostingEnvironment = env;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json",
+                             optional: false,
+                             reloadOnChange: true)
+                .AddEnvironmentVariables();
+
+            if (env.IsDevelopment())
+            {
+                builder.AddUserSecrets<Startup>();
+            }
+
+            Configuration = builder.Build();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            AddScopes(services);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IPushService, PushService>();
             services.AddMvc();
@@ -71,7 +84,8 @@ namespace fantasy_hoops
 #if DEBUG
             DotEnv.Config(false, ".env.development");
 
-            services.AddSwaggerGen(c => {
+            services.AddSwaggerGen(c =>
+            {
                 c.SwaggerDoc("v1", new Info
                 {
                     Version = "v1",
@@ -80,6 +94,9 @@ namespace fantasy_hoops
                 });
             });
 #endif
+
+            var connectionString = Configuration["CONNECTION_STRING"];
+            services.AddDbContext<GameContext>(o => o.UseSqlServer(connectionString));
 
             ConfigureAuth(services);
             ConfigureDbContext(services);
@@ -90,6 +107,32 @@ namespace fantasy_hoops
             {
                 configuration.RootPath = "ClientApp/build";
             });
+        }
+
+        public void AddScopes(IServiceCollection services)
+        {
+            // Services
+            services.AddScoped<IBlogService, BlogService>();
+            services.AddScoped<IFriendService, FriendService>();
+            services.AddScoped<ILineupService, LineupService>();
+            services.AddScoped<IPushService, PushService>();
+            services.AddScoped<IScoreService, ScoreService>();
+            services.AddScoped<IUserService, UserService>();
+
+            // Repositories
+            services.AddScoped<IBlogRepository, BlogRepository>();
+            services.AddScoped<IFriendRepository, FriendRepository>();
+            services.AddScoped<IInjuryRepository, InjuryRepository>();
+            services.AddScoped<ILeaderboardRepository, LeaderboardRepository>();
+            services.AddScoped<ILineupRepository, LineupRepository>();
+            services.AddScoped<INewsRepository, NewsRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<IPlayerRepository, PlayerRepository>();
+            services.AddScoped<IPushNotificationRepository, PushNotificationRepository>();
+            services.AddScoped<IScoreRepository, ScoreRepository>();
+            services.AddScoped<IStatsRepository, StatsRepository>();
+            services.AddScoped<ITeamRepository, TeamRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
 
         private void ConfigureAuth(IServiceCollection services)
@@ -132,6 +175,15 @@ namespace fantasy_hoops
                 configureOptions.TokenValidationParameters = tokenValidationParameters;
                 configureOptions.SaveToken = true;
             });
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    IConfigurationSection googleAuthNSection =
+                        Configuration.GetSection("Authentication:Google");
+
+                    options.ClientId = googleAuthNSection["ClientId"];
+                    options.ClientSecret = googleAuthNSection["ClientSecret"];
+                });
         }
 
         private void ConfigureDbContext(IServiceCollection services)
@@ -148,9 +200,7 @@ namespace fantasy_hoops
 
         private async Task StartJobs()
         {
-            _context = new GameContext();
-            _context.Database.Migrate();
-            await Scheduler.Run(_context);
+            await Scheduler.Instance.Value.Run();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -160,7 +210,8 @@ namespace fantasy_hoops
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger(c => c.RouteTemplate = "swagger/{documentName}/swagger.json");
-                app.UseSwaggerUI(c => {
+                app.UseSwaggerUI(c =>
+                {
                     c.RoutePrefix = "swagger";
                     c.SwaggerEndpoint("v1/swagger.json", "FH API V1");
                 });
@@ -190,6 +241,13 @@ namespace fantasy_hoops
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<GameContext>();
+                context.Database.Migrate();
+            }
+
             Task.Run(() => CreateRoles(serviceProvider)).Wait();
         }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace fantasy_hoops.Services
 {
-    interface IScoreService
+    public interface IScoreService
     {
 
         double GetGameScore(int points, int fieldGoalsMade, int offensiveRebounds,

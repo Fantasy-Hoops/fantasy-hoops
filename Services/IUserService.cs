@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace fantasy_hoops.Services
 {
-    interface IUserService
+    public interface IUserService
     {
 
         Task<bool> Login(LoginViewModel model);

@@ -25,8 +25,9 @@ namespace fantasy_hoops.Database
         public DbSet<PushSubscription> PushSubscriptions { get; set; }
         public DbSet<Post> Posts { get; set; }
 
-        public GameContext()
+        public GameContext(DbContextOptions options) : base(options)
         {
+
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -39,9 +40,9 @@ namespace fantasy_hoops.Database
                 .HasForeignKey<Injury>(i => i.PlayerID);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+        //}
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace fantasy_hoops.Repositories
 {
-    interface INotificationRepository
+    public interface INotificationRepository
     {
 
         IEnumerable<Notification> GetAllNotifications();

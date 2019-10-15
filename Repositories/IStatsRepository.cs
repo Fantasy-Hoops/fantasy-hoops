@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace fantasy_hoops.Repositories
 {
-    interface IStatsRepository
+    public interface IStatsRepository
     {
 
         IQueryable<Object> GetStats();

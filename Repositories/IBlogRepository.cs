@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace fantasy_hoops.Repositories
 {
-    interface IBlogRepository
+    public interface IBlogRepository
     {
         IQueryable<Object> GetPosts();
         bool PostExists(int id);

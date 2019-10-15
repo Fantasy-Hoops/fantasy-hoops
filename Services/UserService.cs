@@ -20,14 +20,14 @@ namespace fantasy_hoops.Services
     {
 
         private readonly GameContext _context;
-        private readonly UserRepository _repository;
+        private readonly IUserRepository _repository;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
-        public UserService(GameContext context, UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserService(GameContext context, IUserRepository repository, UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _context = context;
-            _repository = new UserRepository(_context);
+            _repository = repository;
             _userManager = userManager;
             _signInManager = signInManager;
         }

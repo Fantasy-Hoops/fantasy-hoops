@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace fantasy_hoops.Repositories
 {
@@ -10,13 +12,13 @@ namespace fantasy_hoops.Repositories
     {
 
         private readonly GameContext _context;
-        private readonly TeamRepository _teamRepository;
+        private readonly ITeamRepository _teamRepository;
         DateTime date = CommonFunctions.GetDate("weekly");
 
-        public UserRepository(GameContext context)
+        public UserRepository(GameContext context, ITeamRepository repository)
         {
             _context = context;
-            _teamRepository = new TeamRepository(_context);
+            _teamRepository = repository;
         }
 
         public IQueryable<Object> GetProfile(string id, int start, int count)
@@ -89,7 +91,7 @@ namespace fantasy_hoops.Repositories
                     (userRole, role) => role.NormalizedName);
         }
 
-        public bool IsAdmin(string userIdid)
+        public bool IsAdmin(string userId)
         {
             string adminRoleId = _context.Roles
                 .Where(role => role.NormalizedName.Equals("Admin"))
@@ -97,7 +99,7 @@ namespace fantasy_hoops.Repositories
                 .FirstOrDefault();
 
             return _context.UserRoles
-                .Where(userRole => userRole.UserId.Equals(userIdid))
+                .Where(userRole => userRole.UserId.Equals(userId))
                 .Any(role => role.RoleId.Equals(adminRoleId));
         }
 
@@ -309,6 +311,26 @@ namespace fantasy_hoops.Repositories
                 rank++;
             });
             return position;
+        }
+
+        public bool IsDuplicateUserName(string id, string username)
+        {
+            return _context.Users.Where(x => x.UserName.ToLower().Equals(username.ToLower()) && !x.Id.Equals(id)).Any();
+        }
+
+        public bool IsDuplicateEmail(string id, string email)
+        {
+            return _context.Users.Where(x => x.Email.ToLower().Equals(email.ToLower()) && !x.Id.Equals(id)).Any();
+        }
+
+        public string GetAdminRoleId()
+        {
+            return _context.Roles.Where(role => role.Name.Equals("Admin")).FirstOrDefault().Id;
+        }
+
+        public List<IdentityUserRole<string>> GetAdmins(string adminRoleId)
+        {
+            return _context.UserRoles.Where(userRole => userRole.RoleId.Equals(adminRoleId)).ToList();
         }
     }
 }
