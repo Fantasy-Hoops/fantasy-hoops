@@ -106,8 +106,6 @@ namespace fantasy_hoops.Database
                 Date = dateModified,
                 Link = injury.Value<string>("Link") != null ? (string)injury["Link"] : null
             };
-            injuryObj.Player = injuryPlayer;
-            injuryObj.PlayerID = injuryPlayer.PlayerID;
 
             var dbInjury = context.Injuries
                     .Where(inj => inj.Player.NbaID == (int)injury["PrimarySourceKey"])
@@ -116,7 +114,12 @@ namespace fantasy_hoops.Database
 
             if (dbInjury == null)
             {
+                injuryObj.Player = injuryPlayer;
+                injuryObj.PlayerID = injuryPlayer.PlayerID;
                 await context.Injuries.AddAsync(injuryObj);
+                context.SaveChanges();
+                injuryPlayer.InjuryID = injuryObj.InjuryID;
+                injuryPlayer.Injury = injuryObj;
             }
             else
             {
