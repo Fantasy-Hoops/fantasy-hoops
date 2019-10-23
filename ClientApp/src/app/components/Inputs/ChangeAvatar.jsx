@@ -66,8 +66,10 @@ export class ChangeAvatar extends Component {
         this.setState({
           showAlert: true,
           alertType: 'alert-success',
-          alertText: res.data
+          alertText: "Avatar was changed successfully."
         });
+        localStorage.setItem('accessToken', res.data);
+        window.location.reload();
       })
       .catch(err => {
         this.setState({
