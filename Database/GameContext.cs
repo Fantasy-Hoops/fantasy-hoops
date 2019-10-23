@@ -13,7 +13,7 @@ namespace fantasy_hoops.Database
         public DbSet<Team> Teams { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Stats> Stats { get; set; }
-        public DbSet<Injuries> Injuries { get; set; }
+        public DbSet<Injury> Injuries { get; set; }
         public DbSet<Paragraph> Paragraphs { get; set; }
         public DbSet<News> News { get; set; }
         public DbSet<UserLineup> UserLineups { get; set; }
@@ -29,6 +29,15 @@ namespace fantasy_hoops.Database
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Player>()
+                .HasOne(p => p.Injury)
+                .WithOne(i => i.Player)
+                .HasForeignKey<Injury>(i => i.PlayerID);
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
@@ -93,10 +93,10 @@ namespace fantasy_hoops.Database
 		private static bool IsPlaying(Player player)
 		{
 			// Don't show players out for more that 5 days
-			if ((((player.StatusDate.HasValue && player.StatusDate.Value.AddDays(5) < NextGame.NEXT_GAME)
-					|| !player.StatusDate.HasValue)
-					&& (player.Status.ToLower().Contains("out")
-					|| player.Status.ToLower().Contains("injured")))
+			if ((((player.Injury != null && player.Injury.Date.HasValue && player.Injury.Date.Value.AddDays(5) < NextGame.NEXT_GAME)
+					|| !player.Injury.Date.HasValue)
+					&& (player.Injury.Status.ToLower().Contains("out")
+					|| player.Injury.Status.ToLower().Contains("injured")))
 					|| player.IsInGLeague
 					|| player.Position.Equals("NA"))
 				return false;

@@ -35,7 +35,7 @@ namespace fantasy_hoops.Repositories
                     x.Price,
                     x.Position,
                     x.FPPG,
-                    injuryStatus = x.Status
+                    injuryStatus = x.Injury != null ? x.Injury.Status : "Active"
                 })
                 .OrderByDescending(p => p.Price);
         }
@@ -61,7 +61,7 @@ namespace fantasy_hoops.Repositories
                     x.TOV,
                     x.FPPG,
                     x.Price,
-                    injuryStatus = x.Status,
+                    injuryStatus = x.Injury != null ? x.Injury.Status : "Active",
                     Team = new
                     {
                         x.TeamID,
