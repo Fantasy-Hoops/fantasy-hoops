@@ -18,7 +18,7 @@ export class UserCard extends Component {
         <div className="avatar">
           <Img
             alt={user.userName}
-            src={`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.id}.png`}
+            src={`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.avatarURL}.png`}
             loader={<img width="500px" src={require('../../../content/images/imageLoader2.gif')} alt="Loader" />}
             decode={false}
           />

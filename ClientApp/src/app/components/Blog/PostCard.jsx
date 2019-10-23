@@ -34,7 +34,7 @@ class PostCard extends PureComponent {
             className="PostCard__AuthorImage"
             alt=""
             src={[
-              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${post.author.id}.png`,
+              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${post.author.avatarURL}.png`,
               defaultPhoto
             ]}
             loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader" />}

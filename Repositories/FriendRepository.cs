@@ -35,6 +35,7 @@ namespace fantasy_hoops.Repositories
                 {
                     x.Receiver.UserName,
                     x.Receiver.Id,
+                    x.Receiver.AvatarURL,
                     Status = RequestType.Outcoming
                 })
                 .Union(_context.FriendRequests
@@ -43,6 +44,7 @@ namespace fantasy_hoops.Repositories
                     {
                         x.Sender.UserName,
                         x.Sender.Id,
+                        x.Sender.AvatarURL,
                         Status = RequestType.Incoming
                     })
                 );
@@ -55,7 +57,8 @@ namespace fantasy_hoops.Repositories
                 .Select(x => new
                 {
                     x.Sender.UserName,
-                    x.Sender.Id
+                    x.Sender.Id,
+                    x.Sender.AvatarURL
                 });
         }
 

@@ -5,7 +5,7 @@ import Routes from '../../../routes/routes';
 
 export const RequestCard = (props) => {
   const {
-    id, userName, type, cancel, decline, accept
+    id, userName, type, cancel, decline, accept, avatarURL
   } = props;
 
   return (
@@ -16,7 +16,7 @@ export const RequestCard = (props) => {
             className="RequestCard__Avatar"
             alt={userName}
             src={[
-              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${id}.png`,
+              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${avatarURL}.png`,
               defaultPhoto
             ]}
             decode={false}

@@ -59,7 +59,8 @@ namespace fantasy_hoops.Repositories
                 Streak = streak,
                 Position = position,
                 TotalScore = totalScore,
-                userRecord
+                userRecord,
+                x.AvatarURL
             });
             return profile;
         }
@@ -111,7 +112,8 @@ namespace fantasy_hoops.Repositories
                    Color = _context.Teams
                        .Where(t => t.TeamID == x.Sender.FavoriteTeamId)
                        .Select(t => t.Color)
-                       .FirstOrDefault()
+                       .FirstOrDefault(),
+                   x.Sender.AvatarURL
                })
                .Union(_context.FriendRequests
                .Where(x => x.SenderID.Equals(id) && x.Status.Equals(RequestStatus.ACCEPTED))
@@ -122,7 +124,8 @@ namespace fantasy_hoops.Repositories
                    Color = _context.Teams
                      .Where(t => t.TeamID == x.Receiver.FavoriteTeamId)
                      .Select(t => t.Color)
-                     .FirstOrDefault()
+                     .FirstOrDefault(),
+                   x.Receiver.AvatarURL
                }));
 
             return friends;
@@ -148,7 +151,8 @@ namespace fantasy_hoops.Repositories
                     color = _context.Teams
                         .Where(y => y.TeamID == x.FavoriteTeamId)
                         .Select(y => y.Color)
-                        .FirstOrDefault()
+                        .FirstOrDefault(),
+                    x.AvatarURL
                 })
                 .OrderBy(x => x.UserName);
         }
