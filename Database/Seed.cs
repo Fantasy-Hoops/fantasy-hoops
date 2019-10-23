@@ -127,8 +127,11 @@ namespace fantasy_hoops.Database
                                 TeamID = dbTeam.TeamID,
                                 Team = dbTeam,
                                 IsPlaying = false,
-                                Status = "Active",
-                                IsInGLeague = gLeagueStatus
+                                IsInGLeague = gLeagueStatus,
+                                Injury = new Injury
+                                {
+                                    Status = "Active"
+                                }
                             };
                             await dbPlayers.AddAsync(playerObj);
                             if (playerObj.Position.Equals("NA"))
@@ -147,7 +150,7 @@ namespace fantasy_hoops.Database
         private static async Task<List<JToken>> GetTeams()
         {
             HttpWebResponse webResponse = null;
-            string teamsURL = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + CommonFunctions.SEASON_YEAR
+            string teamsURL = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + 2018
                 + "/REG/rankings.json?api_key=" + Environment.GetEnvironmentVariable("API_KEY");
             try
             {
@@ -165,14 +168,14 @@ namespace fantasy_hoops.Database
                 await PushService.Instance.Value.SendAdminNotification(notification);
                 return new List<JToken>();
             }
-            //if (webResponse != null)
-            //{
-            //   string expiration = webResponse.Headers.Get(3);
-            //   int callsLeft = 1000 - (int.Parse(webResponse.Headers.Get(12)) + 30);
-            //   PushNotificationViewModel notification =
-            //       new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API calls left: " + callsLeft);
-            //   await PushService.Instance.Value.SendAdminNotification(notification);
-            //}
+            if (webResponse != null)
+            {
+                string expiration = webResponse.Headers.Get(3);
+                int callsLeft = 1000 - (int.Parse(webResponse.Headers.Get(13)) + 30);
+                PushNotificationViewModel notification =
+                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API calls left: " + callsLeft);
+                await PushService.Instance.Value.SendAdminNotification(notification);
+            }
             string responseString = CommonFunctions.ResponseToString(webResponse);
             List<JToken> teams = new List<JToken>();
             JObject json = JObject.Parse(responseString);

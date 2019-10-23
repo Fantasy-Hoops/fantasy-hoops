@@ -38,7 +38,7 @@ namespace fantasy_hoops.Repositories
                         }
                     },
                     x.Status,
-                    x.Injury,
+                    Injury = x.InjuryTitle,
                     x.Title,
                     x.Description,
                     x.Link

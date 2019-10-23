@@ -54,7 +54,7 @@ namespace fantasy_hoops.Database
             int seasonYear = int.Parse(CommonFunctions.SEASON_YEAR);
             IEnumerable<JToken> injuries = GetInjuries()
                 .Where(inj => inj.Value<string>("ModifiedDate") == null
-                    || DateTime.Parse(inj.Value<string>("ModifiedDate")) >= new DateTime(seasonYear, 8, 1)).AsEnumerable();
+                    || DateTime.Parse(inj.Value<string>("ModifiedDate")) >= new DateTime(seasonYear - 1, 8, 1)).AsEnumerable();
             foreach (JToken injury in injuries)
             {
                 int NbaID;
@@ -65,10 +65,10 @@ namespace fantasy_hoops.Database
                 DateTime? dateModified = new DateTime?();
                 if (injury.Value<string>("ModifiedDate") != null)
                 {
-                    dateModified = DateTime.Parse(injury["ModifiedDate"].ToString());
-                    //dateModified = dateModified.Value.IsDaylightSavingTime()
-                    //    ? dateModified.Value.AddHours(-1)
-                    //    : dateModified;
+                    dateModified = DateTime.Parse(injury["ModifiedDate"].ToString()).AddHours(5);
+                    dateModified = dateModified.Value.IsDaylightSavingTime()
+                        ? dateModified.Value.AddHours(-1)
+                        : dateModified;
                 }
 
                 if (context.Injuries
@@ -97,11 +97,11 @@ namespace fantasy_hoops.Database
             if (injuryPlayer == null)
                 return;
 
-            var injuryObj = new Injuries
+            var injuryObj = new Injury
             {
                 Title = injury.Value<string>("Title") != null ? (string)injury["Title"] : null,
                 Status = injury.Value<string>("PlayerStatus") != null ? (string)injury["PlayerStatus"] : null,
-                Injury = injury.Value<string>("Injury") != null ? (string)injury["Injury"] : null,
+                InjuryTitle = injury.Value<string>("Injury") != null ? (string)injury["Injury"] : null,
                 Description = injury.Value<string>("News") != null ? (string)injury["News"] : null,
                 Date = dateModified,
                 Link = injury.Value<string>("Link") != null ? (string)injury["Link"] : null
@@ -122,23 +122,23 @@ namespace fantasy_hoops.Database
             {
                 dbInjury.Title = injuryObj.Title;
                 dbInjury.Status = injuryObj.Status;
-                dbInjury.Injury = injuryObj.Injury;
+                dbInjury.InjuryTitle = injuryObj.InjuryTitle;
                 dbInjury.Description = injuryObj.Description;
                 dbInjury.Date = injuryObj.Date;
                 dbInjury.Link = injuryObj.Link;
             }
 
-            string statusBefore = injuryPlayer.Status;
+            string statusBefore = injuryPlayer.Injury.Status;
             string statusAfter = injuryObj.Status;
 
             if (!statusBefore.Equals(statusAfter))
                 await UpdateNotifications(context, injuryObj, statusBefore, statusAfter);
 
-            injuryPlayer.Status = injuryObj.Status;
-            injuryPlayer.StatusDate = dateModified;
+            injuryPlayer.Injury.Status = injuryObj.Status;
+            injuryPlayer.Injury.Date = dateModified;
         }
 
-        private static async Task UpdateNotifications(GameContext context, Injuries injury, string statusBefore, string statusAfter)
+        private static async Task UpdateNotifications(GameContext context, Injury injury, string statusBefore, string statusAfter)
         {
             foreach (var lineup in context.UserLineups
                             .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
@@ -163,7 +163,7 @@ namespace fantasy_hoops.Database
                     DateCreated = DateTime.UtcNow,
                     PlayerID = injury.PlayerID,
                     InjuryStatus = injury.Status,
-                    InjuryDescription = injury.Injury
+                    InjuryDescription = injury.InjuryTitle
                 };
 
                 if (!context.InjuryNotifications
