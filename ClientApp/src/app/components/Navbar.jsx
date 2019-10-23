@@ -28,7 +28,7 @@ export default class Navbar extends Component {
     });
     if (isAuth()) {
       this.setState({
-        avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${parse().id}.png`, defaultPhoto)
+        avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${parse().avatarURL}.png`, defaultPhoto)
       });
     }
   }

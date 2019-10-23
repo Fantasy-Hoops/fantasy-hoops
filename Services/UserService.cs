@@ -54,6 +54,7 @@ namespace fantasy_hoops.Services
                 if (!Directory.Exists(avatarDir))
                     Directory.CreateDirectory(avatarDir);
                 new WebClient().DownloadFile("https://fantasyhoops.org/content/images/avatars/default.png", @"./ClientApp/build/content/images/avatars/" + _repository.GetUserByName(model.UserName).Id + ".png");
+                user.AvatarURL = user.Id;
             }
             catch { }
 
@@ -85,7 +86,8 @@ namespace fantasy_hoops.Services
                 new Claim("description", user.Description ??""),
                 new Claim("team", user.Team != null ? user.Team.Name : ""),
                 new Claim("roles", string.Join(";", roles)),
-                new Claim("isAdmin", isAdmin.ToString())
+                new Claim("isAdmin", isAdmin.ToString()),
+                new Claim("avatarURL", user.AvatarURL)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Tai yra raktas musu saugumo sistemai, kuo ilgesnis tuo geriau?"));
@@ -125,12 +127,23 @@ namespace fantasy_hoops.Services
             string avatarDir = @"./ClientApp/build/content/images/avatars";
             if (!Directory.Exists(avatarDir))
                 Directory.CreateDirectory(avatarDir);
-            var filePath = avatarDir + "/" + model.Id + ".png";
+
+            User user = _repository.GetUser(model.Id);
+            string oldFilePath = avatarDir + "/" + user.AvatarURL + ".png";
+
+            if (user.AvatarURL != null && File.Exists(oldFilePath))
+                File.Delete(oldFilePath);
+
+            string avatarId = Guid.NewGuid().ToString();
+            string newFilePath = avatarDir + "/" + avatarId + ".png";
+            user.AvatarURL = avatarId;
+
+            _context.SaveChangesAsync();
 
             model.Avatar = model.Avatar.Substring(22);
             try
             {
-                System.IO.File.WriteAllBytes(filePath, Convert.FromBase64String(model.Avatar));
+                System.IO.File.WriteAllBytes(newFilePath, Convert.FromBase64String(model.Avatar));
             }
             catch
             {
@@ -142,16 +155,23 @@ namespace fantasy_hoops.Services
         public bool ClearAvatar(AvatarViewModel model)
         {
             string avatarDir = @"./ClientApp/build/content/images/avatars";
+            User user = _repository.GetUser(model.Id);
+            string avatarId = user.AvatarURL;
+
+            if (avatarId == null)
+                return true;
 
             if (Directory.Exists(avatarDir))
             {
-                var filePath = avatarDir + "/" + model.Id + ".png";
+                var filePath = avatarDir + "/" + avatarId + ".png";
                 if (System.IO.File.Exists(filePath))
                 {
                     try
                     {
                         System.IO.File.Delete(filePath);
                         File.Copy(@"./ClientApp/build/content/images/avatars/default.png", @"./ClientApp/build/content/images/avatars/" + model.Id + ".png");
+                        user.AvatarURL = null;
+                        _context.SaveChangesAsync();
                     }
                     catch
                     {

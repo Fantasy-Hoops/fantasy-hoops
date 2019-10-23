@@ -17,7 +17,7 @@ export class Avatar extends Component {
   async componentDidMount() {
     const { user } = this.props;
     this.setState({
-      avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.id}.png`, defaultPhoto)
+      avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.avatarURL}.png`, defaultPhoto)
     });
 
     $('#changeImage').on('hidden.bs.modal', () => this.refs.changeAvatar.clear());
@@ -27,7 +27,7 @@ export class Avatar extends Component {
     if (this.props === nextProps) { return; }
     const { user } = nextProps;
     this.setState({
-      avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.id}.png`, defaultPhoto)
+      avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.avatarURL}.png`, defaultPhoto)
     });
   }
 

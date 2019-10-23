@@ -70,6 +70,7 @@ namespace fantasy_hoops.Repositories
                     {
                         lineup.UserID,
                         lineup.User.UserName,
+                        lineup.User.AvatarURL,
                         longDate = lineup.Date.ToString("yyyy-MM-dd"),
                         shortDate = lineup.Date.ToString("MMM. dd"),
                         lineup.Date,
@@ -107,6 +108,7 @@ namespace fantasy_hoops.Repositories
                         {
                             lineup.First().UserID,
                             lineup.First().User.UserName,
+                            lineup.First().User.AvatarURL,
                             FP = Math.Round(lineup.Sum(res => res.FP), 1)
                         })
                         .OrderByDescending(lineup => lineup.FP)
@@ -120,6 +122,7 @@ namespace fantasy_hoops.Repositories
                         {
                             lineup.First().UserID,
                             lineup.First().User.UserName,
+                            lineup.First().User.AvatarURL,
                             FP = Math.Round(lineup.Sum(res => res.FP), 1)
                         })
                         .OrderByDescending(lineup => lineup.FP)
@@ -160,6 +163,7 @@ namespace fantasy_hoops.Repositories
                     {
                         lineup.UserID,
                         lineup.User.UserName,
+                        lineup.User.AvatarURL,
                         longDate = lineup.Date.ToString("yyyy-MM-dd"),
                         shortDate = lineup.Date.ToString("MMM. dd"),
                         lineup.Date,
@@ -200,7 +204,8 @@ namespace fantasy_hoops.Repositories
                         {
                             lineup.First().UserID,
                             lineup.First().User.UserName,
-                            FP = Math.Round(lineup.Sum(res => res.FP), 1)
+                            FP = Math.Round(lineup.Sum(res => res.FP), 1),
+                            lineup.First().User.AvatarURL,
                         })
                         .OrderByDescending(lineup => lineup.FP)
                         .Skip(from)
@@ -211,6 +216,7 @@ namespace fantasy_hoops.Repositories
                     {
                         userID = user.Id,
                         user.UserName,
+                        user.AvatarURL,
                         FP = Math.Round(user.UserLineups
                             .Where(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
                             .Select(lineup => lineup.FP).Sum(), 1),
@@ -234,6 +240,7 @@ namespace fantasy_hoops.Repositories
                 {
                     lineup.UserID,
                     lineup.User.UserName,
+                    lineup.User.AvatarURL,
                     longDate = lineup.Date.ToString("yyyy-MM-dd"),
                     shortDate = lineup.Date.ToString("MMM. dd"),
                     lineup.Date,

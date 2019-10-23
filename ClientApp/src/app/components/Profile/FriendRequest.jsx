@@ -75,7 +75,7 @@ export default class FriendRequest extends PureComponent {
     const notification = {
       title: 'Fantasy Hoops Friend Request',
       body: `User '${sender.username}' sent you a friend request`,
-      icon: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${sender.id}.png`, defaultImage),
+      icon: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${sender.avatarURL}.png`, defaultImage),
       tag: `${sender.username}_friend_request`,
       actions: [
         { action: 'accept', title: '✔️ Accept' },

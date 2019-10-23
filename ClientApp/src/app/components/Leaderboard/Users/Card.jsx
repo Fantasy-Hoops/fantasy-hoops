@@ -20,7 +20,7 @@ export default class Card extends PureComponent {
   }
 
   async componentDidMount() {
-    const avatar = await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${this.props.user.userID}.png`, defaultPhoto);
+    const avatar = await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${this.props.user.avatarURL}.png`, defaultPhoto);
     this._isMounted = true;
     if (this._isMounted) {
       this.setState({

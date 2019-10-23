@@ -81,6 +81,7 @@ export default class RequestList extends Component {
           accept={this.acceptRequest}
           decline={this.declineRequest}
           type={friend.status}
+          avatarURL={friend.avatarURL}
         />
       ));
     return (

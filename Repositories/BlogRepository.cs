@@ -29,7 +29,8 @@ namespace fantasy_hoops.Repositories
                     Author = new
                     {
                         post.Author.UserName,
-                        post.Author.Id
+                        post.Author.Id,
+                        post.Author.AvatarURL
                     },
                     post.CreatedAt,
                     post.ModifiedAt
