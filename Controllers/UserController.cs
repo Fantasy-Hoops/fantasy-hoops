@@ -153,7 +153,8 @@ namespace fantasy_hoops.Controllers
 
             if(!_service.UploadAvatar(model))
                 return StatusCode(500, "Avatar cannot be uploaded!");
-            return Ok("Avatar updated successfully!");
+
+            return Ok(_service.RequestTokenById(model.Id));
         }
 
         [HttpPost("clearAvatar")]

@@ -72,6 +72,12 @@ namespace fantasy_hoops.Services
             await _signInManager.SignOutAsync();
         }
 
+        public string RequestTokenById(string id)
+        {
+            string userName = _repository.GetUser(id).UserName;
+            return RequestToken(userName);
+        }
+
         public string RequestToken(string username)
         {
             var user = _repository.GetUserByName(username);
@@ -138,7 +144,7 @@ namespace fantasy_hoops.Services
             string newFilePath = avatarDir + "/" + avatarId + ".png";
             user.AvatarURL = avatarId;
 
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             model.Avatar = model.Avatar.Substring(22);
             try
