@@ -84,23 +84,35 @@ namespace fantasy_hoops.Database
 					player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
 					if (updatePrice)
 						player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(player);
-					player.IsPlaying = IsPlaying(player);
+					player.IsPlaying = IsPlaying(context, player);
 				}
 			}
 			await context.SaveChangesAsync();
 		}
 
-		private static bool IsPlaying(Player player)
+		private static bool IsPlaying(GameContext context, Player player)
 		{
-			// Don't show players out for more that 5 days
-			if ((((player.Injury != null && player.Injury.Date.HasValue && player.Injury.Date.Value.AddDays(5) < NextGame.NEXT_GAME)
-					|| !player.Injury.Date.HasValue)
-					&& (player.Injury.Status.ToLower().Contains("out")
-					|| player.Injury.Status.ToLower().Contains("injured")))
-					|| player.IsInGLeague
-					|| player.Position.Equals("NA"))
-				return false;
-			return true;
+            if(player.IsInGLeague || player.Position.Equals("NA"))
+            {
+                return false;
+            }
+            
+            if(player.InjuryID != 0)
+            {
+                if(player.Injury == null)
+                {
+                    player.Injury = context.Injuries.Where(inj => inj.InjuryID == player.InjuryID).FirstOrDefault();
+                }
+
+                if ((player.Injury.Date.HasValue && player.Injury.Date.Value.AddDays(5) < NextGame.NEXT_GAME)
+                    && (player.Injury.Status.ToLower().Contains("out")
+                    || player.Injury.Status.ToLower().Contains("injured")))
+                {
+                    return false;
+                }
+            }
+
+            return true;
 		}
 
 		private static string GetDate()
