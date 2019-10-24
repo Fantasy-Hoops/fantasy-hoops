@@ -11,27 +11,18 @@ using System.Threading.Tasks;
 
 namespace fantasy_hoops.Database
 {
-	public class StatsSeed
+	public class StatsSeed : IJob
 	{
+        private readonly GameContext _context;
+		private readonly IScoreService _scoreService;
 
-		private static IScoreService _scoreService;
-
-		public static void Initialize(GameContext context, IScoreService scoreService)
+        public StatsSeed(GameContext context, IScoreService scoreService)
         {
+            _context = context;
             _scoreService = scoreService;
-            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("statsSeed")))
-			{
-				JobManager.AddJob(() => Initialize(context, _scoreService),
-				s => s.WithName("statsSeed")
-				.ToRunOnceIn(30)
-				.Seconds());
-				return;
-			}
+        }
 
-			Task.Run(() => Calculate(context)).Wait();
-		}
-
-		private static JObject GetBoxscore(string url)
+		private JObject GetBoxscore(string url)
 		{
 			HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
 			string apiResponse = CommonFunctions.ResponseToString(webResponse);
@@ -39,11 +30,11 @@ namespace fantasy_hoops.Database
 			return json;
 		}
 
-		private static bool IsFinished(GameContext context, JArray games)
+		private bool IsFinished(JArray games)
 		{
 			if (games.Any(g => (int)g["statusNum"] != 3 || (bool)g["isGameActivated"]))
 			{
-				JobManager.AddJob(() => Initialize(context, _scoreService),
+				JobManager.AddJob(new StatsSeed(new GameContext(), _scoreService),
 				s => s.WithName("statsSeed")
 				.ToRunOnceIn(5)
 				.Minutes());
@@ -52,91 +43,7 @@ namespace fantasy_hoops.Database
 			return true;
 		}
 
-		private static async Task Calculate(GameContext context)
-		{
-			string gameDate = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
-			JArray games = CommonFunctions.GetGames(gameDate);
-			int countOfActivatedGames = 0;
-			bool isAnyGameStarted = false;
-			foreach (JObject game in games)
-			{
-				if ((int)game["statusNum"] != 1)
-					isAnyGameStarted = true;
-
-				if (!(bool)game["isGameActivated"] && (int)game["statusNum"] != 3)
-					continue;
-
-				countOfActivatedGames++;
-				string bsUrl = "http://data.nba.net/10s/prod/v1/" + gameDate + "/" + game["gameId"] + "_boxscore.json";
-				JObject boxscore = GetBoxscore(bsUrl);
-				if (boxscore["stats"] == null)
-					continue;
-				int hTeam = (int)boxscore["basicGameData"]["hTeam"]["teamId"];
-				int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
-				DateTime date = DateTime.ParseExact((string)boxscore["basicGameData"]["startDateEastern"], "yyyyMMdd", CultureInfo.InvariantCulture);
-				var players = boxscore["stats"]["activePlayers"];
-				int homeScore = (int)boxscore["basicGameData"]["hTeam"]["score"];
-				int awayScore = (int)boxscore["basicGameData"]["vTeam"]["score"];
-				Game gameObj = GetGame(context, date, hTeam, vTeam, homeScore, awayScore);
-
-				foreach (var player in (JArray)players)
-				{
-					int oppId;
-
-					if (!context.Players.Any(x => x.NbaID.Equals((int)player["personId"])))
-						continue;
-					string score = "";
-					string liveToken = (int)game["statusNum"] != 3 ? ";LIVE" : "";
-					if ((int)player["teamId"] == hTeam)
-					{
-						oppId = vTeam;
-						score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";vs" + liveToken;
-					}
-					else
-					{
-						oppId = hTeam;
-						score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";@" + liveToken;
-					}
-					if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
-						continue;
-					await AddToDatabase(context, player, gameObj, date, oppId, score);
-				}
-				await context.SaveChangesAsync();
-			}
-
-			if (!isAnyGameStarted)
-			{
-				JobManager.AddJob(() => Initialize(context, _scoreService),
-												s => s.WithName("statsSeed")
-												.ToRunOnceIn(5).Minutes());
-				return;
-			}
-
-			if (!IsFinished(context, games))
-			{
-				int minutesDelay = countOfActivatedGames == 0 ? 5 : 1;
-				JobManager.AddJob(() => Initialize(context, _scoreService),
-								s => s.WithName("statsSeed")
-								.ToRunOnceIn(minutesDelay).Minutes());
-			}
-			else
-			{
-				context.Stats
-						.RemoveRange(context.Stats.Where(stat => stat.Score.Contains("LIVE")));
-				context.SaveChanges();
-
-				JobManager.AddJob(() => UserScoreSeed.Initialize(context),
-												s => s.WithName("userScore")
-												.ToRunOnceIn(30)
-												.Seconds());
-
-				JobManager.AddJob(() => Initialize(context, _scoreService),
-												s => s.WithName("statsSeed")
-												.ToRunOnceAt(NextGame.NEXT_GAME.AddMinutes(5)));
-			}
-		}
-
-		private static async Task AddToDatabase(GameContext context, JToken player, Game game, DateTime date, int oppId, string score)
+		private async Task AddToDatabase(JToken player, Game game, DateTime date, int oppId, string score)
 		{
 			Stats statsObj = new Stats
 			{
@@ -165,7 +72,7 @@ namespace fantasy_hoops.Database
 				PTS = (int)player["points"]
 			};
 
-			var statsPlayer = context.Players
+			var statsPlayer = _context.Players
 					.Where(x => x.NbaID == (int)player["personId"])
 					.FirstOrDefault();
 
@@ -175,7 +82,7 @@ namespace fantasy_hoops.Database
 			statsObj.Player = statsPlayer;
 			int playerPrice = _scoreService.GetPrice(statsPlayer);
 
-			var dbStats = context.Stats
+			var dbStats = _context.Stats
 							.Where(stats => stats.Date.Equals(date) && stats.PlayerID == statsPlayer.PlayerID)
 							.FirstOrDefault();
 
@@ -190,7 +97,7 @@ namespace fantasy_hoops.Database
 
 				statsObj.Price = playerPrice;
 
-				await context.Stats.AddAsync(statsObj);
+				await _context.Stats.AddAsync(statsObj);
 			}
 			else
 			{
@@ -226,16 +133,16 @@ namespace fantasy_hoops.Database
 			}
 		}
 
-		private static Game GetGame(GameContext context, DateTime date, int homeTeamId, int awayTeamId, int homeScore, int awayScore)
+		private Game GetGame(DateTime date, int homeTeamId, int awayTeamId, int homeScore, int awayScore)
 		{
-			Team homeTeam = context.Teams.Where(team => team.NbaID == homeTeamId).FirstOrDefault();
+			Team homeTeam = _context.Teams.Where(team => team.NbaID == homeTeamId).FirstOrDefault();
 			if (homeTeam == null)
-				homeTeam = CommonFunctions.GetUnknownTeam(context);
-			Team awayTeam = context.Teams.Where(team => team.NbaID == awayTeamId).FirstOrDefault();
+				homeTeam = CommonFunctions.GetUnknownTeam(_context);
+			Team awayTeam = _context.Teams.Where(team => team.NbaID == awayTeamId).FirstOrDefault();
 			if (awayTeam == null)
-				awayTeam = CommonFunctions.GetUnknownTeam(context);
+				awayTeam = CommonFunctions.GetUnknownTeam(_context);
 
-			Game gameObj = context.Games.Where(game => game.Date.Equals(date) && game.HomeTeam.Equals(homeTeam) && game.AwayTeam.Equals(awayTeam)).FirstOrDefault();
+			Game gameObj = _context.Games.Where(game => game.Date.Equals(date) && game.HomeTeam.Equals(homeTeam) && game.AwayTeam.Equals(awayTeam)).FirstOrDefault();
 			if (gameObj != null)
 			{
 				gameObj.HomeScore = homeScore;
@@ -251,10 +158,93 @@ namespace fantasy_hoops.Database
 					AwayTeam = awayTeam,
 					AwayScore = awayScore
 				};
-				context.Games.Add(gameObj);
+                _context.Games.Add(gameObj);
 			}
 
 			return gameObj;
 		}
-	}
+
+        public void Execute()
+        {
+            string gameDate = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
+            JArray games = CommonFunctions.GetGames(gameDate);
+            int countOfActivatedGames = 0;
+            bool isAnyGameStarted = false;
+            foreach (JObject game in games)
+            {
+                if ((int)game["statusNum"] != 1)
+                    isAnyGameStarted = true;
+
+                if (!(bool)game["isGameActivated"] && (int)game["statusNum"] != 3)
+                    continue;
+
+                countOfActivatedGames++;
+                string bsUrl = "http://data.nba.net/10s/prod/v1/" + gameDate + "/" + game["gameId"] + "_boxscore.json";
+                JObject boxscore = GetBoxscore(bsUrl);
+                if (boxscore["stats"] == null)
+                    continue;
+                int hTeam = (int)boxscore["basicGameData"]["hTeam"]["teamId"];
+                int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
+                DateTime date = DateTime.ParseExact((string)boxscore["basicGameData"]["startDateEastern"], "yyyyMMdd", CultureInfo.InvariantCulture);
+                var players = boxscore["stats"]["activePlayers"];
+                int homeScore = (int)boxscore["basicGameData"]["hTeam"]["score"];
+                int awayScore = (int)boxscore["basicGameData"]["vTeam"]["score"];
+                Game gameObj = GetGame(date, hTeam, vTeam, homeScore, awayScore);
+
+                foreach (var player in (JArray)players)
+                {
+                    int oppId;
+
+                    if (!_context.Players.Any(x => x.NbaID.Equals((int)player["personId"])))
+                        continue;
+                    string score = "";
+                    string liveToken = (int)game["statusNum"] != 3 ? ";LIVE" : "";
+                    if ((int)player["teamId"] == hTeam)
+                    {
+                        oppId = vTeam;
+                        score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";vs" + liveToken;
+                    }
+                    else
+                    {
+                        oppId = hTeam;
+                        score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";@" + liveToken;
+                    }
+                    if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
+                        continue;
+                    AddToDatabase(player, gameObj, date, oppId, score).Wait();
+                }
+                _context.SaveChanges();
+            }
+
+            if (!isAnyGameStarted)
+            {
+                JobManager.AddJob(new StatsSeed(new GameContext(), _scoreService),
+                                                s => s.WithName("statsSeed")
+                                                .ToRunOnceIn(5).Minutes());
+                return;
+            }
+
+            if (!IsFinished(games))
+            {
+                int minutesDelay = countOfActivatedGames == 0 ? 5 : 1;
+                JobManager.AddJob(new StatsSeed(new GameContext(), _scoreService),
+                                s => s.WithName("statsSeed")
+                                .ToRunOnceIn(minutesDelay).Minutes());
+            }
+            else
+            {
+                _context.Stats
+                        .RemoveRange(_context.Stats.Where(stat => stat.Score.Contains("LIVE")));
+                _context.SaveChanges();
+
+                JobManager.AddJob(new UserScoreSeed(new GameContext()),
+                                                s => s.WithName("userScore")
+                                                .ToRunNow());
+
+                JobManager.AddJob(new StatsSeed(new GameContext(), _scoreService),
+                                                s => s.WithName("statsSeed")
+                                                .ToRunOnceAt(NextGame.NEXT_GAME.AddMinutes(5)));
+            }
+        }
+    }
 }

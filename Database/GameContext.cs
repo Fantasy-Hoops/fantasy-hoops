@@ -2,13 +2,14 @@
 using fantasy_hoops.Models.Notifications;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
+using System.IO;
 
 namespace fantasy_hoops.Database
 {
     public class GameContext : IdentityDbContext<User>
     {
-
         public DbSet<Player> Players { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<Game> Games { get; set; }
@@ -25,6 +26,11 @@ namespace fantasy_hoops.Database
         public DbSet<PushSubscription> PushSubscriptions { get; set; }
         public DbSet<Post> Posts { get; set; }
 
+        public GameContext()
+        {
+
+        }
+
         public GameContext(DbContextOptions options) : base(options)
         {
 
@@ -40,9 +46,17 @@ namespace fantasy_hoops.Database
                 .HasForeignKey<Injury>(i => i.PlayerID);
         }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+                   .SetBasePath(Directory.GetCurrentDirectory())
+                   .AddJsonFile("appsettings.json")
+                   .Build();
+                var connectionString = "Server=68.183.213.191;Database=fantasyhoops;User=SA;Password=Durnelis1;";
+                optionsBuilder.UseSqlServer(connectionString);
+            }
+        }
     }
 }
