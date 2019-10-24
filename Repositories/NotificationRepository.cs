@@ -13,9 +13,9 @@ namespace fantasy_hoops.Repositories
     {
 
         private readonly GameContext _context;
-        public NotificationRepository(GameContext context)
+        public NotificationRepository()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         public IEnumerable<Notification> GetAllNotifications()
@@ -70,6 +70,7 @@ namespace fantasy_hoops.Repositories
             };
 
             _context.FriendRequestNotifications.Add(notification);
+            _context.SaveChanges();
         }
 
         public void RemoveFriendRequestNotification(string userID, string friendID)
@@ -79,6 +80,8 @@ namespace fantasy_hoops.Repositories
 
             if (notifications != null)
                 _context.FriendRequestNotifications.RemoveRange(notifications);
+
+            _context.SaveChanges();
         }
 
         public void ReadNotification(NotificationViewModel model)

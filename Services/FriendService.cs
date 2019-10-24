@@ -7,61 +7,50 @@ namespace fantasy_hoops.Services
 {
     public class FriendService : IFriendService
     {
+        private readonly IFriendRepository _friendRepository;
+        private readonly INotificationRepository _notificationRepository;
 
-        private readonly GameContext _context;
-        private readonly FriendRepository _repository;
-        private readonly NotificationRepository _notificationRepository;
-
-        public FriendService(GameContext context)
+        public FriendService(IFriendRepository friendRepository, INotificationRepository notificationRepository)
         {
-            _context = context;
-            _repository = new FriendRepository(_context);
-            _notificationRepository = new NotificationRepository(_context);
+            _friendRepository = friendRepository;
+            _notificationRepository = notificationRepository;
         }
 
-        public async void AcceptRequest(FriendRequestViewModel model, FriendRequest request)
+        public void AcceptRequest(FriendRequestViewModel model, FriendRequest request)
         {
-            _repository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.ACCEPTED);
+            _friendRepository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.ACCEPTED);
             _notificationRepository.AddFriendRequestNotification(model.SenderID, model.ReceiverID, "Accepted your friend request.");
-
-            await _context.SaveChangesAsync();
         }
 
-        public async void CancelRequest(FriendRequestViewModel model, FriendRequest request)
+        public void CancelRequest(FriendRequestViewModel model, FriendRequest request)
         {
-            _repository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.CANCELED);
+            _friendRepository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.CANCELED);
 
             _notificationRepository.RemoveFriendRequestNotification(model.ReceiverID, model.SenderID);
             _notificationRepository.RemoveFriendRequestNotification(model.SenderID, model.ReceiverID);
-
-            await _context.SaveChangesAsync();
         }
 
-        public async void RemoveRequest(FriendRequestViewModel model, FriendRequest request)
+        public void RemoveRequest(FriendRequestViewModel model, FriendRequest request)
         {
-            _repository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.CANCELED);
+            _friendRepository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.CANCELED);
 
             _notificationRepository.RemoveFriendRequestNotification(model.SenderID, model.ReceiverID);
             _notificationRepository.RemoveFriendRequestNotification(model.ReceiverID, model.SenderID);
-
-            await _context.SaveChangesAsync();
         }
 
         public async void SendRequest(FriendRequestViewModel model)
         {
-            var request = _repository.GetRequest(model.SenderID, model.ReceiverID);
+            var request = _friendRepository.GetRequest(model.SenderID, model.ReceiverID);
 
             if (request == null)
-                request = _repository.GetRequest(model.ReceiverID, model.SenderID);
+                request = _friendRepository.GetRequest(model.ReceiverID, model.SenderID);
 
             if (request == null)
-                _repository.CreateRequest(model.SenderID, model.ReceiverID, RequestStatus.PENDING);
+                _friendRepository.CreateRequest(model.SenderID, model.ReceiverID, RequestStatus.PENDING);
             else
-                _repository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.PENDING);
+                _friendRepository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.PENDING);
 
             _notificationRepository.AddFriendRequestNotification(model.ReceiverID, model.SenderID, "Sent you a friend request.");
-
-            await _context.SaveChangesAsync();
         }
 
     }

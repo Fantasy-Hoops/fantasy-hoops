@@ -10,14 +10,14 @@ namespace fantasy_hoops.Repositories
 {
     public class UserRepository : IUserRepository
     {
+        readonly DateTime date = CommonFunctions.GetDate("weekly");
 
         private readonly GameContext _context;
         private readonly ITeamRepository _teamRepository;
-        DateTime date = CommonFunctions.GetDate("weekly");
 
-        public UserRepository(GameContext context, ITeamRepository repository)
+        public UserRepository(ITeamRepository repository)
         {
-            _context = context;
+            _context = new GameContext();
             _teamRepository = repository;
         }
 

@@ -36,19 +36,10 @@ namespace fantasy_hoops.Services
 
         public int GetPrice(Player p)
         {
-            double GSavg = 0;
             if (!_repository.AnyPlayerStatsExists(p))
                 return PlayerSeed.PRICE_FLOOR;
 
-            try
-            {
-                double GSsum = _repository.LastFiveSum(p);
-
-                int GScount = _repository.LastGamesCount(p);
-
-                GSavg = GSsum / GScount;
-            }
-            catch { }
+            double GSavg = _repository.LastFiveAverage(p);
             return (int)((p.FPPG + GSavg) * 7 / 5);
         }
     }

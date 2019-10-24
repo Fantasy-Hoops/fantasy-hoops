@@ -17,9 +17,9 @@ namespace fantasy_hoops.Database
         const string photosDir = "./ClientApp/build/content/images/players/";
         const string logosDir = "./ClientApp/build/content/images/logos/";
 
-        public PhotosSeed(GameContext context)
+        public PhotosSeed()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         private void ExtractLogos()

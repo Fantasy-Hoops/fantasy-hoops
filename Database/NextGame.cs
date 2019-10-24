@@ -23,14 +23,16 @@ namespace fantasy_hoops.Database
 		private const int GAME_OFFSET = 10;
 		private static int offset = 0;
 
-        private readonly IScoreService _scoreService;
         private readonly GameContext _context;
+        private readonly IScoreService _scoreService;
+        private readonly IPushService _pushService;
         private readonly bool _updatePrice;
 
-        public NextGame(GameContext context, IScoreService scoreService, bool updatePrice = true)
+        public NextGame(IScoreService scoreService, IPushService pushService, bool updatePrice = true)
         {
-            _context = context;
+            _context = new GameContext();
             _scoreService = scoreService;
+            _pushService = pushService;
             _updatePrice = updatePrice;
         }
 
@@ -129,7 +131,7 @@ namespace fantasy_hoops.Database
 
             if (offset < GAME_OFFSET)
             {
-                JobManager.AddJob(new NextGame(new GameContext(), _scoreService),
+                JobManager.AddJob(new NextGame(_scoreService, _pushService),
                                 s => s.WithName(NEXT_GAME.ToLongDateString())
                                 .ToRunOnceAt(NEXT_GAME));
 
@@ -138,13 +140,13 @@ namespace fantasy_hoops.Database
                 {
                     // Nudge Notifications don't run if game starts in <2 hours
                     if (NEXT_GAME.Subtract(DateTime.UtcNow).TotalMinutes > 115)
-                        JobManager.AddJob(() => PushService.Instance.Value.SendNudgeNotifications().Wait(),
+                        JobManager.AddJob(() => _pushService.SendNudgeNotifications().Wait(),
                                         s => s.WithName("nudgeNotifications")
                                         .ToRunOnceAt(NEXT_GAME.AddHours(-2)));
 
                     // Once per 2 days
                     if (CommonFunctions.UTCToEastern(NEXT_GAME).Day % 2 != 0)
-                        JobManager.AddJob(new Seed(new GameContext()),
+                        JobManager.AddJob(new Seed(_pushService),
                                         s => s.WithName("seed")
                                         .ToRunOnceAt(NEXT_GAME.AddMinutes(-5)));
 
@@ -153,7 +155,7 @@ namespace fantasy_hoops.Database
                     DateTime previewsRuntime = PREVIOUS_LAST_GAME.AddHours(10);
                     if (DateTime.UtcNow > previewsRuntime)
                         previewsRuntime = NEXT_LAST_GAME.AddHours(10);
-                    JobManager.AddJob(new NewsSeed(new GameContext(), NewsSeed.NewsType.PREVIEWS),
+                    JobManager.AddJob(new NewsSeed(NewsSeed.NewsType.PREVIEWS),
                             s => s.WithName("previews")
                             .ToRunOnceAt(previewsRuntime));
 
@@ -162,18 +164,18 @@ namespace fantasy_hoops.Database
                     DateTime recapsRuntime = PREVIOUS_LAST_GAME.AddHours(5);
                     if (DateTime.UtcNow > recapsRuntime)
                         recapsRuntime = NEXT_LAST_GAME.AddHours(5);
-                    JobManager.AddJob(new NewsSeed(new GameContext(), NewsSeed.NewsType.RECAPS),
+                    JobManager.AddJob(new NewsSeed(NewsSeed.NewsType.RECAPS),
                             s => s.WithName("recaps")
                             .ToRunOnceAt(recapsRuntime));
                 }
 
-                JobManager.AddJob(new PlayerSeed(new GameContext(), _scoreService, _updatePrice),
+                JobManager.AddJob(new PlayerSeed(_scoreService, _updatePrice),
                     s => s.WithName("playerSeed")
                     .ToRunNow());
             }
             else
             {
-                JobManager.AddJob(new NextGame(new GameContext(), _scoreService),
+                JobManager.AddJob(new NextGame(_scoreService, _pushService),
                                 s => s.WithName("nextGame")
                                 .ToRunOnceIn(1)
                                 .Hours());
@@ -181,7 +183,7 @@ namespace fantasy_hoops.Database
                 SetPlayersNotPlaying().Wait();
             }
 
-            JobManager.AddJob(new StatsSeed(new GameContext(), _scoreService),
+            JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
                             s => s.WithName("statsSeed")
                             .ToRunNow());
         }

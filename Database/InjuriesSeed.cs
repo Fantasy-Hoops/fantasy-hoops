@@ -19,11 +19,13 @@ namespace fantasy_hoops.Database
     public class InjuriesSeed : IJob
     {
         private readonly GameContext _context;
+        private readonly IPushService _pushService;
         private static readonly Stack<InjuryPushNotificationViewModel> lineupsAffected = new Stack<InjuryPushNotificationViewModel>();
 
-        public InjuriesSeed(GameContext context)
+        public InjuriesSeed(IPushService pushService)
         {
-            _context = context;
+            _context = new GameContext();
+            _pushService = pushService;
         }
 
         private static JArray GetInjuries()
@@ -132,7 +134,7 @@ namespace fantasy_hoops.Database
                                     Image = Environment.GetEnvironmentVariable("IMAGES_SERVER_NAME") + "/content/images/players/" + lineup.PlayerNbaID + ".png",
                                     Actions = new List<NotificationAction> { new NotificationAction("lineup", "🤾🏾‍♂️ Lineup") }
                                 };
-                await PushService.Instance.Value.Send(lineup.UserID, notification);
+                await _pushService.Send(lineup.UserID, notification);
             }
         }
 

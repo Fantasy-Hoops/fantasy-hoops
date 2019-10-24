@@ -9,9 +9,9 @@ namespace fantasy_hoops.Repositories
 
         private readonly GameContext _context;
 
-        public PlayerRepository(GameContext context)
+        public PlayerRepository()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         public IQueryable<Object> GetActivePlayers()

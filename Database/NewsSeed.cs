@@ -14,9 +14,9 @@ namespace fantasy_hoops.Database
         private readonly GameContext _context;
         private readonly NewsType _newsType;
 
-        public NewsSeed(GameContext context, NewsType newsType)
+        public NewsSeed(NewsType newsType)
         {
-            _context = context;
+            _context = new GameContext();
             _newsType = newsType;
         }
 

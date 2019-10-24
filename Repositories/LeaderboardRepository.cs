@@ -15,9 +15,9 @@ namespace fantasy_hoops.Repositories
 
         private readonly GameContext _context;
 
-        public LeaderboardRepository(GameContext context)
+        public LeaderboardRepository()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         public IEnumerable<object> GetPlayerLeaderboard(int from, int limit, string type)

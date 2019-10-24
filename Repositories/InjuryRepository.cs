@@ -8,9 +8,9 @@ namespace fantasy_hoops.Repositories
     {
 
         private readonly GameContext _context;
-        public InjuryRepository(GameContext context)
+        public InjuryRepository()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         public IQueryable<Object> GetInjuries()

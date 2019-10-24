@@ -9,7 +9,6 @@ namespace fantasy_hoops.Repositories
     public interface IScoreRepository
     {
         bool AnyPlayerStatsExists(Player player);
-        double LastFiveSum(Player player);
-        int LastGamesCount(Player player);
+        double LastFiveAverage(Player player);
     }
 }

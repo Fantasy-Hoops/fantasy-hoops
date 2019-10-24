@@ -10,9 +10,9 @@ namespace fantasy_hoops.Repositories
 
         private readonly GameContext _context;
 
-        public StatsRepository(GameContext context)
+        public StatsRepository()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         public IQueryable<object> GetStats()

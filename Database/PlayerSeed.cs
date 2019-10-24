@@ -21,9 +21,9 @@ namespace fantasy_hoops.Database
         public static DateTime PLAYER_POOL_DATE = DateTime.UtcNow;
 		public static int PRICE_FLOOR = 10;
 
-        public PlayerSeed(GameContext context, IScoreService scoreService, bool updatePrice)
+        public PlayerSeed(IScoreService scoreService, bool updatePrice)
         {
-            _context = context;
+            _context = new GameContext();
             _scoreService = scoreService;
             _updatePrice = updatePrice;
         }

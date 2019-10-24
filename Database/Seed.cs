@@ -17,10 +17,12 @@ namespace fantasy_hoops.Database
     public class Seed : IJob
     {
         private readonly GameContext _context;
+        private readonly IPushService _pushService;
 
-        public Seed(GameContext context)
+        public Seed(IPushService pushService)
         {
-            _context = context;
+            _context = new GameContext();
+            _pushService = pushService;
         }
 
         private List<JToken> GetTeams()
@@ -41,7 +43,7 @@ namespace fantasy_hoops.Database
                 PushNotificationViewModel notification =
                     new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API Key has expired! Please change the API Key to new one. " +
                     "Error message: " + e.Message);
-                Task.Run(() => PushService.Instance.Value.SendAdminNotification(notification));
+                _pushService.SendAdminNotification(notification);
                 return new List<JToken>();
             }
             if (webResponse != null)
@@ -50,7 +52,7 @@ namespace fantasy_hoops.Database
                 int callsLeft = 1000 - (int.Parse(webResponse.Headers.Get(13)) + 30);
                 PushNotificationViewModel notification =
                     new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API calls left: " + callsLeft);
-                Task.Run(() => PushService.Instance.Value.SendAdminNotification(notification));
+                _pushService.SendAdminNotification(notification);
             }
             string responseString = CommonFunctions.ResponseToString(webResponse);
             List<JToken> teams = new List<JToken>();
@@ -290,13 +292,13 @@ namespace fantasy_hoops.Database
                             };
                             dbPlayers.Add(playerObj);
                             if (playerObj.Position.Equals("NA"))
-                                Task.Run(() => PushService.Instance.Value.SendAdminNotification(
+                                _pushService.SendAdminNotification(
                                     new PushNotificationViewModel(
                                         "Fantasy Hoops Notification",
                                         string.Format("Player '{0}' with position {1} was added to database.",
                                         playerObj.FullName,
                                         playerObj.Position))
-                                    ));
+                                    );
                         }
                         catch (ArgumentNullException)
                         {
