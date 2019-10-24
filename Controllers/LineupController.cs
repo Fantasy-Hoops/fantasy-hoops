@@ -14,14 +14,13 @@ namespace fantasy_hoops.Controllers
 
         public readonly int MAX_PRICE = 300;
 
-        private readonly LineupService _service;
-        private readonly LineupRepository _repository;
+        private readonly ILineupService _service;
+        private readonly ILineupRepository _repository;
 
-        public LineupController()
+        public LineupController(ILineupService service, ILineupRepository repository)
         {
-            GameContext context = new GameContext();
-            _service = new LineupService(context);
-            _repository = new LineupRepository(context);
+            _service = service;
+            _repository = repository;
         }
 
         [HttpGet("{id}")]

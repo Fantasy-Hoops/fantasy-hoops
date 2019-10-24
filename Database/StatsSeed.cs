@@ -11,250 +11,242 @@ using System.Threading.Tasks;
 
 namespace fantasy_hoops.Database
 {
-	public class StatsSeed
-	{
+    public class StatsSeed : IJob
+    {
+        private readonly GameContext _context;
+        private readonly IScoreService _scoreService;
+        private readonly IPushService _pushService;
 
-		private static ScoreService _scoreService;
+        public StatsSeed(IScoreService scoreService, IPushService pushService)
+        {
+            _context = new GameContext();
+            _scoreService = scoreService;
+            _pushService = pushService;
+        }
 
-		public static void Initialize(GameContext context)
-		{
-			if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("statsSeed")))
-			{
-				JobManager.AddJob(() => Initialize(context),
-				s => s.WithName("statsSeed")
-				.ToRunOnceIn(30)
-				.Seconds());
-				return;
-			}
+        private JObject GetBoxscore(string url)
+        {
+            HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
+            string apiResponse = CommonFunctions.ResponseToString(webResponse);
+            JObject json = JObject.Parse(apiResponse);
+            return json;
+        }
 
-			_scoreService = new ScoreService();
-			Task.Run(() => Calculate(context)).Wait();
-		}
+        private bool IsFinished(JArray games)
+        {
+            if (games.Any(g => (int)g["statusNum"] != 3 || (bool)g["isGameActivated"]))
+            {
+                JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
+                s => s.WithName("statsSeed")
+                .ToRunOnceIn(5)
+                .Minutes());
+                return false;
+            }
+            return true;
+        }
 
-		private static JObject GetBoxscore(string url)
-		{
-			HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
-			string apiResponse = CommonFunctions.ResponseToString(webResponse);
-			JObject json = JObject.Parse(apiResponse);
-			return json;
-		}
+        private void AddToDatabase(JToken player, Game game, DateTime date, int oppId, string score)
+        {
+            Stats statsObj = new Stats
+            {
+                Game = game,
+                Date = date,
+                OppID = oppId,
+                Score = score,
+                MIN = (string)player["min"],
+                FGM = (int)player["fgm"],
+                FGA = (int)player["fga"],
+                FGP = (double)player["fgp"],
+                TPM = (int)player["tpm"],
+                TPA = (int)player["tpa"],
+                TPP = (double)player["tpp"],
+                FTM = (int)player["ftm"],
+                FTA = (int)player["fta"],
+                FTP = (double)player["ftp"],
+                DREB = (int)player["defReb"],
+                OREB = (int)player["offReb"],
+                TREB = (int)player["totReb"],
+                AST = (int)player["assists"],
+                BLK = (int)player["blocks"],
+                STL = (int)player["steals"],
+                FLS = (int)player["pFouls"],
+                TOV = (int)player["turnovers"],
+                PTS = (int)player["points"]
+            };
 
-		private static bool IsFinished(GameContext context, JArray games)
-		{
-			if (games.Any(g => (int)g["statusNum"] != 3 || (bool)g["isGameActivated"]))
-			{
-				JobManager.AddJob(() => Initialize(context),
-				s => s.WithName("statsSeed")
-				.ToRunOnceIn(5)
-				.Minutes());
-				return false;
-			}
-			return true;
-		}
+            var statsPlayer = _context.Players
+                    .Where(x => x.NbaID == (int)player["personId"])
+                    .FirstOrDefault();
 
-		private static async Task Calculate(GameContext context)
-		{
-			string gameDate = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
-			JArray games = CommonFunctions.GetGames(gameDate);
-			int countOfActivatedGames = 0;
-			bool isAnyGameStarted = false;
-			foreach (JObject game in games)
-			{
-				if ((int)game["statusNum"] != 1)
-					isAnyGameStarted = true;
+            if (statsPlayer == null)
+                return;
 
-				if (!(bool)game["isGameActivated"] && (int)game["statusNum"] != 3)
-					continue;
+            statsObj.Player = statsPlayer;
+            int playerPrice = _scoreService.GetPrice(statsPlayer);
 
-				countOfActivatedGames++;
-				string bsUrl = "http://data.nba.net/10s/prod/v1/" + gameDate + "/" + game["gameId"] + "_boxscore.json";
-				JObject boxscore = GetBoxscore(bsUrl);
-				if (boxscore["stats"] == null)
-					continue;
-				int hTeam = (int)boxscore["basicGameData"]["hTeam"]["teamId"];
-				int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
-				DateTime date = DateTime.ParseExact((string)boxscore["basicGameData"]["startDateEastern"], "yyyyMMdd", CultureInfo.InvariantCulture);
-				var players = boxscore["stats"]["activePlayers"];
-				int homeScore = (int)boxscore["basicGameData"]["hTeam"]["score"];
-				int awayScore = (int)boxscore["basicGameData"]["vTeam"]["score"];
-				Game gameObj = GetGame(context, date, hTeam, vTeam, homeScore, awayScore);
+            var dbStats = _context.Stats
+                            .Where(stats => stats.Date.Equals(date) && stats.PlayerID == statsPlayer.PlayerID)
+                            .FirstOrDefault();
 
-				foreach (var player in (JArray)players)
-				{
-					int oppId;
+            if (dbStats == null)
+            {
+                statsObj.GS = _scoreService.GetGameScore(statsObj.PTS, statsObj.FGM, statsObj.DREB, statsObj.OREB,
+                                                statsObj.STL, statsObj.AST, statsObj.BLK, statsObj.FGA, statsObj.FTA - statsObj.FTM,
+                                                statsObj.FLS, statsObj.TOV);
 
-					if (!context.Players.Any(x => x.NbaID.Equals((int)player["personId"])))
-						continue;
-					string score = "";
-					string liveToken = (int)game["statusNum"] != 3 ? ";LIVE" : "";
-					if ((int)player["teamId"] == hTeam)
-					{
-						oppId = vTeam;
-						score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";vs" + liveToken;
-					}
-					else
-					{
-						oppId = hTeam;
-						score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";@" + liveToken;
-					}
-					if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
-						continue;
-					await AddToDatabase(context, player, gameObj, date, oppId, score);
-				}
-				await context.SaveChangesAsync();
-			}
+                statsObj.FP = _scoreService.GetFantasyPoints(statsObj.PTS, statsObj.DREB, statsObj.OREB,
+                                                statsObj.AST, statsObj.STL, statsObj.BLK, statsObj.TOV);
 
-			if (!isAnyGameStarted)
-			{
-				JobManager.AddJob(() => Initialize(context),
-												s => s.WithName("statsSeed")
-												.ToRunOnceIn(5).Minutes());
-				return;
-			}
+                statsObj.Price = playerPrice;
 
-			if (!IsFinished(context, games))
-			{
-				int minutesDelay = countOfActivatedGames == 0 ? 5 : 1;
-				JobManager.AddJob(() => Initialize(context),
-								s => s.WithName("statsSeed")
-								.ToRunOnceIn(minutesDelay).Minutes());
-			}
-			else
-			{
-				context.Stats
-						.RemoveRange(context.Stats.Where(stat => stat.Score.Contains("LIVE")));
-				context.SaveChanges();
+                _context.Stats.Add(statsObj);
+            }
+            else
+            {
+                dbStats.Game = game;
+                dbStats.Score = score;
+                dbStats.MIN = statsObj.MIN;
+                dbStats.FGM = statsObj.FGM;
+                dbStats.FGA = statsObj.FGA;
+                dbStats.FGP = statsObj.FGP;
+                dbStats.TPM = statsObj.TPM;
+                dbStats.TPA = statsObj.TPA;
+                dbStats.TPP = statsObj.TPP;
+                dbStats.FTM = statsObj.FTM;
+                dbStats.FTA = statsObj.FTA;
+                dbStats.FTP = statsObj.FTP;
+                dbStats.DREB = statsObj.DREB;
+                dbStats.OREB = statsObj.OREB;
+                dbStats.TREB = statsObj.TREB;
+                dbStats.AST = statsObj.AST;
+                dbStats.BLK = statsObj.BLK;
+                dbStats.STL = statsObj.STL;
+                dbStats.FLS = statsObj.FLS;
+                dbStats.TOV = statsObj.TOV;
+                dbStats.PTS = statsObj.PTS;
+                dbStats.GS = _scoreService.GetGameScore(statsObj.PTS, statsObj.FGM, statsObj.DREB, statsObj.OREB,
+                                                statsObj.STL, statsObj.AST, statsObj.BLK, statsObj.FGA, statsObj.FTA - statsObj.FTM,
+                                                statsObj.FLS, statsObj.TOV);
 
-				JobManager.AddJob(() => UserScoreSeed.Initialize(context),
-												s => s.WithName("userScore")
-												.ToRunOnceIn(30)
-												.Seconds());
+                dbStats.FP = _scoreService.GetFantasyPoints(statsObj.PTS, statsObj.DREB, statsObj.OREB,
+                                                statsObj.AST, statsObj.STL, statsObj.BLK, statsObj.TOV);
 
-				JobManager.AddJob(() => Initialize(context),
-												s => s.WithName("statsSeed")
-												.ToRunOnceAt(NextGame.NEXT_GAME.AddMinutes(5)));
-			}
-		}
+                dbStats.Price = playerPrice;
+            }
+        }
 
-		private static async Task AddToDatabase(GameContext context, JToken player, Game game, DateTime date, int oppId, string score)
-		{
-			Stats statsObj = new Stats
-			{
-				Game = game,
-				Date = date,
-				OppID = oppId,
-				Score = score,
-				MIN = (string)player["min"],
-				FGM = (int)player["fgm"],
-				FGA = (int)player["fga"],
-				FGP = (double)player["fgp"],
-				TPM = (int)player["tpm"],
-				TPA = (int)player["tpa"],
-				TPP = (double)player["tpp"],
-				FTM = (int)player["ftm"],
-				FTA = (int)player["fta"],
-				FTP = (double)player["ftp"],
-				DREB = (int)player["defReb"],
-				OREB = (int)player["offReb"],
-				TREB = (int)player["totReb"],
-				AST = (int)player["assists"],
-				BLK = (int)player["blocks"],
-				STL = (int)player["steals"],
-				FLS = (int)player["pFouls"],
-				TOV = (int)player["turnovers"],
-				PTS = (int)player["points"]
-			};
+        private Game GetGame(DateTime date, int homeTeamId, int awayTeamId, int homeScore, int awayScore)
+        {
+            Team homeTeam = _context.Teams.Where(team => team.NbaID == homeTeamId).FirstOrDefault();
+            if (homeTeam == null)
+                homeTeam = CommonFunctions.GetUnknownTeam(_context);
+            Team awayTeam = _context.Teams.Where(team => team.NbaID == awayTeamId).FirstOrDefault();
+            if (awayTeam == null)
+                awayTeam = CommonFunctions.GetUnknownTeam(_context);
 
-			var statsPlayer = context.Players
-					.Where(x => x.NbaID == (int)player["personId"])
-					.FirstOrDefault();
+            Game gameObj = _context.Games.Where(game => game.Date.Equals(date) && game.HomeTeam.Equals(homeTeam) && game.AwayTeam.Equals(awayTeam)).FirstOrDefault();
+            if (gameObj != null)
+            {
+                gameObj.HomeScore = homeScore;
+                gameObj.AwayScore = awayScore;
+            }
+            else
+            {
+                gameObj = new Game
+                {
+                    Date = date,
+                    HomeTeam = homeTeam,
+                    HomeScore = homeScore,
+                    AwayTeam = awayTeam,
+                    AwayScore = awayScore
+                };
+                _context.Games.Add(gameObj);
+            }
 
-			if (statsPlayer == null)
-				return;
+            return gameObj;
+        }
 
-			statsObj.Player = statsPlayer;
-			int playerPrice = _scoreService.GetPrice(statsPlayer);
+        public void Execute()
+        {
+            string gameDate = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
+            JArray games = CommonFunctions.GetGames(gameDate);
+            int countOfActivatedGames = 0;
+            bool isAnyGameStarted = false;
+            foreach (JObject game in games)
+            {
+                if ((int)game["statusNum"] != 1)
+                    isAnyGameStarted = true;
 
-			var dbStats = context.Stats
-							.Where(stats => stats.Date.Equals(date) && stats.PlayerID == statsPlayer.PlayerID)
-							.FirstOrDefault();
+                if (!(bool)game["isGameActivated"] && (int)game["statusNum"] != 3)
+                    continue;
 
-			if (dbStats == null)
-			{
-				statsObj.GS = _scoreService.GetGameScore(statsObj.PTS, statsObj.FGM, statsObj.DREB, statsObj.OREB,
-												statsObj.STL, statsObj.AST, statsObj.BLK, statsObj.FGA, statsObj.FTA - statsObj.FTM,
-												statsObj.FLS, statsObj.TOV);
+                countOfActivatedGames++;
+                string bsUrl = "http://data.nba.net/10s/prod/v1/" + gameDate + "/" + game["gameId"] + "_boxscore.json";
+                JObject boxscore = GetBoxscore(bsUrl);
+                if (boxscore["stats"] == null)
+                    continue;
+                int hTeam = (int)boxscore["basicGameData"]["hTeam"]["teamId"];
+                int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
+                DateTime date = DateTime.ParseExact((string)boxscore["basicGameData"]["startDateEastern"], "yyyyMMdd", CultureInfo.InvariantCulture);
+                var players = boxscore["stats"]["activePlayers"];
+                int homeScore = (int)boxscore["basicGameData"]["hTeam"]["score"];
+                int awayScore = (int)boxscore["basicGameData"]["vTeam"]["score"];
+                Game gameObj = GetGame(date, hTeam, vTeam, homeScore, awayScore);
 
-				statsObj.FP = _scoreService.GetFantasyPoints(statsObj.PTS, statsObj.DREB, statsObj.OREB,
-												statsObj.AST, statsObj.STL, statsObj.BLK, statsObj.TOV);
+                foreach (var player in (JArray)players)
+                {
+                    int oppId;
 
-				statsObj.Price = playerPrice;
+                    if (!_context.Players.Any(x => x.NbaID.Equals((int)player["personId"])))
+                        continue;
+                    string score = "";
+                    string liveToken = (int)game["statusNum"] != 3 ? ";LIVE" : "";
+                    if ((int)player["teamId"] == hTeam)
+                    {
+                        oppId = vTeam;
+                        score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";vs" + liveToken;
+                    }
+                    else
+                    {
+                        oppId = hTeam;
+                        score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";@" + liveToken;
+                    }
+                    if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
+                        continue;
+                    AddToDatabase(player, gameObj, date, oppId, score);
+                }
+                _context.SaveChanges();
+            }
 
-				await context.Stats.AddAsync(statsObj);
-			}
-			else
-			{
-				dbStats.Game = game;
-				dbStats.Score = score;
-				dbStats.MIN = statsObj.MIN;
-				dbStats.FGM = statsObj.FGM;
-				dbStats.FGA = statsObj.FGA;
-				dbStats.FGP = statsObj.FGP;
-				dbStats.TPM = statsObj.TPM;
-				dbStats.TPA = statsObj.TPA;
-				dbStats.TPP = statsObj.TPP;
-				dbStats.FTM = statsObj.FTM;
-				dbStats.FTA = statsObj.FTA;
-				dbStats.FTP = statsObj.FTP;
-				dbStats.DREB = statsObj.DREB;
-				dbStats.OREB = statsObj.OREB;
-				dbStats.TREB = statsObj.TREB;
-				dbStats.AST = statsObj.AST;
-				dbStats.BLK = statsObj.BLK;
-				dbStats.STL = statsObj.STL;
-				dbStats.FLS = statsObj.FLS;
-				dbStats.TOV = statsObj.TOV;
-				dbStats.PTS = statsObj.PTS;
-				dbStats.GS = _scoreService.GetGameScore(statsObj.PTS, statsObj.FGM, statsObj.DREB, statsObj.OREB,
-												statsObj.STL, statsObj.AST, statsObj.BLK, statsObj.FGA, statsObj.FTA - statsObj.FTM,
-												statsObj.FLS, statsObj.TOV);
+            if (!isAnyGameStarted)
+            {
+                JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
+                                                s => s.WithName("statsSeed")
+                                                .ToRunOnceIn(5).Minutes());
+                return;
+            }
 
-				dbStats.FP = _scoreService.GetFantasyPoints(statsObj.PTS, statsObj.DREB, statsObj.OREB,
-												statsObj.AST, statsObj.STL, statsObj.BLK, statsObj.TOV);
+            if (!IsFinished(games))
+            {
+                int minutesDelay = countOfActivatedGames == 0 ? 5 : 1;
+                JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
+                                s => s.WithName("statsSeed")
+                                .ToRunOnceIn(minutesDelay).Minutes());
+            }
+            else
+            {
+                _context.Stats
+                        .RemoveRange(_context.Stats.Where(stat => stat.Score.Contains("LIVE")));
+                _context.SaveChanges();
 
-				dbStats.Price = playerPrice;
-			}
-		}
+                JobManager.AddJob(new UserScoreSeed(_pushService),
+                                                s => s.WithName("userScore")
+                                                .ToRunNow());
 
-		private static Game GetGame(GameContext context, DateTime date, int homeTeamId, int awayTeamId, int homeScore, int awayScore)
-		{
-			Team homeTeam = context.Teams.Where(team => team.NbaID == homeTeamId).FirstOrDefault();
-			if (homeTeam == null)
-				homeTeam = CommonFunctions.GetUnknownTeam(context);
-			Team awayTeam = context.Teams.Where(team => team.NbaID == awayTeamId).FirstOrDefault();
-			if (awayTeam == null)
-				awayTeam = CommonFunctions.GetUnknownTeam(context);
-
-			Game gameObj = context.Games.Where(game => game.Date.Equals(date) && game.HomeTeam.Equals(homeTeam) && game.AwayTeam.Equals(awayTeam)).FirstOrDefault();
-			if (gameObj != null)
-			{
-				gameObj.HomeScore = homeScore;
-				gameObj.AwayScore = awayScore;
-			}
-			else
-			{
-				gameObj = new Game
-				{
-					Date = date,
-					HomeTeam = homeTeam,
-					HomeScore = homeScore,
-					AwayTeam = awayTeam,
-					AwayScore = awayScore
-				};
-				context.Games.Add(gameObj);
-			}
-
-			return gameObj;
-		}
-	}
+                JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
+                                                s => s.WithName("statsSeed")
+                                                .ToRunOnceAt(NextGame.NEXT_GAME.AddMinutes(5)));
+            }
+        }
+    }
 }

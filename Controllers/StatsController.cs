@@ -11,13 +11,11 @@ namespace fantasy_hoops.Controllers
     public class StatsController : Controller
     {
 
-        private readonly GameContext context;
-        private readonly StatsRepository _repository;
+        private readonly IStatsRepository _repository;
 
-        public StatsController()
+        public StatsController(IStatsRepository repository)
         {
-            context = new GameContext();
-            _repository = new StatsRepository(context);
+            _repository = repository;
         }
 
         [HttpGet]
