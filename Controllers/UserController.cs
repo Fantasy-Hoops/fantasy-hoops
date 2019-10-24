@@ -16,25 +16,23 @@ namespace fantasy_hoops.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        private readonly GameContext _context;
-        private readonly UserRepository _repository;
-        private readonly UserService _service;
+        private readonly IUserRepository _userRepository;
+        private readonly IUserService _userService;
 
-        public UserController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserController(IUserRepository repository, IUserService service, UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            _context = new GameContext();
-            _repository = new UserRepository(_context);
-            _service = new UserService(_context, userManager, signInManager);
+            _userRepository = repository;
+            _userService = service;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]LoginViewModel model)
         {
-            if (!_repository.UserExists(model.UserName))
+            if (!_userRepository.UserExists(model.UserName))
                 return StatusCode(401, "You have entered an invalid username or password!");
 
-            if (await _service.Login(model))
-                return Ok(_service.RequestToken(model.UserName));
+            if (await _userService.Login(model))
+                return Ok(_userService.RequestToken(model.UserName));
             return StatusCode(401, "You have entered an invalid username or password!");
         }
 
@@ -42,7 +40,7 @@ namespace fantasy_hoops.Controllers
         public async Task<IActionResult> Register([FromBody]RegisterViewModel model)
         {
             // Checking for duplicates usernames
-            if (_repository.UserExists(model.UserName))
+            if (_userRepository.UserExists(model.UserName))
                 return StatusCode(422, "Username is already taken!");
 
             // Check for username length
@@ -54,14 +52,14 @@ namespace fantasy_hoops.Controllers
                 return StatusCode(422, "Password must contain 8-20 characters.");
 
             // Checking for duplicate email addresses
-            if (_repository.EmailExists(model.Email))
+            if (_userRepository.EmailExists(model.Email))
                 return StatusCode(422, "Email already has an user associated to it!");
 
             // Check if email is valid
             if (!Regex.IsMatch(model.Email, @"^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$"))
                 return StatusCode(422, "Entered email is invalid!");
 
-            if (await _service.Register(model))
+            if (await _userService.Register(model))
                 return Ok("You have registered successfully!");
             return StatusCode(500, "Registration has failed!");
         }
@@ -70,14 +68,14 @@ namespace fantasy_hoops.Controllers
         [HttpGet("logout")]
         public IActionResult Logout()
         {
-            _service.Logout();
+            _userService.Logout();
             return Ok("You have signed out successfully!");
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(String id, int start = 0, int count = 5)
         {
-            var profile = _repository.GetProfile(id, start, count).FirstOrDefault();
+            var profile = _userRepository.GetProfile(id, start, count).FirstOrDefault();
             if(profile == null)
                 return NotFound(String.Format("User with id {0} has not been found!", id));
             return Ok(profile);
@@ -86,7 +84,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet("name/{name}")]
         public IActionResult GetByName(String name, int start = 0, int count = 0)
         {
-            User user = _repository.GetUserByName(name);
+            User user = _userRepository.GetUserByName(name);
             if (user == null)
                 return NotFound(String.Format("User with name {0} has not been found!", name));
             return Get(user.Id, start, count);
@@ -95,20 +93,20 @@ namespace fantasy_hoops.Controllers
         [HttpGet("friends/{id}")]
         public IActionResult GetFriends(String id)
         {
-            return Ok(_repository.GetFriends(id).ToList());
+            return Ok(_userRepository.GetFriends(id).ToList());
         }
 
         [HttpGet("team/{id}")]
         public IActionResult GetTeam(String id)
         {
-            return Ok(_repository.GetTeam(id));
+            return Ok(_userRepository.GetTeam(id));
         }
 
         [HttpPut("editprofile")]
         public async Task<IActionResult> EditProfile([FromBody]EditProfileViewModel model)
         {
             // No duplicate usernames
-            if (_context.Users.Where(x => x.UserName.ToLower().Equals(model.UserName.ToLower()) && !x.Id.Equals(model.Id)).Any())
+            if (_userRepository.IsDuplicateUserName(model.Id, model.Email))
                 return StatusCode(409, "Username is already taken!");
 
             // Check for username length
@@ -116,7 +114,7 @@ namespace fantasy_hoops.Controllers
                 return StatusCode(422, "Username must be between 4 and 11 symbols long!");
 
             // No duplicate emails
-            if (_context.Users.Where(x => x.Email.ToLower().Equals(model.Email.ToLower()) && !x.Id.Equals(model.Id)).Any())
+            if (_userRepository.IsDuplicateEmail(model.Id, model.Email))
                 return StatusCode(409, "Email already has an user associated to it!");
 
             // Check if email is valid
@@ -128,14 +126,14 @@ namespace fantasy_hoops.Controllers
                 && !Regex.IsMatch(model.NewPassword, @"^.{8,20}$"))
                 return StatusCode(422, "Password must contain 8-20 characters.");
 
-            User user = _repository.GetUser(model.Id);
+            User user = _userRepository.GetUser(model.Id);
             if (user == null)
                 return NotFound("User has not been found!");
 
-            if(!(await _service.UpdateProfile(model)))
+            if(!(await _userService.UpdateProfile(model)))
                return StatusCode(401, "Wrong current password!");
 
-            return Ok(_service.RequestToken(model.UserName));
+            return Ok(_userService.RequestToken(model.UserName));
         }
 
         [HttpPost("uploadAvatar")]
@@ -151,16 +149,16 @@ namespace fantasy_hoops.Controllers
             if (!(fileType.Equals("png") || fileType.Equals("jpg")))
                 return StatusCode(415, "Only .png and .jpg extensions are allowed!");
 
-            if(!_service.UploadAvatar(model))
+            if(!_userService.UploadAvatar(model))
                 return StatusCode(500, "Avatar cannot be uploaded!");
 
-            return Ok(_service.RequestTokenById(model.Id));
+            return Ok(_userService.RequestTokenById(model.Id));
         }
 
         [HttpPost("clearAvatar")]
         public IActionResult ClearAvatar([FromBody]AvatarViewModel model)
         {
-            if(!_service.ClearAvatar(model))
+            if(!_userService.ClearAvatar(model))
                 return StatusCode(500, "Avatar cannot be cleared!");
             return Ok("Avatar cleared successfully!");
         }
@@ -168,7 +166,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet]
         public IActionResult GetUserPool()
         {
-            return Ok(_repository.GetUserPool());
+            return Ok(_userRepository.GetUserPool());
         }
     }
 }

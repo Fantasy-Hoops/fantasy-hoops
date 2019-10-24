@@ -51,5 +51,8 @@ namespace fantasy_hoops.Services
         /// <param name="userId">user id the push should be sent to</param>
         /// <param name="notification">the notification to be sent</param>
         Task Send(string userId, PushNotificationViewModel notification);
+
+        Task SendAdminNotification(PushNotificationViewModel notification);
+        Task SendNudgeNotifications();
     }
 }

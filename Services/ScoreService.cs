@@ -1,5 +1,6 @@
 ﻿using fantasy_hoops.Database;
 using fantasy_hoops.Models;
+using fantasy_hoops.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,11 @@ namespace fantasy_hoops.Services
     public class ScoreService : IScoreService
     {
 
-        private readonly GameContext _context;
+        private readonly IScoreRepository _repository;
 
-        public ScoreService()
+        public ScoreService(IScoreRepository repository)
         {
-            _context = new GameContext();
+            _repository = repository;
         }
 
         public double GetFantasyPoints(int points, int defensiveRebounds, int offensiveRebounds,
@@ -35,27 +36,10 @@ namespace fantasy_hoops.Services
 
         public int GetPrice(Player p)
         {
-            double GSavg = 0;
-            if (!_context.Stats.Any(stats => stats.Player.NbaID == p.NbaID))
+            if (!_repository.AnyPlayerStatsExists(p))
                 return PlayerSeed.PRICE_FLOOR;
 
-            try
-            {
-                double GSsum = _context.Stats
-                            .Where(x => x.Player.NbaID == p.NbaID)
-                            .OrderByDescending(s => s.Date)
-                            .Take(5)
-                            .Select(s => s.GS)
-                            .Sum();
-
-                int GScount = _context.Stats
-                            .Where(x => x.Player.NbaID == p.NbaID)
-                            .Take(5)
-                            .Count();
-
-                GSavg = GSsum / GScount;
-            }
-            catch { }
+            double GSavg = _repository.LastFiveAverage(p);
             return (int)((p.FPPG + GSavg) * 7 / 5);
         }
     }

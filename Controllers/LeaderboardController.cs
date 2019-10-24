@@ -11,11 +11,11 @@ namespace fantasy_hoops.Controllers
     [Route("api/[controller]")]
     public class LeaderboardController : Controller
     {
-        private readonly LeaderboardRepository _repository;
+        private readonly ILeaderboardRepository _repository;
 
-        public LeaderboardController()
+        public LeaderboardController(ILeaderboardRepository repository)
         {
-            _repository = new LeaderboardRepository(new GameContext());
+            _repository = repository;
         }
 
         [HttpGet("player")]

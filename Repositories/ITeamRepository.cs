@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace fantasy_hoops.Repositories
 {
-    interface ITeamRepository
+    public interface ITeamRepository
     {
 
         IQueryable<Object> GetTeams();

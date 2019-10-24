@@ -14,9 +14,9 @@ namespace fantasy_hoops.Repositories
 
         private readonly GameContext _context;
 
-        public LineupRepository(GameContext context)
+        public LineupRepository()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         public object GetLineup(string id)
@@ -62,6 +62,7 @@ namespace fantasy_hoops.Repositories
                         PfID = model.PfID,
                         CID = model.CID
                     });
+            _context.SaveChanges();
         }
 
         public void UpdateLineup(SubmitLineupViewModel model)
@@ -76,6 +77,7 @@ namespace fantasy_hoops.Repositories
             userLineup.CID = model.CID;
             userLineup.FP = 0.0;
             userLineup.IsCalculated = false;
+            _context.SaveChanges();
         }
 
         public int GetLineupPrice(SubmitLineupViewModel model)
@@ -119,6 +121,20 @@ namespace fantasy_hoops.Repositories
         private bool IsPlayerPriceIncorrect(int playerID, int price)
         {
             return _context.Players.Where(pg => pg.PlayerID == playerID).Select(p => p.Price).FirstOrDefault() != price;
+        }
+
+        public IEnumerable<string> GetUserSelectedIds()
+        {
+            return _context.UserLineups
+                .Where(lineup => lineup.Date.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date))
+                .Select(lineup => lineup.UserID);
+        }
+
+        public IEnumerable<User> UsersNotSelected(IEnumerable<string> usersSelectedIDs)
+        {
+            return _context.Users
+                .Where(user => user.Streak > 0 && !usersSelectedIDs.Any(userID => userID.Equals(user.Id)))
+                .ToList();
         }
     }
 }

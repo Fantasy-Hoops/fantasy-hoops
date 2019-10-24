@@ -5,10 +5,13 @@ using fantasy_hoops.Models.ViewModels;
 
 namespace fantasy_hoops.Repositories
 {
-    interface IPushNotificationRepository
+    public interface IPushNotificationRepository
     {
-        IEnumerable<PushSubscription> GetAllSubscribtions();
-
-        IEnumerable<PushSubscription> GetUserSubscribtions(string userId);
+        IEnumerable<PushSubscription> GetAllSubscriptions();
+        IEnumerable<PushSubscription> GetUserSubscriptions(string userId);
+        bool SubscriptionExists(PushSubscription subscription);
+        PushSubscription GetByP256Dh(string p256dh);
+        void AddSubscription(PushSubscription subscription);
+        void RemoveSubscription(PushSubscription subscription);
     }
 }

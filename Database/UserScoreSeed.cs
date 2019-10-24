@@ -13,32 +13,43 @@ using WebPush;
 
 namespace fantasy_hoops.Database
 {
-    public class UserScoreSeed
+    public class UserScoreSeed : IJob
     {
         private static readonly Stack<GameScorePushNotificationModel> _usersPlayed = new Stack<GameScorePushNotificationModel>();
 
-        public static void Initialize(GameContext context)
+        private readonly GameContext _context;
+        private readonly IPushService _pushService;
+
+        public UserScoreSeed(IPushService pushService)
         {
-            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("userScore")))
-            {
-                JobManager.AddJob(() => Initialize(context),
-                s => s.WithName("userScore")
-                .ToRunOnceIn(30)
-                .Seconds());
-                return;
-            }
-            Update(context);
+            _context = new GameContext();
+            _pushService = pushService;
         }
 
-        private static void Update(GameContext context)
+        private async Task SendPushNotifications()
+        {
+            while (_usersPlayed.Count > 0)
+            {
+                var user = _usersPlayed.Pop();
+                PushNotificationViewModel notification =
+                        new PushNotificationViewModel("Fantasy Hoops Game Score",
+                                string.Format("Game has finished! Your lineup scored {0} FP", user.Score))
+                        {
+                            Actions = new List<NotificationAction> { new NotificationAction("leaderboard", "🏆 Leaderboard") }
+                        };
+                await _pushService.Send(user.UserID, notification);
+            }
+        }
+
+        public void Execute()
         {
             WebPushClient _webPushClient = new WebPushClient();
 
-            var todayStats = context.Stats
+            var todayStats = _context.Stats
                     .Where(stats => stats.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date))
                     .Select(stats => new { stats.PlayerID, stats.FP });
 
-            var allLineups = context.UserLineups
+            var allLineups = _context.UserLineups
                     .Where(lineup => lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date) && !lineup.IsCalculated)
                     .Include(lineup => lineup.User)
                     .ToList();
@@ -46,7 +57,7 @@ namespace fantasy_hoops.Database
             if (allLineups.Count == 0)
                 return;
 
-            context.Users
+            _context.Users
                     .Except(allLineups.Select(lineup => lineup.User))
                     .ToList()
                     .ForEach(user => user.Streak = 0);
@@ -76,25 +87,10 @@ namespace fantasy_hoops.Database
                     DateCreated = DateTime.UtcNow,
                     Score = lineup.FP
                 };
-                context.GameScoreNotifications.Add(gs);
+                _context.GameScoreNotifications.Add(gs);
             }
-            context.SaveChanges();
+            _context.SaveChanges();
             Task.Run(() => SendPushNotifications());
-        }
-
-        private static async Task SendPushNotifications()
-        {
-            while (_usersPlayed.Count > 0)
-            {
-                var user = _usersPlayed.Pop();
-                PushNotificationViewModel notification =
-                        new PushNotificationViewModel("Fantasy Hoops Game Score",
-                                string.Format("Game has finished! Your lineup scored {0} FP", user.Score))
-                        {
-                            Actions = new List<NotificationAction> { new NotificationAction("leaderboard", "🏆 Leaderboard") }
-                        };
-                await PushService.Instance.Value.Send(user.UserID, notification);
-            }
         }
     }
 }

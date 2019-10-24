@@ -11,23 +11,19 @@ namespace fantasy_hoops.Services
     public class LineupService : ILineupService
     {
 
-        private readonly GameContext _context;
-        private readonly LineupRepository _repository;
+        private readonly ILineupRepository _lineupRepository;
 
-        public LineupService(GameContext context)
+        public LineupService(ILineupRepository lineupRepository)
         {
-            _context = context;
-            _repository = new LineupRepository(_context);
+            _lineupRepository = lineupRepository;
         }
 
-        public async void SubmitLineup(SubmitLineupViewModel model)
+        public void SubmitLineup(SubmitLineupViewModel model)
         {
-            if (!_repository.IsUpdating(model.UserID))
-                _repository.AddLineup(model);
+            if (!_lineupRepository.IsUpdating(model.UserID))
+                _lineupRepository.AddLineup(model);
             else
-                _repository.UpdateLineup(model);
-
-            await _context.SaveChangesAsync();
+                _lineupRepository.UpdateLineup(model);
         }
 
     }

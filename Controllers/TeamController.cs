@@ -11,11 +11,11 @@ namespace fantasy_hoops.Controllers
     public class TeamController : Controller
     {
 
-        private readonly TeamRepository _repository;
+        private readonly ITeamRepository _repository;
 
-        public TeamController()
+        public TeamController(ITeamRepository repository)
         {
-            _repository = new TeamRepository(new GameContext());
+            _repository = repository;
         }
 
         [HttpGet]

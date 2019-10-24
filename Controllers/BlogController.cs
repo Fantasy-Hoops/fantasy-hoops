@@ -13,14 +13,13 @@ namespace fantasy_hoops.Controllers
     [Route("api/[controller]")]
     public class BlogController : Controller
     {
-        private readonly BlogService _service;
-        private readonly BlogRepository _repository;
+        private readonly IBlogService _service;
+        private readonly IBlogRepository _repository;
 
-        public BlogController()
+        public BlogController(IBlogService service, IBlogRepository repository)
         {
-            GameContext context = new GameContext();
-            _service = new BlogService(context);
-            _repository = new BlogRepository(context);
+            _service = service;
+            _repository = repository;
         }
 
         [HttpGet]

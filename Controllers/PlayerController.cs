@@ -11,11 +11,11 @@ namespace fantasy_hoops.Controllers
     public class PlayerController : Controller
     {
 
-        private readonly PlayerRepository _repository;
+        private readonly IPlayerRepository _repository;
 
-        public PlayerController()
+        public PlayerController(IPlayerRepository repository)
         {
-            _repository = new PlayerRepository(new GameContext());
+            _repository = repository;
         }
 
         [HttpGet]

@@ -11,12 +11,11 @@ namespace fantasy_hoops.Controllers
     public class InjuriesController : Controller
     {
 
-        private readonly InjuryRepository _repository;
+        private readonly IInjuryRepository _repository;
 
-        public InjuriesController()
+        public InjuriesController(IInjuryRepository repository)
         {
-            GameContext context = new GameContext();
-            _repository = new InjuryRepository(context);
+            _repository = repository;
         }
 
         [HttpGet]

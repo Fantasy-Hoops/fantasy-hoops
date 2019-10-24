@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using fantasy_hoops.Database;
-using fantasy_hoops.Helpers;
-using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Repositories;
 using FluentScheduler;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using WebPush;
 using PushSubscription = fantasy_hoops.Models.PushSubscription;
@@ -18,36 +14,17 @@ namespace fantasy_hoops.Services
 {
     public class PushService : IPushService
     {
-        private static readonly Lazy<PushService> INSTANCE = new Lazy<PushService>();
-
         private readonly WebPushClient _client;
-        private readonly GameContext _context;
         public static VapidDetails _vapidDetails;
+        private readonly IPushNotificationRepository _pushNotificationRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly ILineupRepository _lineupRepository;
 
-        public PushService()
+        public PushService(IPushNotificationRepository pushNotificationRepository, IUserRepository userRepository, ILineupRepository lineupRepository)
         {
-            _context = new GameContext();
-            _client = new WebPushClient();
-            _context = new GameContext();
-            _client = new WebPushClient();
-            var vapidSubject = Environment.GetEnvironmentVariable("VapidSubject");
-            var vapidPublicKey = Environment.GetEnvironmentVariable("VapidPublicKey");
-            var vapidPrivateKey = Environment.GetEnvironmentVariable("VapidPrivateKey");
-            CheckOrGenerateVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
-            _vapidDetails = new VapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
-        }
-
-        public PushService(string vapidSubject, string vapidPublicKey, string vapidPrivateKey)
-        {
-            _context = new GameContext();
-            _client = new WebPushClient();
-            CheckOrGenerateVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
-            _vapidDetails = new VapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
-        }
-
-        public PushService(IConfiguration configuration)
-        {
-            _context = new GameContext();
+            _pushNotificationRepository = pushNotificationRepository;
+            _userRepository = userRepository;
+            _lineupRepository = lineupRepository;
             _client = new WebPushClient();
             var vapidSubject = Environment.GetEnvironmentVariable("VapidSubject");
             var vapidPublicKey = Environment.GetEnvironmentVariable("VapidPublicKey");
@@ -56,9 +33,12 @@ namespace fantasy_hoops.Services
             _vapidDetails = new VapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
         }
 
-        public static Lazy<PushService> Instance
+        public PushService(IPushNotificationRepository repository, string vapidSubject, string vapidPublicKey, string vapidPrivateKey)
         {
-            get { return INSTANCE; }
+            _pushNotificationRepository = repository;
+            _client = new WebPushClient();
+            CheckOrGenerateVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
+            _vapidDetails = new VapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
         }
 
         public void CheckOrGenerateVapidDetails(string vapidSubject, string vapidPublicKey, string vapidPrivateKey)
@@ -82,26 +62,24 @@ namespace fantasy_hoops.Services
 
         public async Task<PushSubscription> Subscribe(PushSubscription subscription)
         {
-            if (await _context.PushSubscriptions.AnyAsync(s => s.P256Dh == subscription.P256Dh))
-                return await _context.PushSubscriptions.FindAsync(subscription.P256Dh);
+            if (_pushNotificationRepository.SubscriptionExists(subscription))
+                return _pushNotificationRepository.GetByP256Dh(subscription.P256Dh);
 
-            await _context.PushSubscriptions.AddAsync(subscription);
-            await _context.SaveChangesAsync();
+            _pushNotificationRepository.AddSubscription(subscription);
 
             return subscription;
         }
 
         public async Task Unsubscribe(PushSubscription subscription)
         {
-            if (!await _context.PushSubscriptions.AnyAsync(s => s.P256Dh == subscription.P256Dh)) return;
+            if (!_pushNotificationRepository.SubscriptionExists(subscription)) return;
 
-            _context.PushSubscriptions.Remove(subscription);
-            await _context.SaveChangesAsync();
+            _pushNotificationRepository.RemoveSubscription(subscription);
         }
 
         public async Task Send(string userId, PushNotificationViewModel notification)
         {
-            foreach (var subscription in await GetUserSubscriptions(userId))
+            foreach (var subscription in GetUserSubscriptions(userId))
             {
                 try
                 {
@@ -111,8 +89,7 @@ namespace fantasy_hoops.Services
                 {
                     if (e.Message == "Subscription no longer valid")
                     {
-                        _context.PushSubscriptions.Remove(subscription);
-                        await _context.SaveChangesAsync();
+                        _pushNotificationRepository.RemoveSubscription(subscription);
                     }
                     else
                     {
@@ -127,13 +104,13 @@ namespace fantasy_hoops.Services
             await Send(userId, new PushNotificationViewModel(text));
         }
 
-        private async Task<List<PushSubscription>> GetUserSubscriptions(string userId) =>
-            await _context.PushSubscriptions.Where(s => s.UserID.Equals(userId)).ToListAsync();
+        private IEnumerable<PushSubscription> GetUserSubscriptions(string userId) =>
+            _pushNotificationRepository.GetUserSubscriptions(userId);
 
         public async Task SendAdminNotification(PushNotificationViewModel notification)
         {
-            string adminRoleID = _context.Roles.Where(role => role.Name.Equals("Admin")).FirstOrDefault().Id;
-            foreach (var admin in await _context.UserRoles.Where(userRole => userRole.RoleId.Equals(adminRoleID)).ToListAsync())
+            string adminRoleID = _userRepository.GetAdminRoleId();
+            foreach (var admin in _userRepository.GetAdmins(adminRoleID))
                 await Send(admin.UserId, notification);
         }
 
@@ -150,14 +127,12 @@ namespace fantasy_hoops.Services
 
             PushNotificationViewModel notification =
                     new PushNotificationViewModel("Fantasy Hoops Reminder",
-                        string.Format("Game is starting in less than 2 hours! Don't forget to set up your lineup!"));
-            notification.Actions = new List<NotificationAction> { new NotificationAction("lineup", "🏆 Lineup") };
-            var usersSelectedIDs = _context.UserLineups
-                .Where(lineup => lineup.Date.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date))
-                .Select(lineup => lineup.UserID);
-            foreach (var user in await _context.Users
-                .Where(user => user.Streak > 0 && !usersSelectedIDs.Any(userID => userID.Equals(user.Id)))
-                .ToListAsync())
+                        string.Format("Game is starting in less than 2 hours! Don't forget to set up your lineup!"))
+                    {
+                        Actions = new List<NotificationAction> { new NotificationAction("lineup", "🏆 Lineup") }
+                    };
+            var usersSelectedIDs = _lineupRepository.GetUserSelectedIds();
+            foreach (var user in _lineupRepository.UsersNotSelected(usersSelectedIDs))
                 await Send(user.Id, notification);
         }
     }

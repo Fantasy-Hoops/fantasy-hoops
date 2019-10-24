@@ -2,13 +2,14 @@
 using fantasy_hoops.Models.Notifications;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
+using System.IO;
 
 namespace fantasy_hoops.Database
 {
     public class GameContext : IdentityDbContext<User>
     {
-
         public DbSet<Player> Players { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<Game> Games { get; set; }
@@ -27,6 +28,12 @@ namespace fantasy_hoops.Database
 
         public GameContext()
         {
+
+        }
+
+        public GameContext(DbContextOptions options) : base(options)
+        {
+
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -41,7 +48,14 @@ namespace fantasy_hoops.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+            if (!optionsBuilder.IsConfigured)
+            {
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+                   .AddUserSecrets<Startup>()
+                   .Build();
+                string connectionString = configuration["CONNECTION_STRING"];
+                optionsBuilder.UseSqlServer(connectionString);
+            }
         }
     }
 }

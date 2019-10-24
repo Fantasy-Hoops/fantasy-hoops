@@ -16,26 +16,17 @@ namespace fantasy_hoops.Controllers
         private readonly IFriendRepository _repository;
         private readonly IFriendService _service;
 
-        public FriendRequestController(IFriendRepository repository = null, IFriendService service = null)
+        public FriendRequestController(IFriendRepository repository, IFriendService service)
         {
-            if (repository != null && service != null)
-            {
-                _repository = repository;
-                _service = service;
-            }
-            else
-            {
-                GameContext context = new GameContext();
-                _repository = new FriendRepository(context);
-                _service = new FriendService(context);
-            }
+            _repository = repository;
+            _service = service;
         }
 
         [HttpPost("status")]
         public IActionResult GetStatus([FromBody]FriendRequestViewModel model)
         {
             RequestStatus status = _repository.GetStatus(model.ReceiverID, model.SenderID);
-            switch(status)
+            switch (status)
             {
                 case RequestStatus.NO_REQUEST:
                     return Ok(-1);
@@ -83,7 +74,7 @@ namespace fantasy_hoops.Controllers
             if (request == null)
                 request = _repository.GetRequest(model.ReceiverID, model.SenderID);
 
-            if(request == null)
+            if (request == null)
                 return NotFound("Users are not friends!");
 
             _service.RemoveRequest(model, request);
