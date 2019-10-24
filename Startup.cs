@@ -11,12 +11,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
-using fantasy_hoops;
 using dotenv.net;
 using Microsoft.AspNetCore.Http;
 using fantasy_hoops.Services;
-using Microsoft.Net.Http.Headers;
-using WebPush;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
@@ -42,10 +39,7 @@ namespace fantasy_hoops
                              reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            if (env.IsDevelopment())
-            {
-                builder.AddUserSecrets<Startup>();
-            }
+            builder.AddUserSecrets<Startup>();
 
             Configuration = builder.Build();
         }
@@ -94,14 +88,9 @@ namespace fantasy_hoops
                 });
             });
 #endif
-
-            var connectionString = Configuration["CONNECTION_STRING"];
-            services.AddDbContext<GameContext>(o => o.UseSqlServer(connectionString));
-            services.AddScoped<GameContext>();
+            services.AddDbContext<GameContext>(o => o.UseSqlServer(Configuration["CONNECTION_STRING"]));
 
             ConfigureAuth(services);
-            //ConfigureDbContext(services);
-            Task.Run(() => StartJobs());
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -187,10 +176,6 @@ namespace fantasy_hoops
                 });
         }
 
-        private async Task StartJobs()
-        {
-        }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
@@ -232,12 +217,13 @@ namespace fantasy_hoops
 
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
-                var context = serviceScope.ServiceProvider.GetService<GameContext>(); 
+                var context = serviceScope.ServiceProvider.GetService<GameContext>();
                 context.Database.Migrate();
-                var scoreService = serviceScope.ServiceProvider.GetService<ScoreService>();
 
+                var scoreService = serviceScope.ServiceProvider.GetService<IScoreService>();
+                var pushService = serviceScope.ServiceProvider.GetService<IPushService>();
                 JobManager.UseUtcTime();
-                JobManager.Initialize(new ApplicationRegistry(context, scoreService));
+                JobManager.Initialize(new ApplicationRegistry(context, scoreService, pushService));
             }
 
             Task.Run(() => CreateRoles(serviceProvider)).Wait();

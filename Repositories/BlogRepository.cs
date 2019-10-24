@@ -3,9 +3,7 @@ using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace fantasy_hoops.Repositories
 {
@@ -13,9 +11,9 @@ namespace fantasy_hoops.Repositories
     {
         private readonly GameContext _context;
 
-        public BlogRepository(GameContext context)
+        public BlogRepository()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         public IQueryable<Object> GetPosts()
@@ -49,6 +47,7 @@ namespace fantasy_hoops.Repositories
                         CreatedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow),
                         ModifiedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow)
                     });
+            _context.SaveChanges();
         }
 
         public bool PostExists(int id)
@@ -62,6 +61,7 @@ namespace fantasy_hoops.Repositories
                 .Where(post => post.PostID == id)
                 .FirstOrDefault();
             _context.Posts.Remove(postToDelete);
+            _context.SaveChanges();
         }
     }
 }

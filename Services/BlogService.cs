@@ -10,26 +10,20 @@ namespace fantasy_hoops.Services
 {
     public class BlogService : IBlogService
     {
-        private readonly GameContext _context;
-        private readonly BlogRepository _repository;
+        private readonly IBlogRepository _blogRepository;
 
-        public BlogService(GameContext context)
+        public BlogService(IBlogRepository blogRepository)
         {
-            _context = context;
-            _repository = new BlogRepository(_context);
+            _blogRepository = blogRepository;
         }
-        public async void SubmitPost(SubmitPostViewModel model)
+        public void SubmitPost(SubmitPostViewModel model)
         {
-            _repository.AddPost(model);
-
-            await _context.SaveChangesAsync();
+            _blogRepository.AddPost(model);
         }
 
-        public async void DeletePost(int id)
+        public void DeletePost(int id)
         {
-            _repository.DeletePost(id);
-
-            await _context.SaveChangesAsync();
+            _blogRepository.DeletePost(id);
         }
     }
 }

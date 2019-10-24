@@ -8,8 +8,7 @@ namespace fantasy_hoops.Repositories
 {
     public class TestFriendRepository : IFriendRepository
     {
-
-        List<FriendRequest> requests;
+        readonly List<FriendRequest> requests;
         public TestFriendRepository()
         {
             requests = new List<FriendRequest>();

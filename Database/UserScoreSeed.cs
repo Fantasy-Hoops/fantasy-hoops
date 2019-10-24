@@ -15,12 +15,15 @@ namespace fantasy_hoops.Database
 {
     public class UserScoreSeed : IJob
     {
-        private readonly GameContext _context;
         private static readonly Stack<GameScorePushNotificationModel> _usersPlayed = new Stack<GameScorePushNotificationModel>();
 
-        public UserScoreSeed(GameContext context)
+        private readonly GameContext _context;
+        private readonly IPushService _pushService;
+
+        public UserScoreSeed(IPushService pushService)
         {
-            _context = context;
+            _context = new GameContext();
+            _pushService = pushService;
         }
 
         private async Task SendPushNotifications()
@@ -34,7 +37,7 @@ namespace fantasy_hoops.Database
                         {
                             Actions = new List<NotificationAction> { new NotificationAction("leaderboard", "🏆 Leaderboard") }
                         };
-                await PushService.Instance.Value.Send(user.UserID, notification);
+                await _pushService.Send(user.UserID, notification);
             }
         }
 

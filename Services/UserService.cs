@@ -20,13 +20,15 @@ namespace fantasy_hoops.Services
     {
 
         private readonly GameContext _context;
+        private readonly IPushService _pushService;
         private readonly IUserRepository _repository;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
-        public UserService(GameContext context, IUserRepository repository, UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserService(GameContext context, IPushService pushService, IUserRepository repository, UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _context = context;
+            _pushService = pushService;
             _repository = repository;
             _userManager = userManager;
             _signInManager = signInManager;
@@ -59,10 +61,12 @@ namespace fantasy_hoops.Services
             catch { }
 
             PushNotificationViewModel notification =
-                new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", model.UserName));
-            notification.Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") };
-            notification.Data = new { userName = model.UserName };
-            await PushService.Instance.Value.SendAdminNotification(notification);
+                new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", model.UserName))
+                {
+                    Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") },
+                    Data = new { userName = model.UserName }
+                };
+            await _pushService.SendAdminNotification(notification);
 
             return result.Succeeded;
         }

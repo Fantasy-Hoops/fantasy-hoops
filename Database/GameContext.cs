@@ -51,10 +51,9 @@ namespace fantasy_hoops.Database
             if (!optionsBuilder.IsConfigured)
             {
                 IConfigurationRoot configuration = new ConfigurationBuilder()
-                   .SetBasePath(Directory.GetCurrentDirectory())
-                   .AddJsonFile("appsettings.json")
+                   .AddUserSecrets<Startup>()
                    .Build();
-                var connectionString = "Server=68.183.213.191;Database=fantasyhoops;User=SA;Password=Durnelis1;";
+                string connectionString = configuration["CONNECTION_STRING"];
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }

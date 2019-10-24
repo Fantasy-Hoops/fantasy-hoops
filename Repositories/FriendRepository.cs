@@ -10,9 +10,9 @@ namespace fantasy_hoops.Repositories
 
         private readonly GameContext _context;
 
-        public FriendRepository(GameContext context)
+        public FriendRepository()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         public void CreateRequest(string senderID, string receiverID, RequestStatus status)
@@ -92,6 +92,7 @@ namespace fantasy_hoops.Repositories
             request.ReceiverID = receiverID;
             request.Date = DateTime.UtcNow;
             request.Status = status;
+            _context.SaveChanges();
         }
     }
 }

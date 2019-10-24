@@ -9,9 +9,9 @@ namespace fantasy_hoops.Repositories
 
         private readonly GameContext _context;
 
-        public NewsRepository(GameContext context)
+        public NewsRepository()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         public IQueryable<Object> GetNews(int start, int count)

@@ -12,26 +12,26 @@ namespace fantasy_hoops
 {
     public class ApplicationRegistry : Registry
     {
-        public ApplicationRegistry(GameContext context, IScoreService scoreService)
+        public ApplicationRegistry(GameContext context, IScoreService scoreService, IPushService pushService)
         {
             if (context.Teams.Count() < 30)
-                Schedule(new Seed(new GameContext()))
+                Schedule(new Seed(pushService))
                     .WithName("seed")
                     .ToRunNow();
 
             Task.Run(() => Seed.UpdateTeamColors(new GameContext()));
 
-            Schedule(new NextGame(new GameContext(), scoreService, false))
+            Schedule(new NextGame(scoreService, pushService, false))
                 .WithName("nextGame")
                 .ToRunNow();
 
-            Schedule(new InjuriesSeed(new GameContext()))
-                .WithName("injuries")
+            Schedule(new InjuriesSeed(pushService))
+                .WithName("injuriesSeed")
                 .ToRunNow()
                 .AndEvery(10)
                 .Minutes();
 
-            Schedule(new PhotosSeed(new GameContext()))
+            Schedule(new PhotosSeed())
                 .WithName("photoSeed")
                 .ToRunEvery(1)
                 .Days()

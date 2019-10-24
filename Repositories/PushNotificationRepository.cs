@@ -12,9 +12,9 @@ namespace fantasy_hoops.Repositories
     {
         private readonly GameContext _context;
 
-        public PushNotificationRepository(GameContext context)
+        public PushNotificationRepository()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         public void AddSubscription(PushSubscription subscription)

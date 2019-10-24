@@ -14,9 +14,9 @@ namespace fantasy_hoops.Repositories
 
         private readonly GameContext _context;
 
-        public LineupRepository(GameContext context)
+        public LineupRepository()
         {
-            _context = context;
+            _context = new GameContext();
         }
 
         public object GetLineup(string id)
@@ -62,6 +62,7 @@ namespace fantasy_hoops.Repositories
                         PfID = model.PfID,
                         CID = model.CID
                     });
+            _context.SaveChanges();
         }
 
         public void UpdateLineup(SubmitLineupViewModel model)
@@ -76,6 +77,7 @@ namespace fantasy_hoops.Repositories
             userLineup.CID = model.CID;
             userLineup.FP = 0.0;
             userLineup.IsCalculated = false;
+            _context.SaveChanges();
         }
 
         public int GetLineupPrice(SubmitLineupViewModel model)
