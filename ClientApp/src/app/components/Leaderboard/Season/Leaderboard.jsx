@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Link } from 'react-router-dom';
 import shortid from 'shortid';
 import _ from 'lodash';
+import YearPicker from 'react-year-picker';
 import UserCard from '../Users/Card';
 import { Card as PlayerCard } from '../Players/Card';
 import leaderboardLogo from '../../../../content/images/leaderboard.png';
@@ -21,12 +22,16 @@ export class Leaderboard extends PureComponent {
       loader: true,
       stats: '',
       modalLoader: true,
-      renderChild: false
+      renderChild: false,
+      lineupsYear: new Date().getYear() + 1900,
+      playersYear: new Date().getYear() + 1900
     };
     this.showModal = this.showModal.bind(this);
     this.loadLineups = this.loadLineups.bind(this);
     this.loadPlayers = this.loadPlayers.bind(this);
     this.switchTab = this.switchTab.bind(this);
+    this.onLineupsDateChange = this.onLineupsDateChange.bind(this);
+    this.onPlayersDateChange = this.onPlayersDateChange.bind(this);
   }
 
   async componentDidMount() {
@@ -49,6 +54,36 @@ export class Leaderboard extends PureComponent {
       SF: require('../../../../content/images/positions/sf.png'),
       PF: require('../../../../content/images/positions/pf.png'),
       C: require('../../../../content/images/positions/c.png')
+    });
+  }
+
+  async onLineupsDateChange(lineupsYear) {
+    if (!lineupsYear) {
+      this.setState({ lineupsYear });
+      return;
+    }
+
+    this.setState({ loader: true });
+    const lineups = await getSeasonLineupsLeaderboard({ year: lineupsYear });
+    this.setState({
+      lineups: lineups.data,
+      loader: false,
+      lineupsYear
+    });
+  }
+
+  async onPlayersDateChange(playersYear) {
+    if (!playersYear) {
+      this.setState({ playersYear });
+      return;
+    }
+
+    this.setState({ loader: true });
+    const players = await getSeasonPlayersLeaderboard({ year: playersYear });
+    this.setState({
+      players: players.data,
+      loader: false,
+      playersYear
     });
   }
 
@@ -116,7 +151,7 @@ export class Leaderboard extends PureComponent {
 
   render() {
     const {
-      lineups, players, renderChild, modalLoader, stats
+      lineups, players, renderChild, modalLoader, stats, lineupsYear, playersYear
     } = this.state;
     const lineupCards = this.loadLineups(lineups);
     const playerCards = this.loadPlayers(players);
@@ -140,6 +175,14 @@ export class Leaderboard extends PureComponent {
         </ul>
         <div className="tab-content" id="myTabContent">
           <div className="pt-4 pb-1 tab-pane show active animated bounceInUp" id="lineups" role="tabpanel">
+            {!this.state.loader
+              ? (
+                <div className="DatePicker YearPicker">
+                  <YearPicker className="input-group-text" onChange={this.onLineupsDateChange} />
+                  <h2 className="SeasonYear">{`Season ${lineupsYear}/${lineupsYear + 1}`}</h2>
+                </div>
+              )
+              : null}
             <div className="text-center">
               {!this.state.loader
                 ? lineupCards.length > 0
@@ -149,6 +192,14 @@ export class Leaderboard extends PureComponent {
             </div>
           </div>
           <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="players" role="tabpanel">
+            {!this.state.loader
+              ? (
+                <div className="DatePicker YearPicker">
+                  <YearPicker className="input-group-text" onChange={this.onPlayersDateChange} />
+                  <h2 className="SeasonYear">{`Season ${playersYear}/${playersYear + 1}`}</h2>
+                </div>
+              )
+              : null}
             <div className="text-center">
               {!this.state.loader
                 ? playerCards.length > 0

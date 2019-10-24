@@ -1,4 +1,5 @@
 ﻿using fantasy_hoops.Database;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -37,15 +38,15 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet("season/lineups")]
-        public Object GetSeasonLineups()
+        public Object GetSeasonLineups(int year = -1)
         {
-            return _repository.GetSeasonLineups();
+            return _repository.GetSeasonLineups(year);
         }
 
         [HttpGet("season/players")]
-        public Object GetSeasonPlayers()
+        public Object GetSeasonPlayers(int year = -1)
         {
-            return _repository.GetSeasonPlayers();
+            return _repository.GetSeasonPlayers(year);
         }
 
         [HttpGet("selected/players")]

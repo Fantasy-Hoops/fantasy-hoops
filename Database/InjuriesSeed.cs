@@ -65,7 +65,7 @@ namespace fantasy_hoops.Database
                 DateTime? dateModified = new DateTime?();
                 if (injury.Value<string>("ModifiedDate") != null)
                 {
-                    dateModified = DateTime.Parse(injury["ModifiedDate"].ToString()).AddHours(5);
+                    dateModified = DateTime.Parse(injury["ModifiedDate"].ToString()).AddHours(4);
                     dateModified = dateModified.Value.IsDaylightSavingTime()
                         ? dateModified.Value.AddHours(-1)
                         : dateModified;

@@ -785,6 +785,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   margin: 0 auto;
   margin-bottom: .8rem;
   width: 18rem;
+  z-index: 1;
 }
 
 .WeeklyDatePicker {
@@ -818,6 +819,20 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 
 .WeeklyDatePicker .react-datepicker__day:hover {
   background-color: var(--grey-text);
+}
+
+.YearPicker {
+  display: flex;
+  flex-direction: column;
+  width: auto !important;
+}
+
+.year-picker {
+  margin: 0 auto;
+}
+
+.SeasonYear {
+  margin: 2rem auto 0rem;
 }
 
 .UserLeaderboardCard {
