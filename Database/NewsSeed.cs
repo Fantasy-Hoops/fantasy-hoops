@@ -4,49 +4,39 @@ using System.Threading.Tasks;
 using System;
 using Newtonsoft.Json.Linq;
 using fantasy_hoops.Models;
-using System.Globalization;
 using fantasy_hoops.Helpers;
 using FluentScheduler;
-using System.Threading;
-using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Database
 {
-    public class NewsSeed
+    public class NewsSeed : IJob
     {
-        public static void ExtractPreviews(GameContext context)
-        {
-            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("previews")))
-            {
-                JobManager.AddJob(() => ExtractPreviews(context),
-                s => s.WithName("previews")
-                .ToRunOnceIn(30)
-                .Seconds());
-                return;
-            }
+        private readonly GameContext _context;
+        private readonly NewsType _newsType;
 
+        public NewsSeed(GameContext context, NewsType newsType)
+        {
+            _context = context;
+            _newsType = newsType;
+        }
+
+        public enum NewsType { PREVIEWS, RECAPS };
+
+        public void ExtractPreviews()
+        {
             string today = Today();
             JArray tGames = CommonFunctions.GetGames(today);
-            Task.Run(() => GetPreviews(context, today, tGames)).Wait();
+            GetPreviews(today, tGames).Wait();
         }
 
-        public static void ExtractRecaps(GameContext context)
+        public void ExtractRecaps()
         {
-            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("recaps")))
-            {
-                JobManager.AddJob(() => ExtractRecaps(context),
-                s => s.WithName("recaps")
-                .ToRunOnceIn(30)
-                .Seconds());
-                return;
-            }
-
             string yesterday = Yesterday();
             JArray yGames = CommonFunctions.GetGames(yesterday);
-            Task.Run(() => GetRecaps(context, yesterday, yGames)).Wait();
+            GetRecaps(yesterday, yGames).Wait();
         }
 
-        private static async Task GetPreviews(GameContext context, string date, JArray games)
+        private async Task GetPreviews(string date, JArray games)
         {
             JArray previews = new JArray();
             foreach (JObject game in games)
@@ -74,12 +64,12 @@ namespace fantasy_hoops.Database
             }
 
             foreach (JObject previewObj in previews)
-                await AddToDatabaseAsync(context, previewObj);
+                await AddToDatabaseAsync(previewObj);
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
-        private static async Task GetRecaps(GameContext context, string date, JArray games)
+        private async Task GetRecaps(string date, JArray games)
         {
             JArray news = new JArray();
             foreach (JObject game in games)
@@ -106,12 +96,12 @@ namespace fantasy_hoops.Database
             }
 
             foreach (JObject newsObj in news)
-                await AddToDatabaseAsync(context, newsObj);
+                await AddToDatabaseAsync(newsObj);
 
-            await context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
-        private static async Task AddToDatabaseAsync(GameContext context, JToken newsObj)
+        private async Task AddToDatabaseAsync(JToken newsObj)
         {
             var nObj = new News
             {
@@ -121,11 +111,11 @@ namespace fantasy_hoops.Database
                 vTeamID = (int)newsObj["vTeamID"]
             };
 
-            bool shouldAdd = !context.News.Any(x => x.Title.Equals((string)newsObj["title"]));
+            bool shouldAdd = !_context.News.Any(x => x.Title.Equals((string)newsObj["title"]));
 
             if (nObj == null || !shouldAdd)
                 return;
-            await context.News.AddAsync(nObj);
+            await _context.News.AddAsync(nObj);
 
             JArray paragraphs = (JArray)newsObj["paragraphs"];
 
@@ -143,18 +133,33 @@ namespace fantasy_hoops.Database
                     Content = parObj["paragraph"].ToString().Replace("\xFFFD", ""),
                     ParagraphNumber = i++
                 };
-                await context.Paragraphs.AddAsync(paragraph);
+                await _context.Paragraphs.AddAsync(paragraph);
             }
         }
 
-        private static string Today()
+        private string Today()
         {
             return CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).ToString("yyyyMMdd");
         }
 
-        private static string Yesterday()
+        private string Yesterday()
         {
             return CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
+        }
+
+        public void Execute()
+        {
+            switch (_newsType)
+            {
+                case NewsType.PREVIEWS:
+                    ExtractPreviews();
+                    break;
+                case NewsType.RECAPS:
+                    ExtractRecaps();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

@@ -16,29 +16,14 @@ using System.Diagnostics;
 
 namespace fantasy_hoops.Database
 {
-    public class InjuriesSeed
+    public class InjuriesSeed : IJob
     {
+        private readonly GameContext _context;
         private static readonly Stack<InjuryPushNotificationViewModel> lineupsAffected = new Stack<InjuryPushNotificationViewModel>();
 
-        public static void Initialize(GameContext context)
+        public InjuriesSeed(GameContext context)
         {
-            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("injuries")))
-            {
-                JobManager.AddJob(() => Initialize(context),
-                s => s.WithName("injuries")
-                .ToRunOnceIn(30)
-                .Seconds());
-                return;
-            }
-
-            try
-            {
-                Task.Run(() => Extract(context)).Wait();
-            }
-            catch (AggregateException e)
-            {
-                Debug.WriteLine("Injuries seed exception: " + e.Message);
-            }
+            _context = context;
         }
 
         private static JArray GetInjuries()
@@ -49,50 +34,9 @@ namespace fantasy_hoops.Database
             return injuries;
         }
 
-        private static async Task Extract(GameContext context)
+        private async Task AddToDatabaseAsync(JToken injury, DateTime? dateModified)
         {
-            int seasonYear = int.Parse(CommonFunctions.SEASON_YEAR);
-            IEnumerable<JToken> injuries = GetInjuries()
-                .Where(inj => inj.Value<string>("ModifiedDate") == null
-                    || DateTime.Parse(inj.Value<string>("ModifiedDate")) >= new DateTime(seasonYear - 1, 8, 1)).AsEnumerable();
-            foreach (JToken injury in injuries)
-            {
-                int NbaID;
-                if (injury.Value<int?>("PrimarySourceKey") == null)
-                    continue;
-                NbaID = (int)injury["PrimarySourceKey"];
-
-                DateTime? dateModified = new DateTime?();
-                if (injury.Value<string>("ModifiedDate") != null)
-                {
-                    dateModified = DateTime.Parse(injury["ModifiedDate"].ToString()).AddHours(4);
-                    dateModified = dateModified.Value.IsDaylightSavingTime()
-                        ? dateModified.Value.AddHours(-1)
-                        : dateModified;
-                }
-
-                if (context.Injuries
-                    .Where(inj => inj.Player.NbaID == NbaID)
-                    .Any(inj => inj.Status.Equals((string)injury["PlayerStatus"])
-                        && dateModified.Equals(inj.Date)))
-                    continue;
-
-                try
-                {
-                    await AddToDatabaseAsync(context, injury, dateModified);
-                }
-                catch (Exception)
-                {
-                    continue;
-                }
-            }
-            await context.SaveChangesAsync();
-            await SendPushNotifications();
-        }
-
-        private static async Task AddToDatabaseAsync(GameContext context, JToken injury, DateTime? dateModified)
-        {
-            Player injuryPlayer = context.Players.Where(x => x.NbaID == (int)injury["PrimarySourceKey"]).FirstOrDefault();
+            Player injuryPlayer = _context.Players.Where(x => x.NbaID == (int)injury["PrimarySourceKey"]).FirstOrDefault();
 
             if (injuryPlayer == null)
                 return;
@@ -107,7 +51,7 @@ namespace fantasy_hoops.Database
                 Link = injury.Value<string>("Link") != null ? (string)injury["Link"] : null
             };
 
-            var dbInjury = context.Injuries
+            var dbInjury = _context.Injuries
                     .Where(inj => inj.Player.NbaID == (int)injury["PrimarySourceKey"])
                     .FirstOrDefault();
 
@@ -116,8 +60,8 @@ namespace fantasy_hoops.Database
             {
                 injuryObj.Player = injuryPlayer;
                 injuryObj.PlayerID = injuryPlayer.PlayerID;
-                await context.Injuries.AddAsync(injuryObj);
-                context.SaveChanges();
+                await _context.Injuries.AddAsync(injuryObj);
+                _context.SaveChanges();
                 injuryPlayer.InjuryID = injuryObj.InjuryID;
                 injuryPlayer.Injury = injuryObj;
             }
@@ -135,15 +79,15 @@ namespace fantasy_hoops.Database
             string statusAfter = injuryObj.Status;
 
             if (!statusBefore.Equals(statusAfter))
-                await UpdateNotifications(context, injuryObj, statusBefore, statusAfter);
+                await UpdateNotifications(injuryObj, statusBefore, statusAfter);
 
             injuryPlayer.Injury.Status = injuryObj.Status;
             injuryPlayer.Injury.Date = dateModified;
         }
 
-        private static async Task UpdateNotifications(GameContext context, Injury injury, string statusBefore, string statusAfter)
+        private async Task UpdateNotifications(Injury injury, string statusBefore, string statusAfter)
         {
-            foreach (var lineup in context.UserLineups
+            foreach (var lineup in _context.UserLineups
                             .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
                             && (x.PgID == injury.PlayerID
                                     || x.SgID == injury.PlayerID
@@ -169,14 +113,14 @@ namespace fantasy_hoops.Database
                     InjuryDescription = injury.InjuryTitle
                 };
 
-                if (!context.InjuryNotifications
+                if (!_context.InjuryNotifications
                 .Any(x => x.InjuryStatus.Equals(inj.InjuryStatus)
                                                                                 && x.PlayerID == inj.PlayerID))
-                    await context.InjuryNotifications.AddAsync(inj);
+                    await _context.InjuryNotifications.AddAsync(inj);
             }
         }
 
-        private static async Task SendPushNotifications()
+        private async Task SendPushNotifications()
         {
             while (lineupsAffected.Count > 0)
             {
@@ -190,6 +134,47 @@ namespace fantasy_hoops.Database
                                 };
                 await PushService.Instance.Value.Send(lineup.UserID, notification);
             }
+        }
+
+        public void Execute()
+        {
+            int seasonYear = int.Parse(CommonFunctions.SEASON_YEAR);
+            IEnumerable<JToken> injuries = GetInjuries()
+                .Where(inj => inj.Value<string>("ModifiedDate") == null
+                    || DateTime.Parse(inj.Value<string>("ModifiedDate")) >= new DateTime(seasonYear - 1, 8, 1)).AsEnumerable();
+            foreach (JToken injury in injuries)
+            {
+                int NbaID;
+                if (injury.Value<int?>("PrimarySourceKey") == null)
+                    continue;
+                NbaID = (int)injury["PrimarySourceKey"];
+
+                DateTime? dateModified = new DateTime?();
+                if (injury.Value<string>("ModifiedDate") != null)
+                {
+                    dateModified = DateTime.Parse(injury["ModifiedDate"].ToString()).AddHours(4);
+                    dateModified = dateModified.Value.IsDaylightSavingTime()
+                        ? dateModified.Value.AddHours(-1)
+                        : dateModified;
+                }
+
+                if (_context.Injuries
+                    .Where(inj => inj.Player.NbaID == NbaID)
+                    .Any(inj => inj.Status.Equals((string)injury["PlayerStatus"])
+                        && dateModified.Equals(inj.Date)))
+                    continue;
+
+                try
+                {
+                    AddToDatabaseAsync(injury, dateModified).Wait();
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+            _context.SaveChanges();
+            Task.Run(() => SendPushNotifications());
         }
     }
 }

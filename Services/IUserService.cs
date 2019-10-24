@@ -15,6 +15,7 @@ namespace fantasy_hoops.Services
         Task<bool> Register(RegisterViewModel model);
         void Logout();
         string RequestToken(string username);
+        string RequestTokenById(string id);
         Task<bool> UpdateProfile(EditProfileViewModel model);
         bool UploadAvatar(AvatarViewModel model);
         bool ClearAvatar(AvatarViewModel model);

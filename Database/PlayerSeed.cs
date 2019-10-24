@@ -12,33 +12,23 @@ using System.Diagnostics;
 
 namespace fantasy_hoops.Database
 {
-	public class PlayerSeed
-	{
-		public static DateTime PLAYER_POOL_DATE = DateTime.UtcNow;
+	public class PlayerSeed : IJob
+    {
+        private readonly GameContext _context;
+        private readonly IScoreService _scoreService;
+        private readonly bool _updatePrice;
+
+        public static DateTime PLAYER_POOL_DATE = DateTime.UtcNow;
 		public static int PRICE_FLOOR = 10;
 
-		private static IScoreService _scoreService;
-
-		public static void Initialize(GameContext context, IScoreService scoreService, bool updatePrice)
-		{
+        public PlayerSeed(GameContext context, IScoreService scoreService, bool updatePrice)
+        {
+            _context = context;
             _scoreService = scoreService;
+            _updatePrice = updatePrice;
+        }
 
-            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("playerSeed")))
-			{
-				JobManager.AddJob(() => Initialize(context, _scoreService, updatePrice),
-				s => s.WithName("playerSeed")
-				.ToRunOnceIn(30)
-				.Seconds());
-				return;
-			}
-
-			if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")))
-				Task.Run(() => Calculate(context, updatePrice)).Wait();
-			NextGame.NEXT_GAME_CLIENT = NextGame.NEXT_GAME;
-			PLAYER_POOL_DATE = NextGame.NEXT_GAME;
-		}
-
-		private static JObject GetPlayer(int id)
+		private JObject GetPlayer(int id)
 		{
 			string url = "http://data.nba.net/v2015/json/mobile_teams/nba/" + CommonFunctions.SEASON_YEAR + "/players/playercard_" + id + "_02.json";
 			HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
@@ -49,49 +39,7 @@ namespace fantasy_hoops.Database
 			return json;
 		}
 
-		private static async Task Calculate(GameContext context, bool updatePrice)
-		{
-			await context.Players.ForEachAsync(p => p.IsPlaying = false);
-			string date = GetDate();
-			JArray games = CommonFunctions.GetGames(date);
-			foreach (var game in games)
-			{
-				SetNextOpponent(context, game);
-				var hTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
-				var vTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
-
-				foreach (var player in hTeamPlayers.Union(vTeamPlayers))
-				{
-					JObject p = GetPlayer(player.NbaID);
-					if (p == null)
-					{
-						player.Price = PRICE_FLOOR;
-						continue;
-					}
-					int gamesPlayed = 0;
-					JToken stats = null;
-					if (!(p["pl"]["ca"] == null || p["pl"]["ca"]["sa"] == null))
-					{
-						stats = p["pl"]["ca"]["sa"].Last;
-						gamesPlayed = (int)stats["gp"];
-					}
-					player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
-					player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
-					player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
-					player.STL = gamesPlayed <= 0 ? 0 : (double)stats["stl"];
-					player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["blk"];
-					player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["tov"];
-					player.GP = gamesPlayed;
-					player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
-					if (updatePrice)
-						player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(player);
-					player.IsPlaying = IsPlaying(context, player);
-				}
-			}
-			await context.SaveChangesAsync();
-		}
-
-		private static bool IsPlaying(GameContext context, Player player)
+		private bool IsPlaying(Player player)
 		{
             if(player.IsInGLeague || player.Position.Equals("NA"))
             {
@@ -102,7 +50,7 @@ namespace fantasy_hoops.Database
             {
                 if(player.Injury == null)
                 {
-                    player.Injury = context.Injuries.Where(inj => inj.InjuryID == player.InjuryID).FirstOrDefault();
+                    player.Injury = _context.Injuries.Where(inj => inj.InjuryID == player.InjuryID).FirstOrDefault();
                 }
 
                 if ((player.Injury.Date.HasValue && player.Injury.Date.Value.AddDays(5) < NextGame.NEXT_GAME)
@@ -116,17 +64,17 @@ namespace fantasy_hoops.Database
             return true;
 		}
 
-		private static string GetDate()
+		private string GetDate()
 		{
 			return CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).ToString("yyyyMMdd");
 		}
 
-		private static double FPPG(Player p)
+		private double FPPG(Player p)
 		{
 			return Math.Round((1 * p.PTS) + (1.2 * p.REB) + (1.5 * p.AST) + (3 * p.STL) + (3 * p.BLK) - (1 * p.TOV), 2);
 		}
 
-		public static int Price(Player p)
+        private int Price(Player p)
 		{
 			int price = _scoreService.GetPrice(p);
 			if (price < PRICE_FLOOR)
@@ -134,10 +82,10 @@ namespace fantasy_hoops.Database
 			return price;
 		}
 
-		private static void SetNextOpponent(GameContext context, JToken game)
+		private void SetNextOpponent(JToken game)
 		{
-			Team hTeam = context.Teams.Where(team => team.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
-			Team vTeam = context.Teams.Where(team => team.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
+			Team hTeam = _context.Teams.Where(team => team.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
+			Team vTeam = _context.Teams.Where(team => team.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
 
 			if (vTeam != null && hTeam != null)
 			{
@@ -147,5 +95,50 @@ namespace fantasy_hoops.Database
 				vTeam.NextOppFormatted = string.Format("@ {0}", game["hTeam"]["triCode"]);
 			}
 		}
-	}
+
+        public void Execute()
+        {
+            _context.Players.ForEachAsync(p => p.IsPlaying = false).Wait();
+            string date = GetDate();
+            JArray games = CommonFunctions.GetGames(date);
+            foreach (var game in games)
+            {
+                SetNextOpponent(game);
+                var hTeamPlayers = _context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
+                var vTeamPlayers = _context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
+
+                foreach (var player in hTeamPlayers.Union(vTeamPlayers))
+                {
+                    JObject p = GetPlayer(player.NbaID);
+                    if (p == null)
+                    {
+                        player.Price = PRICE_FLOOR;
+                        continue;
+                    }
+                    int gamesPlayed = 0;
+                    JToken stats = null;
+                    if (!(p["pl"]["ca"] == null || p["pl"]["ca"]["sa"] == null))
+                    {
+                        stats = p["pl"]["ca"]["sa"].Last;
+                        gamesPlayed = (int)stats["gp"];
+                    }
+                    player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
+                    player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
+                    player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
+                    player.STL = gamesPlayed <= 0 ? 0 : (double)stats["stl"];
+                    player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["blk"];
+                    player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["tov"];
+                    player.GP = gamesPlayed;
+                    player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
+                    if (_updatePrice)
+                        player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(player);
+                    player.IsPlaying = IsPlaying(player);
+                }
+            }
+            _context.SaveChanges();
+
+            NextGame.NEXT_GAME_CLIENT = NextGame.NEXT_GAME;
+            PLAYER_POOL_DATE = NextGame.NEXT_GAME;
+        }
+    }
 }

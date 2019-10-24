@@ -10,33 +10,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Database
 {
-    public class PhotosSeed
+    public class PhotosSeed : IJob
     {
+        private readonly GameContext _context;
+
         const string photosDir = "./ClientApp/build/content/images/players/";
         const string logosDir = "./ClientApp/build/content/images/logos/";
 
-        public static void Initialize(GameContext context)
+        public PhotosSeed(GameContext context)
         {
-            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("photos")))
-            {
-                JobManager.AddJob(() => Initialize(context),
-                s => s.WithName("photos")
-                .ToRunOnceIn(30)
-                .Seconds());
-                return;
-            }
-
-            ExtractLogos(context);
-            ExtractPlayerPhotos(context);
-            Task.Run(() => DeleteNotifications(context)).Wait();
+            _context = context;
         }
 
-        private static void ExtractLogos(GameContext context)
+        private void ExtractLogos()
         {
             if (!Directory.Exists(logosDir))
                 Directory.CreateDirectory(logosDir);
 
-            foreach (var team in context.Teams)
+            foreach (var team in _context.Teams)
             {
                 string teamAbbr = team.Abbreviation;
                 string remoteFileUrl =
@@ -46,12 +37,12 @@ namespace fantasy_hoops.Database
             }
         }
 
-        private static void ExtractPlayerPhotos(GameContext context)
+        private void ExtractPlayerPhotos()
         {
             if (!Directory.Exists(photosDir))
                 Directory.CreateDirectory(photosDir);
 
-            foreach (var player in context.Players)
+            foreach (var player in _context.Players)
             {
                 int personId = player.NbaID;
                 string remoteFileUrl =
@@ -61,7 +52,7 @@ namespace fantasy_hoops.Database
             }
         }
 
-        private static void SavePhoto(string localFile, string urlFile)
+        private void SavePhoto(string localFile, string urlFile)
         {
             byte[] content;
             WebResponse response = CommonFunctions.GetResponse(urlFile);
@@ -91,7 +82,7 @@ namespace fantasy_hoops.Database
             }
         }
 
-        private static bool NeedDownload(string localFile, byte[] urlBytes)
+        private bool NeedDownload(string localFile, byte[] urlBytes)
         {
             if (!File.Exists(localFile))
                 return true;
@@ -106,12 +97,19 @@ namespace fantasy_hoops.Database
             return false;
         }
 
-        private static async Task DeleteNotifications(GameContext context)
+        private async Task DeleteNotifications()
         {
-            await context.Notifications
+            await _context.Notifications
                 .Where(n => n.DateCreated < DateTime.Today.ToUniversalTime().AddDays(-7))
-                .ForEachAsync(notification => context.Notifications.Remove(notification));
-            await context.SaveChangesAsync();
+                .ForEachAsync(notification => _context.Notifications.Remove(notification));
+            await _context.SaveChangesAsync();
+        }
+
+        public void Execute()
+        {
+            ExtractLogos();
+            ExtractPlayerPhotos();
+            Task.Run(() => DeleteNotifications());
         }
     }
 }

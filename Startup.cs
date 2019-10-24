@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
 using Swashbuckle.AspNetCore.Swagger;
 using fantasy_hoops.Repositories;
+using FluentScheduler;
 
 namespace fantasy_hoops
 {
@@ -53,7 +54,6 @@ namespace fantasy_hoops
         {
             AddScopes(services);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IPushService, PushService>();
             services.AddMvc();
 
             // Add gzip compression
@@ -97,9 +97,10 @@ namespace fantasy_hoops
 
             var connectionString = Configuration["CONNECTION_STRING"];
             services.AddDbContext<GameContext>(o => o.UseSqlServer(connectionString));
+            services.AddScoped<GameContext>();
 
             ConfigureAuth(services);
-            ConfigureDbContext(services);
+            //ConfigureDbContext(services);
             Task.Run(() => StartJobs());
 
             // In production, the React files will be served from this directory
@@ -186,21 +187,8 @@ namespace fantasy_hoops
                 });
         }
 
-        private void ConfigureDbContext(IServiceCollection services)
-        {
-            services.AddDbContext<GameContext>();
-            // 'scoped' in ASP.NET means "per HTTP request"
-            services.AddScoped<GameContext>();
-
-            services.AddMvc()
-             .AddJsonOptions(
-                   options => options.SerializerSettings.ReferenceLoopHandling
-                       = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-        }
-
         private async Task StartJobs()
         {
-            await Scheduler.Instance.Value.Run();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -244,8 +232,12 @@ namespace fantasy_hoops
 
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
-                var context = serviceScope.ServiceProvider.GetService<GameContext>();
+                var context = serviceScope.ServiceProvider.GetService<GameContext>(); 
                 context.Database.Migrate();
+                var scoreService = serviceScope.ServiceProvider.GetService<ScoreService>();
+
+                JobManager.UseUtcTime();
+                JobManager.Initialize(new ApplicationRegistry(context, scoreService));
             }
 
             Task.Run(() => CreateRoles(serviceProvider)).Wait();

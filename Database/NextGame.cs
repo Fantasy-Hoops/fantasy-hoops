@@ -12,7 +12,7 @@ using fantasy_hoops.Services;
 
 namespace fantasy_hoops.Database
 {
-	public class NextGame
+	public class NextGame : IJob
 	{
 		public static DateTime NEXT_GAME = DateTime.UtcNow;
 		public static DateTime NEXT_GAME_CLIENT = DateTime.UtcNow;
@@ -24,92 +24,28 @@ namespace fantasy_hoops.Database
 		private static int offset = 0;
 
         private readonly IScoreService _scoreService;
+        private readonly GameContext _context;
+        private readonly bool _updatePrice;
 
-        public NextGame(IScoreService scoreService)
+        public NextGame(GameContext context, IScoreService scoreService, bool updatePrice = true)
         {
+            _context = context;
             _scoreService = scoreService;
+            _updatePrice = updatePrice;
         }
 
-        public static void SetClientTime()
+        private void SetClientTime()
 		{
 			NEXT_GAME_CLIENT = NEXT_GAME;
 		}
 
-		public void Initialize(GameContext context, bool updatePrices = true)
+		private async Task SetPlayersNotPlaying()
 		{
-			string gameDate = GetDate();
-
-			SetLastGame(gameDate);
-			SetNextGame(gameDate);
-			SetClientTime();
-
-			if (offset < GAME_OFFSET)
-			{
-				JobManager.AddJob(() => Initialize(context),
-								s => s.WithName(NEXT_GAME.ToLongDateString())
-								.ToRunOnceAt(NEXT_GAME));
-
-				// All actions run only in production
-				if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")))
-				{
-					// Nudge Notifications don't run if game starts in <2 hours
-					if (NEXT_GAME.Subtract(DateTime.UtcNow).TotalMinutes > 115)
-						JobManager.AddJob(() => PushService.Instance.Value.SendNudgeNotifications().Wait(),
-										s => s.WithName("nudgeNotifications")
-										.ToRunOnceAt(NEXT_GAME.AddHours(-2)));
-
-					// Once per 2 days
-					if (CommonFunctions.UTCToEastern(NEXT_GAME).Day % 2 != 0)
-						JobManager.AddJob(() => Seed.Initialize(context),
-										s => s.WithName("seed")
-										.ToRunOnceAt(NEXT_GAME.AddMinutes(-5)));
-
-					// 10 hours after previous last game if project ran before that time
-					// 10 hours after next last game if project ran after that time
-					DateTime previewsRuntime = PREVIOUS_LAST_GAME.AddHours(10);
-					if (DateTime.UtcNow > previewsRuntime)
-						previewsRuntime = NEXT_LAST_GAME.AddHours(10);
-					JobManager.AddJob(() => NewsSeed.ExtractPreviews(context),
-							s => s.WithName("previews")
-							.ToRunOnceAt(previewsRuntime));
-
-					// 5 hours after previous last game if project ran before that time
-					// 5 hours after next last game if project ran after that time
-					DateTime recapsRuntime = PREVIOUS_LAST_GAME.AddHours(5);
-					if (DateTime.UtcNow > recapsRuntime)
-						recapsRuntime = NEXT_LAST_GAME.AddHours(5);
-					JobManager.AddJob(() => NewsSeed.ExtractRecaps(context),
-							s => s.WithName("recaps")
-							.ToRunOnceAt(recapsRuntime));
-				}
-
-
-				JobManager.AddJob(() => PlayerSeed.Initialize(context, _scoreService, updatePrices),
-								 s => s.WithName("playerSeed")
-								 .ToRunNow());
-			}
-			else
-			{
-				JobManager.AddJob(() => Initialize(context),
-								s => s.WithName("nextGame")
-								.ToRunOnceIn(1)
-								.Hours());
-				offset = 0;
-				Task.Run(() => SetPlayersNotPlaying(context)).Wait();
-			}
-
-			JobManager.AddJob(() => StatsSeed.Initialize(context, _scoreService),
-							s => s.WithName("statsSeed")
-							.ToRunNow());
+			await _context.Players.ForEachAsync(p => p.IsPlaying = false);
+			await _context.SaveChangesAsync();
 		}
 
-		private static async Task SetPlayersNotPlaying(GameContext context)
-		{
-			await context.Players.ForEachAsync(p => p.IsPlaying = false);
-			await context.SaveChangesAsync();
-		}
-
-		private static string GetDate()
+		private string GetDate()
 		{
 			string url = "http://data.nba.net/10s/prod/v1/today.json";
 			HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
@@ -120,7 +56,7 @@ namespace fantasy_hoops.Database
 			return (string)json["links"]["currentDate"];
 		}
 
-		private static void SetNextGame(string gameDate)
+		private void SetNextGame(string gameDate)
 		{
 			if (offset >= GAME_OFFSET)
 			{
@@ -156,7 +92,7 @@ namespace fantasy_hoops.Database
 			}
 		}
 
-		private static void SetLastGame(string gameDate)
+		private void SetLastGame(string gameDate)
 		{
 			JArray games = CommonFunctions.GetGames(gameDate);
 			if (games.Count > 0)
@@ -181,5 +117,73 @@ namespace fantasy_hoops.Database
 				SetLastGame(gameDate);
 			}
 		}
-	}
+
+        public void Execute()
+        {
+            var sth = JobManager.RunningSchedules;
+            string gameDate = GetDate();
+
+            SetLastGame(gameDate);
+            SetNextGame(gameDate);
+            SetClientTime();
+
+            if (offset < GAME_OFFSET)
+            {
+                JobManager.AddJob(new NextGame(new GameContext(), _scoreService),
+                                s => s.WithName(NEXT_GAME.ToLongDateString())
+                                .ToRunOnceAt(NEXT_GAME));
+
+                // All actions run only in production
+                if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")))
+                {
+                    // Nudge Notifications don't run if game starts in <2 hours
+                    if (NEXT_GAME.Subtract(DateTime.UtcNow).TotalMinutes > 115)
+                        JobManager.AddJob(() => PushService.Instance.Value.SendNudgeNotifications().Wait(),
+                                        s => s.WithName("nudgeNotifications")
+                                        .ToRunOnceAt(NEXT_GAME.AddHours(-2)));
+
+                    // Once per 2 days
+                    if (CommonFunctions.UTCToEastern(NEXT_GAME).Day % 2 != 0)
+                        JobManager.AddJob(new Seed(new GameContext()),
+                                        s => s.WithName("seed")
+                                        .ToRunOnceAt(NEXT_GAME.AddMinutes(-5)));
+
+                    // 10 hours after previous last game if project ran before that time
+                    // 10 hours after next last game if project ran after that time
+                    DateTime previewsRuntime = PREVIOUS_LAST_GAME.AddHours(10);
+                    if (DateTime.UtcNow > previewsRuntime)
+                        previewsRuntime = NEXT_LAST_GAME.AddHours(10);
+                    JobManager.AddJob(new NewsSeed(new GameContext(), NewsSeed.NewsType.PREVIEWS),
+                            s => s.WithName("previews")
+                            .ToRunOnceAt(previewsRuntime));
+
+                    // 5 hours after previous last game if project ran before that time
+                    // 5 hours after next last game if project ran after that time
+                    DateTime recapsRuntime = PREVIOUS_LAST_GAME.AddHours(5);
+                    if (DateTime.UtcNow > recapsRuntime)
+                        recapsRuntime = NEXT_LAST_GAME.AddHours(5);
+                    JobManager.AddJob(new NewsSeed(new GameContext(), NewsSeed.NewsType.RECAPS),
+                            s => s.WithName("recaps")
+                            .ToRunOnceAt(recapsRuntime));
+                }
+
+                JobManager.AddJob(new PlayerSeed(new GameContext(), _scoreService, _updatePrice),
+                    s => s.WithName("playerSeed")
+                    .ToRunNow());
+            }
+            else
+            {
+                JobManager.AddJob(new NextGame(new GameContext(), _scoreService),
+                                s => s.WithName("nextGame")
+                                .ToRunOnceIn(1)
+                                .Hours());
+                offset = 0;
+                SetPlayersNotPlaying().Wait();
+            }
+
+            JobManager.AddJob(new StatsSeed(new GameContext(), _scoreService),
+                            s => s.WithName("statsSeed")
+                            .ToRunNow());
+        }
+    }
 }

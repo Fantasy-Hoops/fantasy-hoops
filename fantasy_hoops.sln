@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.489
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29324.140
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fantasy_hoops", "fantasy_hoops.csproj", "{45F2954D-449C-4645-8923-344CA09E929A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fantasy_hoopsTests", "..\fantasy_hoopsTests\fantasy_hoopsTests.csproj", "{DE304344-3A62-4475-AAE1-34B8940E2737}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{45F2954D-449C-4645-8923-344CA09E929A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45F2954D-449C-4645-8923-344CA09E929A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45F2954D-449C-4645-8923-344CA09E929A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE304344-3A62-4475-AAE1-34B8940E2737}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE304344-3A62-4475-AAE1-34B8940E2737}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE304344-3A62-4475-AAE1-34B8940E2737}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE304344-3A62-4475-AAE1-34B8940E2737}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
