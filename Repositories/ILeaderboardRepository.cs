@@ -10,8 +10,8 @@ namespace fantasy_hoops.Repositories
         IEnumerable<Object> GetPlayerLeaderboard(int from, int limit, string type);
         IEnumerable<Object> GetUserLeaderboard(int from, int limit, string type, string date, int weekNumber);
         IEnumerable<Object> GetFriendsLeaderboard(string id, int from, int limit, string type, string date, int weekNumber);
-        IQueryable<Object> GetSeasonLineups();
-        IQueryable<Object> GetSeasonPlayers();
+        IQueryable<Object> GetSeasonLineups(int year);
+        IQueryable<Object> GetSeasonPlayers(int year);
         IQueryable<Object> GetMostSelectedPlayers(int from, int count);
     }
 }

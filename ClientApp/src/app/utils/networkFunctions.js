@@ -70,8 +70,8 @@ export const getPlayerStats = (playerId, parameters) => axios.get(`${statsApiUrl
 export const getPlayersLeaderboard = parameters => axios.get(`${leaderboardApiUrlBase}/player${createParameters(parameters)}`);
 export const getUsersLeaderboard = parameters => axios.get(`${leaderboardApiUrlBase}/user${createParameters(parameters)}`);
 export const getUserFriendsOnlyLeaderboard = (userId, parameters) => axios.get(`${leaderboardApiUrlBase}/user/${userId}${createParameters(parameters)}`);
-export const getSeasonPlayersLeaderboard = () => axios.get(`${leaderboardApiUrlBase}/season/players`);
-export const getSeasonLineupsLeaderboard = () => axios.get(`${leaderboardApiUrlBase}/season/lineups`);
+export const getSeasonPlayersLeaderboard = parameters => axios.get(`${leaderboardApiUrlBase}/season/players${createParameters(parameters)}`);
+export const getSeasonLineupsLeaderboard = parameters => axios.get(`${leaderboardApiUrlBase}/season/lineups${createParameters(parameters)}`);
 export const getSelectedPlayersLeaderboard = parameters => axios.get(`${leaderboardApiUrlBase}/selected/players${createParameters(parameters)}`);
 
 // News requests
