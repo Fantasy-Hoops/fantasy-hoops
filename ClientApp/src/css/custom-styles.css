@@ -821,18 +821,10 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   background-color: var(--grey-text);
 }
 
-.YearPicker {
-  display: flex;
-  flex-direction: column;
-  width: auto !important;
-}
-
-.year-picker {
-  margin: 0 auto;
-}
-
-.SeasonYear {
-  margin: 2rem auto 0rem;
+.select-year {
+  width: 25%;
+  display: block;
+  margin: .5rem auto 2rem;
 }
 
 .UserLeaderboardCard {

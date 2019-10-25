@@ -4,19 +4,7 @@ import shortid from 'shortid';
 export class Select extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      teams: this.props.options
-    }
     this.handleChange = this.handleChange.bind(this);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.teams === this.props.options) {
-      return;
-    }
-    this.setState({
-      teams: this.props.options
-    });
   }
 
   handleChange(e) {
@@ -26,11 +14,9 @@ export class Select extends Component {
   render() {
     let values;
     if (this.props.options) {
-      values = this.props.options.map(option => {
-        return (
-          <option key={shortid()} value={option.teamID}>{option.name}</option>
-        );
-      });
+      values = this.props.options.map(option => (
+        <option key={shortid()} value={option.teamID}>{option.name}</option>
+      ));
     }
     return (
       <div>
@@ -39,7 +25,7 @@ export class Select extends Component {
           className="form-control custom-select select"
           value={this.props.value}
           onChange={this.props.onChange}
-          required={this.props.notRequired ? false : true}
+          required={!this.props.notRequired}
         >
           <option value="" defaultValue>{this.props.defaultValue}</option>
           {values}
@@ -51,3 +37,5 @@ export class Select extends Component {
     );
   }
 }
+
+export default Select;
