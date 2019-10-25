@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import { Link } from 'react-router-dom';
 import shortid from 'shortid';
 import _ from 'lodash';
-import YearPicker from 'react-year-picker';
 import UserCard from '../Users/Card';
 import { Card as PlayerCard } from '../Players/Card';
 import leaderboardLogo from '../../../../content/images/leaderboard.png';
@@ -22,9 +21,7 @@ export class Leaderboard extends PureComponent {
       loader: true,
       stats: '',
       modalLoader: true,
-      renderChild: false,
-      lineupsYear: new Date().getYear() + 1900,
-      playersYear: new Date().getYear() + 1900
+      renderChild: false
     };
     this.showModal = this.showModal.bind(this);
     this.loadLineups = this.loadLineups.bind(this);
@@ -57,7 +54,8 @@ export class Leaderboard extends PureComponent {
     });
   }
 
-  async onLineupsDateChange(lineupsYear) {
+  async onLineupsDateChange(e) {
+    const lineupsYear = e.target.value;
     if (!lineupsYear) {
       this.setState({ lineupsYear });
       return;
@@ -72,7 +70,8 @@ export class Leaderboard extends PureComponent {
     });
   }
 
-  async onPlayersDateChange(playersYear) {
+  async onPlayersDateChange(e) {
+    const playersYear = e.target.value;
     if (!playersYear) {
       this.setState({ playersYear });
       return;
@@ -177,10 +176,15 @@ export class Leaderboard extends PureComponent {
           <div className="pt-4 pb-1 tab-pane show active animated bounceInUp" id="lineups" role="tabpanel">
             {!this.state.loader
               ? (
-                <div className="DatePicker YearPicker">
-                  <YearPicker className="input-group-text" onChange={this.onLineupsDateChange} />
-                  <h2 className="SeasonYear">{`Season ${lineupsYear}/${lineupsYear + 1}`}</h2>
-                </div>
+                <select
+                  className="form-control custom-select select select-year"
+                  value={lineupsYear}
+                  onChange={this.onLineupsDateChange}
+                >
+                  <option value="">Select season...</option>
+                  <option value={2018}>2018</option>
+                  <option value={2019}>2019</option>
+                </select>
               )
               : null}
             <div className="text-center">
@@ -194,10 +198,15 @@ export class Leaderboard extends PureComponent {
           <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="players" role="tabpanel">
             {!this.state.loader
               ? (
-                <div className="DatePicker YearPicker">
-                  <YearPicker className="input-group-text" onChange={this.onPlayersDateChange} />
-                  <h2 className="SeasonYear">{`Season ${playersYear}/${playersYear + 1}`}</h2>
-                </div>
+                <select
+                  className="form-control custom-select select select-year"
+                  value={lineupsYear}
+                  onChange={this.onLineupsDateChange}
+                >
+                  <option value="">Select season...</option>
+                  <option value={2018}>2018</option>
+                  <option value={2019}>2019</option>
+                </select>
               )
               : null}
             <div className="text-center">

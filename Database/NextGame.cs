@@ -12,16 +12,16 @@ using fantasy_hoops.Services;
 
 namespace fantasy_hoops.Database
 {
-	public class NextGame : IJob
-	{
-		public static DateTime NEXT_GAME = DateTime.UtcNow;
-		public static DateTime NEXT_GAME_CLIENT = DateTime.UtcNow;
-		public static DateTime NEXT_LAST_GAME = DateTime.UtcNow;
-		public static DateTime PREVIOUS_GAME = DateTime.UtcNow;
-		public static DateTime PREVIOUS_LAST_GAME = DateTime.UtcNow;
+    public class NextGame : IJob
+    {
+        public static DateTime NEXT_GAME = DateTime.UtcNow;
+        public static DateTime NEXT_GAME_CLIENT = DateTime.UtcNow;
+        public static DateTime NEXT_LAST_GAME = DateTime.UtcNow;
+        public static DateTime PREVIOUS_GAME = DateTime.UtcNow;
+        public static DateTime PREVIOUS_LAST_GAME = DateTime.UtcNow;
 
-		private const int GAME_OFFSET = 10;
-		private static int offset = 0;
+        private const int GAME_OFFSET = 10;
+        private static int offset = 0;
 
         private readonly GameContext _context;
         private readonly IScoreService _scoreService;
@@ -37,88 +37,88 @@ namespace fantasy_hoops.Database
         }
 
         private void SetClientTime()
-		{
-			NEXT_GAME_CLIENT = NEXT_GAME;
-		}
+        {
+            NEXT_GAME_CLIENT = NEXT_GAME;
+        }
 
-		private async Task SetPlayersNotPlaying()
-		{
-			await _context.Players.ForEachAsync(p => p.IsPlaying = false);
-			await _context.SaveChangesAsync();
-		}
+        private async Task SetPlayersNotPlaying()
+        {
+            await _context.Players.ForEachAsync(p => p.IsPlaying = false);
+            await _context.SaveChangesAsync();
+        }
 
-		private string GetDate()
-		{
-			string url = "http://data.nba.net/10s/prod/v1/today.json";
-			HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
-			if (webResponse == null)
-				return null;
-			string apiResponse = CommonFunctions.ResponseToString(webResponse);
-			JObject json = JObject.Parse(apiResponse);
-			return (string)json["links"]["currentDate"];
-		}
+        private string GetDate()
+        {
+            string url = "http://data.nba.net/10s/prod/v1/today.json";
+            HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
+            if (webResponse == null)
+                return null;
+            string apiResponse = CommonFunctions.ResponseToString(webResponse);
+            JObject json = JObject.Parse(apiResponse);
+            return (string)json["links"]["currentDate"];
+        }
 
-		private void SetNextGame(string gameDate)
-		{
-			if (offset >= GAME_OFFSET)
-			{
-				NEXT_GAME = new DateTime();
-				NEXT_LAST_GAME = new DateTime();
-				return;
-			}
+        private void SetNextGame(string gameDate)
+        {
+            if (offset >= GAME_OFFSET)
+            {
+                NEXT_GAME = new DateTime();
+                NEXT_LAST_GAME = new DateTime();
+                return;
+            }
 
-			JArray games = CommonFunctions.GetGames(gameDate);
-			if (games.Count > 0)
-			{
-				DateTime timeUTC = DateTime.Parse((string)games[0]["startTimeUTC"]);
-				if (timeUTC > DateTime.UtcNow)
-				{
-					offset = 0;
-					NEXT_GAME = timeUTC;
-					NEXT_LAST_GAME = DateTime.Parse((string)games[games.Count - 1]["startTimeUTC"]);
-				}
-				else
-				{
-					offset++;
-					gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
-									.AddDays(offset).ToString("yyyyMMdd");
-					SetNextGame(gameDate);
-				}
-			}
-			else
-			{
-				offset++;
-				gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
-								.AddDays(1).ToString("yyyyMMdd");
-				SetNextGame(gameDate);
-			}
-		}
+            JArray games = CommonFunctions.GetGames(gameDate);
+            if (games.Count > 0)
+            {
+                DateTime timeUTC = DateTime.Parse((string)games[0]["startTimeUTC"]);
+                if (timeUTC > DateTime.UtcNow)
+                {
+                    offset = 0;
+                    NEXT_GAME = timeUTC;
+                    NEXT_LAST_GAME = DateTime.Parse((string)games[games.Count - 1]["startTimeUTC"]);
+                }
+                else
+                {
+                    offset++;
+                    gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
+                                    .AddDays(offset).ToString("yyyyMMdd");
+                    SetNextGame(gameDate);
+                }
+            }
+            else
+            {
+                offset++;
+                gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
+                                .AddDays(1).ToString("yyyyMMdd");
+                SetNextGame(gameDate);
+            }
+        }
 
-		private void SetLastGame(string gameDate)
-		{
-			JArray games = CommonFunctions.GetGames(gameDate);
-			if (games.Count > 0)
-			{
-				DateTime timeUTC = DateTime.Parse((string)games[0]["startTimeUTC"]);
-				if (timeUTC < DateTime.UtcNow)
-				{
-					PREVIOUS_GAME = timeUTC;
-					PREVIOUS_LAST_GAME = DateTime.Parse((string)games[games.Count - 1]["startTimeUTC"]);
-				}
-				else
-				{
-					gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
-									.AddDays(-1).ToString("yyyyMMdd");
-					SetLastGame(gameDate);
-				}
-			}
-			else
-			{
-				gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
-								.AddDays(-1).ToString("yyyyMMdd");
-				SetLastGame(gameDate);
-			}
-		}
+        private void SetLastGame(string gameDate)
+        {
+            JArray games = CommonFunctions.GetGames(gameDate);
+            if (games.Count > 0)
+            {
+                DateTime timeUTC = DateTime.Parse((string)games[0]["startTimeUTC"]);
+                if (timeUTC < DateTime.UtcNow)
+                {
+                    PREVIOUS_GAME = timeUTC;
+                    PREVIOUS_LAST_GAME = DateTime.Parse((string)games[games.Count - 1]["startTimeUTC"]);
+                }
+                else
+                {
+                    gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
+                                    .AddDays(-1).ToString("yyyyMMdd");
+                    SetLastGame(gameDate);
+                }
+            }
+            else
+            {
+                gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
+                                .AddDays(-1).ToString("yyyyMMdd");
+                SetLastGame(gameDate);
+            }
+        }
 
         public void Execute()
         {
@@ -183,7 +183,8 @@ namespace fantasy_hoops.Database
                 SetPlayersNotPlaying().Wait();
             }
 
-            JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
+            if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")))
+                JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
                             s => s.WithName("statsSeed")
                             .ToRunNow());
         }
