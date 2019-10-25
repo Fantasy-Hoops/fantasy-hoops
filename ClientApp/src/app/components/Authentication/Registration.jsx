@@ -50,6 +50,7 @@ export class Registration extends Component {
   }
 
   handleSubmit(e) {
+    document.getElementById('submit').disabled = true;
     e.preventDefault();
     const data = {
       UserName: this.state.username,
@@ -61,11 +62,14 @@ export class Registration extends Component {
       .then(res => {
         this.setState({
           showAlert: true,
-          alertType: 'alert-success',
+          alertType: 'alert-info',
           alertText: res.data
         });
+        document.getElementById('submit').remove();
+        document.getElementById('form').remove();
       })
       .catch(err => {
+        document.getElementById('submit').disabled = false;
         this.setState({
           showAlert: true,
           alertType: 'alert-danger',
@@ -148,3 +152,5 @@ export class Registration extends Component {
 
 
 }
+
+export default Registration;
