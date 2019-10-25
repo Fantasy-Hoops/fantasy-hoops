@@ -39,8 +39,6 @@ namespace fantasy_hoops
                              reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            builder.AddUserSecrets<Startup>();
-
             Configuration = builder.Build();
         }
 
@@ -88,7 +86,7 @@ namespace fantasy_hoops
                 });
             });
 #endif
-            services.AddDbContext<GameContext>(o => o.UseSqlServer(Configuration["CONNECTION_STRING"]));
+            services.AddDbContext<GameContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             ConfigureAuth(services);
 

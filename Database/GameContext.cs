@@ -51,9 +51,12 @@ namespace fantasy_hoops.Database
             if (!optionsBuilder.IsConfigured)
             {
                 IConfigurationRoot configuration = new ConfigurationBuilder()
-                   .AddUserSecrets<Startup>()
+                    .AddJsonFile("appsettings.json",
+                             optional: false,
+                             reloadOnChange: true)
+                    .AddEnvironmentVariables()
                    .Build();
-                string connectionString = configuration["CONNECTION_STRING"];
+                string connectionString = configuration.GetConnectionString("DefaultConnection");
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }
