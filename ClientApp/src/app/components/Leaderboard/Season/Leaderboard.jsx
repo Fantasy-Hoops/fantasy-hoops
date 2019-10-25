@@ -200,8 +200,8 @@ export class Leaderboard extends PureComponent {
               ? (
                 <select
                   className="form-control custom-select select select-year"
-                  value={lineupsYear}
-                  onChange={this.onLineupsDateChange}
+                  value={playersYear}
+                  onChange={this.onPlayersDateChange}
                 >
                   <option value="">Select season...</option>
                   <option value={2018}>2018</option>
