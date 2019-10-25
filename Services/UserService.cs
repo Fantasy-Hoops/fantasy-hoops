@@ -50,23 +50,16 @@ namespace fantasy_hoops.Services
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            try
+            if (result.Succeeded)
             {
-                string avatarDir = @"./ClientApp/build/content/images/avatars";
-                if (!Directory.Exists(avatarDir))
-                    Directory.CreateDirectory(avatarDir);
-                new WebClient().DownloadFile("https://fantasyhoops.org/content/images/avatars/default.png", @"./ClientApp/build/content/images/avatars/" + _repository.GetUserByName(model.UserName).Id + ".png");
-                user.AvatarURL = user.Id;
+                PushNotificationViewModel notification =
+                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", model.UserName))
+                    {
+                        Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") },
+                        Data = new { userName = model.UserName }
+                    };
+                await _pushService.SendAdminNotification(notification);
             }
-            catch { }
-
-            PushNotificationViewModel notification =
-                new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", model.UserName))
-                {
-                    Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") },
-                    Data = new { userName = model.UserName }
-                };
-            await _pushService.SendAdminNotification(notification);
 
             return result.Succeeded;
         }
@@ -97,7 +90,7 @@ namespace fantasy_hoops.Services
                 new Claim("team", user.Team != null ? user.Team.Name : ""),
                 new Claim("roles", string.Join(";", roles)),
                 new Claim("isAdmin", isAdmin.ToString()),
-                new Claim("avatarURL", user.AvatarURL)
+                new Claim("avatarURL", user.AvatarURL != null ? user.AvatarURL : "null")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Tai yra raktas musu saugumo sistemai, kuo ilgesnis tuo geriau?"));

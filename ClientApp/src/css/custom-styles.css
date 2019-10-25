@@ -646,8 +646,10 @@ input[type="search"]:focus {
   z-index: 1;
 }
 .UserCard .avatar {
+  width: 8rem;
+  height: 8rem;
+  margin: 1rem auto 0;
   position: relative;
-  margin-top: 1rem;
   z-index: 100;
 }
 
