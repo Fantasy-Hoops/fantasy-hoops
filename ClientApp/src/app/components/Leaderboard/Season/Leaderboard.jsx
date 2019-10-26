@@ -181,9 +181,9 @@ export class Leaderboard extends PureComponent {
                   value={lineupsYear}
                   onChange={this.onLineupsDateChange}
                 >
-                  <option value="">Select season...</option>
-                  <option value={2018}>2018</option>
-                  <option value={2019}>2019</option>
+                  <option value={-1}>All time</option>
+                  <option value={2018}>2018/2019</option>
+                  <option value={2019}>2019/2020</option>
                 </select>
               )
               : null}
@@ -203,9 +203,9 @@ export class Leaderboard extends PureComponent {
                   value={playersYear}
                   onChange={this.onPlayersDateChange}
                 >
-                  <option value="">Select season...</option>
-                  <option value={2018}>2018</option>
-                  <option value={2019}>2019</option>
+                  <option value={-1}>All time</option>
+                  <option value={2018}>2018/2019</option>
+                  <option value={2019}>2019/2020</option>
                 </select>
               )
               : null}

@@ -233,9 +233,14 @@ namespace fantasy_hoops.Repositories
 
         public IQueryable<object> GetSeasonLineups(int year)
         {
-            year = year == -1 ? int.Parse(CommonFunctions.SEASON_YEAR) : year;
-            DateTime seasonStart = new DateTime(year, 10, 1);
-            DateTime seasonEnd = new DateTime(year + 1, 7, 1);
+            DateTime seasonStart = DateTime.MinValue;
+            DateTime seasonEnd = DateTime.MaxValue;
+            if (year != -1)
+            {
+                seasonStart = new DateTime(year, 10, 1);
+                seasonEnd = new DateTime(year + 1, 7, 1);
+            }
+
             return _context.UserLineups
                 .Where(lineup => lineup.Date >= seasonStart && lineup.Date <= seasonEnd)
                 .OrderByDescending(lineup => lineup.FP)
@@ -273,9 +278,14 @@ namespace fantasy_hoops.Repositories
 
         public IQueryable<object> GetSeasonPlayers(int year)
         {
-            year = year == -1 ? int.Parse(CommonFunctions.SEASON_YEAR) : year;
-            DateTime seasonStart = new DateTime(year, 10, 1);
-            DateTime seasonEnd = new DateTime(year + 1, 7, 1);
+            DateTime seasonStart = DateTime.MinValue;
+            DateTime seasonEnd = DateTime.MaxValue;
+            if (year != -1)
+            {
+                seasonStart = new DateTime(year, 10, 1);
+                seasonEnd = new DateTime(year + 1, 7, 1);
+            }
+
             return _context.Stats
                 .Where(stats => stats.Date >= seasonStart && stats.Date <= seasonEnd)
                 .OrderByDescending(s => s.FP)
