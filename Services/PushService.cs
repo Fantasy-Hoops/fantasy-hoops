@@ -127,7 +127,7 @@ namespace fantasy_hoops.Services
 
             PushNotificationViewModel notification =
                     new PushNotificationViewModel("Fantasy Hoops Reminder",
-                        string.Format("Game is starting in less than 2 hours! Don't forget to set up your lineup!"))
+                        string.Format("Game is starting in less than 5 hours! Don't forget to set up your lineup!"))
                     {
                         Actions = new List<NotificationAction> { new NotificationAction("lineup", "🏆 Lineup") }
                     };
