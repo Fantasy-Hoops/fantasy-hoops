@@ -25,6 +25,7 @@ namespace fantasy_hoops.Repositories
                 Status = status
             };
             _context.FriendRequests.Add(request);
+            _context.SaveChanges();
         }
 
         public IQueryable<Object> GetRequests(string id)

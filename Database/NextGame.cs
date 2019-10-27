@@ -142,7 +142,7 @@ namespace fantasy_hoops.Database
                     if (NEXT_GAME.Subtract(DateTime.UtcNow).TotalMinutes > 115)
                         JobManager.AddJob(() => _pushService.SendNudgeNotifications().Wait(),
                                         s => s.WithName("nudgeNotifications")
-                                        .ToRunOnceAt(NEXT_GAME.AddHours(-2)));
+                                        .ToRunOnceAt(NEXT_GAME.AddHours(-5)));
 
                     // Once per 2 days
                     if (CommonFunctions.UTCToEastern(NEXT_GAME).Day % 2 != 0)
