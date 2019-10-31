@@ -18,7 +18,6 @@ namespace fantasy_hoops.Services
 {
     public class UserService : IUserService
     {
-
         private readonly GameContext _context;
         private readonly IPushService _pushService;
         private readonly IUserRepository _repository;
@@ -131,7 +130,7 @@ namespace fantasy_hoops.Services
             if (!Directory.Exists(avatarDir))
                 Directory.CreateDirectory(avatarDir);
 
-            User user = _repository.GetUser(model.Id);
+            User user = _userManager.FindByIdAsync(model.Id).Result;
             string oldFilePath = avatarDir + "/" + user.AvatarURL + ".png";
 
             if (user.AvatarURL != null && File.Exists(oldFilePath))
@@ -140,8 +139,7 @@ namespace fantasy_hoops.Services
             string avatarId = Guid.NewGuid().ToString();
             string newFilePath = avatarDir + "/" + avatarId + ".png";
             user.AvatarURL = avatarId;
-
-            _context.SaveChanges();
+            _userManager.UpdateAsync(user).Wait();
 
             model.Avatar = model.Avatar.Substring(22);
             try
@@ -158,7 +156,7 @@ namespace fantasy_hoops.Services
         public bool ClearAvatar(AvatarViewModel model)
         {
             string avatarDir = @"./ClientApp/build/content/images/avatars";
-            User user = _repository.GetUser(model.Id);
+            User user = _userManager.FindByIdAsync(model.Id).Result;
             string avatarId = user.AvatarURL;
 
             if (avatarId == null)
@@ -174,7 +172,7 @@ namespace fantasy_hoops.Services
                         System.IO.File.Delete(filePath);
                         File.Copy(@"./ClientApp/build/content/images/avatars/default.png", @"./ClientApp/build/content/images/avatars/" + model.Id + ".png");
                         user.AvatarURL = null;
-                        _context.SaveChangesAsync();
+                        _userManager.UpdateAsync(user).Wait();
                     }
                     catch
                     {
