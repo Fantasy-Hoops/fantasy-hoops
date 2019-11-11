@@ -138,9 +138,9 @@ namespace fantasy_hoops.Database
                 // All actions run only in production
                 if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")))
                 {
-                    // Nudge Notifications don't run if game starts in <2 hours
-                    if (NEXT_GAME.Subtract(DateTime.UtcNow).TotalMinutes > 115)
-                        JobManager.AddJob(() => _pushService.SendNudgeNotifications().Wait(),
+                    // Nudge Notifications don't run if game starts in <5 hours
+                    if (NEXT_GAME.Subtract(DateTime.UtcNow).TotalMinutes > 295)
+                        JobManager.AddJob(() => _pushService.SendNudgeNotifications(),
                                         s => s.WithName("nudgeNotifications")
                                         .ToRunOnceAt(NEXT_GAME.AddHours(-5)));
 

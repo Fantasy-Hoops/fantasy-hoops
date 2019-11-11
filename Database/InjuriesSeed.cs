@@ -57,6 +57,8 @@ namespace fantasy_hoops.Database
                     .Where(inj => inj.Player.NbaID == (int)injury["PrimarySourceKey"])
                     .FirstOrDefault();
 
+            string statusBefore = dbInjury.Status;
+            string statusAfter = injuryObj.Status;
 
             if (dbInjury == null)
             {
@@ -77,8 +79,6 @@ namespace fantasy_hoops.Database
                 dbInjury.Link = injuryObj.Link;
             }
 
-            string statusBefore = injuryPlayer.Injury.Status;
-            string statusAfter = injuryObj.Status;
 
             if (!statusBefore.Equals(statusAfter))
                 await UpdateNotifications(injuryObj, statusBefore, statusAfter);
