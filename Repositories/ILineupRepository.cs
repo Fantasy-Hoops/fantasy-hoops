@@ -16,7 +16,7 @@ namespace fantasy_hoops.Repositories
         bool ArePricesCorrect(SubmitLineupViewModel model);
         bool IsUpdating(String userID);
         bool AreNotPlayingPlayers(SubmitLineupViewModel model);
-        IEnumerable<string> GetUserSelectedIds();
-        IEnumerable<User> UsersNotSelected(IEnumerable<string> usersSelectedIDs);
+        List<string> GetUserSelectedIds();
+        List<User> UsersNotSelected();
     }
 }

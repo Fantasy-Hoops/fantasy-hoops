@@ -50,24 +50,22 @@ namespace fantasy_hoops.Database
                 InjuryTitle = injury.Value<string>("Injury") != null ? (string)injury["Injury"] : null,
                 Description = injury.Value<string>("News") != null ? (string)injury["News"] : null,
                 Date = dateModified,
-                Link = injury.Value<string>("Link") != null ? (string)injury["Link"] : null
+                Link = injury.Value<string>("Link") != null ? (string)injury["Link"] : null,
+                Player = injuryPlayer,
+                PlayerID = injuryPlayer.PlayerID
             };
 
             var dbInjury = _context.Injuries
                     .Where(inj => inj.Player.NbaID == (int)injury["PrimarySourceKey"])
                     .FirstOrDefault();
 
-            string statusBefore = dbInjury.Status;
+            string statusBefore = dbInjury != null ? dbInjury.Status : null;
             string statusAfter = injuryObj.Status;
+
 
             if (dbInjury == null)
             {
-                injuryObj.Player = injuryPlayer;
-                injuryObj.PlayerID = injuryPlayer.PlayerID;
                 await _context.Injuries.AddAsync(injuryObj);
-                _context.SaveChanges();
-                injuryPlayer.InjuryID = injuryObj.InjuryID;
-                injuryPlayer.Injury = injuryObj;
             }
             else
             {
@@ -77,14 +75,14 @@ namespace fantasy_hoops.Database
                 dbInjury.Description = injuryObj.Description;
                 dbInjury.Date = injuryObj.Date;
                 dbInjury.Link = injuryObj.Link;
+                dbInjury.Player = injuryPlayer;
+                dbInjury.PlayerID = injuryPlayer.PlayerID;
             }
-
+            _context.Injuries.Update(dbInjury);
+            _context.SaveChanges();
 
             if (!statusBefore.Equals(statusAfter))
-                await UpdateNotifications(injuryObj, statusBefore, statusAfter);
-
-            injuryPlayer.Injury.Status = injuryObj.Status;
-            injuryPlayer.Injury.Date = dateModified;
+                await UpdateNotifications(dbInjury, statusBefore, statusAfter);
         }
 
         private async Task UpdateNotifications(Injury injury, string statusBefore, string statusAfter)
@@ -116,8 +114,7 @@ namespace fantasy_hoops.Database
                 };
 
                 if (!_context.InjuryNotifications
-                .Any(x => x.InjuryStatus.Equals(inj.InjuryStatus)
-                                                                                && x.PlayerID == inj.PlayerID))
+                .Any(x => x.InjuryStatus.Equals(inj.InjuryStatus) && x.PlayerID == inj.PlayerID))
                     await _context.InjuryNotifications.AddAsync(inj);
             }
         }

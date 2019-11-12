@@ -53,6 +53,6 @@ namespace fantasy_hoops.Services
         Task Send(string userId, PushNotificationViewModel notification);
 
         Task SendAdminNotification(PushNotificationViewModel notification);
-        Task SendNudgeNotifications();
+        void SendNudgeNotifications();
     }
 }
