@@ -36,7 +36,7 @@ namespace fantasy_hoops.Database
             return injuries;
         }
 
-        private async Task AddToDatabaseAsync(JToken injury, DateTime? dateModified)
+        private void AddToDatabase(JToken injury, DateTime? dateModified)
         {
             Player injuryPlayer = _context.Players.Where(x => x.NbaID == (int)injury["PrimarySourceKey"]).FirstOrDefault();
 
@@ -65,7 +65,7 @@ namespace fantasy_hoops.Database
 
             if (dbInjury == null)
             {
-                await _context.Injuries.AddAsync(injuryObj);
+                _context.Injuries.Add(injuryObj);
             }
             else
             {
@@ -82,10 +82,10 @@ namespace fantasy_hoops.Database
             _context.SaveChanges();
 
             if (!statusBefore.Equals(statusAfter))
-                await UpdateNotifications(dbInjury, statusBefore, statusAfter);
+                UpdateNotifications(dbInjury, statusBefore, statusAfter);
         }
 
-        private async Task UpdateNotifications(Injury injury, string statusBefore, string statusAfter)
+        private void UpdateNotifications(Injury injury, string statusBefore, string statusAfter)
         {
             foreach (var lineup in _context.UserLineups
                             .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
@@ -115,7 +115,8 @@ namespace fantasy_hoops.Database
 
                 if (!_context.InjuryNotifications
                 .Any(x => x.InjuryStatus.Equals(inj.InjuryStatus) && x.PlayerID == inj.PlayerID))
-                    await _context.InjuryNotifications.AddAsync(inj);
+                    _context.InjuryNotifications.Add(inj);
+                _context.SaveChanges();
             }
         }
 
@@ -165,7 +166,7 @@ namespace fantasy_hoops.Database
 
                 try
                 {
-                    AddToDatabaseAsync(injury, dateModified).Wait();
+                    AddToDatabase(injury, dateModified);
                 }
                 catch (Exception)
                 {

@@ -61,7 +61,7 @@ export class Notifications extends Component {
               link="/leaderboard/users"
             />
           );
-        } if (notification.friend) {
+        } if (notification.friendID) {
           const text = (
             <span>
               {notification.requestMessage}
@@ -72,15 +72,15 @@ export class Notifications extends Component {
             <NotificationCard
               key={shortid()}
               notification={notification}
-              title={notification.friend.userName}
+              title={notification.friendUserName}
               imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendAvatarURL}.png`, defaultPhoto]}
               text={text}
               imageClass="NotificationCard__Image"
-              link={`/profile/${notification.friend.userName}`}
+              link={`/profile/${notification.friendUserName}`}
             />
           );
-        } if (notification.player) {
-          const title = `${notification.player.abbrName} is ${notification.injuryStatus.toLowerCase()}`;
+        } if (notification.playerID) {
+          const title = `${notification.abbrName} is ${notification.injuryStatus.toLowerCase()}`;
 
           return (
             <NotificationCard
@@ -89,8 +89,8 @@ export class Notifications extends Component {
               title={title}
               circleImage
               imageSrc={[
-                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${notification.player.nbaID}.png`,
-                require(`../../../content/images/positions/${notification.player.position.toLowerCase()}.png`)
+                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${notification.nbaID}.png`,
+                require(`../../../content/images/positions/${notification.position.toLowerCase()}.png`)
               ]}
               imageClass="NotificationCard__Image NotificationCard__Image--player"
               text={notification.injuryDescription}

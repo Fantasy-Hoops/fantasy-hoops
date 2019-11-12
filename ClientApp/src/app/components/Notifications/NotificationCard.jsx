@@ -67,7 +67,7 @@ export class NotificationCard extends Component {
     let bgStyle;
     if (circleImage) {
       bgStyle = {
-        backgroundColor: notification.player.team.color
+        backgroundColor: notification.teamColor
       };
     }
 
