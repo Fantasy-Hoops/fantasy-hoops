@@ -114,26 +114,17 @@ namespace fantasy_hoops.Services
                 await Send(admin.UserId, notification);
         }
 
-        public async Task SendNudgeNotifications()
+        public void SendNudgeNotifications()
         {
-            if (JobManager.RunningSchedules.Any(s => !s.Name.Equals("nudgeNotifications")))
-            {
-                JobManager.AddJob(() => SendNudgeNotifications().Wait(),
-                s => s.WithName("nudgeNotifications")
-                .ToRunOnceIn(30)
-                .Seconds());
-                return;
-            }
-
             PushNotificationViewModel notification =
                     new PushNotificationViewModel("Fantasy Hoops Reminder",
                         string.Format("Game is starting in less than 5 hours! Don't forget to set up your lineup!"))
                     {
                         Actions = new List<NotificationAction> { new NotificationAction("lineup", "🏆 Lineup") }
                     };
-            var usersSelectedIDs = _lineupRepository.GetUserSelectedIds();
-            foreach (var user in _lineupRepository.UsersNotSelected(usersSelectedIDs))
-                await Send(user.Id, notification);
+            var userNotSelected = _lineupRepository.UsersNotSelected();
+            foreach (var user in userNotSelected)
+                Send(user.Id, notification).Wait();
         }
     }
 }

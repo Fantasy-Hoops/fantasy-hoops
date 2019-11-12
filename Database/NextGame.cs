@@ -1,4 +1,4 @@
-﻿using FluentScheduler;
+using FluentScheduler;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Globalization;
