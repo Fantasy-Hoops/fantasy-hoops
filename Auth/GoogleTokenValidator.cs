@@ -34,13 +34,20 @@ namespace fantasy_hoops.Auth
 
             var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, payload.Name),
-                    new Claim(ClaimTypes.Name, payload.Name),
-                    new Claim(JwtRegisteredClaimNames.FamilyName, payload.FamilyName),
-                    new Claim(JwtRegisteredClaimNames.GivenName, payload.GivenName),
-                    new Claim(JwtRegisteredClaimNames.Email, payload.Email),
-                    new Claim(JwtRegisteredClaimNames.Sub, payload.Subject),
                     new Claim(JwtRegisteredClaimNames.Iss, payload.Issuer),
+                    new Claim(JwtRegisteredClaimNames.Azp, payload.Audience.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Aud, payload.Audience.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Sub, payload.Subject),
+                    new Claim(JwtRegisteredClaimNames.Email, payload.Email),
+                    new Claim("email_verified", payload.EmailVerified.ToString(), ClaimValueTypes.Boolean),
+                    new Claim(ClaimTypes.Name, payload.Name),
+                    new Claim("picture", payload.Picture),
+                    new Claim(JwtRegisteredClaimNames.GivenName, payload.GivenName),
+                    new Claim(JwtRegisteredClaimNames.FamilyName, payload.FamilyName),
+                    new Claim("locale", payload.Locale),
+                    new Claim(JwtRegisteredClaimNames.Iat, payload.IssuedAtTimeSeconds.ToString(), ClaimValueTypes.Integer32),
+                    new Claim(JwtRegisteredClaimNames.Exp, payload.ExpirationTimeSeconds.ToString(), ClaimValueTypes.Integer32),
+                    new Claim(JwtRegisteredClaimNames.Jti, payload.JwtId)
                 };
 
             try
