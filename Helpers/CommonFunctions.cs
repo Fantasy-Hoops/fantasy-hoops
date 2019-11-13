@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace fantasy_hoops.Helpers
@@ -140,5 +141,13 @@ namespace fantasy_hoops.Helpers
         {
             return _context.Teams.Where(t => t.NbaID == 0).FirstOrDefault();
         }
-	}
+        public async static Task<string> GetImageAsBase64Url(string url)
+        {
+            using (var client = new HttpClient())
+            {
+                var bytes = await client.GetByteArrayAsync(url);
+                return "image/jpeg;base64," + Convert.ToBase64String(bytes);
+            }
+        }
+    }
 }

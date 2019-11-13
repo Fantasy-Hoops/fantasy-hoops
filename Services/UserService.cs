@@ -7,6 +7,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories;
@@ -51,13 +52,7 @@ namespace fantasy_hoops.Services
 
             if (result.Succeeded)
             {
-                PushNotificationViewModel notification =
-                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", model.UserName))
-                    {
-                        Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") },
-                        Data = new { userName = model.UserName }
-                    };
-                await _pushService.SendAdminNotification(notification);
+                await SendRegisterNotification(model.UserName);
             }
 
             return result.Succeeded;
@@ -197,7 +192,8 @@ namespace fantasy_hoops.Services
         public async Task<bool> GoogleRegister(ClaimsPrincipal user)
         {
             string email = GetEmail(user);
-            string username = GetUsername(email);
+            string username = GetUsernameFromEmail(email);
+            Claim imageURL = user.Claims.Where(c => c.Type == "picture").FirstOrDefault();
             var newUser = new User
             {
                 UserName = username,
@@ -209,24 +205,32 @@ namespace fantasy_hoops.Services
 
             if (result.Succeeded)
             {
-                PushNotificationViewModel notification =
-                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", username))
+                if(imageURL != null)
+                {
+                    UploadAvatar(new AvatarViewModel()
                     {
-                        Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") },
-                        Data = new { userName = username }
-                    };
-                await _pushService.SendAdminNotification(notification);
+                        Id = newUser.Id,
+                        Avatar = await CommonFunctions.GetImageAsBase64Url(imageURL.Value)
+                    });
+                }
+                await SendRegisterNotification(username);
             }
 
             return result.Succeeded;
         }
 
-        public async Task<IdentityResult> GoogleLogin(ClaimsPrincipal user)
+        public async Task<bool> GoogleLogin(ClaimsPrincipal user)
         {
             string email = GetEmail(user);
             User dbUser = await _userManager.FindByEmailAsync(email);
-            dbUser.IsSocialAccount = true;
-            return await _userManager.UpdateAsync(dbUser);
+            if(!dbUser.IsSocialAccount)
+            {
+                dbUser.IsSocialAccount = true;
+                IdentityResult result = await _userManager.UpdateAsync(dbUser);
+                return result.Succeeded;
+            }
+
+            return true;
         }
 
         private string GetEmail(ClaimsPrincipal user)
@@ -236,11 +240,37 @@ namespace fantasy_hoops.Services
             return email;
         }
 
-        private string GetUsername(string email)
+        private string GetUsernameFromEmail(string email)
         {
             int atIndex = email.IndexOf('@');
             string username = email.Substring(0, atIndex);
             return username;
+        }
+
+        private async Task SendRegisterNotification(string username)
+        {
+            PushNotificationViewModel notification =
+                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", username))
+                    {
+                        Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") },
+                        Data = new { userName = username }
+                    };
+            await _pushService.SendAdminNotification(notification);
+        }
+
+        public async Task<bool> DeleteProfile(ClaimsPrincipal user)
+        {
+            List<Claim> claims = user.Claims.ToList();
+            string username = claims[1].Value;
+            User userToDelete = await _userManager.FindByNameAsync(username);
+            if(userToDelete != null)
+            {
+
+                ClearAvatar(new AvatarViewModel() { Id = user.Claims.ToList()[0].Value });
+            }
+            _userRepository.DeleteUserResources(userToDelete);
+            IdentityResult result = await _userManager.DeleteAsync(userToDelete);
+            return result.Succeeded;
         }
     }
 }

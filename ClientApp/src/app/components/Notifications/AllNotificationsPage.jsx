@@ -82,7 +82,7 @@ export class AllNotificationsPage extends Component {
               title={notification.friendUserName}
               imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendAvatarURL}.png`, defaultPhoto]}
               text={text}
-              imageClass="NotificationCard__Image"
+              imageClass="NotificationCard__Image Avatar--round"
               link={`/profile/${notification.friendUserName}`}
             />
           );

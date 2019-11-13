@@ -23,6 +23,7 @@ namespace fantasy_hoops.Repositories
         List<IdentityUserRole<string>> GetAdmins(string adminRoleId);
         IQueryable<object> Roles(string id);
         bool IsAdmin(string userId);
+        void DeleteUserResources(User userToDelete);
 
     }
 }

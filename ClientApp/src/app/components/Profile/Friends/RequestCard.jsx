@@ -13,7 +13,7 @@ export const RequestCard = (props) => {
       <div className="RequestCard__Body">
         <a href={`${Routes.PROFILE}/${userName}`} className="card-body RequestCard__Info">
           <Img
-            className="RequestCard__Avatar"
+            className="RequestCard__Avatar Avatar--round"
             alt={userName}
             src={[
               `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${avatarURL}.png`,

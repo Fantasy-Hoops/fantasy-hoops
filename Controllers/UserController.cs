@@ -40,8 +40,6 @@ namespace fantasy_hoops.Controllers
         public async Task<IActionResult> GoogleLogin()
         {
             string email = User.Claims.ToList()[4].Value;
-            int atIndex = email.IndexOf('@');
-            string username = email.Substring(0, atIndex);
             bool emailExists = _userRepository.EmailExists(email);
 
             if(!emailExists)
@@ -49,8 +47,8 @@ namespace fantasy_hoops.Controllers
                 await _userService.GoogleRegister(User);
             }
 
-            IdentityResult result = await _userService.GoogleLogin(User);
-            if (!result.Succeeded)
+            bool success = await _userService.GoogleLogin(User);
+            if (!success)
             {
                 return Unauthorized("Google login failed.");
             }
@@ -193,6 +191,19 @@ namespace fantasy_hoops.Controllers
         public IActionResult GetUserPool()
         {
             return Ok(_userRepository.GetUserPool());
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteProfile()
+        {
+            bool success = await _userService.DeleteProfile(User);
+            if(!success)
+            {
+                StatusCode(500, "Unable to delete profile.");
+            }
+
+            return Ok("Profile deleted successfully.");
         }
     }
 }
