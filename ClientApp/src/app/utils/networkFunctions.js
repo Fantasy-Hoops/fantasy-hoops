@@ -25,7 +25,7 @@ const createParameters = (parameters) => {
   return `?${_.join(strings, '&')}`;
 };
 
-axios.defaults.headers.Authorization = `Bearer${localStorage.getItem('accessToken')}`;
+axios.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
 
 // User requests
 export const register = data => axios.post(`${userApiUrlBase}/register`, data);

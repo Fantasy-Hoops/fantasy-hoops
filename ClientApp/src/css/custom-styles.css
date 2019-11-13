@@ -1524,6 +1524,10 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   font-weight: 700 !important;
 }
 
+.Avatar--round {
+  border-radius: 50%;
+}
+
 .GameLog__corner-cell {
   background-color: var(--primary-color) !important;
   font-weight: 700 !important;

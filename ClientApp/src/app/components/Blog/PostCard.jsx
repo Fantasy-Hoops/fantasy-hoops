@@ -31,7 +31,7 @@ class PostCard extends PureComponent {
         </div>
         <div className="card-header text-muted">
           <Img
-            className="PostCard__AuthorImage"
+            className="PostCard__AuthorImage Avatar--round"
             alt=""
             src={[
               `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${post.author.avatarURL}.png`,

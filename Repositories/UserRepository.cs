@@ -332,5 +332,27 @@ namespace fantasy_hoops.Repositories
         {
             return _context.UserRoles.Where(userRole => userRole.RoleId.Equals(adminRoleId)).ToList();
         }
+
+        public void DeleteUserResources(User userToDelete)
+        {
+            var friendRequests = _context.FriendRequests
+                .Where(request => request.ReceiverID.Equals(userToDelete.Id) || request.SenderID.Equals(userToDelete.Id))
+                .ToList();
+            _context.FriendRequests.RemoveRange(friendRequests);
+            var notifications = _context.Notifications
+                .Where(notification => notification.UserID.Equals(userToDelete.Id))
+                .ToList();
+            _context.Notifications.RemoveRange(notifications);
+            var frNotifications = _context.FriendRequestNotifications
+                .Where(notification => notification.FriendID.Equals(userToDelete.Id))
+                .ToList();
+            _context.FriendRequestNotifications.RemoveRange(frNotifications);
+            var lineups = _context.UserLineups
+                .Where(lineup => lineup.UserID.Equals(userToDelete.Id))
+                .ToList();
+            _context.UserLineups.RemoveRange(lineups);
+
+            _context.SaveChanges();
+        }
     }
 }
