@@ -10,7 +10,6 @@ import { loadImage } from '../utils/loadImage';
 import { registerPush } from '../utils/push';
 import { logout } from '../utils/networkFunctions';
 import Routes from '../routes/routes';
-import { GoogleLogout } from 'react-google-login';
 
 export default class Navbar extends Component {
   constructor(props) {
@@ -102,12 +101,7 @@ export default class Navbar extends Component {
                   <div className="row">
                     <div className="col-lg-12">
                       <p>
-                        <GoogleLogout
-                          clientId="742661414003-9j0660djckpdt9rthv18cnb4vo8bq6ch.apps.googleusercontent.com"
-                          buttonText="Logout"
-                          onLogoutSuccess={logout}
-                        />
-                        {/* <button type="button" onClick={logout} className="btn btn-outline-danger btn-block">Logout</button> */}
+                        <button type="button" onClick={logout} className="btn btn-outline-danger btn-block">Logout</button>
                       </p>
                     </div>
                   </div>

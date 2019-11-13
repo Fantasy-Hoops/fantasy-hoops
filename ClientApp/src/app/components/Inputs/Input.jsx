@@ -14,18 +14,18 @@ export class Input extends Component {
     else
       e.target.className = "form-control";
 
-    if(this.props.match) {
+    if (this.props.match) {
       const passwordValue = document.getElementById(this.props.match).value;
-      if(passwordValue !== value)
+      if (passwordValue !== value)
         e.target.className = "form-control is-invalid";
       else
         e.target.className = "form-control";
     }
 
-    if(this.props.children) {
+    if (this.props.children) {
       const passwordValue = document.getElementById(this.props.children).value;
-      if(passwordValue.length > 0) {
-        if(value !== passwordValue) {
+      if (passwordValue.length > 0) {
+        if (value !== passwordValue) {
           document.getElementById(this.props.children).className = "form-control is-invalid";
         }
         else {
@@ -37,9 +37,11 @@ export class Input extends Component {
   }
 
   render() {
+    const { disabled } = this.props;
     return (
       <div>
         <input
+          disabled={disabled}
           type={this.props.type}
           className="form-control"
           id={this.props.id}
@@ -56,3 +58,5 @@ export class Input extends Component {
     );
   }
 }
+
+export default Input;

@@ -263,8 +263,8 @@ a:hover {
 
 .notification-circle {
   overflow: hidden;
-  border-radius: 50%;
-  width: 4rem;
+  border-radius: 100%;
+  width: 5rem;
   height: 4rem;
 }
 

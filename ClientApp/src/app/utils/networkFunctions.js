@@ -1,5 +1,6 @@
 import axios from 'axios';
 import _ from 'lodash';
+import { GoogleLogout } from 'react-google-login';
 
 const apiUrlBase = `${process.env.REACT_APP_SERVER_NAME}/api`;
 
@@ -24,10 +25,13 @@ const createParameters = (parameters) => {
   return `?${_.join(strings, '&')}`;
 };
 
+axios.defaults.headers.Authorization = `Bearer${localStorage.getItem('accessToken')}`;
+
 // User requests
 export const register = data => axios.post(`${userApiUrlBase}/register`, data);
 export const login = data => axios.post(`${userApiUrlBase}/login`, data);
 export const logout = () => {
+  GoogleLogout.prototype.signOut();
   fetch(`${userApiUrlBase}/logout`, {
     method: 'GET',
     headers: {
