@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using fantasy_hoops.Database;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -10,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 using fantasy_hoops.Services;
 using fantasy_hoops.Repositories;
-using System.Collections.Generic;
-using Microsoft.Extensions.Primitives;
 
 namespace fantasy_hoops.Controllers
 {
@@ -34,7 +31,7 @@ namespace fantasy_hoops.Controllers
                 return StatusCode(401, "You have entered an invalid username or password!");
 
             if (await _userService.Login(model))
-                return Ok(_userService.RequestToken(model.UserName));
+                return Ok(await _userService.RequestToken(model.UserName));
             return StatusCode(401, "You have entered an invalid username or password!");
         }
 
@@ -43,15 +40,24 @@ namespace fantasy_hoops.Controllers
         public async Task<IActionResult> GoogleLogin()
         {
             string email = User.Claims.ToList()[4].Value;
+            int atIndex = email.IndexOf('@');
+            string username = email.Substring(0, atIndex);
             bool emailExists = _userRepository.EmailExists(email);
 
             if(!emailExists)
             {
                 await _userService.GoogleRegister(User);
             }
+
+            IdentityResult result = await _userService.GoogleLogin(User);
+            if (!result.Succeeded)
+            {
+                return Unauthorized("Google login failed.");
+            }
+
             string token = await _userService.RequestTokenByEmail(email);
             if (token == null)
-                return Unauthorized("User token not found.");
+                return Unauthorized("Unable to provide access token.");
 
             return Ok(token);
         }

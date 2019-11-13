@@ -374,3 +374,5 @@ export class Lineup extends Component {
     return '';
   }
 }
+
+export default Lineup;

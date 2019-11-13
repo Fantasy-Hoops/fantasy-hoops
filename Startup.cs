@@ -139,13 +139,8 @@ namespace fantasy_hoops
            .AddEntityFrameworkStores<GameContext>()
            .AddDefaultTokenProviders();
 
-            List<string> issuers = new List<string>() { "nekrosius.com", "accounts.google.com" };
-            List<string> audiences = new List<string>() { "nekrosius.com", "742661414003-9j0660djckpdt9rthv18cnb4vo8bq6ch.apps.googleusercontent.com" };
-            List<SymmetricSecurityKey> securityKeys = new List<SymmetricSecurityKey>()
-            {
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Tai yra raktas musu saugumo sistemai, kuo ilgesnis tuo geriau?")),
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes("742661414003-9j0660djckpdt9rthv18cnb4vo8bq6ch.apps.googleusercontent.com")),
-            };
+            List<string> issuers = new List<string>() { Configuration["CustomAuth:Issuer"], Configuration["Google:Issuer"] };
+            List<string> audiences = new List<string>() { Configuration["CustomAuth:Audience"], Configuration["Google:Audience"] };
 
             services
                 .AddAuthentication(options =>
@@ -167,7 +162,7 @@ namespace fantasy_hoops
                         ValidAudiences = audiences,
 
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKeys = securityKeys,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["CustomAuth:IssuerSigningKey"])),
 
                         RequireExpirationTime = true,
                         ValidateLifetime = true,

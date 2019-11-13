@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactNotification from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
+import _ from 'lodash';
 
 export class AlertNotification extends React.Component {
   constructor(props) {
@@ -17,7 +18,7 @@ export class AlertNotification extends React.Component {
       : 'Error!';
     this.notificationDOMRef.current.addNotification({
       title,
-      message: text,
+      message: !_.isEmpty(text) ? text : 'Error',
       type,
       insert: 'top',
       container: 'top-right',
