@@ -146,7 +146,7 @@ namespace fantasy_hoops.Helpers
             using (var client = new HttpClient())
             {
                 var bytes = await client.GetByteArrayAsync(url);
-                return "image/jpeg;base64," + Convert.ToBase64String(bytes);
+                return "image/jpeg;base64,     " + Convert.ToBase64String(bytes);
             }
         }
     }
