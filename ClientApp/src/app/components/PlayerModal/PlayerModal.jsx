@@ -15,6 +15,13 @@ export class PlayerModal extends Component {
     }
   }
 
+  componentWillUnmount() {
+    const modal = document.querySelector(".modal-backdrop");
+    if (modal) {
+      modal.remove();
+    }
+  }
+
   async componentWillReceiveProps(nextProps) {
     if (nextProps.stats !== "")
       await this.setState({
