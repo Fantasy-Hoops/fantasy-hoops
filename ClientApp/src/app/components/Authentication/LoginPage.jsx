@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { GoogleLogin } from 'react-google-login';
 import { Input } from '../Inputs/Input';
 import { Alert } from '../Alert';
 import { isAuth } from '../../utils/auth';
-import { login } from '../../utils/networkFunctions';
+import { login, googleLogin } from '../../utils/networkFunctions';
 import Routes from '../../routes/routes';
 
 export default class LoginPage extends Component {
@@ -30,6 +31,29 @@ export default class LoginPage extends Component {
     if (isAuth()) {
       window.location.replace('/');
     }
+  }
+
+  responseGoogle = (response) => {
+    const { location } = this.props;
+    googleLogin(response.tokenId)
+      .then((res) => {
+        localStorage.setItem('accessToken', res.data);
+
+        // If user was redirected to login because of authentication errors,
+        // he is now being redirected back
+        if (location.state && location.state.fallback) {
+          window.location.replace('/lineup');
+          return;
+        }
+        window.location.replace('/');
+      })
+      .catch((err) => {
+        this.setState({
+          showAlert: true,
+          alertType: 'alert-danger',
+          alertText: err.response.data
+        });
+      });
   }
 
   handleChange(e) {
@@ -122,6 +146,14 @@ export default class LoginPage extends Component {
           </div>
           <button type="submit" id="login" disabled className="btn btn-outline-primary btn-block">Log in</button>
           <Link to={Routes.REGISTER} className="btn btn-info btn-block">Sign up</Link>
+          <hr />
+          <GoogleLogin
+            className="btn-block"
+            clientId="742661414003-9j0660djckpdt9rthv18cnb4vo8bq6ch.apps.googleusercontent.com"
+            onSuccess={this.responseGoogle}
+            onFailure={this.responseGoogle}
+            cookiePolicy="single_host_origin"
+          />
         </form>
       </div>
     );

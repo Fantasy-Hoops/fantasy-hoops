@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 using fantasy_hoops.Services;
 using fantasy_hoops.Repositories;
+using System.Collections.Generic;
+using Microsoft.Extensions.Primitives;
 
 namespace fantasy_hoops.Controllers
 {
@@ -19,7 +21,7 @@ namespace fantasy_hoops.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
 
-        public UserController(IUserRepository repository, IUserService service, UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserController(IUserRepository repository, IUserService service)
         {
             _userRepository = repository;
             _userService = service;
@@ -34,6 +36,24 @@ namespace fantasy_hoops.Controllers
             if (await _userService.Login(model))
                 return Ok(_userService.RequestToken(model.UserName));
             return StatusCode(401, "You have entered an invalid username or password!");
+        }
+
+        [Authorize]
+        [HttpPost("googleLogin")]
+        public async Task<IActionResult> GoogleLogin()
+        {
+            string email = User.Claims.ToList()[4].Value;
+            bool emailExists = _userRepository.EmailExists(email);
+
+            if(!emailExists)
+            {
+                await _userService.GoogleRegister(User);
+            }
+            string token = await _userService.RequestTokenByEmail(email);
+            if (token == null)
+                return Unauthorized("User token not found.");
+
+            return Ok(token);
         }
 
         [HttpPost("register")]
