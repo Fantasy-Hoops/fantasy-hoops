@@ -13,6 +13,7 @@ const notificationsApiUrlBase = `${apiUrlBase}/notification`;
 const pushNotificationsApiUrlBase = `${apiUrlBase}/push`;
 const blogApiUrlBase = `${apiUrlBase}/blog`;
 
+
 const createParameters = (parameters) => {
   if (parameters === undefined) return '';
   if (_.isEmpty(parameters)) return '';
@@ -95,3 +96,10 @@ export const getPushPublicKey = () => axios.get(`${pushNotificationsApiUrlBase}/
 export const submitPost = post => axios.post(`${blogApiUrlBase}`, post);
 export const getPosts = () => axios.get(`${blogApiUrlBase}`);
 export const deletePost = id => axios.delete(`${blogApiUrlBase}?id=${id}`);
+
+// Google auth
+export const googleLogin = tokenId => axios.create({
+  baseURL: `${userApiUrlBase}/googleLogin`,
+  method: 'POST',
+  headers: { Authorization: `Bearer ${tokenId}` }
+}).post();

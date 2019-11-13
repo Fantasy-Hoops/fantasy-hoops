@@ -18,15 +18,13 @@ namespace fantasy_hoops.Services
 {
     public class UserService : IUserService
     {
-        private readonly GameContext _context;
         private readonly IPushService _pushService;
         private readonly IUserRepository _repository;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
-        public UserService(GameContext context, IPushService pushService, IUserRepository repository, UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserService(IPushService pushService, IUserRepository repository, UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            _context = context;
             _pushService = pushService;
             _repository = repository;
             _userManager = userManager;
@@ -68,6 +66,12 @@ namespace fantasy_hoops.Services
             await _signInManager.SignOutAsync();
         }
 
+        public async Task<string> RequestTokenByEmail(string email)
+        {
+            User user = await _userManager.FindByEmailAsync(email);
+            return RequestToken(user.UserName);
+        }
+
         public string RequestTokenById(string id)
         {
             string userName = _repository.GetUser(id).UserName;
@@ -89,7 +93,7 @@ namespace fantasy_hoops.Services
                 new Claim("team", user.Team != null ? user.Team.Name : ""),
                 new Claim("roles", string.Join(";", roles)),
                 new Claim("isAdmin", isAdmin.ToString()),
-                new Claim("avatarURL", user.AvatarURL != null ? user.AvatarURL : "null")
+                new Claim("avatarURL", user.AvatarURL ?? "null")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Tai yra raktas musu saugumo sistemai, kuo ilgesnis tuo geriau?"));
@@ -183,5 +187,30 @@ namespace fantasy_hoops.Services
             return true;
         }
 
+        public async Task<bool> GoogleRegister(ClaimsPrincipal user)
+        {
+            List<Claim> claims = user.Claims.ToList();
+            string email = claims[4].Value;
+            var newUser = new User
+            {
+                UserName = email,
+                Email = email
+            };
+
+            var result = await _userManager.CreateAsync(newUser);
+
+            if (result.Succeeded)
+            {
+                PushNotificationViewModel notification =
+                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", email))
+                    {
+                        Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") },
+                        Data = new { userName = email }
+                    };
+                await _pushService.SendAdminNotification(notification);
+            }
+
+            return result.Succeeded;
+        }
     }
 }

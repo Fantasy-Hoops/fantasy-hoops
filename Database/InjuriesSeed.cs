@@ -59,7 +59,7 @@ namespace fantasy_hoops.Database
                     .Where(inj => inj.Player.NbaID == (int)injury["PrimarySourceKey"])
                     .FirstOrDefault();
 
-            string statusBefore = dbInjury != null ? dbInjury.Status : null;
+            string statusBefore = dbInjury?.Status;
             string statusAfter = injuryObj.Status;
 
 
