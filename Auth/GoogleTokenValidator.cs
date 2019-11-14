@@ -50,16 +50,9 @@ namespace fantasy_hoops.Auth
                     new Claim(JwtRegisteredClaimNames.Jti, payload.JwtId)
                 };
 
-            try
-            {
-                var principle = new ClaimsPrincipal();
-                principle.AddIdentity(new ClaimsIdentity(claims, Microsoft.IdentityModel.Claims.AuthenticationTypes.Password));
-                return principle;
-            }
-            catch (Exception e)
-            {
-                return;
-            }
+            var principle = new ClaimsPrincipal();
+            principle.AddIdentity(new ClaimsIdentity(claims, Microsoft.IdentityModel.Claims.AuthenticationTypes.Password));
+            return principle;
         }
     }
 }

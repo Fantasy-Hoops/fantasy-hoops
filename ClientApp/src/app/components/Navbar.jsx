@@ -32,6 +32,10 @@ export default class Navbar extends Component {
       });
     }
   }
+  
+  onLoginClick() {
+    console.log('asdasd')
+  }
 
   render() {
     const { avatar } = this.state;
@@ -39,7 +43,7 @@ export default class Navbar extends Component {
     const login = (
       <ul className="nav navbar-nav ml-auto Header__Login">
         <li className="nav-item">
-          <Link className="nav-link btn-no-outline" to={Routes.LOGIN}>Login</Link>
+          <Link onClick={this.onLoginClick.bind(this)} className="nav-link btn-no-outline" to={Routes.LOGIN}>Login</Link>
         </li>
       </ul>
     );
