@@ -20,6 +20,8 @@ using System.IO.Compression;
 using Swashbuckle.AspNetCore.Swagger;
 using fantasy_hoops.Repositories;
 using FluentScheduler;
+using System.Collections.Generic;
+using fantasy_hoops.Auth;
 
 namespace fantasy_hoops
 {
@@ -137,32 +139,38 @@ namespace fantasy_hoops
            .AddEntityFrameworkStores<GameContext>()
            .AddDefaultTokenProviders();
 
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = "nekrosius.com",
+            List<string> issuers = new List<string>() { Configuration["CustomAuth:Issuer"], Configuration["Google:Issuer"] };
+            List<string> audiences = new List<string>() { Configuration["CustomAuth:Audience"], Configuration["Google:Audience"] };
 
-                ValidateAudience = true,
-                ValidAudience = "nekrosius.com",
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(configureOptions =>
+                {
+                    //configureOptions.ClaimsIssuer = "nekrosius.com";
+                    configureOptions.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuers = issuers,
 
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Tai yra raktas musu saugumo sistemai, kuo ilgesnis tuo geriau?")),
+                        ValidateAudience = true,
+                        ValidAudiences = audiences,
 
-                RequireExpirationTime = false,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["CustomAuth:IssuerSigningKey"])),
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(configureOptions =>
-            {
-                configureOptions.ClaimsIssuer = "nekrosius.com";
-                configureOptions.TokenValidationParameters = tokenValidationParameters;
-                configureOptions.SaveToken = true;
-            });
+                        RequireExpirationTime = true,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                    configureOptions.SecurityTokenValidators.Add(new GoogleTokenValidator());
+                    configureOptions.SaveToken = true;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

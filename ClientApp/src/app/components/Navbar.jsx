@@ -61,6 +61,7 @@ export default class Navbar extends Component {
               aria-expanded="false"
             >
               <Img
+                className="Avatar--round"
                 width="36rem"
                 alt={user.username}
                 src={avatar}
@@ -75,6 +76,7 @@ export default class Navbar extends Component {
                       <p className="text-center">
                         <Link className="btn-no-outline" to={Routes.PROFILE}>
                           <Img
+                            className="Avatar--round"
                             width="90rem"
                             height="90rem"
                             alt={user.username}

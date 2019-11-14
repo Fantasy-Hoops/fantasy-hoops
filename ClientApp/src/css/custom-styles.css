@@ -263,8 +263,8 @@ a:hover {
 
 .notification-circle {
   overflow: hidden;
-  border-radius: 50%;
-  width: 4rem;
+  border-radius: 100%;
+  width: 5rem;
   height: 4rem;
 }
 
@@ -1522,6 +1522,10 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .InfoModal__thead {
   background-color: var(--primary-color) !important;
   font-weight: 700 !important;
+}
+
+.Avatar--round {
+  border-radius: 50%;
 }
 
 .GameLog__corner-cell {

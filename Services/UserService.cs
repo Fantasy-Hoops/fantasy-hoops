@@ -7,28 +7,29 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using fantasy_hoops.Database;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace fantasy_hoops.Services
 {
     public class UserService : IUserService
     {
-        private readonly GameContext _context;
+        private readonly IConfiguration Configuration;
         private readonly IPushService _pushService;
-        private readonly IUserRepository _repository;
+        private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
-        public UserService(GameContext context, IPushService pushService, IUserRepository repository, UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserService(IConfiguration configuration, IPushService pushService, IUserRepository userRepository, UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            _context = context;
+            Configuration = configuration;
             _pushService = pushService;
-            _repository = repository;
+            _userRepository = userRepository;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -51,13 +52,7 @@ namespace fantasy_hoops.Services
 
             if (result.Succeeded)
             {
-                PushNotificationViewModel notification =
-                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", model.UserName))
-                    {
-                        Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") },
-                        Data = new { userName = model.UserName }
-                    };
-                await _pushService.SendAdminNotification(notification);
+                await SendRegisterNotification(model.UserName);
             }
 
             return result.Succeeded;
@@ -68,35 +63,46 @@ namespace fantasy_hoops.Services
             await _signInManager.SignOutAsync();
         }
 
-        public string RequestTokenById(string id)
+        public async Task<string> RequestTokenByEmail(string email)
         {
-            string userName = _repository.GetUser(id).UserName;
-            return RequestToken(userName);
+            User user = await _userManager.FindByEmailAsync(email);
+            return await RequestToken(user.UserName);
         }
 
-        public string RequestToken(string username)
+        public async Task<string> RequestTokenById(string id)
         {
-            var user = _repository.GetUserByName(username);
-            var roles = _repository.Roles(user.Id);
-            bool isAdmin = _repository.IsAdmin(user.Id);
+            string userName = _userRepository.GetUser(id).UserName;
+            return await RequestToken(userName);
+        }
 
-            var claims = new[]
+        public async Task<string> RequestToken(string username)
+        {
+            User user = await _userManager.FindByNameAsync(username);
+            bool isAdmin = _userRepository.IsAdmin(user.Id);
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+
+            List<Claim> claims = new List<Claim>
             {
                 new Claim("id", user.Id),
                 new Claim("username", user.UserName),
                 new Claim("email", user.Email),
                 new Claim("description", user.Description ??""),
                 new Claim("team", user.Team != null ? user.Team.Name : ""),
-                new Claim("roles", string.Join(";", roles)),
-                new Claim("isAdmin", isAdmin.ToString()),
-                new Claim("avatarURL", user.AvatarURL != null ? user.AvatarURL : "null")
+                new Claim("isAdmin", isAdmin.ToString(), ClaimValueTypes.Boolean),
+                new Claim("avatarURL", user.AvatarURL ?? "null"),
+                new Claim("isSocialAccount", user.IsSocialAccount.ToString(), ClaimValueTypes.Boolean)
             };
+            //add roles
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Tai yra raktas musu saugumo sistemai, kuo ilgesnis tuo geriau?"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["CustomAuth:IssuerSigningKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
-                issuer: "nekrosius.com",
-                audience: "nekrosius.com",
+                issuer: Configuration["CustomAuth:Issuer"],
+                audience: Configuration["CustomAuth:Audience"],
                 claims: claims,
                 expires: DateTime.Now.AddDays(2),
                 signingCredentials: creds);
@@ -144,7 +150,7 @@ namespace fantasy_hoops.Services
             model.Avatar = model.Avatar.Substring(22);
             try
             {
-                System.IO.File.WriteAllBytes(newFilePath, Convert.FromBase64String(model.Avatar));
+                File.WriteAllBytes(newFilePath, Convert.FromBase64String(model.Avatar));
             }
             catch
             {
@@ -165,11 +171,11 @@ namespace fantasy_hoops.Services
             if (Directory.Exists(avatarDir))
             {
                 var filePath = avatarDir + "/" + avatarId + ".png";
-                if (System.IO.File.Exists(filePath))
+                if (File.Exists(filePath))
                 {
                     try
                     {
-                        System.IO.File.Delete(filePath);
+                        File.Delete(filePath);
                         File.Copy(@"./ClientApp/build/content/images/avatars/default.png", @"./ClientApp/build/content/images/avatars/" + model.Id + ".png");
                         user.AvatarURL = null;
                         _userManager.UpdateAsync(user).Wait();
@@ -183,5 +189,88 @@ namespace fantasy_hoops.Services
             return true;
         }
 
+        public async Task<bool> GoogleRegister(ClaimsPrincipal user)
+        {
+            string email = GetEmail(user);
+            string username = GetUsernameFromEmail(email);
+            Claim imageURL = user.Claims.Where(c => c.Type == "picture").FirstOrDefault();
+            var newUser = new User
+            {
+                UserName = username,
+                Email = email,
+                IsSocialAccount = true
+            };
+
+            var result = await _userManager.CreateAsync(newUser);
+
+            if (result.Succeeded)
+            {
+                if(imageURL != null)
+                {
+                    UploadAvatar(new AvatarViewModel()
+                    {
+                        Id = newUser.Id,
+                        Avatar = await CommonFunctions.GetImageAsBase64Url(imageURL.Value)
+                    });
+                }
+                await SendRegisterNotification(username);
+            }
+
+            return result.Succeeded;
+        }
+
+        public async Task<bool> GoogleLogin(ClaimsPrincipal user)
+        {
+            string email = GetEmail(user);
+            User dbUser = await _userManager.FindByEmailAsync(email);
+            if(!dbUser.IsSocialAccount)
+            {
+                dbUser.IsSocialAccount = true;
+                IdentityResult result = await _userManager.UpdateAsync(dbUser);
+                return result.Succeeded;
+            }
+
+            return true;
+        }
+
+        private string GetEmail(ClaimsPrincipal user)
+        {
+            List<Claim> claims = user.Claims.ToList();
+            string email = claims[4].Value;
+            return email;
+        }
+
+        private string GetUsernameFromEmail(string email)
+        {
+            int atIndex = email.IndexOf('@');
+            string username = email.Substring(0, atIndex);
+            return username;
+        }
+
+        private async Task SendRegisterNotification(string username)
+        {
+            PushNotificationViewModel notification =
+                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", username))
+                    {
+                        Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") },
+                        Data = new { userName = username }
+                    };
+            await _pushService.SendAdminNotification(notification);
+        }
+
+        public async Task<bool> DeleteProfile(ClaimsPrincipal user)
+        {
+            List<Claim> claims = user.Claims.ToList();
+            string username = claims[1].Value;
+            User userToDelete = await _userManager.FindByNameAsync(username);
+            if(userToDelete != null)
+            {
+
+                ClearAvatar(new AvatarViewModel() { Id = user.Claims.ToList()[0].Value });
+            }
+            _userRepository.DeleteUserResources(userToDelete);
+            IdentityResult result = await _userManager.DeleteAsync(userToDelete);
+            return result.Succeeded;
+        }
     }
 }

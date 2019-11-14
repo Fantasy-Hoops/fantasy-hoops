@@ -113,6 +113,7 @@ export class EditProfile extends Component {
   }
 
   render() {
+    const user = parse();
     const { teams } = this.state;
     const changingPassword = !(this.state.password.length > 0
       || this.state.newPassword.length > 0
@@ -149,6 +150,7 @@ export class EditProfile extends Component {
                 onChange={this.handleChange}
                 regex={/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/}
                 error="Invalid email"
+                disabled={user.isSocialAccount}
               />
             </div>
           </div>
@@ -239,3 +241,5 @@ export class EditProfile extends Component {
     );
   }
 }
+
+export default EditProfile;

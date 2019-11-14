@@ -84,24 +84,6 @@ self.addEventListener(
           },
           body: JSON.stringify(model)
         })
-          .then(async () => {
-            const notification = {
-              title: "Fantasy Hoops Friend Request",
-              body: `User '${
-                model.receiverUsername
-                }' accepted your friend request!`,
-              icon: `https://fantasyhoops.org/content/images/avatars/${
-                model.receiverID
-                }.png`
-            };
-            await fetch(`./api/push/send/${model.senderID}`, {
-              method: "post",
-              headers: {
-                "Content-type": "application/json"
-              },
-              body: JSON.stringify(notification)
-            });
-          })
           .then(clients.openWindow(`/profile/${model.senderUsername}`));
         break;
       case "decline":

@@ -14,7 +14,6 @@ export class UserCard extends Component {
 
   async componentWillMount() {
     const { user } = this.props;
-    console.log(user);
     this.setState({
       avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${user.avatarURL}.png`, defaultPhoto)
     });

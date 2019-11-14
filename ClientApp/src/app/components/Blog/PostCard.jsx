@@ -6,7 +6,7 @@ import markdown from 'markdown';
 import defaultPhoto from '../../../content/images/default.png';
 import PostCardMenu from './PostCardMenu';
 
-const canEdit = user => user && user.isAdmin === 'True';
+const canEdit = user => user && user.isAdmin;
 
 class PostCard extends PureComponent {
   constructor(props) {
@@ -31,7 +31,7 @@ class PostCard extends PureComponent {
         </div>
         <div className="card-header text-muted">
           <Img
-            className="PostCard__AuthorImage"
+            className="PostCard__AuthorImage Avatar--round"
             alt=""
             src={[
               `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${post.author.avatarURL}.png`,

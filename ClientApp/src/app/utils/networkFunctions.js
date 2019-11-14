@@ -1,5 +1,6 @@
 import axios from 'axios';
 import _ from 'lodash';
+import { GoogleLogout } from 'react-google-login';
 
 const apiUrlBase = `${process.env.REACT_APP_SERVER_NAME}/api`;
 
@@ -13,6 +14,7 @@ const notificationsApiUrlBase = `${apiUrlBase}/notification`;
 const pushNotificationsApiUrlBase = `${apiUrlBase}/push`;
 const blogApiUrlBase = `${apiUrlBase}/blog`;
 
+
 const createParameters = (parameters) => {
   if (parameters === undefined) return '';
   if (_.isEmpty(parameters)) return '';
@@ -23,10 +25,13 @@ const createParameters = (parameters) => {
   return `?${_.join(strings, '&')}`;
 };
 
+axios.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
+
 // User requests
 export const register = data => axios.post(`${userApiUrlBase}/register`, data);
 export const login = data => axios.post(`${userApiUrlBase}/login`, data);
 export const logout = () => {
+  GoogleLogout.prototype.signOut();
   fetch(`${userApiUrlBase}/logout`, {
     method: 'GET',
     headers: {
@@ -95,3 +100,10 @@ export const getPushPublicKey = () => axios.get(`${pushNotificationsApiUrlBase}/
 export const submitPost = post => axios.post(`${blogApiUrlBase}`, post);
 export const getPosts = () => axios.get(`${blogApiUrlBase}`);
 export const deletePost = id => axios.delete(`${blogApiUrlBase}?id=${id}`);
+
+// Google auth
+export const googleLogin = tokenId => axios.create({
+  baseURL: `${userApiUrlBase}/googleLogin`,
+  method: 'POST',
+  headers: { Authorization: `Bearer ${tokenId}` }
+}).post();
