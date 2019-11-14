@@ -1154,7 +1154,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   background: linear-gradient(
     to bottom,
     var(--tertiary-color) 85%,
-    transparent
+    rgba(255, 255, 255, 0)
   );
   padding-bottom: 2.5rem;
 }

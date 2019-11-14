@@ -15,7 +15,7 @@
     "markdown": "^0.5.0",
     "markdown-toolbar": "^1.1.0",
     "moment": "^2.24.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.13.0",
     "npm": "^6.9.0",
     "react": "^16.4.0",
     "react-autosize-textarea": "^6.0.0",

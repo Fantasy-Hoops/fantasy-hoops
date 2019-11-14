@@ -52,6 +52,7 @@ export class NewsCard extends PureComponent {
                 defaultLogo
               ]}
               loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader" />}
+              decode={false}
             />
           </div>
         </span>
@@ -65,6 +66,7 @@ export class NewsCard extends PureComponent {
                 defaultLogo
               ]}
               loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader" />}
+              decode={false}
             />
           </div>
         </span>

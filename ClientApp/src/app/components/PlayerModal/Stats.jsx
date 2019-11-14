@@ -23,6 +23,7 @@ export class Stats extends Component {
               defaultLogo
             ]}
             loader={<img height='150px' src={require(`../../../content/images/imageLoader2.gif`)} alt="Loader" />}
+            decode={false}
           />
         </div>
         <div className="position-absolute">
