@@ -58,9 +58,7 @@ namespace fantasy_hoops.Auth
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
-
+                return;
             }
         }
     }

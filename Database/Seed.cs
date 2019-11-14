@@ -1,4 +1,4 @@
-﻿using fantasy_hoops.Models;
+using fantasy_hoops.Models;
 using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -28,7 +28,7 @@ namespace fantasy_hoops.Database
         private List<JToken> GetTeams()
         {
             HttpWebResponse webResponse = null;
-            string teamsURL = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + 2018
+            string teamsURL = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + CommonFunctions.SEASON_YEAR
                 + "/REG/rankings.json?api_key=" + Environment.GetEnvironmentVariable("API_KEY");
             try
             {
