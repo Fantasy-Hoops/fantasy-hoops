@@ -24,6 +24,7 @@ export default class LoginPage extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.responseGoogle = this.responseGoogle.bind(this);
   }
 
   componentDidMount() {
