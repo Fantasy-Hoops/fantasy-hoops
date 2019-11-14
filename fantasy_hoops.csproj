@@ -37,6 +37,7 @@
     <PackageReference Include="Microsoft.Owin.Security.Jwt" Version="4.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.2" />
+    <PackageReference Include="Sentry" Version="2.0.0-beta6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.4.0" />
     <PackageReference Include="WebPush" Version="1.0.11" />

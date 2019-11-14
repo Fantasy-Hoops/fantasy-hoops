@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Sentry;
 
 namespace fantasy_hoops
 {
@@ -7,7 +8,10 @@ namespace fantasy_hoops
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            using (SentrySdk.Init("https://d29efee590ed4facbe9a287407a86eaa@sentry.io/1820879"))
+            {
+                CreateWebHostBuilder(args).Build().Run();
+            }
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

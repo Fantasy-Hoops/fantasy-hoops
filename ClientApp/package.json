@@ -3,6 +3,7 @@
   "version": "1.2.0",
   "private": true,
   "dependencies": {
+    "@sentry/browser": "^5.9.0",
     "animate.css": "^3.7.0",
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
