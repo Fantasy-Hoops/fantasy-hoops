@@ -11,6 +11,7 @@ export class Stats extends Component {
 
   render() {
     const stats = this.props.stats;
+    console.log(stats.position.toLowerCase());
     return (
       <div className="row">
         <div className="PlayerModal__image--background"></div>
@@ -33,7 +34,7 @@ export class Stats extends Component {
             alt={stats.fullName}
             src={[
               `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${stats.nbaID}.png`,
-              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/positions/${stats.position.toLowerCase()}.png`
+              require(`../../../content/images/positions/${stats.position.toLowerCase()}.png`)
             ]}
             loader={<img src={require(`../../../content/images/imageLoader2.gif`)} alt="Loader" />}
           />
