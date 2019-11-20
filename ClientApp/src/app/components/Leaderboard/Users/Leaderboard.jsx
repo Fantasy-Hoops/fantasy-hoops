@@ -134,7 +134,7 @@ export default class Leaderboard extends PureComponent {
       : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: 'weekly', weekNumber });
 
     const sunday = new Date(moment(date).day(7));
-    const today = new Date;
+    const today = new Date();
     this.setState({
       week: today <= sunday ? today : sunday,
       weekNumber,

@@ -52,7 +52,7 @@ BlogPosts.propTypes = {
         userName: PropTypes.string.isRequired,
         id: PropTypes.string.isRequired
       }).isRequired
-    }).isRequired
+    })
   })).isRequired
 };
 

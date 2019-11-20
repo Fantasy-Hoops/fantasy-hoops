@@ -118,7 +118,7 @@ export class ChangeAvatar extends Component {
           <div className="modal-content">
             <div className="modal-header">
               <h2 className="modal-title" id="changeImage">Crop your image</h2>
-              <a type="button btn-no-outline" className="close" data-dismiss="modal" aria-label="Close">
+              <a href="#" type="button btn-no-outline" className="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </a>
             </div>

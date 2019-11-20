@@ -72,6 +72,7 @@ export const registerPush = () => navigator.serviceWorker.ready
         }
         return subscribePush(registration);
       })
+        .catch(err => console.log(err))
     }
   })
   .then(subscription => {

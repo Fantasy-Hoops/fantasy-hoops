@@ -16,11 +16,11 @@ class PostCardMenu extends PureComponent {
 			<>
 				<span className="PostCard__Dots" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="fas fa-ellipsis-v" /></span>
 				<div className="dropdown-menu">
-					<a className="PostCard__MenuItem dropdown-item">
+					<a href="javascript:void(0)" className="PostCard__MenuItem dropdown-item">
 						<i className="fas fa-edit" />
 						{' Edit'}
 					</a>
-					<a role="button" className="PostCard__MenuItem dropdown-item" onClick={this.handleRemove} onKeyDown={this.handleRemove}>
+					<a href="javascript:void(0)" role="button" className="PostCard__MenuItem dropdown-item" onClick={this.handleRemove} onKeyDown={this.handleRemove}>
 						<i className="fas fa-trash-alt text-danger" />
 						{' Remove'}
 					</a>
