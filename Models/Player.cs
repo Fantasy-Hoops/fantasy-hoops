@@ -15,7 +15,7 @@ namespace fantasy_hoops.Models
         public String LastName { get; set; }
         public String AbbrName { get; set; }
         public String Position { get; set; }
-        public int Number { get; set; }
+        public string Number { get; set; }
         public int GP { get; set; }
         public double PTS { get; set; }
         public double REB { get; set; }

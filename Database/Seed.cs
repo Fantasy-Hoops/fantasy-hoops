@@ -253,7 +253,7 @@ namespace fantasy_hoops.Database
 
                         if (player["jersey_number"] != null)
                         {
-                            dbPlayer.Number = (int)player["jersey_number"];
+                            dbPlayer.Number = player["jersey_number"].ToString();
                         }
 
                         if (player["primary_position"] != null)
@@ -280,7 +280,7 @@ namespace fantasy_hoops.Database
                                 AbbrName = abbrName,
                                 Position = (string)player["primary_position"],
                                 NbaID = (int)player["reference"],
-                                Number = (int)player["jersey_number"],
+                                Number = player["jersey_number"].ToString(),
                                 Price = PlayerSeed.PRICE_FLOOR,
                                 FPPG = 0.0,
                                 PTS = 0.0,
