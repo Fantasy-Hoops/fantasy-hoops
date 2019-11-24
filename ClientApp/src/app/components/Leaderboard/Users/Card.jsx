@@ -92,7 +92,7 @@ export default class Card extends PureComponent {
           <div className="UserLeaderboardCard__body-item">
             <Link to={`${Routes.PROFILE}/${this.props.user.userName}`}>
               <Img
-                className="UserLeaderboardCard__user-photo--image"
+                className="UserLeaderboardCard__user-photo--image Avatar--round"
                 alt={this.props.user.userName}
                 src={this.state.avatar}
                 decode={false}
