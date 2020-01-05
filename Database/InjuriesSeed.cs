@@ -81,6 +81,14 @@ namespace fantasy_hoops.Database
             _context.Injuries.Update(dbInjury);
             _context.SaveChanges();
 
+            if(statusAfter.Equals("Active") && !injuryPlayer.IsPlaying)
+            {
+                if(injuryPlayer.Team.Players.Any(p => p.IsPlaying))
+                {
+                    injuryPlayer.IsPlaying = true;
+                }
+            }
+
             if (!statusBefore.Equals(statusAfter))
                 UpdateNotifications(dbInjury, statusBefore, statusAfter);
         }
