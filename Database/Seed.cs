@@ -28,7 +28,7 @@ namespace fantasy_hoops.Database
         private List<JToken> GetTeams()
         {
             HttpWebResponse webResponse = null;
-            string teamsUrl = "http://api.sportradar.us/nba/trial/v4/en/seasons/" + CommonFunctions.SEASON_YEAR
+            string teamsUrl = "http://api.sportradar.us/nba/trial/v7/en/seasons/" + CommonFunctions.SEASON_YEAR
                 + "/REG/rankings.json?api_key=" + Environment.GetEnvironmentVariable("API_KEY");
             try
             {
@@ -48,8 +48,8 @@ namespace fantasy_hoops.Database
             }
             if (webResponse != null)
             {
-                string expiration = webResponse.Headers.Get(3);
-                int callsLeft = 1000 - (int.Parse(webResponse.Headers.Get(13)) + 30);
+                string expiration = webResponse.GetResponseHeader("Expires");
+                int callsLeft = 1000 - (int.Parse(webResponse.GetResponseHeader("X-Plan-Quota-Current")) + 30);
                 PushNotificationViewModel notification =
                     new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API calls left: " + callsLeft);
                 _pushService.SendAdminNotification(notification);
@@ -69,7 +69,7 @@ namespace fantasy_hoops.Database
 
         private List<JToken> GetRoster(string teamId)
         {
-            string rosterUrl = "http://api.sportradar.us/nba/trial/v4/en/teams/" + teamId + "/profile.json?api_key=" + Environment.GetEnvironmentVariable("API_KEY");
+            string rosterUrl = "http://api.sportradar.us/nba/trial/v7/en/teams/" + teamId + "/profile.json?api_key=" + Environment.GetEnvironmentVariable("API_KEY");
             HttpWebResponse webResponse = CommonFunctions.GetResponse(rosterUrl);
             if (webResponse == null)
                 return new List<JToken>();
