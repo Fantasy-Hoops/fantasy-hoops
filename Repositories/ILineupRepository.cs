@@ -9,7 +9,7 @@ namespace fantasy_hoops.Repositories
     public interface ILineupRepository
     {
 
-        object GetLineup(String id);
+        UserLineup GetLineup(String id);
         void AddLineup(SubmitLineupViewModel model);
         void UpdateLineup(SubmitLineupViewModel mode);
         int GetLineupPrice(SubmitLineupViewModel model);

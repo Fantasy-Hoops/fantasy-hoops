@@ -16,7 +16,7 @@ namespace fantasy_hoops.Helpers
 	{
 		public static string SEASON_YEAR = GetSeasonYear();
 
-		public static Array PlayersOrder = new[] { "PG", "SG", "SF", "PF", "C" };
+		public static string LineupPositionsOrder = "PG|SG|SF|PF|C";
 
 		public static DateTime UTCToEastern(DateTime UTC)
 		{

@@ -670,6 +670,9 @@ input[type="search"]:focus {
   margin: 1rem;
   font-size: 75%;
   font-weight: 800;
+  max-width: 81%;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .UserCard__UserName--text {

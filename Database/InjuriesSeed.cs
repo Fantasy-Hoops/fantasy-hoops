@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
@@ -38,7 +38,7 @@ namespace fantasy_hoops.Database
 
         private void AddToDatabase(JToken injury, DateTime? dateModified)
         {
-            Player injuryPlayer = _context.Players.Where(x => x.NbaID == (int)injury["PrimarySourceKey"]).FirstOrDefault();
+            Player injuryPlayer = _context.Players.FirstOrDefault(x => x.NbaID == (int)injury["PrimarySourceKey"]);
 
             if (injuryPlayer == null)
                 return;
@@ -56,8 +56,7 @@ namespace fantasy_hoops.Database
             };
 
             var dbInjury = _context.Injuries
-                    .Where(inj => inj.Player.NbaID == (int)injury["PrimarySourceKey"])
-                    .FirstOrDefault();
+                    .FirstOrDefault(inj => inj.Player.NbaID == (int)injury["PrimarySourceKey"]);
 
             string statusBefore = dbInjury?.Status;
             string statusAfter = injuryObj.Status;

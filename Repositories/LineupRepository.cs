@@ -5,7 +5,6 @@ using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
-using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Repositories
 {
@@ -19,34 +18,10 @@ namespace fantasy_hoops.Repositories
             _context = new GameContext();
         }
 
-        public object GetLineup(string id)
+        public UserLineup GetLineup(string id)
         {
             return _context.UserLineups
-            .Where(lineup => lineup.UserID.Equals(id) && lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date))
-            .Select(lineup => new
-            {
-                lineup = _context.Players
-                    .Where(player =>
-                        player.PlayerID == lineup.PgID
-                        || player.PlayerID == lineup.SgID
-                        || player.PlayerID == lineup.SfID
-                        || player.PlayerID == lineup.PfID
-                        || player.PlayerID == lineup.CID)
-                    .Select(player => new
-                    {
-                        id = player.NbaID,
-                        fullName = player.FullName,
-                        firstName = player.FirstName,
-                        lastName = player.LastName,
-                        abbrName = player.AbbrName,
-                        position = player.Position,
-                        price = player.Price,
-                        fppg = player.FPPG,
-                        playerId = player.PlayerID,
-                        teamColor = player.Team.Color
-                    })
-            })
-            .FirstOrDefault();
+             .FirstOrDefault(lineup => lineup.UserID.Equals(id) && lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date));
         }
 
         public void AddLineup(SubmitLineupViewModel model)
@@ -68,8 +43,13 @@ namespace fantasy_hoops.Repositories
         public void UpdateLineup(SubmitLineupViewModel model)
         {
             var userLineup = _context.UserLineups
-                    .Where(lineup => lineup.UserID.Equals(model.UserID)
-                                    && lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)).FirstOrDefault();
+                .FirstOrDefault(lineup => lineup.UserID.Equals(model.UserID)
+                                        && lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date));
+            if (userLineup == null)
+            {
+                return;
+            }
+            
             userLineup.PgID = model.PgID;
             userLineup.SgID = model.SgID;
             userLineup.SfID = model.SfID;
@@ -113,9 +93,8 @@ namespace fantasy_hoops.Repositories
         public bool IsUpdating(String userID)
         {
             return _context.UserLineups
-                    .Where(x => x.UserID.Equals(userID)
-                        && x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date))
-                    .Any();
+                    .Any(x => x.UserID.Equals(userID)
+                              && x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date));
         }
 
         private bool IsPlayerPriceIncorrect(int playerID, int price)

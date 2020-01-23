@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using fantasy_hoops.Database;
+using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using Microsoft.AspNetCore.Identity;
@@ -173,82 +174,87 @@ namespace fantasy_hoops.Repositories
                 .Any();
         }
 
-        private object GetCurrentLineup(string id)
+        private UserLeaderboardRecordDto GetCurrentLineup(string id)
         {
             return _context.UserLineups
                     .Where(lineup => lineup.UserID.Equals(id)
                     && ((lineup.Date.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
                         || lineup.Date.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date)
                     && !lineup.IsCalculated)
-                    .Select(lineup => new
+                    .Select(lineup => new UserLeaderboardRecordDto
                     {
-                        lineup.UserID,
-                        lineup.User.UserName,
-                        longDate = lineup.Date.ToString("yyyy-MM-dd"),
-                        shortDate = lineup.Date.ToString("MMM. dd"),
-                        lineup.Date,
-                        lineup.FP,
-                        lineup = _context.Players
-                        .Where(player =>
-                            player.PlayerID == lineup.PgID
-                            || player.PlayerID == lineup.SgID
-                            || player.PlayerID == lineup.SfID
-                            || player.PlayerID == lineup.PfID
-                            || player.PlayerID == lineup.CID)
-                        .Select(player => new
-                        {
-                            player.NbaID,
-                            player.Position,
-                            teamColor = player.Team.Color,
-                            player.FullName,
-                            player.FirstName,
-                            player.LastName,
-                            player.AbbrName,
-                            FP = _context.Stats.Where(stats => stats.Date.Date == lineup.Date.Date
-                                && stats.PlayerID == player.PlayerID)
-                            .Select(stats => stats.FP).FirstOrDefault()
-                        }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position)),
-                        isLive = lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date) && !lineup.IsCalculated
+                        UserId = lineup.UserID,
+                        Username = lineup.User.UserName,
+                        LongDate = lineup.Date.ToString("yyyy-MM-dd"),
+                        ShortDate = lineup.Date.ToString("MMM. dd"),
+                        Date = lineup.Date,
+                        FP = lineup.FP,
+                        Lineup = _context.Players
+                            .Where(player =>
+                                player.PlayerID == lineup.PgID
+                                || player.PlayerID == lineup.SgID
+                                || player.PlayerID == lineup.SfID
+                                || player.PlayerID == lineup.PfID
+                                || player.PlayerID == lineup.CID)
+                            .Select(player => new PlayerDto
+                            {
+                                NbaId = player.NbaID,
+                                Position = player.Position,
+                                TeamColor = player.Team.Color,
+                                FullName = player.FullName,
+                                FirstName = player.FirstName,
+                                LastName = player.LastName,
+                                AbbrName = player.AbbrName,
+                                FP = _context.Stats.Where(stats => stats.Date.Date == lineup.Date.Date
+                                    && stats.PlayerID == player.PlayerID)
+                                .Select(stats => stats.FP).FirstOrDefault()
+                            })
+                            .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Position))
+                            .ToList(),
+                        IsLive = lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date) && !lineup.IsCalculated
                     })
                     .FirstOrDefault();
         }
 
-        private IQueryable<Object> GetRecentActivity(string id, int start, int count)
+        private List<UserLeaderboardRecordDto> GetRecentActivity(string id, int start, int count)
         {
             return _context.UserLineups
                 .Where(lineup => lineup.IsCalculated && lineup.UserID.Equals(id))
                 .OrderByDescending(lineup => lineup.Date)
                 .Skip(start)
                 .Take(count)
-                .Select(lineup => new
+                .Select(lineup => new UserLeaderboardRecordDto
                 {
-                    lineup.UserID,
-                    lineup.User.UserName,
-                    longDate = lineup.Date.ToString("yyyy-MM-dd"),
-                    shortDate = lineup.Date.ToString("MMM. dd"),
-                    lineup.Date,
-                    lineup.FP,
-                    lineup = _context.Players
+                    UserId = lineup.UserID,
+                    Username = lineup.User.UserName,
+                    LongDate = lineup.Date.ToString("yyyy-MM-dd"),
+                    ShortDate = lineup.Date.ToString("MMM. dd"),
+                    Date = lineup.Date,
+                    FP = lineup.FP,
+                    Lineup = _context.Players
                         .Where(player =>
                             player.PlayerID == lineup.PgID
                             || player.PlayerID == lineup.SgID
                             || player.PlayerID == lineup.SfID
                             || player.PlayerID == lineup.PfID
                             || player.PlayerID == lineup.CID)
-                        .Select(player => new
+                        .Select(player => new PlayerDto
                         {
-                            player.NbaID,
-                            player.Position,
-                            teamColor = player.Team.Color,
-                            player.FullName,
-                            player.FirstName,
-                            player.LastName,
-                            player.AbbrName,
+                            NbaId = player.NbaID,
+                            Position = player.Position,
+                            TeamColor = player.Team.Color,
+                            FullName = player.FullName,
+                            FirstName = player.FirstName,
+                            LastName = player.LastName,
+                            AbbrName = player.AbbrName,
                             FP = _context.Stats.Where(stats => stats.Date.Date == lineup.Date.Date
                                 && stats.PlayerID == player.PlayerID)
                             .Select(stats => stats.FP).FirstOrDefault()
-                        }).OrderBy(p => Array.IndexOf(CommonFunctions.PlayersOrder, p.Position))
-                });
+                        })
+                        .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Position))
+                        .ToList()
+                })
+                .ToList();
         }
 
         private int GetStreak(string id)

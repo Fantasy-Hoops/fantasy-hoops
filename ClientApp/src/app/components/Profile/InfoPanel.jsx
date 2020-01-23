@@ -32,7 +32,7 @@ export class InfoPanel extends Component {
 
   getCurrentLineup() {
     const { user } = this.props;
-    const liveBadge = user.currentLineup && user.currentLineup.isLive
+    const liveBadge = user.currentLineup && user.currentLineup.IsLive
       ? <span className="ml-2 LiveBadge--pulse badge badge-danger" style={{ fontSize: '1.2rem' }}>LIVE</span>
       : null;
     return this.props.readOnly || !user.currentLineup
@@ -55,7 +55,7 @@ export class InfoPanel extends Component {
 
   async showModal(player) {
     this.setState({ modalLoader: true });
-    await getPlayerStats(player.nbaID)
+    await getPlayerStats(player.nbaId)
       .then((res) => {
         this.setState({
           stats: res.data,

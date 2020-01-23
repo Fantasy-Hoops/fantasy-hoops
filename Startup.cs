@@ -17,11 +17,11 @@ using fantasy_hoops.Services;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
-using Swashbuckle.AspNetCore.Swagger;
 using fantasy_hoops.Repositories;
 using FluentScheduler;
 using System.Collections.Generic;
 using fantasy_hoops.Auth;
+using Microsoft.OpenApi.Models;
 
 namespace fantasy_hoops
 {
@@ -46,6 +46,7 @@ namespace fantasy_hoops
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews();
             AddScopes(services);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddMvc();
@@ -80,7 +81,7 @@ namespace fantasy_hoops
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
                     Title = "FH API",
@@ -192,15 +193,17 @@ namespace fantasy_hoops
                 app.UseHsts();
             }
 
+            app.UseRouting();
+
             app.UseHttpsRedirection();
             app.UseSpaStaticFiles();
             app.UseAuthentication();
-
-            app.UseMvc(routes =>
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller}/{action=Index}/{id?}");
             });
 
             app.UseSpa(spa =>

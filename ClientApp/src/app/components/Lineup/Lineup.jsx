@@ -93,18 +93,18 @@ export class Lineup extends Component {
 
     if (!this.state.loadedPlayers && this.state.players) {
       const user = parse();
+      const { players } = this.state;
       await getUserLineup(user.id)
         .then((res) => {
           if (res.status !== 200) return;
-          res.data.lineup.map((selectedPlayer) => {
-            this.state.players.map((player) => {
-              if (player.id == selectedPlayer.id) {
-                player.selected = true;
-                player.status = 2;
-                this.selectPlayer(player);
-              }
-            });
-          });
+          const lineup = res.data;
+          players.filter(p => p.playerId === lineup.pgID || p.playerId === lineup.sgID || p.playerId === lineup.sfID
+            || p.playerId === lineup.pfID || p.playerId === lineup.cid)
+              .forEach(p => {
+                p.selected = true;
+                p.status = 2;
+                this.selectPlayer(p);
+              });
         });
       this.setState({
         loadedPlayers: true

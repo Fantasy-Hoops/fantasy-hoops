@@ -15,7 +15,7 @@ const author = parse();
 class BlogForm extends PureComponent {
 	componentDidMount() {
 		$(document).ready(() => {
-			$('.toolbar').markdownToolbar();
+			// $('.toolbar').markdownToolbar();
 		});
 	}
 

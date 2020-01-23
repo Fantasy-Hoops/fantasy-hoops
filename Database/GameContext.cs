@@ -1,10 +1,8 @@
-﻿using fantasy_hoops.Models;
+using fantasy_hoops.Models;
 using fantasy_hoops.Models.Notifications;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
 
 namespace fantasy_hoops.Database
 {
@@ -48,6 +46,7 @@ namespace fantasy_hoops.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.EnableSensitiveDataLogging();
             if (!optionsBuilder.IsConfigured)
             {
                 IConfigurationRoot configuration = new ConfigurationBuilder()

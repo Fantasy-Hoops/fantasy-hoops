@@ -32,7 +32,7 @@ export class UserScoreCard extends Component {
               className="UserScoreCard__player-photo--image"
               alt={this.props.player.lastName}
               src={[
-                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.nbaID}.png`,
+                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.nbaId}.png`,
                 require(`../../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
               ]}
               loader={<img className="UserScoreCard__loader" src={require('../../../content/images/imageLoader.gif')} alt="Loader" />}

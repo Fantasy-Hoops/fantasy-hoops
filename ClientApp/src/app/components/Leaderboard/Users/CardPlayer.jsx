@@ -31,7 +31,7 @@ export default class CardPlayer extends PureComponent {
             className="UserLeaderboardCard__player-photo--image"
             alt={this.props.player.fullName}
             src={[
-              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.nbaID}.png`,
+              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.nbaId}.png`,
               require(`../../../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
             ]}
             decode={false}
