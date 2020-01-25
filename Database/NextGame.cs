@@ -21,7 +21,7 @@ namespace fantasy_hoops.Database
         public static DateTime PREVIOUS_LAST_GAME = DateTime.UtcNow;
 
         private const int GAME_OFFSET = 10;
-        private static int offset = 0;
+        private static int offset;
 
         private readonly GameContext _context;
         private readonly IScoreService _scoreService;
@@ -55,7 +55,7 @@ namespace fantasy_hoops.Database
                 return null;
             string apiResponse = CommonFunctions.ResponseToString(webResponse);
             JObject json = JObject.Parse(apiResponse);
-            return (string)json["links"]["currentDate"];
+            return (string) json["links"]["currentDate"];
         }
 
         private void SetNextGame(string gameDate)
@@ -70,18 +70,18 @@ namespace fantasy_hoops.Database
             JArray games = CommonFunctions.GetGames(gameDate);
             if (games.Count > 0)
             {
-                DateTime timeUTC = DateTime.Parse((string)games[0]["startTimeUTC"]);
-                if (timeUTC > DateTime.UtcNow)
+                DateTime timeUtc = DateTime.Parse((string) games[0]["startTimeUTC"]);
+                if (timeUtc > DateTime.UtcNow)
                 {
                     offset = 0;
-                    NEXT_GAME = timeUTC;
-                    NEXT_LAST_GAME = DateTime.Parse((string)games[games.Count - 1]["startTimeUTC"]);
+                    NEXT_GAME = timeUtc;
+                    NEXT_LAST_GAME = DateTime.Parse((string) games[games.Count - 1]["startTimeUTC"]);
                 }
                 else
                 {
                     offset++;
                     gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
-                                    .AddDays(offset).ToString("yyyyMMdd");
+                        .AddDays(offset).ToString("yyyyMMdd");
                     SetNextGame(gameDate);
                 }
             }
@@ -89,7 +89,7 @@ namespace fantasy_hoops.Database
             {
                 offset++;
                 gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
-                                .AddDays(1).ToString("yyyyMMdd");
+                    .AddDays(1).ToString("yyyyMMdd");
                 SetNextGame(gameDate);
             }
         }
@@ -99,30 +99,29 @@ namespace fantasy_hoops.Database
             JArray games = CommonFunctions.GetGames(gameDate);
             if (games.Count > 0)
             {
-                DateTime timeUTC = DateTime.Parse((string)games[0]["startTimeUTC"]);
-                if (timeUTC < DateTime.UtcNow)
+                DateTime timeUtc = DateTime.Parse((string) games[0]["startTimeUTC"]);
+                if (timeUtc < DateTime.UtcNow)
                 {
-                    PREVIOUS_GAME = timeUTC;
-                    PREVIOUS_LAST_GAME = DateTime.Parse((string)games[games.Count - 1]["startTimeUTC"]);
+                    PREVIOUS_GAME = timeUtc;
+                    PREVIOUS_LAST_GAME = DateTime.Parse((string) games[games.Count - 1]["startTimeUTC"]);
                 }
                 else
                 {
                     gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
-                                    .AddDays(-1).ToString("yyyyMMdd");
+                        .AddDays(-1).ToString("yyyyMMdd");
                     SetLastGame(gameDate);
                 }
             }
             else
             {
                 gameDate = DateTime.ParseExact(gameDate, "yyyyMMdd", CultureInfo.InvariantCulture)
-                                .AddDays(-1).ToString("yyyyMMdd");
+                    .AddDays(-1).ToString("yyyyMMdd");
                 SetLastGame(gameDate);
             }
         }
 
         public void Execute()
         {
-            var sth = JobManager.RunningSchedules;
             string gameDate = GetDate();
 
             SetLastGame(gameDate);
@@ -132,23 +131,23 @@ namespace fantasy_hoops.Database
             if (offset < GAME_OFFSET)
             {
                 JobManager.AddJob(new NextGame(_scoreService, _pushService),
-                                s => s.WithName(NEXT_GAME.ToLongDateString())
-                                .ToRunOnceAt(NEXT_GAME));
+                    s => s.WithName(NEXT_GAME.ToLongDateString())
+                        .ToRunOnceAt(NEXT_GAME));
 
                 // All actions run only in production
-                if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")))
+                if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION") ?? "false"))
                 {
                     // Nudge Notifications don't run if game starts in <5 hours
                     if (NEXT_GAME.Subtract(DateTime.UtcNow).TotalMinutes > 295)
                         JobManager.AddJob(() => _pushService.SendNudgeNotifications(),
-                                        s => s.WithName("nudgeNotifications")
-                                        .ToRunOnceAt(NEXT_GAME.AddHours(-5)));
+                            s => s.WithName("nudgeNotifications")
+                                .ToRunOnceAt(NEXT_GAME.AddHours(-5)));
 
                     // Once per 2 days
                     if (CommonFunctions.UTCToEastern(NEXT_GAME).Day % 2 != 0)
                         JobManager.AddJob(new Seed(_pushService),
-                                        s => s.WithName("seed")
-                                        .ToRunOnceAt(NEXT_GAME.AddMinutes(-5)));
+                            s => s.WithName("seed")
+                                .ToRunOnceAt(NEXT_GAME.AddMinutes(-5)));
 
                     // 10 hours after previous last game if project ran before that time
                     // 10 hours after next last game if project ran after that time
@@ -156,7 +155,7 @@ namespace fantasy_hoops.Database
                     if (DateTime.UtcNow > previewsRuntime)
                         previewsRuntime = NEXT_LAST_GAME.AddHours(10);
                     JobManager.AddJob(new NewsSeed(NewsSeed.NewsType.PREVIEWS),
-                            s => s.WithName("previews")
+                        s => s.WithName("previews")
                             .ToRunOnceAt(previewsRuntime));
 
                     // 5 hours after previous last game if project ran before that time
@@ -165,28 +164,28 @@ namespace fantasy_hoops.Database
                     if (DateTime.UtcNow > recapsRuntime)
                         recapsRuntime = NEXT_LAST_GAME.AddHours(5);
                     JobManager.AddJob(new NewsSeed(NewsSeed.NewsType.RECAPS),
-                            s => s.WithName("recaps")
+                        s => s.WithName("recaps")
                             .ToRunOnceAt(recapsRuntime));
                 }
 
                 JobManager.AddJob(new PlayerSeed(_scoreService, _updatePrice),
                     s => s.WithName("playerSeed")
-                    .ToRunNow());
+                        .ToRunNow());
             }
             else
             {
                 JobManager.AddJob(new NextGame(_scoreService, _pushService),
-                                s => s.WithName("nextGame")
-                                .ToRunOnceIn(1)
-                                .Hours());
+                    s => s.WithName("nextGame")
+                        .ToRunOnceIn(1)
+                        .Hours());
                 offset = 0;
                 SetPlayersNotPlaying().Wait();
             }
 
-            if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION")))
+            if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION") ?? "false"))
                 JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
-                            s => s.WithName("statsSeed")
-                            .ToRunNow());
+                    s => s.WithName("statsSeed")
+                        .ToRunNow());
         }
     }
 }

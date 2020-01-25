@@ -34,14 +34,15 @@ namespace fantasy_hoops.Database
 
         private bool IsFinished(JArray games)
         {
-            if (games.Any(g => (int)g["statusNum"] != 3 || (bool)g["isGameActivated"]))
+            if (games.Any(g => (int) g["statusNum"] != 3 || (bool) g["isGameActivated"]))
             {
                 JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
-                s => s.WithName("statsSeed")
-                .ToRunOnceIn(5)
-                .Minutes());
+                    s => s.WithName("statsSeed")
+                        .ToRunOnceIn(5)
+                        .Minutes());
                 return false;
             }
+
             return true;
         }
 
@@ -53,30 +54,29 @@ namespace fantasy_hoops.Database
                 Date = date,
                 OppID = oppId,
                 Score = score,
-                MIN = (string)player["min"],
-                FGM = (int)player["fgm"],
-                FGA = (int)player["fga"],
-                FGP = (double)player["fgp"],
-                TPM = (int)player["tpm"],
-                TPA = (int)player["tpa"],
-                TPP = (double)player["tpp"],
-                FTM = (int)player["ftm"],
-                FTA = (int)player["fta"],
-                FTP = (double)player["ftp"],
-                DREB = (int)player["defReb"],
-                OREB = (int)player["offReb"],
-                TREB = (int)player["totReb"],
-                AST = (int)player["assists"],
-                BLK = (int)player["blocks"],
-                STL = (int)player["steals"],
-                FLS = (int)player["pFouls"],
-                TOV = (int)player["turnovers"],
-                PTS = (int)player["points"]
+                MIN = (string) player["min"],
+                FGM = (int) player["fgm"],
+                FGA = (int) player["fga"],
+                FGP = (double) player["fgp"],
+                TPM = (int) player["tpm"],
+                TPA = (int) player["tpa"],
+                TPP = (double) player["tpp"],
+                FTM = (int) player["ftm"],
+                FTA = (int) player["fta"],
+                FTP = (double) player["ftp"],
+                DREB = (int) player["defReb"],
+                OREB = (int) player["offReb"],
+                TREB = (int) player["totReb"],
+                AST = (int) player["assists"],
+                BLK = (int) player["blocks"],
+                STL = (int) player["steals"],
+                FLS = (int) player["pFouls"],
+                TOV = (int) player["turnovers"],
+                PTS = (int) player["points"]
             };
 
             var statsPlayer = _context.Players
-                    .Where(x => x.NbaID == (int)player["personId"])
-                    .FirstOrDefault();
+                .FirstOrDefault(x => x.NbaID == (int) player["personId"]);
 
             if (statsPlayer == null)
                 return;
@@ -84,18 +84,17 @@ namespace fantasy_hoops.Database
             statsObj.Player = statsPlayer;
             int playerPrice = _scoreService.GetPrice(statsPlayer);
 
-            var dbStats = _context.Stats
-                            .Where(stats => stats.Date.Equals(date) && stats.PlayerID == statsPlayer.PlayerID)
-                            .FirstOrDefault();
+            var dbStats = _context.Stats.FirstOrDefault(stats =>
+                stats.Date.Equals(date) && stats.PlayerID == statsPlayer.PlayerID);
 
             if (dbStats == null)
             {
                 statsObj.GS = _scoreService.GetGameScore(statsObj.PTS, statsObj.FGM, statsObj.DREB, statsObj.OREB,
-                                                statsObj.STL, statsObj.AST, statsObj.BLK, statsObj.FGA, statsObj.FTA - statsObj.FTM,
-                                                statsObj.FLS, statsObj.TOV);
+                    statsObj.STL, statsObj.AST, statsObj.BLK, statsObj.FGA, statsObj.FTA - statsObj.FTM,
+                    statsObj.FLS, statsObj.TOV);
 
                 statsObj.FP = _scoreService.GetFantasyPoints(statsObj.PTS, statsObj.DREB, statsObj.OREB,
-                                                statsObj.AST, statsObj.STL, statsObj.BLK, statsObj.TOV);
+                    statsObj.AST, statsObj.STL, statsObj.BLK, statsObj.TOV);
 
                 statsObj.Price = playerPrice;
 
@@ -125,11 +124,11 @@ namespace fantasy_hoops.Database
                 dbStats.TOV = statsObj.TOV;
                 dbStats.PTS = statsObj.PTS;
                 dbStats.GS = _scoreService.GetGameScore(statsObj.PTS, statsObj.FGM, statsObj.DREB, statsObj.OREB,
-                                                statsObj.STL, statsObj.AST, statsObj.BLK, statsObj.FGA, statsObj.FTA - statsObj.FTM,
-                                                statsObj.FLS, statsObj.TOV);
+                    statsObj.STL, statsObj.AST, statsObj.BLK, statsObj.FGA, statsObj.FTA - statsObj.FTM,
+                    statsObj.FLS, statsObj.TOV);
 
                 dbStats.FP = _scoreService.GetFantasyPoints(statsObj.PTS, statsObj.DREB, statsObj.OREB,
-                                                statsObj.AST, statsObj.STL, statsObj.BLK, statsObj.TOV);
+                    statsObj.AST, statsObj.STL, statsObj.BLK, statsObj.TOV);
 
                 dbStats.Price = playerPrice;
             }
@@ -137,14 +136,17 @@ namespace fantasy_hoops.Database
 
         private Game GetGame(DateTime date, int homeTeamId, int awayTeamId, int homeScore, int awayScore)
         {
-            Team homeTeam = _context.Teams.Where(team => team.NbaID == homeTeamId).FirstOrDefault();
+            Team homeTeam = _context.Teams.FirstOrDefault(team => team.NbaID == homeTeamId);
             if (homeTeam == null)
                 homeTeam = CommonFunctions.GetUnknownTeam(_context);
-            Team awayTeam = _context.Teams.Where(team => team.NbaID == awayTeamId).FirstOrDefault();
+            Team awayTeam = _context.Teams.FirstOrDefault(team => team.NbaID == awayTeamId);
             if (awayTeam == null)
                 awayTeam = CommonFunctions.GetUnknownTeam(_context);
 
-            Game gameObj = _context.Games.Where(game => game.Date.Equals(date) && game.HomeTeam.Equals(homeTeam) && game.AwayTeam.Equals(awayTeam)).FirstOrDefault();
+            Game gameObj = _context.Games.FirstOrDefault(game => game.Date.Equals(date)
+                                                                 && game.HomeTeam.Equals(homeTeam)
+                                                                 && game.AwayTeam.Equals(awayTeam));
+            
             if (gameObj != null)
             {
                 gameObj.HomeScore = homeScore;
@@ -172,12 +174,12 @@ namespace fantasy_hoops.Database
             JArray games = CommonFunctions.GetGames(gameDate);
             int countOfActivatedGames = 0;
             bool isAnyGameStarted = false;
-            foreach (JObject game in games)
+            foreach (var game in games)
             {
-                if ((int)game["statusNum"] != 1)
+                if ((int) game["statusNum"] != 1)
                     isAnyGameStarted = true;
 
-                if (!(bool)game["isGameActivated"] && (int)game["statusNum"] != 3)
+                if (!(bool) game["isGameActivated"] && (int) game["statusNum"] != 3)
                     continue;
 
                 countOfActivatedGames++;
@@ -185,44 +187,49 @@ namespace fantasy_hoops.Database
                 JObject boxscore = GetBoxscore(bsUrl);
                 if (boxscore["stats"] == null)
                     continue;
-                int hTeam = (int)boxscore["basicGameData"]["hTeam"]["teamId"];
-                int vTeam = (int)boxscore["basicGameData"]["vTeam"]["teamId"];
-                DateTime date = DateTime.ParseExact((string)boxscore["basicGameData"]["startDateEastern"], "yyyyMMdd", CultureInfo.InvariantCulture);
+                int hTeam = (int) boxscore["basicGameData"]["hTeam"]["teamId"];
+                int vTeam = (int) boxscore["basicGameData"]["vTeam"]["teamId"];
+                DateTime date = DateTime.ParseExact((string) boxscore["basicGameData"]["startDateEastern"], "yyyyMMdd",
+                    CultureInfo.InvariantCulture);
                 var players = boxscore["stats"]["activePlayers"];
-                int homeScore = (int)boxscore["basicGameData"]["hTeam"]["score"];
-                int awayScore = (int)boxscore["basicGameData"]["vTeam"]["score"];
+                int homeScore = (int) boxscore["basicGameData"]["hTeam"]["score"];
+                int awayScore = (int) boxscore["basicGameData"]["vTeam"]["score"];
                 Game gameObj = GetGame(date, hTeam, vTeam, homeScore, awayScore);
 
-                foreach (var player in (JArray)players)
+                foreach (var player in (JArray) players)
                 {
                     int oppId;
 
-                    if (!_context.Players.Any(x => x.NbaID.Equals((int)player["personId"])))
+                    if (!_context.Players.Any(x => x.NbaID.Equals((int) player["personId"])))
                         continue;
-                    string score = "";
-                    string liveToken = (int)game["statusNum"] != 3 ? ";LIVE" : "";
-                    if ((int)player["teamId"] == hTeam)
+                    string score;
+                    string liveToken = (int) game["statusNum"] != 3 ? ";LIVE" : "";
+                    if ((int) player["teamId"] == hTeam)
                     {
                         oppId = vTeam;
-                        score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";vs" + liveToken;
+                        score = (int) boxscore["basicGameData"]["vTeam"]["score"] + "-" +
+                                (int) boxscore["basicGameData"]["hTeam"]["score"] + ";vs" + liveToken;
                     }
                     else
                     {
                         oppId = hTeam;
-                        score = (int)boxscore["basicGameData"]["vTeam"]["score"] + "-" + (int)boxscore["basicGameData"]["hTeam"]["score"] + ";@" + liveToken;
+                        score = (int) boxscore["basicGameData"]["vTeam"]["score"] + "-" +
+                                (int) boxscore["basicGameData"]["hTeam"]["score"] + ";@" + liveToken;
                     }
-                    if ((string)player["min"] == null || ((string)player["min"]).Length == 0)
+
+                    if ((string) player["min"] == null || ((string) player["min"]).Length == 0)
                         continue;
                     AddToDatabase(player, gameObj, date, oppId, score);
                 }
+
                 _context.SaveChanges();
             }
 
             if (!isAnyGameStarted)
             {
                 JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
-                                                s => s.WithName("statsSeed")
-                                                .ToRunOnceIn(5).Minutes());
+                    s => s.WithName("statsSeed")
+                        .ToRunOnceIn(5).Minutes());
                 return;
             }
 
@@ -230,22 +237,22 @@ namespace fantasy_hoops.Database
             {
                 int minutesDelay = countOfActivatedGames == 0 ? 5 : 1;
                 JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
-                                s => s.WithName("statsSeed")
-                                .ToRunOnceIn(minutesDelay).Minutes());
+                    s => s.WithName("statsSeed")
+                        .ToRunOnceIn(minutesDelay).Minutes());
             }
             else
             {
                 _context.Stats
-                        .RemoveRange(_context.Stats.Where(stat => stat.Score.Contains("LIVE")));
+                    .RemoveRange(_context.Stats.Where(stat => stat.Score.Contains("LIVE")));
                 _context.SaveChanges();
 
                 JobManager.AddJob(new UserScoreSeed(_pushService),
-                                                s => s.WithName("userScore")
-                                                .ToRunNow());
+                    s => s.WithName("userScore")
+                        .ToRunNow());
 
                 JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
-                                                s => s.WithName("statsSeed")
-                                                .ToRunOnceAt(NextGame.NEXT_GAME.AddMinutes(5)));
+                    s => s.WithName("statsSeed")
+                        .ToRunOnceAt(NextGame.NEXT_GAME.AddMinutes(5)));
             }
         }
     }

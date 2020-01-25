@@ -21,16 +21,17 @@ using fantasy_hoops.Repositories;
 using FluentScheduler;
 using System.Collections.Generic;
 using fantasy_hoops.Auth;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
 namespace fantasy_hoops
 {
     public class Startup
     {
-        public IHostingEnvironment HostingEnvironment { get; private set; }
-        public IConfiguration Configuration { get; private set; }
+        public IWebHostEnvironment HostingEnvironment;
+        public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             HostingEnvironment = env;
@@ -175,7 +176,7 @@ namespace fantasy_hoops
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {

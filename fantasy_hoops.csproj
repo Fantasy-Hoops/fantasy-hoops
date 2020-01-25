@@ -10,6 +10,8 @@
     <AssemblyName>fantasy_hoops</AssemblyName>
     <RootNamespace>fantasy_hoops</RootNamespace>
     <UserSecretsId>e41963f6-d9d6-4732-b053-c5cec53f6da9</UserSecretsId>
+    <Title>Mantas Naidzinavicius</Title>
+    <PackageProjectUrl>https://fantasyhoops.org/</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->

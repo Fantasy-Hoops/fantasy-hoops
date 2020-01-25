@@ -18,12 +18,10 @@ namespace fantasy_hoops.Controllers
     [ApiController]
     public class PushController : ControllerBase
     {
-        private readonly IHostingEnvironment _env;
         private readonly IPushService _pushService;
 
-        public PushController(IHostingEnvironment hostingEnvironment, IPushService pushService)
+        public PushController(IPushService pushService)
         {
-            _env = hostingEnvironment;
             _pushService = pushService;
         }
 

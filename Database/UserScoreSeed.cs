@@ -15,7 +15,8 @@ namespace fantasy_hoops.Database
 {
     public class UserScoreSeed : IJob
     {
-        private static readonly Stack<GameScorePushNotificationModel> _usersPlayed = new Stack<GameScorePushNotificationModel>();
+        private static readonly Stack<GameScorePushNotificationModel> _usersPlayed =
+            new Stack<GameScorePushNotificationModel>();
 
         private readonly GameContext _context;
         private readonly IPushService _pushService;
@@ -32,41 +33,42 @@ namespace fantasy_hoops.Database
             {
                 var user = _usersPlayed.Pop();
                 PushNotificationViewModel notification =
-                        new PushNotificationViewModel("Fantasy Hoops Game Score",
-                                string.Format("Game has finished! Your lineup scored {0} FP", user.Score))
-                        {
-                            Actions = new List<NotificationAction> { new NotificationAction("leaderboard", "🏆 Leaderboard") }
-                        };
+                    new PushNotificationViewModel("Fantasy Hoops Game Score",
+                        $"Game has finished! Your lineup scored {user.Score} FP")
+                    {
+                        Actions = new List<NotificationAction> {new NotificationAction("leaderboard", "🏆 Leaderboard")}
+                    };
                 await _pushService.Send(user.UserID, notification);
             }
         }
 
         public void Execute()
         {
-            WebPushClient _webPushClient = new WebPushClient();
-
             var todayStats = _context.Stats
-                    .Where(stats => stats.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date))
-                    .Select(stats => new { stats.PlayerID, stats.FP });
+                .Where(stats => stats.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date))
+                .Select(stats => new {stats.PlayerID, stats.FP});
 
             var allLineups = _context.UserLineups
-                    .Where(lineup => lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date) && !lineup.IsCalculated)
-                    .Include(lineup => lineup.User)
-                    .ToList();
+                .Include(lineup => lineup.User)
+                .Where(lineup => lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date) &&
+                                 !lineup.IsCalculated)
+                .Include(lineup => lineup.User)
+                .ToList();
 
             if (allLineups.Count == 0)
                 return;
 
             _context.Users
-                    .Except(allLineups.Select(lineup => lineup.User))
-                    .ToList()
-                    .ForEach(user => user.Streak = 0);
+                .AsEnumerable()
+                .Except(allLineups.Select(lineup => lineup.User).AsEnumerable())
+                .ToList()
+                .ForEach(user => user.Streak = 0);
 
             foreach (var lineup in allLineups)
             {
-                var selectedPlayers = new List<int> { lineup.PgID, lineup.SgID, lineup.SfID, lineup.PfID, lineup.CID };
+                var selectedPlayers = new List<int> {lineup.PgID, lineup.SgID, lineup.SfID, lineup.PfID, lineup.CID};
                 lineup.FP =
-                        Math.Round(todayStats
+                    Math.Round(todayStats
                         .Where(stats => selectedPlayers.Contains(stats.PlayerID))
                         .Select(stats => stats.FP)
                         .Sum(), 1);
@@ -89,8 +91,9 @@ namespace fantasy_hoops.Database
                 };
                 _context.GameScoreNotifications.Add(gs);
             }
+
             _context.SaveChanges();
-            Task.Run(() => SendPushNotifications());
+            Task.Run(SendPushNotifications);
         }
     }
 }
