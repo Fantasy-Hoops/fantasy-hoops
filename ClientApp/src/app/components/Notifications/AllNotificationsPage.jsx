@@ -80,7 +80,7 @@ export class AllNotificationsPage extends Component {
               key={shortid()}
               notification={notification}
               title={notification.friendUserName}
-              imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendAvatarURL}.png`, defaultPhoto]}
+              imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendAvatarUrl}.png`, defaultPhoto]}
               text={text}
               imageClass="NotificationCard__Image Avatar--round"
               link={`/profile/${notification.friendUserName}`}
@@ -88,7 +88,6 @@ export class AllNotificationsPage extends Component {
           );
         } if (notification.playerID) {
           const title = `${notification.abbrName} is ${notification.injuryStatus.toLowerCase()}`;
-
           return (
             <NotificationCard
               key={shortid()}
@@ -96,7 +95,7 @@ export class AllNotificationsPage extends Component {
               title={title}
               circleImage
               imageSrc={[
-                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${notification.nbaID}.png`,
+                `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${notification.nbaId}.png`,
                 require(`../../../content/images/positions/${notification.position.toLowerCase()}.png`)
               ]}
               imageClass="NotificationCard__Image NotificationCard__Image--player"
@@ -139,7 +138,7 @@ export class AllNotificationsPage extends Component {
         <div className="AllNotifications mt-3 mb-3 mx-auto">
           {notifications}
         </div>
-        <div className="text-center">
+        <div className="text-center m-3">
           {!loader ? btn : ''}
         </div>
         {loader ? <div className="Loader" /> : null}

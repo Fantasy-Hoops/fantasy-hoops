@@ -1,12 +1,12 @@
 ﻿using fantasy_hoops.Database;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Notifications;
-using fantasy_hoops.Models.Notifications.ViewModels;
 using fantasy_hoops.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using fantasy_hoops.Dtos;
 
 namespace fantasy_hoops.Repositories
 {
@@ -19,96 +19,101 @@ namespace fantasy_hoops.Repositories
             _context = new GameContext();
         }
 
-        public IEnumerable<Notification> GetAllNotifications()
+        public List<NotificationDto> GetAllNotifications()
         {
             return _context.Notifications.OfType<GameScoreNotification>()
-                    .Select(n => new GameScoreNotification
+                .Select(notification => new NotificationDto
+                {
+                    NotificationID = notification.NotificationID,
+                    UserID = notification.UserID,
+                    DateCreated = notification.DateCreated,
+                    ReadStatus = notification.ReadStatus,
+                    Score = notification.Score
+                })
+                .AsEnumerable()
+                .Union(_context.Notifications
+                    .OfType<InjuryNotification>()
+                    .Include(notification => notification.Player)
+                    .ThenInclude(player => player.Team)
+                    .Select(notification => new NotificationDto
                     {
-                        NotificationID = n.NotificationID,
-                        UserID = n.UserID,
-                        DateCreated = n.DateCreated,
-                        ReadStatus = n.ReadStatus,
-                        Score = n.Score
-                    })
-                    .AsEnumerable()
-                    .OfType<Notification>()
-                    .Union(_context.Notifications
-                        .OfType<FriendRequestNotification>()
-                        .Select(n => new FriendRequestNotificationViewModel
-                        {
-                            NotificationID = n.NotificationID,
-                            UserID = n.UserID,
-                            DateCreated = n.DateCreated,
-                            ReadStatus = n.ReadStatus,
-                            FriendID = n.FriendID,
-                            RequestMessage = n.RequestMessage,
-                            FriendUserName = n.Friend.UserName,
-                            FriendAvatarURL = n.Friend.AvatarURL
-                        }))
-                    .Union(_context.InjuryNotifications
-                        .OfType<InjuryNotification>()
-                        .Select(n => new InjuryNotificationViewModel
-                        {
-                            NotificationID = n.NotificationID,
-                            UserID = n.UserID,
-                            DateCreated = n.DateCreated,
-                            ReadStatus = n.ReadStatus,
-                            InjuryStatus = n.InjuryStatus,
-                            InjuryDescription = n.InjuryDescription,
-                            PlayerID = n.PlayerID,
-                            AbbrName = n.Player.AbbrName,
-                            NbaID = n.Player.NbaID,
-                            Position = n.Player.Position,
-                            TeamColor = n.Player.Team.Color
-                        }))
-                    .OrderByDescending(n => n.DateCreated)
-                    .ToList();
+                        NotificationID = notification.NotificationID,
+                        UserID = notification.UserID,
+                        DateCreated = notification.DateCreated,
+                        ReadStatus = notification.ReadStatus,
+                        PlayerID = notification.PlayerID,
+                        NbaId = notification.Player.NbaID,
+                        AbbrName = notification.Player.AbbrName,
+                        Position = notification.Player.Position,
+                        TeamColor = notification.Player.Team.Color,
+                        InjuryStatus = notification.InjuryStatus,
+                        InjuryDescription = notification.InjuryDescription
+                    }))
+                .AsEnumerable()
+                .Union(_context.Notifications
+                    .OfType<FriendRequestNotification>()
+                    .Include(notification => notification.Friend)
+                    .Select(notification => new NotificationDto
+                    {
+                        NotificationID = notification.NotificationID,
+                        UserID = notification.UserID,
+                        DateCreated = notification.DateCreated,
+                        ReadStatus = notification.ReadStatus,
+                        FriendID = notification.FriendID,
+                        RequestMessage = notification.RequestMessage,
+                        FriendUsername = notification.Friend.UserName,
+                        FriendAvatarUrl = notification.Friend.AvatarURL
+                    }))
+                .ToList();
         }
 
-        public IEnumerable<Notification> GetNotifications(string userID, int start, int count)
+        public List<NotificationDto> GetNotifications(string userID, int start, int count)
         {
             if (count == 0)
-                count = _context.Notifications.Where(y => y.UserID.Equals(userID)).Count();
+                count = _context.Notifications.Count(y => y.UserID.Equals(userID));
             return _context.Notifications.OfType<GameScoreNotification>()
-                    .Select(n => new GameScoreNotification
+                .Select(notification => new NotificationDto
+                {
+                    NotificationID = notification.NotificationID,
+                    UserID = notification.UserID,
+                    DateCreated = notification.DateCreated,
+                    ReadStatus = notification.ReadStatus,
+                    Score = notification.Score
+                })
+                .AsEnumerable()
+                .Union(_context.Notifications
+                    .OfType<InjuryNotification>()
+                    .Include(notification => notification.Player)
+                    .ThenInclude(player => player.Team)
+                    .Select(notification => new NotificationDto
                     {
-                        NotificationID = n.NotificationID,
-                        UserID = n.UserID,
-                        DateCreated = n.DateCreated,
-                        ReadStatus = n.ReadStatus,
-                        Score = n.Score
-                    })
-                    .AsEnumerable()
-                    .OfType<Notification>()
-                    .Union(_context.Notifications
-                        .OfType<FriendRequestNotification>()
-                        .Select(n => new FriendRequestNotificationViewModel
-                        {
-                            NotificationID = n.NotificationID,
-                            UserID = n.UserID,
-                            DateCreated = n.DateCreated,
-                            ReadStatus = n.ReadStatus,
-                            FriendID = n.FriendID,
-                            RequestMessage = n.RequestMessage,
-                            FriendUserName = n.Friend.UserName,
-                            FriendAvatarURL = n.Friend.AvatarURL
-                        }))
-                    .Union(_context.InjuryNotifications
-                        .OfType<InjuryNotification>()
-                        .Select(n => new InjuryNotificationViewModel
-                        {
-                            NotificationID = n.NotificationID,
-                            UserID = n.UserID,
-                            DateCreated = n.DateCreated,
-                            ReadStatus = n.ReadStatus,
-                            InjuryStatus = n.InjuryStatus,
-                            InjuryDescription = n.InjuryDescription,
-                            PlayerID = n.PlayerID,
-                            AbbrName = n.Player.AbbrName,
-                            NbaID = n.Player.NbaID,
-                            Position = n.Player.Position,
-                            TeamColor = n.Player.Team.Color
-                        }))
+                        NotificationID = notification.NotificationID,
+                        UserID = notification.UserID,
+                        DateCreated = notification.DateCreated,
+                        ReadStatus = notification.ReadStatus,
+                        PlayerID = notification.PlayerID,
+                        NbaId = notification.Player.NbaID,
+                        AbbrName = notification.Player.AbbrName,
+                        Position = notification.Player.Position,
+                        TeamColor = notification.Player.Team.Color,
+                        InjuryStatus = notification.InjuryStatus,
+                        InjuryDescription = notification.InjuryDescription
+                    }))
+                .AsEnumerable()
+                .Union(_context.Notifications
+                    .OfType<FriendRequestNotification>()
+                    .Include(notification => notification.Friend)
+                    .Select(notification => new NotificationDto
+                    {
+                        NotificationID = notification.NotificationID,
+                        UserID = notification.UserID,
+                        DateCreated = notification.DateCreated,
+                        ReadStatus = notification.ReadStatus,
+                        FriendID = notification.FriendID,
+                        RequestMessage = notification.RequestMessage,
+                        FriendUsername = notification.Friend.UserName,
+                        FriendAvatarUrl = notification.Friend.AvatarURL
+                    }))
                     .Where(y => y.UserID.Equals(userID))
                     .OrderByDescending(y => y.DateCreated)
                     .Skip(start)
@@ -144,12 +149,15 @@ namespace fantasy_hoops.Repositories
 
         public void ReadNotification(NotificationViewModel model)
         {
-            _context.Notifications
-                .Where(x => x.NotificationID == model.NotificationID
-                        && x.UserID.Equals(model.UserID))
-                .FirstOrDefault()
-                .ReadStatus = true;
-
+            Notification notification = _context.Notifications
+                .FirstOrDefault(x => x.NotificationID == model.NotificationID && x.UserID.Equals(model.UserID));
+            
+            if (notification == null)
+            {
+                return;
+            }
+            
+            notification.ReadStatus = true;
             _context.SaveChanges();
         }
 

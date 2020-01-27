@@ -120,7 +120,6 @@ export default class Main extends Component {
             {'Play Now!'}
           </Link>
         </div>
-        <audio src={require("../../content/sounds/kobe.mp3")} autoPlay/>
       </div>
     );
   }
