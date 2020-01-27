@@ -73,7 +73,7 @@ export default class Main extends Component {
   }
 
   createPlayers(players) {
-    const temp = _.map(
+    return  _.map(
       players,
       (player, index) => (
         <Card
@@ -86,22 +86,6 @@ export default class Main extends Component {
         />
       )
     );
-
-    const player = {
-      abbrName: "K. Bryant",
-      fp: 81.0,
-      teamColor: "#FDB927"
-    };
-    temp.unshift(
-        <Card
-            className="Main__TopPlayersCard"
-            index={23}
-            key="KOBE"
-            player={player}
-            image="https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/1610612747/2015/260x190/977.png"
-        />
-    );
-    return temp;
   }
 
   render() {
@@ -130,13 +114,13 @@ export default class Main extends Component {
           <Link
             id="PlayNowBtn"
             to={Routes.LINEUP}
-            className="Main__PlayNowButton text-center btn btn-success"
+            className="Main__PlayNowButton text-center btn btn-outline-success"
             role="button"
           >
             {'Play Now!'}
           </Link>
         </div>
-        <audio src={require("../../content/sounds/kobe.mp3")} autoPlay loop/>
+        <audio src={require("../../content/sounds/kobe.mp3")} autoPlay/>
       </div>
     );
   }

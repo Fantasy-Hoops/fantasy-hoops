@@ -166,10 +166,10 @@ export class Leaderboard extends PureComponent {
         </div>
         <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
           <li className="nav-item">
-            <Link className="nav-link active tab-no-outline" id="lineups-tab" data-toggle="tab" to="#lineups" role="tab" onClick={this.switchTab}>Lineups</Link>
+            <a className="nav-link active tab-no-outline" id="lineups-tab" data-toggle="tab" href="#lineups" role="tab" onClick={this.switchTab}>Lineups</a>
           </li>
           <li className="nav-item">
-            <Link className="nav-link tab-no-outline" id="players-tab" data-toggle="tab" to="#players" role="tab" onClick={this.switchTab}>Players</Link>
+            <a className="nav-link tab-no-outline" id="players-tab" data-toggle="tab" href="#players" role="tab" onClick={this.switchTab}>Players</a>
           </li>
         </ul>
         <div className="tab-content" id="myTabContent">
