@@ -43,7 +43,7 @@ export class Card extends PureComponent {
                 className="PlayerLeaderboardCard__player-photo--image"
                 alt=""
                 src={[
-                  `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${player.nbaID}.png`,
+                  `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${player.nbaId}.png`,
                   image
                 ]}
                 decode={false}

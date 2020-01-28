@@ -11,10 +11,9 @@ export class Stats extends Component {
 
   render() {
     const stats = this.props.stats;
-    console.log(stats.position.toLowerCase());
     return (
       <div className="row">
-        <div className="PlayerModal__image--background"></div>
+        <div className="PlayerModal__image--background"/>
         <div className='position-absolute'>
           <Img
             className="img-modal pt-4 mb-2"

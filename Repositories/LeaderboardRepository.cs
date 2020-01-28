@@ -20,7 +20,7 @@ namespace fantasy_hoops.Repositories
             _context = new GameContext();
         }
 
-        public List<PlayerDto> GetPlayerLeaderboard(int from, int limit, string type)
+        public List<PlayerLeaderboardRecordDto> GetPlayerLeaderboard(int from, int limit, string type)
         {
             DateTime date = CommonFunctions.GetDate(type);
 
@@ -33,15 +33,11 @@ namespace fantasy_hoops.Repositories
                     stats.FP
                 })
                 .GroupBy(stats => stats.Player.PlayerID)
-                .Select(res => new PlayerDto
+                .Select(res => new PlayerLeaderboardRecordDto
                 {
-                    PlayerId = res.Max(p => p.Player.PlayerID),
                     NbaId = res.Max(p => p.Player.NbaID),
                     FullName = res.Max(p => p.Player.FullName),
-                    FirstName = res.Max(p => p.Player.FirstName),
-                    LastName = res.Max(p => p.Player.LastName),
                     AbbrName = res.Max(p => p.Player.AbbrName),
-                    Position = res.Max(p => p.Player.Position),
                     TeamColor = res.Max(p => p.teamColor),
                     FP = res.Sum(stats => stats.FP)
                 })
@@ -207,7 +203,7 @@ namespace fantasy_hoops.Repositories
                             .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Position))
                             .ToList()
                     })
-                    .Where(x => x.Lineup.Count() > 0)
+                    .Where(x => x.Lineup.Any())
                     .OrderByDescending(x => x.FP)
                     .Skip(from)
                     .Take(limit)
@@ -244,8 +240,7 @@ namespace fantasy_hoops.Repositories
                             .Where(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
                             .Select(lineup => lineup.FP).Sum(), 1),
                         GamesPlayed = user.UserLineups
-                            .Where(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
-                            .Count()
+                            .Count(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
                     })
                     .Where(user => user.GamesPlayed > 0)
                     .OrderByDescending(lineup => lineup.FP)
@@ -264,46 +259,7 @@ namespace fantasy_hoops.Repositories
                 seasonStart = new DateTime(year, 10, 1);
                 seasonEnd = new DateTime(year + 1, 7, 1);
             }
-
-            var a = _context.UserLineups
-                .Where(lineup => lineup.Date >= seasonStart && lineup.Date <= seasonEnd)
-                .OrderByDescending(lineup => lineup.FP)
-                .Take(10)
-                .Include(lineup => lineup.User)
-                .Select(lineup => new UserLeaderboardRecordDto
-                {
-                    UserId = lineup.UserID,
-                    Username = lineup.User.UserName,
-                    AvatarUrl = lineup.User.AvatarURL,
-                    LongDate = lineup.Date.ToString("yyyy-MM-dd"),
-                    ShortDate = lineup.Date.ToString("MMM. dd"),
-                    Date = lineup.Date,
-                    FP = lineup.FP,
-                    Lineup = _context.Players
-                        .Include(player => player.Team)
-                        .Where(player =>
-                            player.PlayerID == lineup.PgID
-                            || player.PlayerID == lineup.SgID
-                            || player.PlayerID == lineup.SfID
-                            || player.PlayerID == lineup.PfID
-                            || player.PlayerID == lineup.CID)
-                        .Select(player => new PlayerDto
-                        {
-                            PlayerId = player.PlayerID,
-                            NbaId = player.NbaID,
-                            Position = player.Position,
-                            TeamColor = player.Team.Color,
-                            FullName = player.FullName,
-                            FirstName = player.FirstName,
-                            LastName = player.LastName,
-                            AbbrName = player.AbbrName,
-                            FP = player.Stats.FirstOrDefault(stats => stats.Date.Equals(lineup.Date)).FP
-                        })
-                        .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Position))
-                        .ToList()
-                })
-                .ToList();
-
+            
             return _context.UserLineups
                 .Where(lineup => lineup.Date >= seasonStart && lineup.Date <= seasonEnd)
                 .OrderByDescending(lineup => lineup.FP)
@@ -345,7 +301,7 @@ namespace fantasy_hoops.Repositories
                 .ToList();
         }
 
-        public IQueryable<object> GetSeasonPlayers(int year)
+        public List<PlayerLeaderboardRecordDto> GetSeasonPlayers(int year)
         {
             DateTime seasonStart = DateTime.MinValue;
             DateTime seasonEnd = DateTime.MaxValue;
@@ -359,85 +315,78 @@ namespace fantasy_hoops.Repositories
                 .Where(stats => stats.Date >= seasonStart && stats.Date <= seasonEnd)
                 .OrderByDescending(s => s.FP)
                 .Take(10)
-                .Select(p => new
+                .Select(p => new PlayerLeaderboardRecordDto
                 {
-                    longDate = p.Date.ToString("yyyy-MM-dd"),
-                    shortDate = p.Date.ToString("MMM. dd"),
-                    p.Player.NbaID,
-                    teamColor = p.Player.Team.Color,
-                    p.Player.FullName,
-                    p.Player.AbbrName,
-                    p.FP
-                });
+                    NbaId = p.Player.NbaID,
+                    TeamColor = p.Player.Team.Color,
+                    FullName = p.Player.FullName,
+                    AbbrName = p.Player.AbbrName,
+                    FP = p.FP,
+                    LongDate = p.Date.ToString("yyyy-MM-dd"),
+                    ShortDate = p.Date.ToString("MMM. dd")
+                })
+                .ToList();
         }
 
-        public IQueryable<object> GetMostSelectedPlayers(int from, int count)
+        public List<PlayerLeaderboardRecordDto> GetMostSelectedPlayers(int from, int count)
         {
-            var pg = _context.UserLineups
-                .Where(lineup => lineup.Date < NextGame.PREVIOUS_GAME)
-                .Select(lineup => new
+            var userLineups = _context.UserLineups
+                .Where(lineup => lineup.Date < NextGame.PREVIOUS_GAME);
+            var pg = userLineups
+                .Select(lineup => new PlayerDto
                 {
-                    PlayerID = lineup.PgID,
-                    lineup.Pg.NbaID,
-                    lineup.Pg.AbbrName,
+                    NbaId = lineup.Pg.NbaID,
+                    AbbrName = lineup.Pg.AbbrName,
                     TeamColor = lineup.Pg.Team.Color
-                });
-            var sg = _context.UserLineups
-                .Where(lineup => lineup.Date < NextGame.PREVIOUS_GAME)
-                .Select(lineup => new
+                })
+                .ToList();
+            var sg = userLineups
+                .Select(lineup => new PlayerDto
                 {
-                    PlayerID = lineup.SgID,
-                    lineup.Sg.NbaID,
-                    lineup.Sg.AbbrName,
+                    NbaId = lineup.Sg.NbaID,
+                    AbbrName = lineup.Sg.AbbrName,
                     TeamColor = lineup.Sg.Team.Color
-                });
-            var sf = _context.UserLineups
-                .Where(lineup => lineup.Date < NextGame.PREVIOUS_GAME)
-                .Select(lineup => new
+                })
+                .ToList();
+            var sf = userLineups
+                .Select(lineup => new PlayerDto
                 {
-                    PlayerID = lineup.SfID,
-                    lineup.Sf.NbaID,
-                    lineup.Sf.AbbrName,
+                    NbaId = lineup.Sf.NbaID,
+                    AbbrName = lineup.Sf.AbbrName,
                     TeamColor = lineup.Sf.Team.Color
-                });
-
-            var pf = _context.UserLineups
-                .Where(lineup => lineup.Date < NextGame.PREVIOUS_GAME)
-                .Select(lineup => new
+                })
+                .ToList();
+            var pf = userLineups
+                .Select(lineup => new PlayerDto
                 {
-                    PlayerID = lineup.PfID,
-                    lineup.Pf.NbaID,
-                    lineup.Pf.AbbrName,
+                    NbaId = lineup.Pf.NbaID,
+                    AbbrName = lineup.Pf.AbbrName,
                     TeamColor = lineup.Pf.Team.Color
-                });
-
-            var c = _context.UserLineups
-                .Where(lineup => lineup.Date < NextGame.PREVIOUS_GAME)
-                .Select(lineup => new
+                })
+                .ToList();
+            var c = userLineups
+                .Select(lineup => new PlayerDto
                 {
-                    PlayerID = lineup.CID,
-                    lineup.C.NbaID,
-                    lineup.C.AbbrName,
+                    NbaId = lineup.C.NbaID,
+                    AbbrName = lineup.C.AbbrName,
                     TeamColor = lineup.C.Team.Color
-                });
+                })
+                .ToList();
 
-            return pg
-                .Concat(sg)
-                .Concat(sf)
-                .Concat(pf)
-                .Concat(c)
+            return pg.Concat(sg).Concat(sf).Concat(pf).Concat(c)
                 .Select(lineup => lineup)
-                .GroupBy(lineup => lineup.PlayerID)
-                .Select(res => new
+                .GroupBy(lineup => lineup.NbaId)
+                .Select(res => new PlayerLeaderboardRecordDto
                 {
-                    NbaID = res.Max(p => p.NbaID),
+                    NbaId = res.Max(p => p.NbaId),
                     AbbrName = res.Max(p => p.AbbrName),
                     TeamColor = res.Max(p => p.TeamColor),
                     Count = res.Count()
                 })
                 .OrderByDescending(player => player.Count)
                 .Skip(from)
-                .Take(count);
+                .Take(count)
+                .ToList();
         }
     }
 }
