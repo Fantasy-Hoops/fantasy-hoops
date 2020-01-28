@@ -39,14 +39,13 @@ namespace fantasy_hoops.Database
             base.OnModelCreating(builder);
 
             builder.Entity<Player>()
-                .HasOne(p => p.Injury)
-                .WithOne(i => i.Player)
-                .HasForeignKey<Injury>(i => i.PlayerID);
+                .HasOne(player => player.Injury)
+                .WithOne(injury => injury.Player)
+                .HasForeignKey<Injury>(injury => injury.PlayerID);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.EnableSensitiveDataLogging();
             if (!optionsBuilder.IsConfigured)
             {
                 IConfigurationRoot configuration = new ConfigurationBuilder()

@@ -48,7 +48,7 @@ namespace fantasy_hoops.Auth
                 };
 
             var principle = new ClaimsPrincipal();
-            principle.AddIdentity(new ClaimsIdentity(claims, Microsoft.IdentityModel.Claims.AuthenticationTypes.Password));
+            principle.AddIdentity(new ClaimsIdentity(claims, "Password"));
             return principle;
         }
     }

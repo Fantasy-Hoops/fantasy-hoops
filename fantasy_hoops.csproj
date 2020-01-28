@@ -19,34 +19,30 @@
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Migrations - Copy\20191002121002_InitialMSSQL.cs" />
-    <Compile Remove="Migrations - Copy\20191002121002_InitialMSSQL.Designer.cs" />
-    <Compile Remove="Migrations\20190209210804_Initial.cs" />
-    <Compile Remove="Migrations\20190209210804_Initial.Designer.cs" />
-    <Compile Remove="Migrations\20191002120047_TeamId.cs" />
-    <Compile Remove="Migrations\20191002120047_TeamId.Designer.cs" />
-    <Compile Remove="Migrations\20191023142301_AddAvatarURL.cs" />
-    <Compile Remove="Migrations\20191023142301_AddAvatarURL.Designer.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include=".env" CopyToOutputDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="dotenv.net" Version="1.0.6" />
+    <PackageReference Include="EntityFramework" Version="6.4.0" />
     <PackageReference Include="FluentScheduler" Version="5.3.0" />
     <PackageReference Include="Google.Apis.Auth" Version="1.43.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
-    <PackageReference Include="Microsoft.IdentityModel" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.NETCore.App" Version="2.2.8" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Sentry" Version="2.0.0-beta8" />
-    <PackageReference Include="Sentry.AspNetCore" Version="2.0.0-beta8" />
+    <PackageReference Include="Sentry" Version="2.0.1" />
+    <PackageReference Include="Sentry.AspNetCore" Version="2.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
@@ -56,9 +52,6 @@
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ClientApp\src\content\videos" />
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->

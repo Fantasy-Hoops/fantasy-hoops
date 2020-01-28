@@ -1,6 +1,9 @@
 ﻿using fantasy_hoops.Database;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using fantasy_hoops.Dtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Repositories
 {
@@ -14,22 +17,29 @@ namespace fantasy_hoops.Repositories
             _context = new GameContext();
         }
 
-        public IQueryable<Object> GetNews(int start, int count)
+        public List<NewsDto> GetNews(int start, int count)
         {
             return _context.News
-                .Select(x => new
+                .OrderByDescending(news => news.Date)
+                .Skip(start)
+                .Take(count)
+                .Include(news => news.Paragraphs)
+                .Include(news => news.hTeam)
+                .Include(news => news.vTeam)
+                .AsEnumerable()
+                .Select(news => new NewsDto
                 {
-                    id = x.NewsID,
-                    x.Title,
-                    Paragraphs = x.Paragraphs
+                    Id = news.NewsID,
+                    Title = news.Title,
+                    Paragraphs = news.Paragraphs
                                     .OrderBy(p => p.ParagraphNumber)
-                                    .Select(y => y.Content).ToList(),
-                    date = x.Date.ToString("MM/dd/yyyy"),
-                    hTeam = _context.Teams.Where(y => y.NbaID == x.hTeamID).FirstOrDefault().Abbreviation,
-                    vTeam = _context.Teams.Where(y => y.NbaID == x.vTeamID).FirstOrDefault().Abbreviation
+                                    .Select(y => y.Content)
+                                    .ToList(),
+                    Date = news.Date.ToString("MM/dd/yyyy"),
+                    hTeam = news.hTeam.Abbreviation,
+                    vTeam = news.vTeam.Abbreviation
                 })
-                .OrderByDescending(x => x.date)
-                .Skip(start).Take(count);
+                .ToList();
         }
 
     }

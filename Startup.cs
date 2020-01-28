@@ -251,11 +251,11 @@ namespace fantasy_hoops
             }
 
             var naidze = await UserManager.FindByNameAsync("Naidze");
-            if (naidze != null)
+            if (naidze != null && !await UserManager.IsInRoleAsync(naidze, "Admin"))
                 await UserManager.AddToRoleAsync(naidze, "Admin");
 
             var bennek = await UserManager.FindByNameAsync("bennek");
-            if (bennek != null)
+            if (bennek != null && !await UserManager.IsInRoleAsync(bennek, "Admin"))
                 await UserManager.AddToRoleAsync(bennek, "Admin");
         }
     }

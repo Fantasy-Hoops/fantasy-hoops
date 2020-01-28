@@ -1,12 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Collections.Generic;
+using fantasy_hoops.Dtos;
 
 namespace fantasy_hoops.Repositories
 {
     public interface INewsRepository
     {
 
-        IQueryable<Object> GetNews(int start, int count);
+        List<NewsDto> GetNews(int start, int count);
 
     }
 }

@@ -1,9 +1,7 @@
-﻿using fantasy_hoops.Database;
-using fantasy_hoops.Repositories;
+﻿using fantasy_hoops.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
+using fantasy_hoops.Dtos;
 
 namespace fantasy_hoops.Controllers
 {
@@ -19,9 +17,9 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Object> Get(int start = 0, int count = 6)
+        public List<NewsDto> Get(int start = 0, int count = 6)
         {
-            return _repository.GetNews(start, count).ToList();
+            return _repository.GetNews(start, count);
         }
     }
 }

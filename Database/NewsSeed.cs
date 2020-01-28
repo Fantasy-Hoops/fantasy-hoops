@@ -26,17 +26,17 @@ namespace fantasy_hoops.Database
         {
             string today = Today();
             JArray tGames = CommonFunctions.GetGames(today);
-            GetPreviews(today, tGames).Wait();
+            GetPreviews(today, tGames);
         }
 
         public void ExtractRecaps()
         {
             string yesterday = Yesterday();
             JArray yGames = CommonFunctions.GetGames(yesterday);
-            GetRecaps(yesterday, yGames).Wait();
+            GetRecaps(yesterday, yGames);
         }
 
-        private async Task GetPreviews(string date, JArray games)
+        private void GetPreviews(string date, JArray games)
         {
             JArray previews = new JArray();
             foreach (JObject game in games)
@@ -64,18 +64,19 @@ namespace fantasy_hoops.Database
             }
 
             foreach (JObject previewObj in previews)
-                await AddToDatabaseAsync(previewObj);
+                AddToDatabaseAsync(previewObj);
 
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        private async Task GetRecaps(string date, JArray games)
+        private void GetRecaps(string date, JArray games)
         {
             JArray news = new JArray();
-            foreach (JObject game in games)
+            foreach (var jToken in games)
             {
+                var game = (JObject) jToken;
                 string recap = "http://data.nba.net/10s/prod/v1/" + date + "/" + game["gameId"] + "_recap_article.json";
-                JObject recapJson = null;
+                JObject recapJson;
                 try
                 {
                     HttpWebResponse recapResponse = CommonFunctions.GetResponse(recap);
@@ -95,32 +96,38 @@ namespace fantasy_hoops.Database
                 }
             }
 
-            foreach (JObject newsObj in news)
-                await AddToDatabaseAsync(newsObj);
+            foreach (var jToken in news)
+            {
+                var newsObj = (JObject) jToken;
+                AddToDatabaseAsync(newsObj);
+            }
 
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
-        private async Task AddToDatabaseAsync(JToken newsObj)
+        private void AddToDatabaseAsync(JToken newsObj)
         {
+            Team hTeam = _context.Teams.FirstOrDefault(team => team.NbaID == (int) newsObj["hTeamID"]);
+            Team vTeam = _context.Teams.FirstOrDefault(team => team.NbaID == (int) newsObj["vTeamID"]);
             var nObj = new News
             {
                 Date = DateTime.Parse(newsObj["pubDateUTC"].ToString()),
                 Title = (string)newsObj["title"],
-                hTeamID = (int)newsObj["hTeamID"],
-                vTeamID = (int)newsObj["vTeamID"]
+                hTeamID = hTeam?.TeamID ?? -1,
+                vTeamID = vTeam?.TeamID ?? -1
             };
 
             bool shouldAdd = !_context.News.Any(x => x.Title.Equals((string)newsObj["title"]));
 
-            if (nObj == null || !shouldAdd)
+            if (!shouldAdd)
                 return;
-            await _context.News.AddAsync(nObj);
+            _context.News.Add(nObj);
+            _context.SaveChanges();
 
             JArray paragraphs = (JArray)newsObj["paragraphs"];
 
             string firstParagraph = paragraphs[0]["paragraph"].ToString();
-            int beginIndex = firstParagraph.IndexOf("(AP)");
+            int beginIndex = firstParagraph.IndexOf("(AP)", StringComparison.Ordinal);
 
             if (beginIndex != -1)
                 paragraphs[0]["paragraph"] = firstParagraph.Substring(beginIndex + 5);
@@ -133,7 +140,7 @@ namespace fantasy_hoops.Database
                     Content = parObj["paragraph"].ToString().Replace("\xFFFD", ""),
                     ParagraphNumber = i++
                 };
-                await _context.Paragraphs.AddAsync(paragraph);
+                _context.Paragraphs.Add(paragraph);
             }
         }
 
@@ -156,8 +163,6 @@ namespace fantasy_hoops.Database
                     break;
                 case NewsType.RECAPS:
                     ExtractRecaps();
-                    break;
-                default:
                     break;
             }
         }
