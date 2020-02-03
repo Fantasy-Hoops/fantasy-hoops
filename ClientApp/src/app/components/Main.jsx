@@ -6,6 +6,7 @@ import $ from 'jquery';
 import Routes from '../routes/routes';
 import { Card } from './Leaderboard/Players/Card';
 import { getPlayersLeaderboard } from '../utils/networkFunctions';
+import {registerPush} from "../utils/push";
 
 export default class Main extends Component {
   constructor(props) {
@@ -16,6 +17,7 @@ export default class Main extends Component {
   }
 
   async componentDidMount() {
+    if (typeof Notification !== 'undefined' && Notification.permission !== 'denied') { registerPush(); }
     $('#PlayNowBtn').on('click', () => {
       $('.navbar-collapse').removeClass('show');
     });

@@ -1,11 +1,8 @@
-﻿using fantasy_hoops.Models;
+﻿using System.Threading.Tasks;
+using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace fantasy_hoops.Services
+namespace fantasy_hoops.Services.Interfaces
 {
     /// <summary>
     /// Defines a service to manage Push subscriptions and send Push notifications

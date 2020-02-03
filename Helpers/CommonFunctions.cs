@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using fantasy_hoops.Jobs;
 
 namespace fantasy_hoops.Helpers
 {
@@ -108,7 +109,7 @@ namespace fantasy_hoops.Helpers
 				int dayOffset = dayOfMonth == 1 ? DaysInMonth() : dayOfMonth - 1;
 				return easternDate.AddDays(-dayOffset).Date;
 			}
-			return UTCToEastern(NextGame.PREVIOUS_GAME).Date;
+			return UTCToEastern(NextGameJob.PREVIOUS_GAME).Date;
 		}
 
 		public static string GetSeasonYear()

@@ -1,23 +1,23 @@
-﻿using System.Net;
-using System.Linq;
-using System;
-using Newtonsoft.Json.Linq;
-using fantasy_hoops.Models;
-using fantasy_hoops.Helpers;
-using FluentScheduler;
-using fantasy_hoops.Services;
+﻿using System;
 using System.Globalization;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Net;
+using fantasy_hoops.Database;
+using fantasy_hoops.Helpers;
+using fantasy_hoops.Models;
+using fantasy_hoops.Services.Interfaces;
+using FluentScheduler;
+using Newtonsoft.Json.Linq;
 
-namespace fantasy_hoops.Database
+namespace fantasy_hoops.Jobs
 {
-    public class StatsSeed : IJob
+    public class StatsJob : IJob
     {
         private readonly GameContext _context;
         private readonly IScoreService _scoreService;
         private readonly IPushService _pushService;
 
-        public StatsSeed(IScoreService scoreService, IPushService pushService)
+        public StatsJob(IScoreService scoreService, IPushService pushService)
         {
             _context = new GameContext();
             _scoreService = scoreService;
@@ -36,7 +36,7 @@ namespace fantasy_hoops.Database
         {
             if (games.Any(g => (int) g["statusNum"] != 3 || (bool) g["isGameActivated"]))
             {
-                JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
+                JobManager.AddJob(new StatsJob(_scoreService, _pushService),
                     s => s.WithName("statsSeed")
                         .ToRunOnceIn(5)
                         .Minutes());
@@ -170,7 +170,7 @@ namespace fantasy_hoops.Database
 
         public void Execute()
         {
-            string gameDate = CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
+            string gameDate = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).ToString("yyyyMMdd");
             JArray games = CommonFunctions.GetGames(gameDate);
             int countOfActivatedGames = 0;
             bool isAnyGameStarted = false;
@@ -227,7 +227,7 @@ namespace fantasy_hoops.Database
 
             if (!isAnyGameStarted)
             {
-                JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
+                JobManager.AddJob(new StatsJob(_scoreService, _pushService),
                     s => s.WithName("statsSeed")
                         .ToRunOnceIn(5).Minutes());
                 return;
@@ -236,7 +236,7 @@ namespace fantasy_hoops.Database
             if (!IsFinished(games))
             {
                 int minutesDelay = countOfActivatedGames == 0 ? 5 : 1;
-                JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
+                JobManager.AddJob(new StatsJob(_scoreService, _pushService),
                     s => s.WithName("statsSeed")
                         .ToRunOnceIn(minutesDelay).Minutes());
             }
@@ -246,13 +246,13 @@ namespace fantasy_hoops.Database
                     .RemoveRange(_context.Stats.Where(stat => stat.Score.Contains("LIVE")));
                 _context.SaveChanges();
 
-                JobManager.AddJob(new UserScoreSeed(_pushService),
+                JobManager.AddJob(new UserScoreJob(_pushService),
                     s => s.WithName("userScore")
                         .ToRunNow());
 
-                JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
+                JobManager.AddJob(new StatsJob(_scoreService, _pushService),
                     s => s.WithName("statsSeed")
-                        .ToRunOnceAt(NextGame.NEXT_GAME.AddMinutes(5)));
+                        .ToRunOnceAt(NextGameJob.NEXT_GAME.AddMinutes(5)));
             }
         }
     }

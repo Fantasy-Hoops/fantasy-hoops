@@ -35,9 +35,10 @@ export class NewsFeedContainer extends Component {
   render() {
     const { news, hasMore } = this.props;
     const newsCards = _.map(news,
-      newsObj => (
+        (newsObj, index) => (
         <NewsCard
           key={shortid()}
+          index={index}
           news={newsObj}
         />
       ));

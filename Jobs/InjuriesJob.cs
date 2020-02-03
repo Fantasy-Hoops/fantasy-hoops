@@ -1,28 +1,26 @@
-using System.Net;
-using System.Linq;
-using System.Threading.Tasks;
 using System;
-using Newtonsoft.Json.Linq;
-using fantasy_hoops.Models;
-using Microsoft.EntityFrameworkCore;
-using fantasy_hoops.Helpers;
-using fantasy_hoops.Models.Notifications;
-using FluentScheduler;
-using fantasy_hoops.Services;
-using WebPush;
-using fantasy_hoops.Models.ViewModels;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using fantasy_hoops.Database;
+using fantasy_hoops.Helpers;
+using fantasy_hoops.Models;
+using fantasy_hoops.Models.Notifications;
+using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Services.Interfaces;
+using FluentScheduler;
+using Newtonsoft.Json.Linq;
 
-namespace fantasy_hoops.Database
+namespace fantasy_hoops.Jobs
 {
-    public class InjuriesSeed : IJob
+    public class InjuriesJob : IJob
     {
         private readonly GameContext _context;
         private readonly IPushService _pushService;
         private static readonly Stack<InjuryPushNotificationViewModel> lineupsAffected = new Stack<InjuryPushNotificationViewModel>();
 
-        public InjuriesSeed(IPushService pushService)
+        public InjuriesJob(IPushService pushService)
         {
             _context = new GameContext();
             _pushService = pushService;
@@ -95,7 +93,7 @@ namespace fantasy_hoops.Database
         private void UpdateNotifications(Injury injury, string statusBefore, string statusAfter)
         {
             foreach (var lineup in _context.UserLineups
-                            .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
+                            .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).Date)
                             && (x.PgID == injury.PlayerID
                                     || x.SgID == injury.PlayerID
                                     || x.SfID == injury.PlayerID

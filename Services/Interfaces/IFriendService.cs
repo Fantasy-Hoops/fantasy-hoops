@@ -1,8 +1,8 @@
-﻿using fantasy_hoops.Models;
+﻿using System.Threading.Tasks;
+using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
-using System.Threading.Tasks;
 
-namespace fantasy_hoops.Services
+namespace fantasy_hoops.Services.Interfaces
 {
     public interface IFriendService
     {

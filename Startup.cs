@@ -21,6 +21,8 @@ using fantasy_hoops.Repositories;
 using FluentScheduler;
 using System.Collections.Generic;
 using fantasy_hoops.Auth;
+using fantasy_hoops.Repositories.Interfaces;
+using fantasy_hoops.Services.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 

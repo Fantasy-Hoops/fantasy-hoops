@@ -1,20 +1,20 @@
-using System.Net;
-using System.Linq;
-using System.Threading.Tasks;
 using System;
-using Newtonsoft.Json.Linq;
-using fantasy_hoops.Models;
+using System.Linq;
+using System.Net;
+using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
+using fantasy_hoops.Models;
 using FluentScheduler;
+using Newtonsoft.Json.Linq;
 
-namespace fantasy_hoops.Database
+namespace fantasy_hoops.Jobs
 {
-    public class NewsSeed : IJob
+    public class NewsJob : IJob
     {
         private readonly GameContext _context;
         private readonly NewsType _newsType;
 
-        public NewsSeed(NewsType newsType)
+        public NewsJob(NewsType newsType)
         {
             _context = new GameContext();
             _newsType = newsType;
@@ -146,12 +146,12 @@ namespace fantasy_hoops.Database
 
         private string Today()
         {
-            return CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).ToString("yyyyMMdd");
+            return CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).ToString("yyyyMMdd");
         }
 
         private string Yesterday()
         {
-            return CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).ToString("yyyyMMdd");
+            return CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).ToString("yyyyMMdd");
         }
 
         public void Execute()

@@ -1,9 +1,8 @@
-﻿using fantasy_hoops.Models;
-using fantasy_hoops.Models.ViewModels;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using fantasy_hoops.Dtos;
+using fantasy_hoops.Models.ViewModels;
 
-namespace fantasy_hoops.Repositories
+namespace fantasy_hoops.Repositories.Interfaces
 {
     public interface INotificationRepository
     {

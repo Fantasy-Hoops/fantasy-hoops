@@ -1,12 +1,9 @@
 ﻿using fantasy_hoops.Database;
-using fantasy_hoops.Services;
 using FluentScheduler;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using fantasy_hoops.Jobs;
+using fantasy_hoops.Services.Interfaces;
 
 namespace fantasy_hoops
 {
@@ -15,23 +12,23 @@ namespace fantasy_hoops
         public ApplicationRegistry(GameContext context, IScoreService scoreService, IPushService pushService)
         {
             if (context.Teams.Count() < 30)
-                Schedule(new Seed(pushService))
+                Schedule(new RostersJob(pushService))
                     .WithName("seed")
                     .ToRunNow();
 
-            Task.Run(() => Seed.UpdateTeamColors(new GameContext()));
+            Task.Run(() => RostersJob.UpdateTeamColors(new GameContext()));
 
-            Schedule(new NextGame(scoreService, pushService, false))
+            Schedule(new NextGameJob(scoreService, pushService, false))
                 .WithName("nextGame")
                 .ToRunNow();
 
-            Schedule(new InjuriesSeed(pushService))
+            Schedule(new InjuriesJob(pushService))
                 .WithName("injuriesSeed")
                 .ToRunNow()
                 .AndEvery(10)
                 .Minutes();
 
-            Schedule(new PhotosSeed())
+            Schedule(new PhotosJob())
                 .WithName("photoSeed")
                 .ToRunEvery(1)
                 .Days()

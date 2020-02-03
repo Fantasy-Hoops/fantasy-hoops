@@ -1,25 +1,24 @@
-using fantasy_hoops.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
-using System.Collections;
-using System.Collections.Generic;
-using FluentScheduler;
-using Microsoft.EntityFrameworkCore;
+using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
-using fantasy_hoops.Services;
+using fantasy_hoops.Services.Interfaces;
+using FluentScheduler;
+using Newtonsoft.Json.Linq;
 
-namespace fantasy_hoops.Database
+namespace fantasy_hoops.Jobs
 {
-    public class Seed : IJob
+    public class RostersJob : IJob
     {
         private readonly GameContext _context;
         private readonly IPushService _pushService;
 
-        public Seed(IPushService pushService)
+        public RostersJob(IPushService pushService)
         {
             _context = new GameContext();
             _pushService = pushService;
@@ -281,7 +280,7 @@ namespace fantasy_hoops.Database
                                 Position = (string)player["primary_position"],
                                 NbaID = (int)player["reference"],
                                 Number = player["jersey_number"].ToString(),
-                                Price = PlayerSeed.PRICE_FLOOR,
+                                Price = PlayersJob.PRICE_FLOOR,
                                 FPPG = 0.0,
                                 PTS = 0.0,
                                 REB = 0.0,

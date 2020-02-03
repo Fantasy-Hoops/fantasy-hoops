@@ -8,7 +8,6 @@ self.addEventListener("install", function (event) {
   event.waitUntil(
     fetch(offlineRequest).then(function (response) {
       return caches.open("offline").then(function (cache) {
-        console.log("[oninstall] Cached offline page", response.url);
         return cache.put(offlineRequest, response);
       });
     })
@@ -17,12 +16,9 @@ self.addEventListener("install", function (event) {
 
 self.addEventListener("fetch", function (event) {
   var request = event.request;
-  if (request.method === "GET") {
+  if (request.method === "GET" && request.url === 'https://fantasyhoops.org/') {
     event.respondWith(
       fetch(request).catch(function (error) {
-        console.error(
-          "[onfetch] Failed. Serving cached offline fallback " + error
-        );
         return caches.open("offline").then(function (cache) {
           return cache.match("./offline.html");
         });

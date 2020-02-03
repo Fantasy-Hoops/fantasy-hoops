@@ -4,7 +4,9 @@ using fantasy_hoops.Database;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories;
+using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services;
+using fantasy_hoops.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace fantasy_hoops.Controllers

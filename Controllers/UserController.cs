@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 using fantasy_hoops.Services;
 using fantasy_hoops.Repositories;
+using fantasy_hoops.Repositories.Interfaces;
+using fantasy_hoops.Services.Interfaces;
 
 namespace fantasy_hoops.Controllers
 {

@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using fantasy_hoops.Jobs;
+using fantasy_hoops.Repositories.Interfaces;
+using fantasy_hoops.Services.Interfaces;
 
 namespace fantasy_hoops.Controllers
 {
@@ -40,7 +43,7 @@ namespace fantasy_hoops.Controllers
                 return StatusCode(422, "Lineup price exceeds the budget! Lineup was not submitted.");
             if (!_repository.ArePricesCorrect(model))
                 return StatusCode(422, "Wrong player prices! Lineup was not submitted.");
-            if (!PlayerSeed.PLAYER_POOL_DATE.Equals(Database.NextGame.NEXT_GAME))
+            if (!PlayersJob.PLAYER_POOL_DATE.Equals(NextGameJob.NEXT_GAME))
                 return StatusCode(500, "Player pool not updated! Try again in a moment.");
             if (_repository.AreNotPlayingPlayers(model))
                 return StatusCode(422, "Player pool is outdated! Refresh the page.");
@@ -55,9 +58,9 @@ namespace fantasy_hoops.Controllers
         {
             return Ok(new
             {
-                nextGame = Database.NextGame.NEXT_GAME_CLIENT,
+                nextGame = NextGameJob.NEXT_GAME_CLIENT,
                 serverTime = DateTime.Now,
-                playerPoolDate = PlayerSeed.PLAYER_POOL_DATE
+                playerPoolDate = PlayersJob.PLAYER_POOL_DATE
             });
         }
 

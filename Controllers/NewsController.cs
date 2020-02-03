@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using fantasy_hoops.Dtos;
+using fantasy_hoops.Repositories.Interfaces;
 
 namespace fantasy_hoops.Controllers
 {

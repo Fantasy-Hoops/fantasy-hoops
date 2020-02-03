@@ -11,6 +11,8 @@ using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories;
+using fantasy_hoops.Repositories.Interfaces;
+using fantasy_hoops.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

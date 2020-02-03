@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace fantasy_hoops.Repositories
+namespace fantasy_hoops.Repositories.Interfaces
 {
     public interface IInjuryRepository
     {

@@ -1,8 +1,8 @@
-﻿using fantasy_hoops.Models;
-using System;
+﻿using System;
 using System.Linq;
+using fantasy_hoops.Models;
 
-namespace fantasy_hoops.Repositories
+namespace fantasy_hoops.Repositories.Interfaces
 {
 
     enum RequestType

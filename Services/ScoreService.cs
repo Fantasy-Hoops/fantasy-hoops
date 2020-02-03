@@ -5,6 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using fantasy_hoops.Jobs;
+using fantasy_hoops.Repositories.Interfaces;
+using fantasy_hoops.Services.Interfaces;
 
 namespace fantasy_hoops.Services
 {
@@ -37,7 +40,7 @@ namespace fantasy_hoops.Services
         public int GetPrice(Player p)
         {
             if (!_repository.AnyPlayerStatsExists(p))
-                return PlayerSeed.PRICE_FLOOR;
+                return PlayersJob.PRICE_FLOOR;
 
             double GSavg = _repository.LastFiveAverage(p);
             return (int)((p.FPPG + GSavg) * 7 / 5);

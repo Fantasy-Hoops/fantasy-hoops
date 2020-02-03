@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
+using fantasy_hoops.Jobs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,8 +19,8 @@ namespace fantasy_hoops.Controllers
         {
             try
             {
-                Task.Run(() => new NewsSeed(NewsSeed.NewsType.RECAPS).Execute());
-                Task.Run(() => new NewsSeed(NewsSeed.NewsType.PREVIEWS).Execute());
+                Task.Run(() => new NewsJob(NewsJob.NewsType.RECAPS).Execute());
+                Task.Run(() => new NewsJob(NewsJob.NewsType.PREVIEWS).Execute());
             }
             catch
             {

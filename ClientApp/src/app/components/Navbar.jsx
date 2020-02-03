@@ -7,7 +7,6 @@ import { isAuth, parse } from '../utils/auth';
 import defaultPhoto from '../../content/images/default.png';
 import { Notifications } from './Notifications/Notifications';
 import { loadImage } from '../utils/loadImage';
-import { registerPush } from '../utils/push';
 import { logout } from '../utils/networkFunctions';
 import Routes from '../routes/routes';
 
@@ -19,7 +18,7 @@ export default class Navbar extends Component {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     $('#NavbarLogo').on('click', () => {
       $('.navbar-collapse').removeClass('show');
     });
@@ -28,7 +27,7 @@ export default class Navbar extends Component {
     });
     if (isAuth()) {
       this.setState({
-        avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${parse().avatarURL}.png`, defaultPhoto)
+        avatar: loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${parse().avatarURL}.png`, defaultPhoto)
       });
     }
   }
@@ -48,7 +47,6 @@ export default class Navbar extends Component {
     let profile = '';
     if (isAuth()) {
       const user = parse();
-      if (typeof Notification !== 'undefined' && Notification.permission !== 'denied') { registerPush(); }
       profile = (
         <ul className="nav navbar-nav ml-auto Header__LoggedIn">
           <Notifications />

@@ -4,6 +4,8 @@ using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using fantasy_hoops.Repositories.Interfaces;
+using fantasy_hoops.Services.Interfaces;
 
 namespace fantasy_hoops.Services
 {

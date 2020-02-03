@@ -1,18 +1,17 @@
-using System.Net;
-using System.Linq;
-using System.Threading.Tasks;
 using System;
-using Newtonsoft.Json.Linq;
-using fantasy_hoops.Models;
+using System.Linq;
+using System.Net;
+using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
-using fantasy_hoops.Services;
+using fantasy_hoops.Models;
+using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
+using Newtonsoft.Json.Linq;
 
-namespace fantasy_hoops.Database
+namespace fantasy_hoops.Jobs
 {
-	public class PlayerSeed : IJob
+	public class PlayersJob : IJob
     {
         private readonly GameContext _context;
         private readonly IScoreService _scoreService;
@@ -21,7 +20,7 @@ namespace fantasy_hoops.Database
         public static DateTime PLAYER_POOL_DATE = DateTime.UtcNow;
 		public static int PRICE_FLOOR = 10;
 
-        public PlayerSeed(IScoreService scoreService, bool updatePrice)
+        public PlayersJob(IScoreService scoreService, bool updatePrice)
         {
             _context = new GameContext();
             _scoreService = scoreService;
@@ -53,7 +52,7 @@ namespace fantasy_hoops.Database
                     player.Injury = _context.Injuries.Where(inj => inj.InjuryID == player.InjuryID).FirstOrDefault();
                 }
 
-                if ((player.Injury.Date.HasValue && player.Injury.Date.Value.AddDays(5) < NextGame.NEXT_GAME)
+                if ((player.Injury.Date.HasValue && player.Injury.Date.Value.AddDays(5) < NextGameJob.NEXT_GAME)
                     && (player.Injury.Status.ToLower().Contains("out")
                     || player.Injury.Status.ToLower().Contains("injured")))
                 {
@@ -66,7 +65,7 @@ namespace fantasy_hoops.Database
 
 		private string GetDate()
 		{
-			return CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).ToString("yyyyMMdd");
+			return CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).ToString("yyyyMMdd");
 		}
 
 		private double FPPG(Player p)
@@ -137,8 +136,8 @@ namespace fantasy_hoops.Database
             }
             _context.SaveChanges();
 
-            NextGame.NEXT_GAME_CLIENT = NextGame.NEXT_GAME;
-            PLAYER_POOL_DATE = NextGame.NEXT_GAME;
+            NextGameJob.NEXT_GAME_CLIENT = NextGameJob.NEXT_GAME;
+            PLAYER_POOL_DATE = NextGameJob.NEXT_GAME;
         }
     }
 }

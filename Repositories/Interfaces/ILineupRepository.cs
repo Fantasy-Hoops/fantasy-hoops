@@ -1,10 +1,9 @@
-﻿using fantasy_hoops.Models;
-using fantasy_hoops.Models.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using fantasy_hoops.Models;
+using fantasy_hoops.Models.ViewModels;
 
-namespace fantasy_hoops.Repositories
+namespace fantasy_hoops.Repositories.Interfaces
 {
     public interface ILineupRepository
     {

@@ -1,18 +1,17 @@
-using FluentScheduler;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Globalization;
 using System.Net;
 using System.Threading.Tasks;
+using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
-using System.Linq;
-using System.Threading;
+using fantasy_hoops.Services.Interfaces;
+using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
-using fantasy_hoops.Services;
+using Newtonsoft.Json.Linq;
 
-namespace fantasy_hoops.Database
+namespace fantasy_hoops.Jobs
 {
-    public class NextGame : IJob
+    public class NextGameJob : IJob
     {
         public static DateTime NEXT_GAME = DateTime.UtcNow;
         public static DateTime NEXT_GAME_CLIENT = DateTime.UtcNow;
@@ -28,7 +27,7 @@ namespace fantasy_hoops.Database
         private readonly IPushService _pushService;
         private readonly bool _updatePrice;
 
-        public NextGame(IScoreService scoreService, IPushService pushService, bool updatePrice = true)
+        public NextGameJob(IScoreService scoreService, IPushService pushService, bool updatePrice = true)
         {
             _context = new GameContext();
             _scoreService = scoreService;
@@ -130,7 +129,7 @@ namespace fantasy_hoops.Database
 
             if (offset < GAME_OFFSET)
             {
-                JobManager.AddJob(new NextGame(_scoreService, _pushService),
+                JobManager.AddJob(new NextGameJob(_scoreService, _pushService),
                     s => s.WithName(NEXT_GAME.ToLongDateString())
                         .ToRunOnceAt(NEXT_GAME));
 
@@ -145,7 +144,7 @@ namespace fantasy_hoops.Database
 
                     // Once per 2 days
                     if (CommonFunctions.UTCToEastern(NEXT_GAME).Day % 2 != 0)
-                        JobManager.AddJob(new Seed(_pushService),
+                        JobManager.AddJob(new RostersJob(_pushService),
                             s => s.WithName("seed")
                                 .ToRunOnceAt(NEXT_GAME.AddMinutes(-5)));
 
@@ -154,7 +153,7 @@ namespace fantasy_hoops.Database
                     DateTime previewsRuntime = PREVIOUS_LAST_GAME.AddHours(10);
                     if (DateTime.UtcNow > previewsRuntime)
                         previewsRuntime = NEXT_LAST_GAME.AddHours(10);
-                    JobManager.AddJob(new NewsSeed(NewsSeed.NewsType.PREVIEWS),
+                    JobManager.AddJob(new NewsJob(NewsJob.NewsType.PREVIEWS),
                         s => s.WithName("previews")
                             .ToRunOnceAt(previewsRuntime));
 
@@ -163,18 +162,18 @@ namespace fantasy_hoops.Database
                     DateTime recapsRuntime = PREVIOUS_LAST_GAME.AddHours(5);
                     if (DateTime.UtcNow > recapsRuntime)
                         recapsRuntime = NEXT_LAST_GAME.AddHours(5);
-                    JobManager.AddJob(new NewsSeed(NewsSeed.NewsType.RECAPS),
+                    JobManager.AddJob(new NewsJob(NewsJob.NewsType.RECAPS),
                         s => s.WithName("recaps")
                             .ToRunOnceAt(recapsRuntime));
                 }
 
-                JobManager.AddJob(new PlayerSeed(_scoreService, _updatePrice),
+                JobManager.AddJob(new PlayersJob(_scoreService, _updatePrice),
                     s => s.WithName("playerSeed")
                         .ToRunNow());
             }
             else
             {
-                JobManager.AddJob(new NextGame(_scoreService, _pushService),
+                JobManager.AddJob(new NextGameJob(_scoreService, _pushService),
                     s => s.WithName("nextGame")
                         .ToRunOnceIn(1)
                         .Hours());
@@ -182,8 +181,8 @@ namespace fantasy_hoops.Database
                 SetPlayersNotPlaying().Wait();
             }
 
-            if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION") ?? "false"))
-                JobManager.AddJob(new StatsSeed(_scoreService, _pushService),
+//            if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION") ?? "false"))
+                JobManager.AddJob(new UserScoreJob(_pushService),
                     s => s.WithName("statsSeed")
                         .ToRunNow());
         }

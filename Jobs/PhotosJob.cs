@@ -1,23 +1,23 @@
-﻿using System.Net;
+﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
-using System;
 using FluentScheduler;
-using System.Threading;
 using Microsoft.EntityFrameworkCore;
 
-namespace fantasy_hoops.Database
+namespace fantasy_hoops.Jobs
 {
-    public class PhotosSeed : IJob
+    public class PhotosJob : IJob
     {
         private readonly GameContext _context;
 
         const string photosDir = "./ClientApp/build/content/images/players/";
         const string logosDir = "./ClientApp/build/content/images/logos/";
 
-        public PhotosSeed()
+        public PhotosJob()
         {
             _context = new GameContext();
         }

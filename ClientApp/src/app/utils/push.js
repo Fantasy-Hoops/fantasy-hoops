@@ -23,7 +23,10 @@ export const subscribePush = registration => getPublicKey()
   .then(key => registration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: key
-  }));
+  }))
+  .then(function(subscription) {
+    return saveSubscription(subscription);
+  });
 
 export const saveSubscription = subscription => fetch(`./api/push/subscribe/${parse().id}`, {
   method: 'post',
@@ -49,9 +52,9 @@ export const deleteSubscription = subscription => fetch('./api/push/unsubscribe'
   })
 });
 
-export const unsubscribePush = () => this.getPushSubscription()
+export const unsubscribePush = () => getPushSubscription()
   .then(subscription => subscription.unsubscribe().then(() => {
-    deleteSubscription(subscription);
+    deleteSubscription(subscription)
   }));
 
 export const getPushSubscription = () => navigator.serviceWorker.ready
@@ -61,16 +64,9 @@ export const registerPush = () => navigator.serviceWorker.ready
   .then(registration => {
     if (registration.pushManager) {
       registration.pushManager.getSubscription().then((subscription) => {
-        if (subscription) {
-          // // renew subscription if we're within 5 days of expiration
-          if (subscription.expirationTime && Date.now() > subscription.expirationTime - 432000000) {
-            return unsubscribePush()
-              .then(() => subscribePush(registration)
-                .then(sub => sub));
-          }
-          return subscription;
+        if (!subscription) {
+          return subscribePush(registration);
         }
-        return subscribePush(registration);
       })
         .catch(err => console.log(err))
     }

@@ -4,7 +4,9 @@ using System.Linq;
 using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
+using fantasy_hoops.Jobs;
 using fantasy_hoops.Models;
+using fantasy_hoops.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace fantasy_hoops.Repositories
@@ -51,7 +53,7 @@ namespace fantasy_hoops.Repositories
                 x.Email,
                 x.Description,
                 x.FavoriteTeamId,
-                date = NextGame.NEXT_GAME,
+                date = NextGameJob.NEXT_GAME,
                 Team = new
                 {
                     Name = team.City + " " + team.Name,
@@ -178,8 +180,8 @@ namespace fantasy_hoops.Repositories
         {
             return _context.UserLineups
                     .Where(lineup => lineup.UserID.Equals(id)
-                    && ((lineup.Date.Date == CommonFunctions.UTCToEastern(NextGame.NEXT_GAME).Date)
-                        || lineup.Date.Date == CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date)
+                    && ((lineup.Date.Date == CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).Date)
+                        || lineup.Date.Date == CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date)
                     && !lineup.IsCalculated)
                     .Select(lineup => new UserLeaderboardRecordDto
                     {
@@ -211,7 +213,7 @@ namespace fantasy_hoops.Repositories
                             })
                             .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Position))
                             .ToList(),
-                        IsLive = lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date) && !lineup.IsCalculated
+                        IsLive = lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date) && !lineup.IsCalculated
                     })
                     .FirstOrDefault();
         }

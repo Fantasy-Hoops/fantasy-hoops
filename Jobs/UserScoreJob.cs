@@ -1,19 +1,18 @@
-using fantasy_hoops.Helpers;
-using fantasy_hoops.Models;
-using fantasy_hoops.Models.ViewModels;
-using fantasy_hoops.Services;
-using FluentScheduler;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebPush;
+using fantasy_hoops.Database;
+using fantasy_hoops.Helpers;
+using fantasy_hoops.Models;
+using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Services.Interfaces;
+using FluentScheduler;
+using Microsoft.EntityFrameworkCore;
 
-namespace fantasy_hoops.Database
+namespace fantasy_hoops.Jobs
 {
-    public class UserScoreSeed : IJob
+    public class UserScoreJob : IJob
     {
         private static readonly Stack<GameScorePushNotificationModel> _usersPlayed =
             new Stack<GameScorePushNotificationModel>();
@@ -21,7 +20,7 @@ namespace fantasy_hoops.Database
         private readonly GameContext _context;
         private readonly IPushService _pushService;
 
-        public UserScoreSeed(IPushService pushService)
+        public UserScoreJob(IPushService pushService)
         {
             _context = new GameContext();
             _pushService = pushService;
@@ -45,12 +44,12 @@ namespace fantasy_hoops.Database
         public void Execute()
         {
             var todayStats = _context.Stats
-                .Where(stats => stats.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date))
+                .Where(stats => stats.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date))
                 .Select(stats => new {stats.PlayerID, stats.FP});
 
             var allLineups = _context.UserLineups
                 .Include(lineup => lineup.User)
-                .Where(lineup => lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGame.PREVIOUS_GAME).Date) &&
+                .Where(lineup => lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date) &&
                                  !lineup.IsCalculated)
                 .Include(lineup => lineup.User)
                 .ToList();

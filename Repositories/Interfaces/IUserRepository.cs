@@ -1,10 +1,10 @@
-﻿using fantasy_hoops.Models;
-using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using fantasy_hoops.Models;
+using Microsoft.AspNetCore.Identity;
 
-namespace fantasy_hoops.Repositories
+namespace fantasy_hoops.Repositories.Interfaces
 {
     public interface IUserRepository
     {

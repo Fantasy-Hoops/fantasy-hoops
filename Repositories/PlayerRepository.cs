@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using fantasy_hoops.Database;
+using fantasy_hoops.Repositories.Interfaces;
 
 namespace fantasy_hoops.Repositories
 {
