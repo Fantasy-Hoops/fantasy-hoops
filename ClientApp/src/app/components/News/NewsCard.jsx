@@ -87,7 +87,23 @@ export class NewsCard extends PureComponent {
             id={this.props.news.id}
           />
           <div className="read-more-wrap" style={{ textAlign: 'justify' }}>
-            {paragraphs.slice(0, size)}
+              {paragraphs.slice(0, 1)}
+              {this.props.index === 0
+              ? <>
+                  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                  <ins className="adsbygoogle"
+                       style={{ display: 'block', textAlign: 'center' }}
+                       data-ad-layout="in-article"
+                       data-ad-format="fluid"
+                       data-ad-client="ca-pub-6391166063453559"
+                       data-ad-slot="5855491321">
+                  </ins>
+                  <script>
+                      (adsbygoogle = window.adsbygoogle || []).push({});
+                  </script>
+              </>
+              : ''}
+              {paragraphs.slice(1, size)}
 
             {!this.state.checked ? '' : ''}
             <span className="read-more-target">
