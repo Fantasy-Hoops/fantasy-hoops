@@ -18,7 +18,7 @@ export default class Navbar extends Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     $('#NavbarLogo').on('click', () => {
       $('.navbar-collapse').removeClass('show');
     });
@@ -27,7 +27,7 @@ export default class Navbar extends Component {
     });
     if (isAuth()) {
       this.setState({
-        avatar: loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${parse().avatarURL}.png`, defaultPhoto)
+        avatar: await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${parse().avatarURL}.png`, defaultPhoto)
       });
     }
   }
