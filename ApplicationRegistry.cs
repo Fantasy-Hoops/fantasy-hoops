@@ -13,23 +13,23 @@ namespace fantasy_hoops
         {
             if (context.Teams.Count() < 30)
                 Schedule(new RostersJob(pushService))
-                    .WithName("seed")
+                    .WithName("rosterJob")
                     .ToRunNow();
 
             Task.Run(() => RostersJob.UpdateTeamColors(new GameContext()));
 
             Schedule(new NextGameJob(scoreService, pushService, false))
-                .WithName("nextGame")
+                .WithName("nextGameJob")
                 .ToRunNow();
 
             Schedule(new InjuriesJob(pushService))
-                .WithName("injuriesSeed")
+                .WithName("injuriesJob")
                 .ToRunNow()
                 .AndEvery(10)
                 .Minutes();
 
             Schedule(new PhotosJob())
-                .WithName("photoSeed")
+                .WithName("photosJob")
                 .ToRunEvery(1)
                 .Days()
                 .At(00, 04);

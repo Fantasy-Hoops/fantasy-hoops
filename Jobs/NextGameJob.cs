@@ -145,7 +145,7 @@ namespace fantasy_hoops.Jobs
                     // Once per 2 days
                     if (CommonFunctions.UTCToEastern(NEXT_GAME).Day % 2 != 0)
                         JobManager.AddJob(new RostersJob(_pushService),
-                            s => s.WithName("seed")
+                            s => s.WithName("rostersJob")
                                 .ToRunOnceAt(NEXT_GAME.AddMinutes(-5)));
 
                     // 10 hours after previous last game if project ran before that time
@@ -168,22 +168,22 @@ namespace fantasy_hoops.Jobs
                 }
 
                 JobManager.AddJob(new PlayersJob(_scoreService, _updatePrice),
-                    s => s.WithName("playerSeed")
+                    s => s.WithName("playersJob")
                         .ToRunNow());
             }
             else
             {
                 JobManager.AddJob(new NextGameJob(_scoreService, _pushService),
-                    s => s.WithName("nextGame")
+                    s => s.WithName("nextGameJob")
                         .ToRunOnceIn(1)
                         .Hours());
                 offset = 0;
                 SetPlayersNotPlaying().Wait();
             }
 
-//            if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION") ?? "false"))
-                JobManager.AddJob(new UserScoreJob(_pushService),
-                    s => s.WithName("statsSeed")
+            if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION") ?? "false"))
+                JobManager.AddJob(new StatsJob(_scoreService, _pushService),
+                    s => s.WithName("statsJob")
                         .ToRunNow());
         }
     }
