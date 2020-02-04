@@ -108,7 +108,9 @@ namespace fantasy_hoops.Repositories
                     return _context.UserLineups
                         .Include(lineup => lineup.User)
                         .AsEnumerable()
-                        .Where(lineup => lineup.IsCalculated && CommonFunctions.GetIso8601WeekOfYear(lineup.Date) == week)
+                        .Where(lineup => lineup.IsCalculated
+                                         && CommonFunctions.GetIso8601WeekOfYear(lineup.Date) == week
+                                         && lineup.Date.Year == DateTime.Now.Year)
                         .GroupBy(lineup => lineup.UserID)
                         .Select(lineup => new UserLeaderboardRecordDto
                         {
@@ -218,7 +220,9 @@ namespace fantasy_hoops.Repositories
                         .SelectMany(user => user.UserLineups)
                         .Include(lineup => lineup.User)
                         .AsEnumerable()
-                        .Where(lineup => lineup.IsCalculated && CommonFunctions.GetIso8601WeekOfYear(lineup.Date) == week)
+                        .Where(lineup => lineup.IsCalculated
+                                         && CommonFunctions.GetIso8601WeekOfYear(lineup.Date) == week
+                                         && lineup.Date.Year == DateTime.Now.Year)
                         .GroupBy(lineup => lineup.UserID)
                         .Select(lineup => new UserLeaderboardRecordDto
                         {
