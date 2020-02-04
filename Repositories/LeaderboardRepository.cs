@@ -153,8 +153,9 @@ namespace fantasy_hoops.Repositories
                     : previousECT
                 : DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
 
-            User loggedInUser = _context.Users.FirstOrDefault(u => u.Id.Equals(id));
-            string loggedInUserId = loggedInUser != null ? loggedInUser.Id : "";
+            var loggedInUser = _context.Users.Where(u => u.Id.Equals(id));
+            User user = loggedInUser.FirstOrDefault();
+            string loggedInUserId = user != null ? user.Id : "";
 
             var friendsOnly = _context.FriendRequests
                 .Include(u => u.Sender)
@@ -163,7 +164,8 @@ namespace fantasy_hoops.Repositories
                 .Union(_context.FriendRequests
                         .Include(u => u.Receiver)
                         .Where(f => f.SenderID.Equals(loggedInUserId) && f.Status == RequestStatus.ACCEPTED)
-                        .Select(u => u.Receiver));
+                        .Select(u => u.Receiver))
+                .Concat(loggedInUser);
             switch (type)
             {
                 case "daily":

@@ -32,7 +32,7 @@ export class InfoPanel extends Component {
 
   getCurrentLineup() {
     const { user } = this.props;
-    const liveBadge = user.currentLineup && user.currentLineup.IsLive
+    const liveBadge = user.currentLineup && user.currentLineup.isLive
       ? <span className="ml-2 LiveBadge--pulse badge badge-danger" style={{ fontSize: '1.2rem' }}>LIVE</span>
       : null;
     return this.props.readOnly || !user.currentLineup
@@ -83,7 +83,7 @@ export class InfoPanel extends Component {
           ? (
             <div className="col-md-12">
               <h3 className="mt-2">
-                <span className="fa fa-history" />
+                <img width="20" src={require('../../../content/icons/history-clock-button.svg')}  alt/>
                 {' Recent Activity'}
               </h3>
               {activity}

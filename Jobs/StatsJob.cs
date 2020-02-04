@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
@@ -227,7 +228,7 @@ namespace fantasy_hoops.Jobs
 
             if (!isAnyGameStarted)
             {
-                JobManager.AddJob(new StatsJob(_scoreService, _pushService),
+                JobManager.AddJob(() => Task.Run(() => new StatsJob(_scoreService, _pushService).Execute()),
                     s => s.WithName("statsSeed")
                         .ToRunOnceIn(5).Minutes());
                 return;
@@ -236,7 +237,7 @@ namespace fantasy_hoops.Jobs
             if (!IsFinished(games))
             {
                 int minutesDelay = countOfActivatedGames == 0 ? 5 : 1;
-                JobManager.AddJob(new StatsJob(_scoreService, _pushService),
+                JobManager.AddJob(() => Task.Run(() => new StatsJob(_scoreService, _pushService).Execute()),
                     s => s.WithName("statsSeed")
                         .ToRunOnceIn(minutesDelay).Minutes());
             }
@@ -246,11 +247,11 @@ namespace fantasy_hoops.Jobs
                     .RemoveRange(_context.Stats.Where(stat => stat.Score.Contains("LIVE")));
                 _context.SaveChanges();
 
-                JobManager.AddJob(new UserScoreJob(_pushService),
+                JobManager.AddJob(() => Task.Run(() => new UserScoreJob(_pushService).Execute()),
                     s => s.WithName("userScore")
                         .ToRunNow());
 
-                JobManager.AddJob(new StatsJob(_scoreService, _pushService),
+                JobManager.AddJob(() => Task.Run(() => new StatsJob(_scoreService, _pushService).Execute()),
                     s => s.WithName("statsSeed")
                         .ToRunOnceAt(NextGameJob.NEXT_GAME.AddMinutes(5)));
             }

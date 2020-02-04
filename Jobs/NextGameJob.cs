@@ -182,9 +182,7 @@ namespace fantasy_hoops.Jobs
             }
 
             if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION") ?? "false"))
-                JobManager.AddJob(new StatsJob(_scoreService, _pushService),
-                    s => s.WithName("statsJob")
-                        .ToRunNow());
+                Task.Run(() => new StatsJob(_scoreService, _pushService).Execute());
         }
     }
 }
