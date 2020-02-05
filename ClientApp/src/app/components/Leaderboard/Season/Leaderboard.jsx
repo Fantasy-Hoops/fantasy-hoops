@@ -4,7 +4,7 @@ import shortid from 'shortid';
 import _ from 'lodash';
 import UserCard from '../Users/Card';
 import { Card as PlayerCard } from '../Players/Card';
-import leaderboardLogo from '../../../../content/images/leaderboard.png';
+import leaderboardLogo from '../../../../content/icons/1021175-winning/svg/006-winner-5.svg';
 import EmptyJordan from '../../EmptyJordan';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
 import { getSeasonLineupsLeaderboard, getSeasonPlayersLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';

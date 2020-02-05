@@ -126,15 +126,15 @@ export class UserProfile extends Component {
       <div className="col-lg-8 order-lg-2 mt-5 p-2">
         <ul className="nav nav-pills">
           <li className="nav-item">
-            <Link to="" data-target="#profile" data-toggle="tab" id="navLinkProfile" className="nav-link active tab-no-outline">Profile</Link>
+            <a href="#profile" data-target="#profile" data-toggle="tab" id="navLinkProfile" className="nav-link active tab-no-outline">Profile</a>
           </li>
           <li className="nav-item">
-            <Link to="" data-target="#friends" data-toggle="tab" id="navLinkFriends" className="nav-link tab-no-outline">Friends</Link>
+            <a href="#friends" data-target="#friends" data-toggle="tab" id="navLinkFriends" className="nav-link tab-no-outline">Friends</a>
           </li>
           {!readOnly
             && (
               <li className="nav-item">
-                <Link to="" data-target="#edit" data-toggle="tab" id="navLinkEdit" className="nav-link tab-no-outline">Edit</Link>
+                <a href="#edit" data-target="#edit" data-toggle="tab" id="navLinkEdit" className="nav-link tab-no-outline">Edit</a>
               </li>
             )
           }

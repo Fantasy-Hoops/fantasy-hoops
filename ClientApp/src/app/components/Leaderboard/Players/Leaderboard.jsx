@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import shortid from 'shortid';
 import _ from 'lodash';
 import { Card } from './Card';
-import leaderboardLogo from '../../../../content/images/leaderboard.png';
+import leaderboardLogo from '../../../../content/icons/1021175-winning/svg/006-winner-5.svg';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
 import EmptyJordan from '../../EmptyJordan';
 import { getPlayersLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';

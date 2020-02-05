@@ -15,10 +15,10 @@ export const Friends = (props) => {
         {loggedInAsSameUser && (
           <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li className="nav-item">
-              <Link className="nav-link active" id="pills-friends-tab" data-toggle="pill" to="#pills-friends" role="tab" aria-controls="pills-friends" aria-selected="true">My friends</Link>
+              <a className="nav-link active" id="pills-friends-tab" data-toggle="pill" href="#pills-friends" role="tab" aria-controls="pills-friends" aria-selected="true">My friends</a>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" id="pills-requests-tab" data-toggle="pill" to="#pills-requests" role="tab" aria-controls="pills-requests" aria-selected="false">Requests</Link>
+              <a className="nav-link" id="pills-requests-tab" data-toggle="pill" href="#pills-requests" role="tab" aria-controls="pills-requests" aria-selected="false">Requests</a>
             </li>
           </ul>
         )}

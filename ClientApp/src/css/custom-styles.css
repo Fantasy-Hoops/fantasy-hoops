@@ -568,6 +568,7 @@ a:hover {
   display: block;
   margin: auto;
   width: 100%;
+  margin-top: 3rem;
 }
 
 .btn-no-outline {
@@ -1447,7 +1448,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .PlayerModal {
   padding: 0;
   width: 120rem;
-  max-width: 93%;
+  max-width: 90vw;
 }
 
 .PlayerModal__PlayerName {

@@ -211,7 +211,7 @@ export class Lineup extends Component {
     };
 
     return (
-      <div className="container bg-light" style={{ width: '100%' }}>
+      <div className="container bg-light" style={{ marginTop: 0 }}>
         <Alert
           ref="alert"
           {...this.props}

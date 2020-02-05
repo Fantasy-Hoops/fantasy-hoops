@@ -8,7 +8,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 import { parse } from '../../../utils/auth';
 import Card from './Card';
-import leaderboardLogo from '../../../../content/images/leaderboard.png';
+import leaderboardLogo from '../../../../content/icons/1021175-winning/svg/006-winner-5.svg';
 import EmptyJordan from '../../EmptyJordan';
 import { PlayerModal } from '../../PlayerModal/PlayerModal';
 import { getUsersLeaderboard, getUserFriendsOnlyLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
