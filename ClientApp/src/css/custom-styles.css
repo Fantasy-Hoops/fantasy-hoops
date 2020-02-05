@@ -99,67 +99,6 @@ a:hover {
   padding: 1rem;
 }
 
-.Main__Background {
-  position: relative;
-  background-color: var(--primary-color);
-}
-
-.Main__TopPlayers {
-  z-index: 5;
-  position: absolute;
-  top: 55vh;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-@media screen and (min-width: 568px) {
-  .Main__TopPlayers {
-    top: 65vh;
-  }
-}
-
-.Main__TopPlayersHeading {
-  color: var(--grey-text);
-  font-weight: 700;
-}
-
-.A2HS-Button {
-  display: none;
-  position: absolute;
-  left: 1.6rem;
-  top: .5rem;
-  z-index: 5;
-}
-
-.Main__LogoContainer {
-  height: 35vh;
-  margin: 0 auto;
-  position: relative;
-}
-
-@media screen and (min-width: 568px) {
-  .Main__LogoContainer {
-    height: 55vh;
-  }
-}
-
-.Main__Logo {
-  margin: 0 auto;
-  height: 95%;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);  
-}
-
-.Main__PlayNowButton {
-  position: absolute;
-  bottom: -5rem;
-  left: 50%;
-  transform: translateX(-50%);  
-  transform: translateX(-50%);
-}
-
 #main-text {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
@@ -983,17 +922,6 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   height: 6rem;
 }
 
-.Main__TopPlayersCard {
-  width: 100%;
-  max-width: 50rem;
-  pointer-events: none;
-  height: 4.5rem;
-}
-
-.Main__TopPlayersCard--FP {
-  padding-top: 10rem !important;
-}
-
 .PlayerLeaderboardCard__body {
   height: 100%;
   padding: 0;
@@ -1439,85 +1367,6 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
     margin-bottom: 0px;
     margin-left: 12px;
   }
-}  
-
-#playerModal {
-  margin: 0;
-}
-
-.PlayerModal {
-  padding: 0;
-  width: 120rem;
-  max-width: 90vw;
-}
-
-.PlayerModal__PlayerName {
-  font-size: 3.5rem;
-  font-weight: 700;
-  opacity: .8;
-}
-
-.PlayerModal__image--background {
-  width: 21rem;
-  height: 20.2rem;
-}
-
-.PlayerModal #table-scroll  {
-  position: relative;
-  width:100%;
-  z-index: 1;
-  margin: auto;
-  overflow: auto;
-  height: 40vh;
-}
-.PlayerModal #table-scroll  table {
-  width: 100%;
-  margin: auto;
-  border-collapse: separate;
-  border-spacing: 0;
-}
-.PlayerModal .table-wrap {
-  position: relative;
-}
-.PlayerModal #table-scroll  th,
-.PlayerModal #table-scroll  td {
-  vertical-align: middle;
-  min-width: 40px;
-}
-.PlayerModal #table-scroll  thead th {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  background: var(--primary-color);
-}
-/* safari and ios need the tfoot itself to be position:sticky also */
-.PlayerModal #table-scroll  tfoot,
-.PlayerModal #table-scroll  tfoot th,
-.PlayerModal #table-scroll  tfoot td {
-  position: -webkit-sticky;
-  position: sticky;
-  bottom: 0;
-  z-index:4;
-}
-
-.PlayerModal #table-scroll th:first-child {
-  position: -webkit-sticky;
-  position: sticky;
-  left: 0;
-  z-index: 2;
-  background: var(--grey-background);
-  font-weight: 400;
-  text-align: left;
-}
-.PlayerModal #table-scroll thead th:first-child,
-.PlayerModal #table-scroll tfoot th:first-child {
-  z-index: 5;
-  min-width: 70px;
-  text-align: left;
-}
-
-.PlayerModal #table-scroll th:nth-last-child(1) {
-  min-width: 11rem;
 }
 
 .Charts {

@@ -13,35 +13,32 @@ export class Stats extends Component {
     const stats = this.props.stats;
     return (
       <div className="row">
-        <div className="PlayerModal__image--background"/>
-        <div className='position-absolute'>
-          <Img
-            className="img-modal pt-4 mb-2"
-            alt={stats.team.abbreviation}
-            src={[
-              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${stats.team.abbreviation}.svg`,
-              defaultLogo
-            ]}
-            loader={<img height='150px' src={require(`../../../content/images/imageLoader2.gif`)} alt="Loader" />}
-            decode={false}
-          />
-        </div>
-        <div className="position-absolute">
-          <Img
-            className="ml-3 img-modal mb-2"
-            style={{ zIndex: '1', paddingTop: '1.2rem' }}
-            alt={stats.fullName}
-            src={[
-              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${stats.nbaID}.png`,
-              require(`../../../content/images/positions/${stats.position.toLowerCase()}.png`)
-            ]}
-            loader={<img src={require(`../../../content/images/imageLoader2.gif`)} alt="Loader" />}
-          />
-        </div>
-        <div className="col">
-          <h1 className="PlayerModal__PlayerName overflow-hidden">{stats.fullName}</h1>
-          <h4>{stats.position} | {stats.team.city + " " + stats.team.name}</h4>
-          <h4>#{stats.number}</h4>
+          <div className="PlayerModal__image--background">
+              <Img
+                  className="PlayerModal__TeamLogoImage"
+                  alt={stats.team.abbreviation}
+                  src={[
+                      `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${stats.team.abbreviation}.svg`,
+                      defaultLogo
+                  ]}
+                  loader={<img height='10rem' src={require(`../../../content/images/imageLoader2.gif`)} alt="Loader" />}
+                  decode={false}
+              />
+              <Img
+                  className="PlayerModal__PlayerImage"
+                  alt={stats.fullName}
+                  src={[
+                      `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${stats.nbaID}.png`,
+                      require(`../../../content/images/positions/${stats.position.toLowerCase()}.png`)
+                  ]}
+                  loader={<img src={require(`../../../content/images/imageLoader2.gif`)} alt="Loader" />}
+              />
+              <h4 className="PlayerModal__PlayerNumber">#{stats.number}</h4>
+          </div>
+        <div className="PlayerModal__PlayerName col">
+          <div>{stats.firstName}</div>
+          <div>{stats.lastName}</div>
+          <div className="PlayerModal__PositionTeam"><strong>{stats.position}</strong> | {stats.team.city + " " + stats.team.name}</div>
         </div>
         <div className="table-responsive">
           <table className="table text-right" style={{ maxWidth: '60%' }}>

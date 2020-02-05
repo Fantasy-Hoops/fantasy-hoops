@@ -6,7 +6,9 @@ import $ from 'jquery';
 import Routes from '../routes/routes';
 import { Card } from './Leaderboard/Players/Card';
 import { getPlayersLeaderboard } from '../utils/networkFunctions';
-import {registerPush} from "../utils/push";
+import {registerPush} from '../utils/push';
+
+import './Main.css';
 
 export default class Main extends Component {
   constructor(props) {
@@ -106,22 +108,22 @@ export default class Main extends Component {
           <i className="far fa-bookmark" />
           {' Save'}
         </button>
-        {topPlayers}
-        <div className="Main__LogoContainer">
-          <img
+        <img
             className="Main__Logo"
             alt="Fantasy Hoops"
-            src={`${require('../../content/images/FH_Logo.png')}`}
-          />
+            src={`${require('../../content/logo/fh.svg')}`}
+        />
+        <div className="Main__PlayNowButton">
           <Link
-            id="PlayNowBtn"
-            to={Routes.LINEUP}
-            className="Main__PlayNowButton text-center btn btn-outline-success"
-            role="button"
+              id="PlayNowBtn"
+              to={Routes.LINEUP}
+              className="text-center btn btn-outline-success"
+              role="button"
           >
             {'Play Now!'}
           </Link>
         </div>
+        {topPlayers}
       </div>
     );
   }

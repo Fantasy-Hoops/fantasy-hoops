@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { Stats } from './Stats';
 import Gamelog from './Gamelog';
 import { Charts } from './Charts';
+
+import './PlayerModal.css';
 
 export class PlayerModal extends Component {
   constructor(props) {

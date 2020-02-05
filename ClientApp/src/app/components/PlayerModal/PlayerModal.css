@@ -1,0 +1,147 @@
+
+#playerModal {
+    margin: 0;
+}
+
+.PlayerModal {
+    margin-top: 4rem !important;
+    max-width: 90vw !important;
+    max-height: 80vh;
+}
+
+.PlayerModal__PlayerNumber {
+    position: absolute;
+    transform: translateY(-50%);
+    top: 60%;
+    right: 0;
+    font-weight: 700;
+    opacity: .3;
+    font-size: 2rem;
+}
+
+.PlayerModal__PlayerName {
+    font-size: 2rem;
+    line-height: 2.5rem;
+    font-weight: 700;
+    opacity: .8;
+    max-width: 45vw !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    align-self: flex-end;
+}
+
+.PlayerModal__image--background {
+    position: relative;
+    width: 12rem;
+    height: 10rem;
+}
+
+.PlayerModal #table-scroll  {
+    position: relative;
+    width:100%;
+    z-index: 1;
+    margin: auto;
+    overflow: auto;
+    height: 40vh;
+}
+.PlayerModal #table-scroll  table {
+    width: 100%;
+    margin: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.PlayerModal .table-wrap {
+    position: relative;
+}
+.PlayerModal #table-scroll  th,
+.PlayerModal #table-scroll  td {
+    vertical-align: middle;
+    min-width: 40px;
+}
+.PlayerModal #table-scroll  thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background: var(--primary-color);
+}
+/* safari and ios need the tfoot itself to be position:sticky also */
+.PlayerModal #table-scroll  tfoot,
+.PlayerModal #table-scroll  tfoot th,
+.PlayerModal #table-scroll  tfoot td {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    z-index:4;
+}
+
+.PlayerModal #table-scroll th:first-child {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--grey-background);
+    font-weight: 400;
+    text-align: left;
+}
+.PlayerModal #table-scroll thead th:first-child,
+.PlayerModal #table-scroll tfoot th:first-child {
+    z-index: 5;
+    min-width: 70px;
+    text-align: left;
+}
+
+.PlayerModal #table-scroll th:nth-last-child(1) {
+    min-width: 11rem;
+}
+
+.PlayerModal__TeamLogoImage {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 8rem;
+    z-index: 1;
+}
+
+.PlayerModal__PlayerImage {
+    position: absolute;
+    bottom: 0;
+    width: 12rem;
+    z-index: 2;
+}
+
+.PlayerModal__PositionTeam {
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 2.5rem;
+}
+
+@media screen and (min-width: 768px) {
+    .PlayerModal__image--background {
+        width: 20rem;
+        height: 18rem;
+    }
+    
+    .PlayerModal__TeamLogoImage {
+        width: 13rem;
+    }
+    
+    .PlayerModal__PlayerImage {
+        width: 20rem;
+    }
+
+    .PlayerModal__PlayerNumber {
+        top: 65%;
+        font-size: 3.5rem;
+    }
+    
+    .PlayerModal__PlayerName {
+        font-size: 4rem;
+        line-height: 4.5rem;
+    }
+
+    .PlayerModal__PositionTeam {
+        font-size: 1.8rem;
+        line-height: 4rem;
+    }
+}

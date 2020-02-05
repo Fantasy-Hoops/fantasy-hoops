@@ -1,0 +1,56 @@
+.Main__Background {
+    position: relative;
+    background-color: var(--primary-color);
+    height: 100%;
+}
+
+.Main__TopPlayers {
+    text-align: center;
+}
+
+@media screen and (min-width: 568px) {
+    .Main__TopPlayers {
+        top: 65vh;
+    }
+}
+
+.Main__TopPlayersHeading {
+    color: var(--grey-text);
+    font-weight: 700;
+}
+
+.A2HS-Button {
+    display: none;
+    position: absolute;
+    left: 1.6rem;
+    top: .5rem;
+    z-index: 5;
+}
+
+.Main__Logo {
+    display: block;
+    margin: 2rem auto;
+    width: 90vw;
+}
+
+@media screen and (min-width: 568px) {
+    .Main__Logo {
+        width: 50vw;
+    }
+}
+
+.Main__PlayNowButton {
+    margin: 4rem auto;
+    width: fit-content;
+}
+
+.Main__TopPlayersCard {
+    width: 100%;
+    max-width: 35rem !important;
+    pointer-events: none;
+    height: 4.5rem !important;
+}
+
+.Main__TopPlayersCard--FP {
+    padding-top: 10rem !important;
+}
