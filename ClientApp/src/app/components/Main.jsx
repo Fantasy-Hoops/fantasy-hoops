@@ -104,15 +104,17 @@ export default class Main extends Component {
       : null;
     return (
       <div className="Main__Background">
-        <button type="button" className="btn btn-outline-success A2HS-Button">
-          <i className="far fa-bookmark" />
-          {' Save'}
-        </button>
-        <img
-            className="Main__Logo"
-            alt="Fantasy Hoops"
-            src={`${require('../../content/logo/fh.svg')}`}
-        />
+        {/*<button type="button" className="btn btn-outline-success A2HS-Button">*/}
+        {/*  <i className="far fa-bookmark" />*/}
+        {/*  {' Save'}*/}
+        {/*</button>*/}
+        <div className="Main__Logo--placeholder">
+          <img
+              className="Main__Logo"
+              alt="Fantasy Hoops"
+              src={`${require('../../content/logo/fh.svg')}`}
+          />
+        </div>
         <div className="Main__PlayNowButton">
           <Link
               id="PlayNowBtn"

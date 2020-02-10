@@ -5,7 +5,8 @@
 
 .PlayerModal {
     margin-top: 4rem !important;
-    max-width: 90vw !important;
+    width: 90vw !important;
+    max-width: 100rem !important;
     max-height: 80vh;
 }
 
