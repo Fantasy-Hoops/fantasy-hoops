@@ -254,11 +254,6 @@ namespace fantasy_hoops.Jobs
                         {
                             dbPlayer.Number = player["jersey_number"].ToString();
                         }
-
-                        if (player["primary_position"] != null)
-                        {
-                            dbPlayer.Position = (string) player["primary_position"];
-                        }
                     }
                     else
                     {
