@@ -101,9 +101,9 @@ namespace fantasy_hoops.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(String id, int start = 0, int count = 5)
         {
-            var profile = _userRepository.GetProfile(id, start, count).FirstOrDefault();
+            var profile = _userRepository.GetProfile(id, start, count);
             if(profile == null)
-                return NotFound(String.Format("User with id {0} has not been found!", id));
+                return NotFound($"User with id {id} has not been found!");
             return Ok(profile);
         }
 
@@ -112,7 +112,7 @@ namespace fantasy_hoops.Controllers
         {
             User user = _userRepository.GetUserByName(name);
             if (user == null)
-                return NotFound(String.Format("User with name {0} has not been found!", name));
+                return NotFound($"User with name {name} has not been found!");
             return Get(user.Id, start, count);
         }
 

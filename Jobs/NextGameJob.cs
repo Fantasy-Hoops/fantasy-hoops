@@ -165,11 +165,11 @@ namespace fantasy_hoops.Jobs
                     JobManager.AddJob(new NewsJob(NewsJob.NewsType.RECAPS),
                         s => s.WithName("recaps")
                             .ToRunOnceAt(recapsRuntime));
-                }
 
-                JobManager.AddJob(new PlayersJob(_scoreService, _updatePrice),
-                    s => s.WithName("playersJob")
-                        .ToRunNow());
+                    JobManager.AddJob(new PlayersJob(_scoreService, _updatePrice),
+                        s => s.WithName("playersJob")
+                            .ToRunNow());
+                }
             }
             else
             {

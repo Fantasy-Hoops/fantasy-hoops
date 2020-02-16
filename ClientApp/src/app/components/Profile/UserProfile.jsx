@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { parse } from '../../utils/auth';
 import { Avatar } from './Avatar';
 import { EditProfile } from './EditProfile';
@@ -8,6 +7,7 @@ import { InfoPanel } from './InfoPanel';
 import { Friends } from './Friends/Friends';
 import { Error } from '../Error';
 import { getUserData, getUserDataByName } from '../../utils/networkFunctions';
+import Achievements from "../Achievements/Achievements";
 
 export class UserProfile extends Component {
   _isMounted = false;
@@ -134,14 +134,22 @@ export class UserProfile extends Component {
           {!readOnly
             && (
               <li className="nav-item">
-                <a href="#edit" data-target="#edit" data-toggle="tab" id="navLinkEdit" className="nav-link tab-no-outline">Edit</a>
+                <a href="#achievements" data-target="#achievements" data-toggle="tab" id="navLinkEdit" className="nav-link tab-no-outline">Achievements</a>
               </li>
             )
+          }
+          {!readOnly
+          && (
+              <li className="nav-item">
+                <a href="#edit" data-target="#edit" data-toggle="tab" id="navLinkEdit" className="nav-link tab-no-outline">Edit</a>
+              </li>
+          )
           }
         </ul>
         <div className="tab-content py-4">
           <InfoPanel user={user} readOnly={readOnly} />
           <Friends user={user} />
+          <Achievements />
           <EditProfile user={user} />
         </div>
       </div>

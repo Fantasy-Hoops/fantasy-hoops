@@ -13,6 +13,7 @@ const statsApiUrlBase = `${apiUrlBase}/stats`;
 const notificationsApiUrlBase = `${apiUrlBase}/notification`;
 const pushNotificationsApiUrlBase = `${apiUrlBase}/push`;
 const blogApiUrlBase = `${apiUrlBase}/blog`;
+const achievementsApiUrlBase = `${apiUrlBase}/achievements`;
 
 
 const createParameters = (parameters) => {
@@ -44,7 +45,7 @@ export const logout = () => {
 export const editProfile = data => axios.put(`${userApiUrlBase}/editProfile`, data);
 export const uploadAvatar = data => axios.post(`${userApiUrlBase}/uploadAvatar`, data);
 export const clearAvatar = data => axios.post(`${userApiUrlBase}/clearAvatar`, data);
-export const getUsers = () => axios.get(`${userApiUrlBase}`);
+export const getUsers = () => axios.get(userApiUrlBase);
 export const getUserData = (userId, parameters) => axios.get(`${userApiUrlBase}/${userId}${createParameters(parameters)}`);
 export const getUserDataByName = (userName, parameters) => axios.get(`${userApiUrlBase}/name/${userName}${createParameters(parameters)}`);
 export const getUserFriends = userId => axios.get(`${userApiUrlBase}/friends/${userId}`);
@@ -61,14 +62,14 @@ export const removeFriendRequest = data => axios.post(`${friendRequestApiUrlBase
 export const getInjuries = () => axios.get(`${apiUrlBase}/injuries`);
 
 // Players requests
-export const getPlayers = () => axios.get(`${playerApiUrlBase}`);
+export const getPlayers = () => axios.get(playerApiUrlBase);
 export const getPlayer = playerId => axios.get(`${playerApiUrlBase}/${playerId}`);
 
 // Team requests
 export const getTeams = () => axios.get(`${apiUrlBase}/team`);
 
 // Stats requests
-export const getStats = () => axios.get(`${statsApiUrlBase}`);
+export const getStats = () => axios.get(statsApiUrlBase);
 export const getPlayerStats = (playerId, parameters) => axios.get(`${statsApiUrlBase}/${playerId}${createParameters(parameters)}`);
 
 // Leaderboard requests
@@ -86,6 +87,8 @@ export const getNews = parameters => axios.get(`${apiUrlBase}/news${createParame
 export const getNextGameInfo = () => axios.get(`${lineupApiUrlBase}/nextGame`);
 export const getUserLineup = userId => axios.get(`${lineupApiUrlBase}/${userId}`);
 export const submitLineup = lineup => axios.post(`${lineupApiUrlBase}/submit`, lineup);
+export const getCurrentLineup = () => axios.get(`${lineupApiUrlBase}/current`);
+export const getRecentLineups = () => axios.get(`${lineupApiUrlBase}/recent`);
 
 // Notifications requests
 export const getUserNotifications = (userId, parameters) => axios.get(`${notificationsApiUrlBase}/${userId}${createParameters(parameters)}`);
@@ -97,8 +100,8 @@ export const sendPushNotification = (receiverId, notification) => axios.post(`${
 export const getPushPublicKey = () => axios.get(`${pushNotificationsApiUrlBase}/vapidpublickey`);
 
 // Blog requests
-export const submitPost = post => axios.post(`${blogApiUrlBase}`, post);
-export const getPosts = () => axios.get(`${blogApiUrlBase}`);
+export const submitPost = post => axios.post(blogApiUrlBase, post);
+export const getPosts = () => axios.get(blogApiUrlBase);
 export const deletePost = id => axios.delete(`${blogApiUrlBase}?id=${id}`);
 
 // Google auth
@@ -107,3 +110,6 @@ export const googleLogin = tokenId => axios.create({
   method: 'POST',
   headers: { Authorization: `Bearer ${tokenId}` }
 }).post();
+
+// Achievements
+export const getExistingAchievements = () => axios.get(achievementsApiUrlBase);

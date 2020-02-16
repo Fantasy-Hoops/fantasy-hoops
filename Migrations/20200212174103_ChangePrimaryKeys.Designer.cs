@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200212174103_ChangePrimaryKeys")]
+    partial class ChangePrimaryKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -152,7 +154,7 @@ namespace fantasy_hoops.Migrations
 
             modelBuilder.Entity("fantasy_hoops.Models.Achievements.Achievement", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("Aid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -178,17 +180,22 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("Aid");
 
                     b.ToTable("Achievements");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.Achievements.UserAchievement", b =>
                 {
-                    b.Property<string>("UserID")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Uaid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AchievementID")
+                    b.Property<int>("AID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AchievementAid")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsAchieved")
@@ -200,14 +207,19 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("LevelUpGoal")
                         .HasColumnType("int");
 
-                    b.Property<double>("Progress")
-                        .HasColumnType("float");
+                    b.Property<string>("UID")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserID", "AchievementID");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasIndex("AchievementID");
+                    b.HasKey("Uaid");
 
-                    b.ToTable("UserAchievements");
+                    b.HasIndex("AchievementAid");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserAchievement");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.FriendRequest", b =>
@@ -706,6 +718,9 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("Streak")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TeamID")
+                        .HasColumnType("int");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -715,8 +730,6 @@ namespace fantasy_hoops.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FavoriteTeamId");
-
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -724,6 +737,8 @@ namespace fantasy_hoops.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("TeamID");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -877,15 +892,11 @@ namespace fantasy_hoops.Migrations
                 {
                     b.HasOne("fantasy_hoops.Models.Achievements.Achievement", "Achievement")
                         .WithMany()
-                        .HasForeignKey("AchievementID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AchievementAid");
 
                     b.HasOne("fantasy_hoops.Models.User", "User")
                         .WithMany("Achievements")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.FriendRequest", b =>
@@ -999,11 +1010,9 @@ namespace fantasy_hoops.Migrations
 
             modelBuilder.Entity("fantasy_hoops.Models.User", b =>
                 {
-                    b.HasOne("fantasy_hoops.Models.Team", "FavoriteTeam")
-                        .WithMany()
-                        .HasForeignKey("FavoriteTeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("fantasy_hoops.Models.Team", "Team")
+                        .WithMany("Users")
+                        .HasForeignKey("TeamID");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.UserLineup", b =>

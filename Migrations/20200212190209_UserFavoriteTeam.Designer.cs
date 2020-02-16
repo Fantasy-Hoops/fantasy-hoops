@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200212190209_UserFavoriteTeam")]
+    partial class UserFavoriteTeam
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -706,6 +708,9 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("Streak")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TeamID")
+                        .HasColumnType("int");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -724,6 +729,8 @@ namespace fantasy_hoops.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("TeamID");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -1004,6 +1011,10 @@ namespace fantasy_hoops.Migrations
                         .HasForeignKey("FavoriteTeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("fantasy_hoops.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamID");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.UserLineup", b =>

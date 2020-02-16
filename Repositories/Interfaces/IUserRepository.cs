@@ -9,7 +9,7 @@ namespace fantasy_hoops.Repositories.Interfaces
     public interface IUserRepository
     {
 
-        IQueryable<Object> GetProfile(string id, int start = 0, int count = 0);
+        object GetProfile(string id, int start = 0, int count = 0);
         User GetUser(string id);
         User GetUserByName(string username);
         IQueryable<Object> GetFriends(string id);

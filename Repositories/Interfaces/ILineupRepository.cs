@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using fantasy_hoops.Dtos;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 
@@ -17,5 +18,7 @@ namespace fantasy_hoops.Repositories.Interfaces
         bool AreNotPlayingPlayers(SubmitLineupViewModel model);
         List<string> GetUserSelectedIds();
         List<User> UsersNotSelected();
+        UserLeaderboardRecordDto GetUserCurrentLineup(string userId);
+        List<UserLeaderboardRecordDto> GetRecentLineups(string userId, int start, int count);
     }
 }

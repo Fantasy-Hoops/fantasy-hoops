@@ -127,6 +127,7 @@ namespace fantasy_hoops
             services.AddScoped<IStatsRepository, StatsRepository>();
             services.AddScoped<ITeamRepository, TeamRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAchievementsRepository, AchievementsRepository>();
         }
 
         private void ConfigureAuth(IServiceCollection services)

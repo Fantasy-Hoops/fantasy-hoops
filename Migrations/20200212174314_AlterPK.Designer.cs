@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200212174314_AlterPK")]
+    partial class AlterPK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -200,14 +202,11 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("LevelUpGoal")
                         .HasColumnType("int");
 
-                    b.Property<double>("Progress")
-                        .HasColumnType("float");
-
                     b.HasKey("UserID", "AchievementID");
 
                     b.HasIndex("AchievementID");
 
-                    b.ToTable("UserAchievements");
+                    b.ToTable("UserAchievement");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.FriendRequest", b =>
@@ -706,6 +705,9 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("Streak")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TeamID")
+                        .HasColumnType("int");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -715,8 +717,6 @@ namespace fantasy_hoops.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FavoriteTeamId");
-
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -724,6 +724,8 @@ namespace fantasy_hoops.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("TeamID");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -999,11 +1001,9 @@ namespace fantasy_hoops.Migrations
 
             modelBuilder.Entity("fantasy_hoops.Models.User", b =>
                 {
-                    b.HasOne("fantasy_hoops.Models.Team", "FavoriteTeam")
-                        .WithMany()
-                        .HasForeignKey("FavoriteTeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("fantasy_hoops.Models.Team", "Team")
+                        .WithMany("Users")
+                        .HasForeignKey("TeamID");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.UserLineup", b =>

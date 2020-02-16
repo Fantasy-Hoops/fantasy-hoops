@@ -5,7 +5,9 @@ using fantasy_hoops.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using fantasy_hoops.Dtos;
 using fantasy_hoops.Jobs;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
@@ -18,19 +20,19 @@ namespace fantasy_hoops.Controllers
 
         public readonly int MAX_PRICE = 300;
 
-        private readonly ILineupService _service;
-        private readonly ILineupRepository _repository;
+        private readonly ILineupService _lineupService;
+        private readonly ILineupRepository _lineupRepository;
 
-        public LineupController(ILineupService service, ILineupRepository repository)
+        public LineupController(ILineupService lineupService, ILineupRepository lineupRepository)
         {
-            _service = service;
-            _repository = repository;
+            _lineupService = lineupService;
+            _lineupRepository = lineupRepository;
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(String id)
         {
-            return Ok(_repository.GetLineup(id));
+            return Ok(_lineupRepository.GetLineup(id));
         }
 
         [Authorize]
@@ -39,16 +41,16 @@ namespace fantasy_hoops.Controllers
         {
             string userId = User.Claims.ToList()[0].Value;
             model.UserID = userId;
-            if (_repository.GetLineupPrice(model) > MAX_PRICE)
+            if (_lineupRepository.GetLineupPrice(model) > MAX_PRICE)
                 return StatusCode(422, "Lineup price exceeds the budget! Lineup was not submitted.");
-            if (!_repository.ArePricesCorrect(model))
+            if (!_lineupRepository.ArePricesCorrect(model))
                 return StatusCode(422, "Wrong player prices! Lineup was not submitted.");
             if (!PlayersJob.PLAYER_POOL_DATE.Equals(NextGameJob.NEXT_GAME))
                 return StatusCode(500, "Player pool not updated! Try again in a moment.");
-            if (_repository.AreNotPlayingPlayers(model))
+            if (_lineupRepository.AreNotPlayingPlayers(model))
                 return StatusCode(422, "Player pool is outdated! Refresh the page.");
 
-            _service.SubmitLineup(model);
+            _lineupService.SubmitLineup(model);
 
             return Ok("Lineup was updated successfully");
         }
@@ -64,5 +66,20 @@ namespace fantasy_hoops.Controllers
             });
         }
 
+        [Authorize]
+        [HttpGet("current")]
+        public UserLeaderboardRecordDto GetUserCurrentLineup()
+        {
+            string userId = User.Claims.ToList()[0].Value;
+            return _lineupRepository.GetUserCurrentLineup(userId);
+        }
+
+        [Authorize]
+        [HttpGet("recent")]
+        public List<UserLeaderboardRecordDto> GetRecentLineups([FromQuery] int start = 0, [FromQuery] int count = 5)
+        {
+            string userId = User.Claims.ToList()[0].Value;
+            return _lineupRepository.GetRecentLineups(userId, start, count);
+        }
     }
 }

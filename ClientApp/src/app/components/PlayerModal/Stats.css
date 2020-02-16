@@ -1,0 +1,30 @@
+.Stats__TableCell {
+  width: 5rem;
+  padding: .5rem !important;
+}
+
+.Stats__TableCell--first {
+  position: relative;
+  background-color: white;
+}
+
+.Stats__TableCell--label {
+  font-weight: 400;
+  font-size: 1.2rem;
+}
+
+.Stats__TableCell--value {
+  font-weight: 700;
+  font-size: 2rem;
+  opacity: .8;
+}
+
+@media screen and (min-width: 768px) {
+  .Stats__TableCell--label {
+    font-size: 1.6rem;
+  }
+
+  .Stats__TableCell--value {
+    font-size: 3rem;
+  }
+}

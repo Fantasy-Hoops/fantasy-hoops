@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Img from 'react-image';
 import defaultLogo from '../../../content/images/defaultLogo.png';
 
+import './Stats.css';
+
 export class Stats extends Component {
   constructor(props) {
     super(props);
@@ -44,13 +46,34 @@ export class Stats extends Component {
           <table className="table text-right" style={{ maxWidth: '60%' }}>
             <thead>
               <tr>
-                <th scope="col" style={{ position: 'relative', backgroundColor: 'white', width: '5rem' }}><h4>FPPG</h4><h1>{stats.fppg.toFixed(1)}</h1></th>
-                <th scope="col" style={{ width: '5rem' }}><h4>PTS</h4><h1>{stats.pts}</h1></th>
-                <th scope="col" style={{ width: '5rem' }}><h4>REB</h4><h1>{stats.reb}</h1></th>
-                <th scope="col" style={{ width: '5rem' }}><h4>AST</h4><h1>{stats.ast}</h1></th>
-                <th scope="col" style={{ width: '5rem' }}><h4>STL</h4><h1>{stats.stl}</h1></th>
-                <th scope="col" style={{ width: '5rem' }}><h4>BLK</h4><h1>{stats.blk}</h1></th>
-                <th scope="col" style={{ width: '5rem' }}><h4>TOV</h4><h1>{stats.tov}</h1></th>
+                <th scope="col" className="Stats__TableCell Stats__TableCell--first">
+                    <div className="Stats__TableCell--label">FPPG</div>
+                    <div className="Stats__TableCell--value">{stats.fppg.toFixed(1)}</div>
+                </th>
+                <th scope="col" className="Stats__TableCell">
+                    <div className="Stats__TableCell--label">PTS</div>
+                    <div className="Stats__TableCell--value">{stats.pts}</div>
+                </th>
+                <th scope="col" className="Stats__TableCell">
+                    <div className="Stats__TableCell--label">REB</div>
+                    <div className="Stats__TableCell--value">{stats.reb}</div>
+                </th>
+                <th scope="col" className="Stats__TableCell">
+                    <div className="Stats__TableCell--label">AST</div>
+                    <div className="Stats__TableCell--value">{stats.ast}</div>
+                </th>
+                <th scope="col" className="Stats__TableCell">
+                    <div className="Stats__TableCell--label">STL</div>
+                    <div className="Stats__TableCell--value">{stats.stl}</div>
+                </th>
+                <th scope="col" className="Stats__TableCell">
+                    <div className="Stats__TableCell--label">BLK</div>
+                    <div className="Stats__TableCell--value">{stats.blk}</div>
+                </th>
+                <th scope="col" className="Stats__TableCell">
+                    <div className="Stats__TableCell--label">TOV</div>
+                    <div className="Stats__TableCell--value">{stats.tov}</div>
+                </th>
               </tr>
             </thead>
           </table>

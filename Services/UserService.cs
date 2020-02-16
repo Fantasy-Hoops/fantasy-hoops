@@ -89,7 +89,7 @@ namespace fantasy_hoops.Services
                 new Claim("username", user.UserName),
                 new Claim("email", user.Email),
                 new Claim("description", user.Description ??""),
-                new Claim("team", user.Team != null ? user.Team.Name : ""),
+                new Claim("team", user.FavoriteTeam != null ? user.FavoriteTeam.Name : ""),
                 new Claim("isAdmin", isAdmin.ToString(), ClaimValueTypes.Boolean),
                 new Claim("avatarURL", user.AvatarURL ?? "null"),
                 new Claim("isSocialAccount", user.IsSocialAccount.ToString(), ClaimValueTypes.Boolean)

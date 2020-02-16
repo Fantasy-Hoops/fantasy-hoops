@@ -1,4 +1,5 @@
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Models.Notifications;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ namespace fantasy_hoops.Database
         public DbSet<FriendRequestNotification> FriendRequestNotifications { get; set; }
         public DbSet<PushSubscription> PushSubscriptions { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Achievement> Achievements { get; set; }
+        public DbSet<UserAchievement> UserAchievements { get; set; }
 
         public GameContext()
         {
@@ -42,6 +45,9 @@ namespace fantasy_hoops.Database
                 .HasOne(player => player.Injury)
                 .WithOne(injury => injury.Player)
                 .HasForeignKey<Injury>(injury => injury.PlayerID);
+            
+            builder.Entity<UserAchievement>()
+                .HasKey(userAchievement => new { userAchievement.UserID, userAchievement.AchievementID });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
