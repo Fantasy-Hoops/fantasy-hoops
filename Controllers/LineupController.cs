@@ -18,7 +18,7 @@ namespace fantasy_hoops.Controllers
     public class LineupController : Controller
     {
 
-        public readonly int MAX_PRICE = 300;
+        public static readonly int MAX_PRICE = 300;
 
         private readonly ILineupService _lineupService;
         private readonly ILineupRepository _lineupRepository;

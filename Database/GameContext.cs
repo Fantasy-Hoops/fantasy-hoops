@@ -26,6 +26,8 @@ namespace fantasy_hoops.Database
         public DbSet<Post> Posts { get; set; }
         public DbSet<Achievement> Achievements { get; set; }
         public DbSet<UserAchievement> UserAchievements { get; set; }
+        public DbSet<BestLineup> BestLineups { get; set; }
+        public DbSet<PlayersBestLineups> PlayersBestLineups { get; set; }
 
         public GameContext()
         {
@@ -45,6 +47,19 @@ namespace fantasy_hoops.Database
                 .HasOne(player => player.Injury)
                 .WithOne(injury => injury.Player)
                 .HasForeignKey<Injury>(injury => injury.PlayerID);
+
+            builder.Entity<PlayersBestLineups>()
+                .HasKey(playerLineups => new {playerLineups.PlayerID, playerLineups.BestLineupID});
+            
+            builder.Entity<PlayersBestLineups>()
+                .HasOne(x => x.Player)
+                .WithMany(x => x.BestLineups)
+                .HasForeignKey(x => x.PlayerID);
+            
+            builder.Entity<PlayersBestLineups>()
+                .HasOne(x => x.BestLineup)
+                .WithMany(x => x.Lineup)
+                .HasForeignKey(x => x.BestLineupID);
             
             builder.Entity<UserAchievement>()
                 .HasKey(userAchievement => new { userAchievement.UserID, userAchievement.AchievementID });

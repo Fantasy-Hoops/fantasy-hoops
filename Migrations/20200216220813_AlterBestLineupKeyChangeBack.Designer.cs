@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200216220813_AlterBestLineupKeyChangeBack")]
+    partial class AlterBestLineupKeyChangeBack
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,8 +222,8 @@ namespace fantasy_hoops.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("Date");
 
-                    b.Property<int>("LineupPrice")
-                        .HasColumnType("int");
+                    b.Property<double>("LineupPrice")
+                        .HasColumnType("float");
 
                     b.Property<double>("TotalFP")
                         .HasColumnType("float");

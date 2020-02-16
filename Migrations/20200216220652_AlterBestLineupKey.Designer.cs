@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200216220652_AlterBestLineupKey")]
+    partial class AlterBestLineupKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -212,7 +214,7 @@ namespace fantasy_hoops.Migrations
 
             modelBuilder.Entity("fantasy_hoops.Models.BestLineup", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("BID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -220,13 +222,13 @@ namespace fantasy_hoops.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("Date");
 
-                    b.Property<int>("LineupPrice")
-                        .HasColumnType("int");
+                    b.Property<double>("LineupPrice")
+                        .HasColumnType("float");
 
                     b.Property<double>("TotalFP")
                         .HasColumnType("float");
 
-                    b.HasKey("Id");
+                    b.HasKey("BID");
 
                     b.ToTable("BestLineups");
                 });
@@ -485,7 +487,7 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("PlayerID")
                         .HasColumnType("int");
 
-                    b.Property<int>("BestLineupID")
+                    b.Property<int>("BID")
                         .HasColumnType("int");
 
                     b.Property<double>("FP")
@@ -494,9 +496,9 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
-                    b.HasKey("PlayerID", "BestLineupID");
+                    b.HasKey("PlayerID", "BID");
 
-                    b.HasIndex("BestLineupID");
+                    b.HasIndex("BID");
 
                     b.ToTable("PlayersBestLineups");
                 });
@@ -1009,7 +1011,7 @@ namespace fantasy_hoops.Migrations
                 {
                     b.HasOne("fantasy_hoops.Models.BestLineup", "BestLineup")
                         .WithMany("Lineup")
-                        .HasForeignKey("BestLineupID")
+                        .HasForeignKey("BID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

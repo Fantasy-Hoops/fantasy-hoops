@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using fantasy_hoops.Database;
+﻿using System.Threading.Tasks;
 using fantasy_hoops.Jobs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +9,6 @@ namespace fantasy_hoops.Controllers
     [ApiController]
     public class JobController : ControllerBase
     {
-        // GET: api/Job
         [HttpGet("news")]
         public IActionResult StartJobs()
         {
@@ -26,33 +21,8 @@ namespace fantasy_hoops.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
+            
             return Ok("News job started successfully.");
-        }
-
-        // GET: api/Job/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST: api/Job
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT: api/Job/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

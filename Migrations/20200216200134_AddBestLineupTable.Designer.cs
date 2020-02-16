@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200216200134_AddBestLineupTable")]
+    partial class AddBestLineupTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,22 +215,50 @@ namespace fantasy_hoops.Migrations
             modelBuilder.Entity("fantasy_hoops.Models.BestLineup", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("Date");
 
-                    b.Property<int>("LineupPrice")
+                    b.Property<double>("CFP")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CPrice")
+                        .HasColumnType("int");
+
+                    b.Property<double>("LineupPrice")
+                        .HasColumnType("float");
+
+                    b.Property<double>("PfFP")
+                        .HasColumnType("float");
+
+                    b.Property<int>("PfPrice")
+                        .HasColumnType("int");
+
+                    b.Property<double>("PgFP")
+                        .HasColumnType("float");
+
+                    b.Property<int>("PgPrice")
+                        .HasColumnType("int");
+
+                    b.Property<double>("SfFP")
+                        .HasColumnType("float");
+
+                    b.Property<int>("SfPrice")
+                        .HasColumnType("int");
+
+                    b.Property<double>("SgFP")
+                        .HasColumnType("float");
+
+                    b.Property<int>("SgPrice")
                         .HasColumnType("int");
 
                     b.Property<double>("TotalFP")
                         .HasColumnType("float");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id", "Date");
 
-                    b.ToTable("BestLineups");
+                    b.ToTable("BestLineup");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.FriendRequest", b =>
@@ -422,6 +452,12 @@ namespace fantasy_hoops.Migrations
                     b.Property<double>("BLK")
                         .HasColumnType("float");
 
+                    b.Property<DateTime?>("BestLineupDate")
+                        .HasColumnType("Date");
+
+                    b.Property<int?>("BestLineupId")
+                        .HasColumnType("int");
+
                     b.Property<double>("FPPG")
                         .HasColumnType("float");
 
@@ -477,28 +513,9 @@ namespace fantasy_hoops.Migrations
 
                     b.HasIndex("TeamID");
 
+                    b.HasIndex("BestLineupId", "BestLineupDate");
+
                     b.ToTable("Players");
-                });
-
-            modelBuilder.Entity("fantasy_hoops.Models.PlayersBestLineups", b =>
-                {
-                    b.Property<int>("PlayerID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BestLineupID")
-                        .HasColumnType("int");
-
-                    b.Property<double>("FP")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
-
-                    b.HasKey("PlayerID", "BestLineupID");
-
-                    b.HasIndex("BestLineupID");
-
-                    b.ToTable("PlayersBestLineups");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.Post", b =>
@@ -1003,21 +1020,10 @@ namespace fantasy_hoops.Migrations
                         .HasForeignKey("TeamID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
 
-            modelBuilder.Entity("fantasy_hoops.Models.PlayersBestLineups", b =>
-                {
-                    b.HasOne("fantasy_hoops.Models.BestLineup", "BestLineup")
+                    b.HasOne("fantasy_hoops.Models.BestLineup", null)
                         .WithMany("Lineup")
-                        .HasForeignKey("BestLineupID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("fantasy_hoops.Models.Player", "Player")
-                        .WithMany("BestLineups")
-                        .HasForeignKey("PlayerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BestLineupId", "BestLineupDate");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.Post", b =>

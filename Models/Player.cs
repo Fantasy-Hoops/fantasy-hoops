@@ -33,5 +33,6 @@ namespace fantasy_hoops.Models
         public int InjuryID { get; set; }
         public virtual Injury Injury { get; set; }
         public virtual ICollection<Stats> Stats { get; set; }
+        public virtual IEnumerable<PlayersBestLineups> BestLineups { get; set; }
     }
 }

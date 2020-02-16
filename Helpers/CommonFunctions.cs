@@ -140,15 +140,16 @@ namespace fantasy_hoops.Helpers
 
         public static Team GetUnknownTeam(GameContext _context)
         {
-            return _context.Teams.Where(t => t.NbaID == 0).FirstOrDefault();
+            return _context.Teams.FirstOrDefault(t => t.NbaID == 0);
         }
-        public async static Task<string> GetImageAsBase64Url(string url)
+        
+        public static async Task<string> GetImageAsBase64Url(string url)
         {
-            using (var client = new HttpClient())
-            {
-                var bytes = await client.GetByteArrayAsync(url);
-                return "image/jpeg;base64,     " + Convert.ToBase64String(bytes);
-            }
+	        using var client = new HttpClient();
+	        var bytes = await client.GetByteArrayAsync(url);
+	        return "image/jpeg;base64,     " + Convert.ToBase64String(bytes);
         }
+        
+        
     }
 }
