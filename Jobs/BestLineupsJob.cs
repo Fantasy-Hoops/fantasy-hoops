@@ -14,6 +14,7 @@ namespace fantasy_hoops.Jobs
     public class BestLineupsJob : IJob
     {
         private GameContext _context;
+        private DateTime date = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME.Date);
         
         public BestLineupsJob()
         {
@@ -55,13 +56,13 @@ namespace fantasy_hoops.Jobs
                     .AsEnumerable()
                     .FirstOrDefault(x => Math.Round(x.TotalFP, 1).Equals(Math.Round(lineup.FP, 1))
                                          && x.LineupPrice == lineup.TotalPrice
-                                         && x.Date.Equals(NextGameJob.PREVIOUS_GAME.Date)
+                                         && x.Date.Equals(date)
                                          && x.playerIds.All(players.Contains));
                 if (bestLineup == null)
                 {
                     _context.BestLineups.Add(new BestLineup
                     {
-                        Date = NextGameJob.PREVIOUS_GAME.Date,
+                        Date = date,
                         Lineup = lineup.Players,
                         TotalFP = Math.Round(lineup.FP, 1),
                         LineupPrice = lineup.TotalPrice
@@ -76,7 +77,7 @@ namespace fantasy_hoops.Jobs
             return _context.Stats
                 .Include(stats => stats.Player)
                 .ThenInclude(player => player.Team)
-                .Where(stats => stats.Date.Date.Equals(NextGameJob.PREVIOUS_GAME.Date))
+                .Where(stats => stats.Date.Date.Equals(date))
                 .Select(stats => new LineupPlayerDto
                 {
                     Player = stats.Player,

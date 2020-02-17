@@ -170,6 +170,11 @@ namespace fantasy_hoops.Jobs
                         s => s.WithName("playersJob")
                             .ToRunNow());
                 }
+                else
+                {
+                    NEXT_GAME_CLIENT = NEXT_GAME;
+                    PlayersJob.PLAYER_POOL_DATE = NEXT_GAME;
+                }
             }
             else
             {
