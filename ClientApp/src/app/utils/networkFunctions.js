@@ -88,7 +88,7 @@ export const getNextGameInfo = () => axios.get(`${lineupApiUrlBase}/nextGame`);
 export const getUserLineup = userId => axios.get(`${lineupApiUrlBase}/${userId}`);
 export const submitLineup = lineup => axios.post(`${lineupApiUrlBase}/submit`, lineup);
 export const getCurrentLineup = () => axios.get(`${lineupApiUrlBase}/current`);
-export const getRecentLineups = () => axios.get(`${lineupApiUrlBase}/recent`);
+export const getRecentLineups = (userId, parameters) => axios.get(`${lineupApiUrlBase}/recent/${userId}${createParameters(parameters)}`);
 
 // Notifications requests
 export const getUserNotifications = (userId, parameters) => axios.get(`${notificationsApiUrlBase}/${userId}${createParameters(parameters)}`);

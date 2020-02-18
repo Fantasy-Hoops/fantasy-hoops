@@ -23,10 +23,12 @@ export class InfoPanel extends Component {
   }
 
   async componentDidMount() {
+    const { user } = this.props;
+    
     const currentLineup = await getCurrentLineup()
         .then(response => response.data)
         .catch(error => console.error(error.message));
-    const recentLineups = await getRecentLineups()
+    const recentLineups = await getRecentLineups(user.id)
         .then(response => response.data)
         .catch(error => console.error(error.message));
     this.setState({ currentLineup, recentLineups });

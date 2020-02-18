@@ -75,10 +75,14 @@ namespace fantasy_hoops.Controllers
         }
 
         [Authorize]
-        [HttpGet("recent")]
-        public List<UserLeaderboardRecordDto> GetRecentLineups([FromQuery] int start = 0, [FromQuery] int count = 5)
+        [HttpGet("recent/{userId}")]
+        public List<UserLeaderboardRecordDto> GetRecentLineups([FromRoute] string userId, [FromQuery] int start = 0, [FromQuery] int count = 5)
         {
-            string userId = User.Claims.ToList()[0].Value;
+            if (userId == null)
+            {
+                userId = User.Claims.ToList()[0].Value;
+            }
+            
             return _lineupRepository.GetRecentLineups(userId, start, count);
         }
     }

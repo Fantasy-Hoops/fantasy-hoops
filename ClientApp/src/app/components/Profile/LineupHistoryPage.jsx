@@ -4,8 +4,7 @@ import _ from 'lodash';
 import { UserScore } from './UserScore';
 import { PlayerModal } from '../PlayerModal/PlayerModal';
 import { parse } from '../../utils/auth';
-import { getPlayerStats } from '../../utils/networkFunctions';
-import { getUserData } from '../../utils/networkFunctions';
+import {getPlayerStats, getRecentLineups} from '../../utils/networkFunctions';
 
 const { $ } = window;
 const user = parse();
@@ -37,10 +36,10 @@ export class LineupHistory extends Component {
   }
 
   async componentDidMount() {
-    await getUserData(user.id, { count: 10 })
+    await getRecentLineups(user.id, { count: 10 })
       .then((res) => {
         this.setState({
-          recentActivity: res.data.recentActivity,
+          recentActivity: res.data,
           loader: false,
           readOnly: false
         });
@@ -64,10 +63,10 @@ export class LineupHistory extends Component {
       loadCounter: this.state.loadCounter + 1,
       loader: true
     });
-    await getUserData(user.id, { start: this.state.recentActivity.length, count: LOAD_COUNT })
+    await getRecentLineups(user.id, { start: this.state.recentActivity.length, count: LOAD_COUNT })
       .then((res) => {
         this.setState({
-          recentActivity: this.state.recentActivity.concat(res.data.recentActivity),
+          recentActivity: this.state.recentActivity.concat(res.data),
           loader: false
         });
       });
