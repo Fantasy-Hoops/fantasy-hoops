@@ -179,7 +179,7 @@ namespace fantasy_hoops.Jobs
                 }
             }
             _context.SaveChanges();
-            Task.Run(() => SendPushNotifications());
+            Task.Run(SendPushNotifications);
         }
     }
 }
