@@ -1,9 +1,11 @@
+using System;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Models.Notifications;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace fantasy_hoops.Database
 {
@@ -73,6 +75,8 @@ namespace fantasy_hoops.Database
                     .AddJsonFile("appsettings.json",
                              optional: false,
                              reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{Environments.Development}.json", optional: true)
+                    .AddJsonFile($"appsettings.{Environments.Production}.json", optional: true)
                     .AddEnvironmentVariables()
                    .Build();
                 string connectionString = configuration.GetConnectionString("DefaultConnection");

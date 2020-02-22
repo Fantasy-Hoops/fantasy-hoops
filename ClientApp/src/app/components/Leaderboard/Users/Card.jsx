@@ -8,7 +8,7 @@ import defaultPhoto from '../../../../content/images/default.png';
 import { loadImage } from '../../../utils/loadImage';
 import Routes from '../../../routes/routes';
 
-export default class Card extends PureComponent {
+export class Card extends PureComponent {
   _isMounted = false;
 
   constructor(props) {
@@ -51,9 +51,11 @@ export default class Card extends PureComponent {
   }
 
   render() {
+    const { className } = this.props;
+    
     if (this.props.isDaily) {
       return (
-        <div className="UserLeaderboardCard UserLeaderboardCard--daily card bg-white rounded">
+        <div className={`UserLeaderboardCard UserLeaderboardCard--daily card bg-white rounded ${className}`}>
           <div className="UserLeaderboardCard__body--daily card-body">
             <div className="UserLeaderboardCard__body-item UserLeaderboardCard__user-ranking UserLeaderboardCard__user-ranking--daily">
               {this.props.index + 1}
@@ -84,7 +86,7 @@ export default class Card extends PureComponent {
     }
 
     return (
-      <div className="UserLeaderboardCard card bg-white rounded">
+      <div className={`UserLeaderboardCard card bg-white rounded ${className}`}>
         <div className="UserLeaderboardCard__body card-body">
           <div className="UserLeaderboardCard__body-item UserLeaderboardCard__user-ranking">
             {this.props.index + 1}
@@ -109,3 +111,5 @@ export default class Card extends PureComponent {
     );
   }
 }
+
+export default Card;

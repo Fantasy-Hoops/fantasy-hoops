@@ -42,6 +42,7 @@ namespace fantasy_hoops
                 .AddJsonFile("appsettings.json",
                              optional: false,
                              reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
             Configuration = builder.Build();
@@ -200,7 +201,6 @@ namespace fantasy_hoops
 
             app.UseRouting();
 
-            app.UseHttpsRedirection();
             app.UseSpaStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();

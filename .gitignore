@@ -270,3 +270,5 @@ Desktop.ini
 .DS_Store
 
 .idea/config/applicationhost.config
+
+appsettings.Development.json
