@@ -29,6 +29,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators(actionCreators, dispatch);
 
 function InjuriesFeedContainer(props) {
+    let content;
     const {injuries, injuryLoader, loadInjuries} = props;
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
@@ -39,6 +40,7 @@ function InjuriesFeedContainer(props) {
     const handleClose = () => {
         setOpen(false);
     };
+
     function transition() {
         if (this.classList.contains('active')) {
             this.lastChild.classList.add('overflow-hidden');
@@ -55,6 +57,7 @@ function InjuriesFeedContainer(props) {
         async function handleLoadInjuries() {
             await loadInjuries();
         }
+
         handleLoadInjuries();
     }, []);
 
@@ -65,15 +68,14 @@ function InjuriesFeedContainer(props) {
     });
 
     if (injuryLoader) {
-        return (
+        content = (
             <div className="m-5">
                 <div className="Loader"/>
             </div>
         );
     }
-
     if (injuries && injuries.length === 0) {
-        return (
+        content = (
             <div className="p-5">
                 <EmptyJordan message="No injuries report today..."/>
             </div>
@@ -85,7 +87,7 @@ function InjuriesFeedContainer(props) {
         return <InjuryCard key={shortid()} injury={injury} animated={animated}/>;
     });
     return (
-        <Container maxWidth="lg">
+        <Container maxWidth="md">
             <article className="Injuries__Intro">
                 <h1 className="Injuries__Title">{Intro.TITLE}</h1>
                 <p className="Injuries__Subtitle">{Intro.SUBTITLE}</p>
@@ -93,7 +95,7 @@ function InjuriesFeedContainer(props) {
             <Button className={classes.button} color="primary" onClick={handleClickOpen}>
                 INFO
             </Button>
-            <div className="InjuryContainer__Cards">{injuryCards}</div>
+            <div className="InjuryContainer__Cards">{content || injuryCards}</div>
             <InjuriesInfoDialog handleClose={handleClose} open={open}/>
         </Container>
     );

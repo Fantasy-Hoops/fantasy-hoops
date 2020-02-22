@@ -1,0 +1,64 @@
+h2 {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 32px;
+    margin: 0 0 72px;
+    text-align: left;
+}
+
+
+p {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    line-height: 24px;
+    margin: 0 0 24px;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.NewsCard {
+    margin-bottom: 7rem;
+}
+
+.NewsCard__Title {
+    display: table;
+}
+
+.NewsCard__Date {
+    color: rgba(0, 0, 0, .3);
+    line-height: 0.5;
+    margin-left: 6rem;
+}
+
+.NewsCard__Date span {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 1.6rem;
+    display: inline-block;
+    position: relative;
+}
+
+.NewsCard__Date span:before,
+.NewsCard__Date span:after {
+    content: "";
+    position: absolute;
+    height: 5px;
+    border-bottom: 1px solid;
+    top: 0;
+    width: 600px;
+}
+
+.NewsCard__Date span:before {
+    right: 100%;
+    margin-right: 15px;
+}
+
+.NewsCard__Date span:after {
+    left: 100%;
+    margin-left: 15px;
+}
+
+.NewsCard__Label--vs {
+    margin: 0 1rem;
+}

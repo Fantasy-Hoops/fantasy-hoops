@@ -7,10 +7,17 @@ using System.Threading.Tasks;
 
 namespace fantasy_hoops.Models
 {
+    public enum NewsType
+    {
+        PREVIEW, RECAP
+    }
+    
     public class News
     {
         [Key]
         public int NewsID { get; set; }
+
+        public NewsType Type { get; set; }
         public string Title { get; set; }
         public DateTime Date { get; set; }
         

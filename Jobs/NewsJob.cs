@@ -1,4 +1,5 @@
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using fantasy_hoops.Database;
@@ -20,8 +21,6 @@ namespace fantasy_hoops.Jobs
             _newsType = newsType;
         }
 
-        public enum NewsType { PREVIEWS, RECAPS };
-
         public void ExtractPreviews()
         {
             string today = Today();
@@ -42,7 +41,7 @@ namespace fantasy_hoops.Jobs
             foreach (JObject game in games)
             {
                 string preview = "http://data.nba.net/10s/prod/v1/" + date + "/" + game["gameId"] + "_preview_article.json";
-                JObject previewJson = null;
+                JObject previewJson;
                 try
                 {
                     HttpWebResponse previewResponse = CommonFunctions.GetResponse(preview);
@@ -63,8 +62,11 @@ namespace fantasy_hoops.Jobs
                 }
             }
 
-            foreach (JObject previewObj in previews)
-                AddToDatabaseAsync(previewObj);
+            foreach (var jToken in previews)
+            {
+                var previewObj = (JObject) jToken;
+                AddToDatabaseAsync(previewObj, NewsType.PREVIEW);
+            }
 
             _context.SaveChanges();
         }
@@ -99,32 +101,37 @@ namespace fantasy_hoops.Jobs
             foreach (var jToken in news)
             {
                 var newsObj = (JObject) jToken;
-                AddToDatabaseAsync(newsObj);
+                AddToDatabaseAsync(newsObj, NewsType.RECAP);
             }
 
             _context.SaveChanges();
         }
 
-        private void AddToDatabaseAsync(JToken newsObj)
+        private void AddToDatabaseAsync(JToken newsObj, NewsType type)
         {
             Team hTeam = _context.Teams.FirstOrDefault(team => team.NbaID == (int) newsObj["hTeamID"]);
             Team vTeam = _context.Teams.FirstOrDefault(team => team.NbaID == (int) newsObj["vTeamID"]);
             var nObj = new News
             {
+                Type = type,
                 Date = DateTime.Parse(newsObj["pubDateUTC"].ToString()),
                 Title = (string)newsObj["title"],
                 hTeamID = hTeam?.TeamID ?? -1,
                 vTeamID = vTeam?.TeamID ?? -1
             };
 
-            bool shouldAdd = !_context.News.Any(x => x.Title.Equals((string)newsObj["title"]));
+            JArray paragraphs = (JArray)newsObj["paragraphs"];
+            bool shouldAdd = !_context.News
+                .Include(news => news.hTeam)
+                .Include(news => news.vTeam)
+                .AsEnumerable()
+                .Any(x => x.hTeamID == nObj.hTeamID
+                          && x.vTeamID == nObj.vTeamID
+                          && x.Date.Equals(nObj.Date));
 
             if (!shouldAdd)
                 return;
             _context.News.Add(nObj);
-            _context.SaveChanges();
-
-            JArray paragraphs = (JArray)newsObj["paragraphs"];
 
             string firstParagraph = paragraphs[0]["paragraph"].ToString();
             int beginIndex = firstParagraph.IndexOf("(AP)", StringComparison.Ordinal);
@@ -142,6 +149,7 @@ namespace fantasy_hoops.Jobs
                 };
                 _context.Paragraphs.Add(paragraph);
             }
+            _context.SaveChanges();
         }
 
         private string Today()
@@ -151,17 +159,17 @@ namespace fantasy_hoops.Jobs
 
         private string Yesterday()
         {
-            return CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).ToString("yyyyMMdd");
+            return CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME.AddDays(-1)).ToString("yyyyMMdd");
         }
 
         public void Execute()
         {
             switch (_newsType)
             {
-                case NewsType.PREVIEWS:
+                case NewsType.PREVIEW:
                     ExtractPreviews();
                     break;
-                case NewsType.RECAPS:
+                case NewsType.RECAP:
                     ExtractRecaps();
                     break;
             }

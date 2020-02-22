@@ -1,31 +1,35 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using fantasy_hoops.Controllers;
 using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
-using FluentScheduler;
+using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Jobs
 {
-    public class BestLineupsJob : IJob
+    public class BestLineupsJob
     {
-        private GameContext _context;
-        private DateTime date = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME.Date);
-        
-        public BestLineupsJob()
+        private readonly GameContext _context;
+        private readonly IPushService _pushService;
+        private readonly DateTime _date = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME.Date);
+
+        public BestLineupsJob(IPushService pushService)
         {
             _context = new GameContext();
+            _pushService = pushService;
         }
 
-        public void Execute()
+        public async Task Execute()
         {
-            var previousGameStats = GetPreviousGameStats();
-            var lineupsCombinations = CrossProductFunctions
-                .CrossProduct(previousGameStats)
+            _context.Database.SetCommandTimeout(0);
+            var previousGameStats = await GetPreviousGameStats();
+            var lineupsCombinations = CrossProductFunctions.CrossProduct(previousGameStats)
                 .Select(lineup => new
                 {
                     Players = lineup.Select(l => new PlayersBestLineups
@@ -33,7 +37,7 @@ namespace fantasy_hoops.Jobs
                         PlayerID = l.Player.PlayerID,
                         FP = l.FP,
                         Price = l.Price
-                    }).ToList(),
+                    }),
                     FP = lineup.Sum(l => l.FP),
                     TotalPrice = lineup.Sum(players => players.Price)
                 })
@@ -44,7 +48,7 @@ namespace fantasy_hoops.Jobs
             foreach (var lineup in lineupsCombinations)
             {
                 var players = lineup.Players.Select(p => p.PlayerID).ToList();
-                var bestLineup = _context.BestLineups
+                var bestLineups = await _context.BestLineups
                     .Include(x => x.Lineup)
                     .Select(x => new
                     {
@@ -53,39 +57,45 @@ namespace fantasy_hoops.Jobs
                         x.TotalFP,
                         playerIds = x.Lineup.Select(l => l.PlayerID).ToList()
                     })
-                    .AsEnumerable()
+                    .ToListAsync();
+                var bestLineup = bestLineups
                     .FirstOrDefault(x => Math.Round(x.TotalFP, 1).Equals(Math.Round(lineup.FP, 1))
                                          && x.LineupPrice == lineup.TotalPrice
-                                         && x.Date.Equals(date)
+                                         && x.Date.Equals(_date)
                                          && x.playerIds.All(players.Contains));
                 if (bestLineup == null)
                 {
-                    _context.BestLineups.Add(new BestLineup
+                    await _context.BestLineups.AddAsync(new BestLineup
                     {
-                        Date = date,
+                        Date = _date,
                         Lineup = lineup.Players,
                         TotalFP = Math.Round(lineup.FP, 1),
                         LineupPrice = lineup.TotalPrice
                     });
                 }
             }
-            _context.SaveChanges();
+
+            await _context.SaveChangesAsync();
+
+            PushNotificationViewModel notification =
+                new PushNotificationViewModel("Admin notification", "BestLineupsJob completed successfully");
+            await _pushService.SendAdminNotification(notification);
         }
 
-        private IDictionary<string, List<LineupPlayerDto>> GetPreviousGameStats()
+        private async Task<IDictionary<string, List<LineupPlayerDto>>> GetPreviousGameStats()
         {
-            return _context.Stats
+            var allStats = await _context.Stats
                 .Include(stats => stats.Player)
                 .ThenInclude(player => player.Team)
-                .Where(stats => stats.Date.Date.Equals(date))
+                .Where(stats => stats.Date.Date.Equals(_date))
                 .Select(stats => new LineupPlayerDto
                 {
                     Player = stats.Player,
                     FP = stats.FP,
                     Price = stats.Price
                 })
-                .AsEnumerable()
-                .GroupBy(stats => stats.Player.Position)
+                .ToListAsync();
+            return allStats.GroupBy(stats => stats.Player.Position)
                 .ToDictionary(group => group.Key, group => group.ToList());
         }
     }

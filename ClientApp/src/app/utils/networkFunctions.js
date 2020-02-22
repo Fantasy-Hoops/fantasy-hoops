@@ -82,6 +82,8 @@ export const getSelectedPlayersLeaderboard = parameters => axios.get(`${leaderbo
 
 // News requests
 export const getNews = parameters => axios.get(`${apiUrlBase}/news${createParameters(parameters)}`);
+export const getPreviews = parameters => axios.get(`${apiUrlBase}/news/preview${createParameters(parameters)}`);
+export const getRecaps = parameters => axios.get(`${apiUrlBase}/news/recap${createParameters(parameters)}`);
 
 // Lineup requests
 export const getNextGameInfo = () => axios.get(`${lineupApiUrlBase}/nextGame`);

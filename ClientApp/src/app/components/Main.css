@@ -43,7 +43,7 @@
 
 .Main__PlayNowButton {
     margin: 4rem auto;
-    width: fit-content;
+    display: table;
 }
 
 .Main__TopPlayersCard {

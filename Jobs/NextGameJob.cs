@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
+using fantasy_hoops.Models;
 using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
@@ -153,7 +154,7 @@ namespace fantasy_hoops.Jobs
                     DateTime previewsRuntime = PREVIOUS_LAST_GAME.AddHours(10);
                     if (DateTime.UtcNow > previewsRuntime)
                         previewsRuntime = NEXT_LAST_GAME.AddHours(10);
-                    JobManager.AddJob(new NewsJob(NewsJob.NewsType.PREVIEWS),
+                    JobManager.AddJob(new NewsJob(NewsType.PREVIEW),
                         s => s.WithName("previews")
                             .ToRunOnceAt(previewsRuntime));
 
@@ -162,7 +163,7 @@ namespace fantasy_hoops.Jobs
                     DateTime recapsRuntime = PREVIOUS_LAST_GAME.AddHours(5);
                     if (DateTime.UtcNow > recapsRuntime)
                         recapsRuntime = NEXT_LAST_GAME.AddHours(5);
-                    JobManager.AddJob(new NewsJob(NewsJob.NewsType.RECAPS),
+                    JobManager.AddJob(new NewsJob(NewsType.RECAP),
                         s => s.WithName("recaps")
                             .ToRunOnceAt(recapsRuntime));
 
@@ -187,7 +188,11 @@ namespace fantasy_hoops.Jobs
             }
 
             if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION") ?? "false"))
-                Task.Run(() => new StatsJob(_scoreService, _pushService).Execute());
+            {
+                new Task(delegate {
+                    new StatsJob(_scoreService, _pushService).Execute();
+                }).Start();
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
@@ -37,10 +38,12 @@ namespace fantasy_hoops.Jobs
         {
             if (games.Any(g => (int) g["statusNum"] != 3 || (bool) g["isGameActivated"]))
             {
-                JobManager.AddJob(new StatsJob(_scoreService, _pushService),
+                JobManager.AddJob(() => new Task(delegate {
+                    new StatsJob(_scoreService, _pushService).Execute();
+                }).Start(),
                     s => s.WithName("statsSeed")
-                        .ToRunOnceIn(5)
-                        .Minutes());
+                    .ToRunOnceIn(5)
+                    .Minutes());
                 return false;
             }
 
@@ -228,7 +231,9 @@ namespace fantasy_hoops.Jobs
 
             if (!isAnyGameStarted)
             {
-                JobManager.AddJob(() => Task.Run(() => new StatsJob(_scoreService, _pushService).Execute()),
+                JobManager.AddJob(() => new Task(delegate {
+                        new StatsJob(_scoreService, _pushService).Execute();
+                    }).Start(),
                     s => s.WithName("statsSeed")
                         .ToRunOnceIn(5).Minutes());
                 return;
@@ -237,7 +242,9 @@ namespace fantasy_hoops.Jobs
             if (!IsFinished(games))
             {
                 int minutesDelay = countOfActivatedGames == 0 ? 5 : 1;
-                JobManager.AddJob(() => Task.Run(() => new StatsJob(_scoreService, _pushService).Execute()),
+                JobManager.AddJob(() => new Task(delegate {
+                        new StatsJob(_scoreService, _pushService).Execute();
+                    }).Start(),
                     s => s.WithName("statsSeed")
                         .ToRunOnceIn(minutesDelay).Minutes());
             }
@@ -247,15 +254,15 @@ namespace fantasy_hoops.Jobs
                     .RemoveRange(_context.Stats.Where(stat => stat.Score.Contains("LIVE")));
                 _context.SaveChanges();
 
-                JobManager.AddJob(() => Task.Run(() => new UserScoreJob(_pushService).Execute()),
+                JobManager.AddJob(() => new Task(delegate {
+                        new UserScoreJob(_pushService).Execute();
+                    }).Start(),
                     s => s.WithName("userScore")
                         .ToRunNow());
-                
-                // JobManager.AddJob(() => Task.Run(() => new BestLineupsJob().Execute()),
-                //     s => s.WithName("bestLineupsJob")
-                //         .ToRunNow());
 
-                JobManager.AddJob(() => Task.Run(() => new StatsJob(_scoreService, _pushService).Execute()),
+                JobManager.AddJob(() => new Task(delegate {
+                        new StatsJob(_scoreService, _pushService).Execute();
+                    }).Start(),
                     s => s.WithName("statsSeed")
                         .ToRunOnceAt(NextGameJob.NEXT_GAME.AddMinutes(5)));
             }

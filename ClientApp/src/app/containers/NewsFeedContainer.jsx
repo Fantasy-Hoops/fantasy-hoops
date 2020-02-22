@@ -1,73 +1,169 @@
-import React, { Component } from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import _ from 'lodash';
 import shortid from 'shortid';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { NewsCard } from '../components/News/NewsCard';
+import NewsCard from '../components/News/NewsCard';
 import * as actionCreators from '../actions/news';
+import {Container} from "@material-ui/core";
+
+import './NewsFeedContainer.css';
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import {useStyles} from "./NewsFeedContainerStyle";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+import moment from "moment";
+
+const Intro = {
+    TITLE: "NEWS",
+    SUBTITLE: "Get to know the latest daily articles about NBA games - short previews and recaps available, including " +
+        "players' and coaches' thoughts, game breakdowns and summaries. Follow the news regularly to find out " +
+        "projected NBA players' status updates, game plan changes and potential rotation for the upcoming games.",
+    COPYRIGHT: `${moment().year()} by STATS/Field Level Media.`
+};
 
 const mapStateToProps = state => ({
-  news: state.newsContainerReducer.news,
-  newsLoader: state.newsContainerReducer.newsLoader,
-  hasMore: state.newsContainerReducer.hasMore
+    news: state.newsContainerReducer.news,
+    newsLoader: state.newsContainerReducer.newsLoader,
+    hasMoreNews: state.newsContainerReducer.hasMoreNews,
+    previews: state.newsContainerReducer.previews,
+    previewsLoader: state.newsContainerReducer.previewsLoader,
+    hasMorePreviews: state.newsContainerReducer.hasMorePreviews,
+    recaps: state.newsContainerReducer.recaps,
+    recapsLoader: state.newsContainerReducer.recapsLoader,
+    hasMoreRecaps: state.newsContainerReducer.hasMoreRecaps
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionCreators, dispatch);
 
-export class NewsFeedContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.handleLoadMore = this.handleLoadMore.bind(this);
-  }
+function TabPanel(props) {
+    const {children, value, index, ...other} = props;
 
-  async componentDidMount() {
-    const { loadNews } = this.props;
-    await loadNews();
-  }
-
-  async handleLoadMore() {
-    const { news, loadMoreNews } = this.props;
-    await loadMoreNews(news.length);
-  }
-
-  render() {
-    const { news, hasMore } = this.props;
-    const newsCards = _.map(news,
-        (newsObj, index) => (
-        <NewsCard
-          key={shortid()}
-          index={index}
-          news={newsObj}
-        />
-      ));
     return (
-      <div className="container bg-light p-0 pt-5">
-        <div className="center col">
-          <InfiniteScroll
-            dataLength={news.length}
-            next={this.handleLoadMore}
-            hasMore={hasMore}
-            loader={<div className="Loader" />}
-          >
-            {newsCards}
-          </InfiniteScroll>
-        </div>
-      </div>
+        <Typography
+            component="div"
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && <Box className="NewsFeed__Box">{children}</Box>}
+        </Typography>
     );
-  }
+}
+
+function NewsFeedContainer(props) {
+    const {
+        news, loadNews, loadMoreNews, hasMoreNews, previews, loadPreviews, loadMorePreviews, hasMorePreviews,
+        recaps, loadRecaps, loadMoreRecaps, hasMoreRecaps
+    } = props;
+    const classes = useStyles();
+    const [value, setValue] = React.useState(0);
+
+    useEffect(() => {
+        loadPreviews();
+    }, []);
+
+    const previewsCards = _.map(previews,
+        (newsObj, index) => (
+            <NewsCard
+                key={shortid()}
+                index={index}
+                news={newsObj}
+            />
+        ));
+
+    const recapsCards = _.map(recaps,
+        (newsObj, index) => (
+            <NewsCard
+                key={shortid()}
+                index={index}
+                news={newsObj}
+            />
+        ));
+
+
+    const handleChange = (event, newValue) => {
+        if (newValue === 0 && previews.length === 0) {
+            loadPreviews();
+        }
+        if (newValue === 1 && recaps.length === 0) {
+            loadRecaps();
+        }
+        setValue(newValue);
+    };
+
+    return (
+        <Container maxWidth="md">
+            <article className="News__Intro">
+                <h1 className="News__Title">{Intro.TITLE}</h1>
+                <p className="News__Subtitle">{Intro.SUBTITLE}</p>
+                <p className="News__Subtitle">&copy; {Intro.COPYRIGHT}</p>
+            </article>
+            <Tabs
+                className={classes.tabs}
+                value={value}
+                indicatorColor="primary"
+                textColor="primary"
+                onChange={handleChange}
+                aria-label="disabled tabs example"
+            >
+                <Tab label="Previews"/>
+                <Tab label="Recaps"/>
+            </Tabs>
+            <TabPanel value={value} index={0}>
+                <InfiniteScroll
+                    dataLength={previews.length}
+                    next={() => loadMorePreviews(previews.length)}
+                    hasMore={hasMorePreviews}
+                    loader={<div className="Loader"/>}
+                >
+                    {previewsCards}
+                </InfiniteScroll>
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+                <InfiniteScroll
+                    dataLength={recaps.length}
+                    next={() => loadMoreRecaps(recaps.length)}
+                    hasMore={hasMoreRecaps}
+                    loader={<div className="Loader"/>}
+                >
+                    {recapsCards}
+                </InfiniteScroll>
+            </TabPanel>
+        </Container>
+    );
 }
 
 NewsFeedContainer.propTypes = {
-  loadNews: PropTypes.func.isRequired,
-  loadMoreNews: PropTypes.func.isRequired,
-  news: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired
-    })
-  ).isRequired,
-  hasMore: PropTypes.bool.isRequired
+    loadNews: PropTypes.func.isRequired,
+    loadMoreNews: PropTypes.func.isRequired,
+    news: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.number.isRequired
+        })
+    ).isRequired,
+    hasMoreNews: PropTypes.bool.isRequired,
+    loadPreviews: PropTypes.func.isRequired,
+    loadMorePreviews: PropTypes.func.isRequired,
+    previews: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.number.isRequired
+        })
+    ).isRequired,
+    hasMorePreviews: PropTypes.bool.isRequired,
+    loadRecaps: PropTypes.func.isRequired,
+    loadMoreRecaps: PropTypes.func.isRequired,
+    recaps: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.number.isRequired
+        })
+    ).isRequired,
+    hasMoreRecaps: PropTypes.bool.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewsFeedContainer);
