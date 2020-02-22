@@ -273,7 +273,7 @@ function Leaderboard(props) {
                                     type={DatePickerTypes.DAY}
                                     label={"Select date"}
                                     styles={datePickerStyles}
-                                    selectedDate={maxDate}
+                                    selectedDate={date}
                                     minDate={minDate}
                                     maxDate={maxDate}
                                     onDateChange={onDateChange}
