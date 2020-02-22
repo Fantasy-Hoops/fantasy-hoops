@@ -251,9 +251,9 @@ namespace fantasy_hoops.Jobs
                     s => s.WithName("userScore")
                         .ToRunNow());
                 
-                JobManager.AddJob(() => Task.Run(() => new BestLineupsJob().Execute()),
-                    s => s.WithName("bestLineupsJob")
-                        .ToRunNow());
+                // JobManager.AddJob(() => Task.Run(() => new BestLineupsJob().Execute()),
+                //     s => s.WithName("bestLineupsJob")
+                //         .ToRunNow());
 
                 JobManager.AddJob(() => Task.Run(() => new StatsJob(_scoreService, _pushService).Execute()),
                     s => s.WithName("statsSeed")
