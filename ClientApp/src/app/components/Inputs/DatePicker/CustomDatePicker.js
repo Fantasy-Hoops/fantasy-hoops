@@ -14,10 +14,10 @@ import {useStyles} from "./CustomDatePickerStyle";
 import DateFnsUtils from "@date-io/date-fns";
 
 function CustomDatePicker(props) {
-    const {styles, selectedDate, selectedWeek, label, type, autoOk, onDateChange, onWeekChange, minDate, maxDate} = props;
+    const {styles, selectedDate, selectedWeek, label, type, autoOk, onDateChange, onWeekChange, minDate, maxDate, disableFuture} = props;
     const propsStyles = styles();
     const defaultStyles = useStyles();
-    
+
     const classes = {...propsStyles, ...defaultStyles};
 
     function formatWeekSelectLabel(date, invalidLabel) {
@@ -58,12 +58,13 @@ function CustomDatePicker(props) {
             </div>
         );
     };
-    
+
     if (type === DatePickerTypes.DAY) {
         return (
             <MuiPickersUtilsProvider utils={DateFnsUtils} locale={enLocale}>
                 <DatePicker
                     autoOk={autoOk}
+                    disableFuture={disableFuture}
                     label={label}
                     value={selectedDate}
                     minDate={minDate}
@@ -74,12 +75,13 @@ function CustomDatePicker(props) {
             </MuiPickersUtilsProvider>
         );
     }
-    
+
     if (type === DatePickerTypes.WEEK) {
         return (
             <MuiPickersUtilsProvider utils={DateFnsUtils} locale={enLocale}>
                 <DatePicker
                     autoOk={autoOk}
+                    disableFuture={disableFuture}
                     label={label}
                     value={selectedWeek}
                     minDate={minDate}
@@ -92,9 +94,9 @@ function CustomDatePicker(props) {
             </MuiPickersUtilsProvider>
         );
     }
-    
+
     return (
-      <div>Provide valid DatePicker type!</div>  
+        <div>Provide valid DatePicker type!</div>
     );
 }
 

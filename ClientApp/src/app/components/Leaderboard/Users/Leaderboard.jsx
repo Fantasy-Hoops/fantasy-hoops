@@ -63,14 +63,11 @@ function Leaderboard(props) {
     const [dateFormat, setDateFormat] = useState(null);
 
 
-
     const activeType = friendsOnly ? `${activeTab}Friends` : activeTab;
     const dailyUsers = createUsers(friendsOnly ? leaderboard.dailyFriends : leaderboard.daily, true);
     const weeklyUsers = createUsers(friendsOnly ? leaderboard.weeklyFriends : leaderboard.weekly);
     const monthlyUsers = createUsers(friendsOnly ? leaderboard.monthlyFriends : leaderboard.monthly);
-    const seeMoreButton = loader || loadMoreLoader
-        ? <div className="Loader"/>
-        : seeMoreBtn(activeType);
+    const seeMoreButton = seeMoreBtn(activeType);
 
     useEffect(() => {
         $('#playerModal').on('hidden.bs.modal', () => {
@@ -119,18 +116,24 @@ function Leaderboard(props) {
             setWeek(date);
             return;
         }
-        
+
         const weekNum = getWeek(date);
-        if (weekNumber === weekNum) { return; }
+        if (weekNumber === weekNum) {
+            return;
+        }
 
         setLoader(true);
         setLeaderboard(prevState => ({...prevState, weekly: [], weeklyFriends: []}));
 
         const type = activeTab + (friendsOnly ? 'Friends' : '');
         const users = !friendsOnly
-            ? await getUsersLeaderboard({ type: 'weekly', weekNumber: weekNum })
-            : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: 'weekly', weekNumber: weekNum });
-        
+            ? await getUsersLeaderboard({type: 'weekly', weekNumber: weekNum, year: moment(date).year()})
+            : await getUserFriendsOnlyLeaderboard(loggedInUser.id, {
+                type: 'weekly',
+                weekNumber: weekNum,
+                year: moment(date).year()
+            });
+
         const sunday = new Date(makeJSDateObject(moment(date).day(7)));
         const today = new Date();
         setWeek(today <= sunday ? today : sunday);
@@ -144,7 +147,7 @@ function Leaderboard(props) {
         const type = activeTab + (!friendsOnly ? 'Friends' : '');
 
         if (leaderboard[type].length === 0) {
-            setLoader(false);
+            setLoader(true);
 
             const users = friendsOnly
                 ? await getUsersLeaderboard({type: activeTab, date: dateFormat, weekNumber})
@@ -285,7 +288,7 @@ function Leaderboard(props) {
                         ? dailyUsers.length > 0
                             ? dailyUsers
                             : <EmptyJordan message="Such empty..."/>
-                        : ''}
+                        :  <div className="Loader"/>}
                     <div className="text-center">
                         {seeMoreButton}
                     </div>
@@ -294,19 +297,6 @@ function Leaderboard(props) {
                     {!loader
                         ? (
                             <div className="WeeklyDatePicker">
-                                {/*<DatePicker*/}
-                                {/*    id="weeklyDatePicker"*/}
-                                {/*    className="input-group-text"*/}
-                                {/*    placeholderText="Select the week..."*/}
-                                {/*    locale={enGB}*/}
-                                {/*    dateFormat="'Week' ww"*/}
-                                {/*    onChange={this.onWeekChange}*/}
-                                {/*    minDate={minDate}*/}
-                                {/*    maxDate={maxDate}*/}
-                                {/*    disabledKeyboardNavigation*/}
-                                {/*    isClearable*/}
-                                {/*    selected={this.state.week}*/}
-                                {/*/>*/}
                                 <CustomDatePicker
                                     autoOk={true}
                                     type={DatePickerTypes.WEEK}
@@ -324,7 +314,7 @@ function Leaderboard(props) {
                         ? weeklyUsers.length > 0
                             ? weeklyUsers
                             : <EmptyJordan message="Such empty..."/>
-                        : ''}
+                        :  <div className="Loader"/>}
                     <div className="text-center">
                         {seeMoreBtn()}
                     </div>
@@ -334,7 +324,7 @@ function Leaderboard(props) {
                         ? monthlyUsers.length > 0
                             ? monthlyUsers
                             : <EmptyJordan message="Such empty..."/>
-                        : ''}
+                        :  <div className="Loader"/>}
                     <div className="text-center">
                         {seeMoreBtn()}
                     </div>

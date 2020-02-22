@@ -49,7 +49,7 @@ namespace fantasy_hoops.Repositories
                 .ToList();
         }
 
-        public List<UserLeaderboardRecordDto> GetUserLeaderboard(int from, int limit, string type, string date, int weekNumber)
+        public List<UserLeaderboardRecordDto> GetUserLeaderboard(int from, int limit, string type, string date, int weekNumber, int year)
         {
             DateTime previousECT = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME);
 
@@ -105,12 +105,15 @@ namespace fantasy_hoops.Repositories
                     int week = weekNumber != -1
                         ? weekNumber
                         : CommonFunctions.GetIso8601WeekOfYear(DateTime.UtcNow);
+                    int leaderboardYear = year == -1
+                        ? DateTime.Now.Year
+                        : year;
                     return _context.UserLineups
                         .Include(lineup => lineup.User)
                         .AsEnumerable()
                         .Where(lineup => lineup.IsCalculated
                                          && CommonFunctions.GetIso8601WeekOfYear(lineup.Date) == week
-                                         && lineup.Date.Year == DateTime.Now.Year)
+                                         && lineup.Date.Year == leaderboardYear)
                         .GroupBy(lineup => lineup.UserID)
                         .Select(lineup => new UserLeaderboardRecordDto
                         {
@@ -143,7 +146,7 @@ namespace fantasy_hoops.Repositories
             }
         }
 
-        public List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit, string type, string date, int weekNumber)
+        public List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit, string type, string date, int weekNumber, int year)
         {
             DateTime previousECT = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME);
 
@@ -218,13 +221,16 @@ namespace fantasy_hoops.Repositories
                     int week = weekNumber != -1
                         ? weekNumber
                         : CommonFunctions.GetIso8601WeekOfYear(CommonFunctions.UTCToEastern(DateTime.UtcNow));
+                    int leaderboardYear = year == -1
+                        ? DateTime.Now.Year
+                        : year;
                     return friendsOnly
                         .SelectMany(user => user.UserLineups)
                         .Include(lineup => lineup.User)
                         .AsEnumerable()
                         .Where(lineup => lineup.IsCalculated
                                          && CommonFunctions.GetIso8601WeekOfYear(lineup.Date) == week
-                                         && lineup.Date.Year == DateTime.Now.Year)
+                                         && lineup.Date.Year == leaderboardYear)
                         .GroupBy(lineup => lineup.UserID)
                         .Select(lineup => new UserLeaderboardRecordDto
                         {
