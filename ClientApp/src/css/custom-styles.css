@@ -23,13 +23,35 @@ body {
   font-weight: 400;
   font-size: 1.6rem;
   line-height: 1.7;
-  padding-top: 6.6rem;
+  padding-top: 9.6rem;
   box-sizing: border-box;
   background-color: var(--tertiary-color);
 }
 
+@media screen and (max-width: 600px) {
+  body {
+    padding-top: 5.5rem
+  }
+}
+
 a:hover {
   text-decoration: none;
+}
+
+button:focus, div:focus {
+  outline: none;
+}
+
+span + ul {
+  margin-left: 4rem;
+}
+
+.no-pointer-events {
+  pointer-events: none;
+}
+
+.no-left-margin {
+  margin-left: 0 !important;
 }
 
 .tab-no-outline {
@@ -71,10 +93,6 @@ a:hover {
   height: 6rem;
   background-image: url('../content/images/ballLoader.svg');
   background-size: 6rem 6rem;
-}
-
-.Navbar__Logo {
-  order: -2;
 }
 
 .Navbar__Icon {
@@ -149,11 +167,24 @@ a:hover {
   background-image: none;
 }
 
+.NotificationDropdown {
+  margin: 0 1rem 0 0;
+  display: flex;
+  align-self: center;
+  height: max-content;
+}
+
+.NotificationBell {
+  padding: 0;
+  margin: 0;
+  font-size: 2.4rem;
+}
+
 .Notifications__UnreadCounter {
   font-size: 1.1rem;
   position: absolute;
-  right: .2rem;
-  top: .2rem;
+  right: -.5rem;
+  top: -.5rem;
 }
 
 .AllNotifications {
@@ -226,143 +257,6 @@ a:hover {
   margin: 0;
 }
 
-.InjuryCardContainer {
-  position: relative;
-  max-width: 22rem;
-  width: 45vw;
-  height: 30rem;
-  min-width: 12.7rem;
-  min-height: 10rem;
-  -webkit-perspective: 100rem;
-          perspective: 100rem;
-  margin: .5rem auto;
-}
-
-.InjuryCardContainer .active {
-  -webkit-transform: translateZ(0px) rotateY(180deg) !important;
-          transform: translateZ(0px) rotateY(180deg) !important;
-}
-.InjuryCardContainer .active:after {
-  display: none;
-}
-
-.InjuryCard {
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  -moz-backface-visibility: hidden;
-  -webkit-transform-style: preserve-3d;
-          transform-style: preserve-3d;
-  -webkit-transform: translateZ(-100px);
-          transform: translateZ(-100px);
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-.InjuryCard:after {
-  content: "";
-  /* position: absolute; */
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  border-radius: 5px;
-  box-shadow: 0 14px 50px -4px rgba(0, 0, 0, 0.15);
-  opacity: 0;
-  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1.4);
-}
-
-.InjuryCard:hover {
-  -webkit-transform: translateZ(0px);
-          transform: translateZ(0px);
-}
-
-.InjuryCard:hover:after {
-  opacity: 1;
-}
-
-.InjuryCard .side {
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 5px;
-  background-color: white;
-}
-
-.InjuryCard .front {
-  z-index: 2;
-}
-
-.InjuryCard .back {
-  -webkit-transform: rotateY(180deg);
-          transform: rotateY(180deg);
-}
-
-.InjuryCard .info {
-  position: relative;
-  padding: 0 1rem 0 1rem;
-  margin-top: 1.5rem;
-  overflow: hidden;
-  overflow-y: auto;
-}
-
-.InjuryCard__PlayerImage--background {
-  z-index: -5;
-  position: relative;
-  border-radius: 5px 5px 0 0;
-}
-
-.InjuryCard__PlayerImage {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.InjuryCard__loader {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-}
-
-.InjuryCard__TeamLogo--behind {
-  position: absolute;
-  left: 0;
-  top: 1rem;
-}
-
-.InjuryCard__PlayerName {
-  overflow-x: hidden;
-  white-space: nowrap;
-  font-size: 1.8rem;
-  font-weight: 700;
-  opacity: .9;
-}
-
-.InjuryCard__Datetime {
-  position: absolute;
-  right: .5rem;
-  bottom: 0.5rem;
-  font-size: 1.4rem;
-  color: var(--grey-text);
-  font-weight: 300;
-}
-
-.InjuryCard__PlayerName--back {
-  font-size: 1.7rem;
-}
-
-.InjuryCard__StatusBadge {
-  position: absolute;
-  bottom: -.5rem;
-  left: 0;
-  padding: 0 .5rem;
-  font-size: 1.6rem;
-  font-weight: 700;
-  z-index: 5;
-}
-
 .injury-active {
   background: green;
   color: white !important;
@@ -372,43 +266,6 @@ a:hover {
 }
 .injury-questionable {
   background: #ffd700;
-}
-
-.InjuryCard__Title {
-  font-size: 1.6rem;
-  max-height: 6rem;
-  overflow: auto;
-}
-
-.InjuryCard__Title::-webkit-scrollbar-track {
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	border-radius: 10px;
-	background-color: #F5F5F5;
-}
-
-.InjuryCard__Title::-webkit-scrollbar {
-	width: .2rem;
-	background-color: #F5F5F5;
-}
-
-.InjuryCard__Title::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: #555;
-}
-
-.InjuryCard__PlayerPosition {
-  position: absolute;
-  right: .8rem;
-  top: .8rem;
-  background-color: var(--primary-color);
-  font-size: 1.6rem;
-  color: var(--tertiary-color);
-}
-
-.InjuryCard .back {
-  overflow-y: auto;
-  position: relative;
 }
 
 .info::-webkit-scrollbar-track,
@@ -620,10 +477,6 @@ input[type="search"]:focus {
   opacity: .8;
 }
 
-.NewsCard {
-  max-width: 60rem;
-}
-
 .NewsCard__Info {
   height: 4.5rem;
   padding-left: 5rem;
@@ -732,7 +585,8 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   position: relative;
   margin: 0 auto;
   margin-bottom: .8rem;
-  width: 18rem;
+  width: fit-content;
+  width: -moz-fit-content;
   z-index: 1;
 }
 
@@ -781,7 +635,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   width: 100%;
   max-width: 45rem;
   min-width: 29rem;
-  height: 7rem;
+  height: 6rem;
 }
 
 .UserLeaderboardCard--daily {
@@ -860,7 +714,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   height: 100%;
   border-left: .01rem solid #acacac;
   background-color: var(--grey-background);
-  padding-top: 17%;
+  line-height: 6rem;
 }
 
 .UserLeaderboardCard__Date {
@@ -892,8 +746,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .UserLeaderboardCard__player-photo--image {
   width: 5.5rem;
   overflow: hidden;
-  margin-left: -.7rem;
-  margin-bottom: -1.5rem;
+  margin: .3rem -.9rem;
 }
 
 .UserLeaderboardCard__player-lastname {
@@ -955,8 +808,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .PlayerLeaderboardCard__player-photo--image {
   width: 4.5rem;
   overflow: hidden;
-  margin-left: -.5rem;
-  margin-bottom: -1.2rem;
+  margin: .5rem -.4rem;
 }
 
 .PlayerLeaderboardCard__player-name--abbr {
@@ -1028,7 +880,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .UserScoreCard__player-photo--image {
   width: 5rem;
   overflow: hidden;
-  margin: 0 0 -1.2rem -.7rem;
+  margin: .3rem -.9rem;
 }
 
 .UserScoreCard__loader {
@@ -1084,14 +936,21 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .Lineup--sticky {
   width: 100%;
   position: sticky;
-  top: 6.6rem;
+  top: 9.6rem;
   z-index: 10;
   background: linear-gradient(
     to bottom,
-    var(--tertiary-color) 85%,
+    #FAFAFA 85%,
     rgba(255, 255, 255, 0)
   );
   padding-bottom: 2.5rem;
+}
+
+
+@media screen and (max-width: 600px) {
+  .Lineup--sticky {
+    top: 5.5rem
+  }
 }
 
 .Lineup__countdown {
@@ -1175,6 +1034,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
   position: relative;
   z-index: 0;
   width: 100%;
+  border-radius: .5rem 0 0 0;
 }
 
 .PlayerCard__player-img {

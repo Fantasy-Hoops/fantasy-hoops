@@ -1,27 +1,27 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import shortid from 'shortid';
 import _ from 'lodash';
 import moment from 'moment';
-import {parse} from '../../../utils/auth';
+import { parse } from '../../../utils/auth';
 import Card from './Card';
 import leaderboardLogo from '../../../../content/icons/1021175-winning/svg/006-winner-5.svg';
 import EmptyJordan from '../../EmptyJordan';
-import {PlayerModal} from '../../PlayerModal/PlayerModal';
-import {getUsersLeaderboard, getUserFriendsOnlyLeaderboard, getPlayerStats} from '../../../utils/networkFunctions';
-import {getWeek} from '../../../utils/date';
+import { PlayerModal } from '../../PlayerModal/PlayerModal';
+import { getUsersLeaderboard, getUserFriendsOnlyLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
+import { getWeek } from '../../../utils/date';
 import CustomDatePicker from "../../Inputs/DatePicker/CustomDatePicker";
-import {datePickerStyles} from "./LeaderboardStyle";
-import {DatePickerTypes, makeJSDateObject} from "../../Inputs/DatePicker/utils";
+import { datePickerStyles } from "./LeaderboardStyle";
+import { DatePickerTypes, makeJSDateObject } from "../../Inputs/DatePicker/utils";
 import endOfWeek from "date-fns/endOfWeek";
 import enLocale from "date-fns/locale/en-GB";
-import {Container} from "@material-ui/core";
-import {Helmet} from "react-helmet";
-import {Canonicals, Meta} from "../../../utils/helpers";
+import { Container } from "@material-ui/core";
+import { Helmet } from "react-helmet";
+import { Canonicals, Meta } from "../../../utils/helpers";
 
 const LEADERBOARD_SUPPORT_START_DATE = '2019-02-24';
 const loggedInUser = parse();
 const LOAD_COUNT = 10;
-const {$} = window;
+const { $ } = window;
 
 const positionImages = {
     PG: require('../../../../content/images/positions/pg.png'),
@@ -79,10 +79,10 @@ function Leaderboard(props) {
         });
 
         async function handleGetUsersLeaderboard() {
-            await getUsersLeaderboard({type: 'daily', date: ''})
+            await getUsersLeaderboard({ type: 'daily', date: '' })
                 .then((res) => {
-                    setShowButton(prevState => ({...prevState, daily: res.data.length === LOAD_COUNT}));
-                    setLeaderboard(prevState => ({...prevState, daily: res.data}));
+                    setShowButton(prevState => ({ ...prevState, daily: res.data.length === LOAD_COUNT }));
+                    setLeaderboard(prevState => ({ ...prevState, daily: res.data }));
                     setActiveTab('daily');
                     setLoader(false);
                 });
@@ -99,16 +99,16 @@ function Leaderboard(props) {
         }
 
         setLoader(true);
-        setLeaderboard(prevState => ({...prevState, daily: [], dailyFriends: []}));
+        setLeaderboard(prevState => ({ ...prevState, daily: [], dailyFriends: [] }));
         const dateFormat = moment(date).format('YYYYMMDD');
         const type = friendsOnly ? 'dailyFriends' : 'daily';
 
         const users = !friendsOnly
-            ? await getUsersLeaderboard({type: 'daily', date: dateFormat})
-            : await getUserFriendsOnlyLeaderboard(loggedInUser.id, {type: 'daily', date: dateFormat});
+            ? await getUsersLeaderboard({ type: 'daily', date: dateFormat })
+            : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: 'daily', date: dateFormat });
 
         showButton[type] = users.data.length === LOAD_COUNT;
-        setLeaderboard(prevState => ({...prevState, [type]: users.data}));
+        setLeaderboard(prevState => ({ ...prevState, [type]: users.data }));
         setLoader(false);
         setDate(date);
         setDateFormat(dateFormat);
@@ -126,11 +126,11 @@ function Leaderboard(props) {
         }
 
         setLoader(true);
-        setLeaderboard(prevState => ({...prevState, weekly: [], weeklyFriends: []}));
+        setLeaderboard(prevState => ({ ...prevState, weekly: [], weeklyFriends: [] }));
 
         const type = activeTab + (friendsOnly ? 'Friends' : '');
         const users = !friendsOnly
-            ? await getUsersLeaderboard({type: 'weekly', weekNumber: weekNum, year: moment(date).year()})
+            ? await getUsersLeaderboard({ type: 'weekly', weekNumber: weekNum, year: moment(date).year() })
             : await getUserFriendsOnlyLeaderboard(loggedInUser.id, {
                 type: 'weekly',
                 weekNumber: weekNum,
@@ -141,7 +141,7 @@ function Leaderboard(props) {
         const today = new Date();
         setWeek(today <= sunday ? today : sunday);
         setWeekNumber(weekNum);
-        setLeaderboard(prevState => ({...prevState, [type]: users.data}));
+        setLeaderboard(prevState => ({ ...prevState, [type]: users.data }));
         setLoader(false);
     }
 
@@ -153,11 +153,11 @@ function Leaderboard(props) {
             setLoader(true);
 
             const users = friendsOnly
-                ? await getUsersLeaderboard({type: activeTab, date: dateFormat, weekNumber})
-                : await getUserFriendsOnlyLeaderboard(loggedInUser.id, {type: activeTab, date: dateFormat, weekNumber});
+                ? await getUsersLeaderboard({ type: activeTab, date: dateFormat, weekNumber })
+                : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: activeTab, date: dateFormat, weekNumber });
 
-            setShowButton(prevState => ({...prevState, daily: users.data.length === LOAD_COUNT}));
-            setLeaderboard(prevState => ({...prevState, [type]: users.data}));
+            setShowButton(prevState => ({ ...prevState, daily: users.data.length === LOAD_COUNT }));
+            setLeaderboard(prevState => ({ ...prevState, [type]: users.data }));
             setLoader(false);
         }
     }
@@ -176,11 +176,11 @@ function Leaderboard(props) {
             setLoader(true);
 
             const users = !friendsOnly
-                ? await getUsersLeaderboard({type: activeTabURL, date: dateFormat})
-                : await getUserFriendsOnlyLeaderboard(loggedInUser.id, {type: activeTabURL, date: dateFormat});
+                ? await getUsersLeaderboard({ type: activeTabURL, date: dateFormat })
+                : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: activeTabURL, date: dateFormat });
 
-            setShowButton(prevState => ({...prevState, daily: users.data.length === LOAD_COUNT}));
-            setLeaderboard(prevState => ({...prevState, [type]: users.data}));
+            setShowButton(prevState => ({ ...prevState, daily: users.data.length === LOAD_COUNT }));
+            setLeaderboard(prevState => ({ ...prevState, [type]: users.data }));
             setLoader(false);
         }
     }
@@ -198,8 +198,8 @@ function Leaderboard(props) {
                 type: activeTab, from: leaderboard[type].length, limit: LOAD_COUNT, date: dateFormat, weekNumber
             });
 
-        setShowButton(prevState => ({...prevState, daily: users.data.length === LOAD_COUNT}));
-        setLeaderboard(prevState => ({...prevState, [type]: leaderboard[type].concat(users.data)}));
+        setShowButton(prevState => ({ ...prevState, daily: users.data.length === LOAD_COUNT }));
+        setLeaderboard(prevState => ({ ...prevState, [type]: leaderboard[type].concat(users.data) }));
         setLoader(false);
     }
 
@@ -236,8 +236,8 @@ function Leaderboard(props) {
         <>
             <Helmet>
                 <title>Users Leaderboard | Fantasy Hoops</title>
-                <meta name="description" content={Meta.DESCRIPTION}/>
-                <link rel="canonical" href={Canonicals.USERS_LEADERBOARD}/>
+                <meta name="description" content={Meta.DESCRIPTION} />
+                <link rel="canonical" href={Canonicals.USERS_LEADERBOARD} />
             </Helmet>
             <Container maxWidth="md">
                 <div className="text-center">
@@ -250,10 +250,10 @@ function Leaderboard(props) {
                 </div>
                 <div className="row justify-content-center">
                     <div className="col-xs">
-                        <div style={{transform: 'scale(0.7, 0.7)'}}>
+                        <div style={{ transform: 'scale(0.7, 0.7)' }}>
                             <label className="UserLeaderboard__FriendsOnly">
-                                <input type="checkbox" checked={friendsOnly} onChange={toggleFriendsOnly}/>
-                                <span className="UserLeaderboard__FriendsOnly--slider round"/>
+                                <input type="checkbox" checked={friendsOnly} onChange={toggleFriendsOnly} />
+                                <span className="UserLeaderboard__FriendsOnly--slider round" />
                             </label>
                         </div>
                     </div>
@@ -264,15 +264,15 @@ function Leaderboard(props) {
                 <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
                     <li className="nav-item">
                         <a className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" href="#daily"
-                           role="tab" onClick={switchTab}>Daily</a>
+                            role="tab" onClick={switchTab}>Daily</a>
                     </li>
                     <li className="nav-item">
                         <a className="nav-link tab-no-outline" id="weekly-tab" data-toggle="tab" href="#weekly"
-                           role="tab" onClick={switchTab}>Weekly</a>
+                            role="tab" onClick={switchTab}>Weekly</a>
                     </li>
                     <li className="nav-item">
                         <a className="nav-link tab-no-outline" id="monthly-tab" data-toggle="tab" href="#monthly"
-                           role="tab" onClick={switchTab}>Monthly</a>
+                            role="tab" onClick={switchTab}>Monthly</a>
                     </li>
                 </ul>
                 <div className="tab-content" id="myTabContent">
@@ -296,8 +296,8 @@ function Leaderboard(props) {
                         {!loader
                             ? dailyUsers.length > 0
                                 ? dailyUsers
-                                : <EmptyJordan message="Such empty..."/>
-                            : <div className="Loader"/>}
+                                : <EmptyJordan message="Such empty..." />
+                            : <div className="Loader" />}
                         <div className="text-center">
                             {seeMoreButton}
                         </div>
@@ -313,7 +313,7 @@ function Leaderboard(props) {
                                         styles={datePickerStyles}
                                         selectedWeek={week}
                                         minDate={minDate}
-                                        maxDate={endOfWeek(maxDate, {locale: enLocale})}
+                                        maxDate={endOfWeek(maxDate, { locale: enLocale })}
                                         onWeekChange={onWeekChange}
                                     />
                                 </div>
@@ -322,8 +322,8 @@ function Leaderboard(props) {
                         {!loader
                             ? weeklyUsers.length > 0
                                 ? weeklyUsers
-                                : <EmptyJordan message="Such empty..."/>
-                            : <div className="Loader"/>}
+                                : <EmptyJordan message="Such empty..." />
+                            : <div className="Loader" />}
                         <div className="text-center">
                             {seeMoreBtn()}
                         </div>
@@ -332,8 +332,8 @@ function Leaderboard(props) {
                         {!loader
                             ? monthlyUsers.length > 0
                                 ? monthlyUsers
-                                : <EmptyJordan message="Such empty..."/>
-                            : <div className="Loader"/>}
+                                : <EmptyJordan message="Such empty..." />
+                            : <div className="Loader" />}
                         <div className="text-center">
                             {seeMoreBtn()}
                         </div>

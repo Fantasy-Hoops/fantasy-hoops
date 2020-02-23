@@ -39,27 +39,29 @@ function NewsCard(props) {
                     {news.title}
                 </h2>
                 <div className="NewsCard__Date"><span>{moment(news.date).format("MMM D, YYYY")}</span></div>
-                <Img
-                    className="NewsCard__TeamLogo"
-                    alt={news.hTeam}
-                    src={[
-                        `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${news.vTeam}.svg`,
-                        defaultLogo
-                    ]}
-                    loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader"/>}
-                    decode={false}
-                />
-                <span className="NewsCard__Label--vs">vs.</span>
-                <Img
-                    className="NewsCard__TeamLogo"
-                    alt={news.vTeam}
-                    src={[
-                        `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${news.hTeam}.svg`,
-                        defaultLogo
-                    ]}
-                    loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader"/>}
-                    decode={false}
-                />
+                <div className="NewsCard__Logos">
+                    <Img
+                        className="NewsCard__TeamLogo"
+                        alt={news.hTeam}
+                        src={[
+                            `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${news.vTeam}.svg`,
+                            defaultLogo
+                        ]}
+                        loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader"/>}
+                        decode={false}
+                    />
+                    <span className="NewsCard__Label--vs">vs.</span>
+                    <Img
+                        className="NewsCard__TeamLogo"
+                        alt={news.vTeam}
+                        src={[
+                            `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${news.hTeam}.svg`,
+                            defaultLogo
+                        ]}
+                        loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader"/>}
+                        decode={false}
+                    />
+                </div>
                 <input
                     onChange={toggleExpanded}
                     checked={expanded}

@@ -103,7 +103,7 @@ function InjuriesFeedContainer(props) {
                 <Button className={classes.button} color="primary" onClick={handleClickOpen}>
                     INFO
                 </Button>
-                <div className="InjuryContainer__Cards">{content || injuryCards}</div>
+                <div className="InjuryContainer__Cards">{injuryCards.length > 0 ? injuryCards : content}</div>
                 <InjuriesInfoDialog handleClose={handleClose} open={open}/>
             </Container>
         </>

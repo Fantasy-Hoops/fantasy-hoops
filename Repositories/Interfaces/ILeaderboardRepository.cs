@@ -13,8 +13,8 @@ namespace fantasy_hoops.Repositories.Interfaces
         List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit, string type, string date,
             int weekNumber, int year);
 
-        List<UserLeaderboardRecordDto> GetSeasonLineups(int year);
-        List<PlayerLeaderboardRecordDto> GetSeasonPlayers(int year);
-        List<PlayerLeaderboardRecordDto> GetMostSelectedPlayers(int from, int count);
+        List<UserLeaderboardRecordDto> GetSeasonLineups(int from, int limit, int year);
+        List<PlayerLeaderboardRecordDto> GetSeasonPlayers(int from, int limit, int year);
+        List<PlayerLeaderboardRecordDto> GetMostSelectedPlayers(int from, int limit);
     }
 }

@@ -264,7 +264,7 @@ namespace fantasy_hoops.Repositories
             }
         }
 
-        public List<UserLeaderboardRecordDto> GetSeasonLineups(int year)
+        public List<UserLeaderboardRecordDto> GetSeasonLineups(int from, int limit, int year)
         {
             DateTime seasonStart = DateTime.MinValue;
             DateTime seasonEnd = DateTime.MaxValue;
@@ -312,10 +312,12 @@ namespace fantasy_hoops.Repositories
                         .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Position))
                         .ToList()
                 })
+                .Skip(from)
+                .Take(limit)
                 .ToList();
         }
 
-        public List<PlayerLeaderboardRecordDto> GetSeasonPlayers(int year)
+        public List<PlayerLeaderboardRecordDto> GetSeasonPlayers(int from, int limit, int year)
         {
             DateTime seasonStart = DateTime.MinValue;
             DateTime seasonEnd = DateTime.MaxValue;
@@ -339,10 +341,12 @@ namespace fantasy_hoops.Repositories
                     LongDate = p.Date.ToString("yyyy-MM-dd"),
                     ShortDate = p.Date.ToString("MMM. dd")
                 })
+                .Skip(from)
+                .Take(limit)
                 .ToList();
         }
 
-        public List<PlayerLeaderboardRecordDto> GetMostSelectedPlayers(int from, int count)
+        public List<PlayerLeaderboardRecordDto> GetMostSelectedPlayers(int from, int limit)
         {
             var userLineups = _context.UserLineups
                 .Where(lineup => lineup.Date < NextGameJob.PREVIOUS_GAME);
@@ -399,7 +403,7 @@ namespace fantasy_hoops.Repositories
                 })
                 .OrderByDescending(player => player.Count)
                 .Skip(from)
-                .Take(count)
+                .Take(limit)
                 .ToList();
         }
     }

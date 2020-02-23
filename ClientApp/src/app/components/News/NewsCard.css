@@ -57,6 +57,10 @@
     margin-left: 15px;
 }
 
+.NewsCard__Logos {
+    margin-top: 1rem;
+}
+
 .NewsCard__Label--vs {
     margin: 0 1rem;
 }

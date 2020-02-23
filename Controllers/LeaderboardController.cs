@@ -39,21 +39,21 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet("season/lineups")]
-        public Object GetSeasonLineups(int year = -1)
+        public Object GetSeasonLineups(int from = 0, int limit = 10, int year = -1)
         {
-            return _repository.GetSeasonLineups(year);
+            return _repository.GetSeasonLineups(from, limit, year);
         }
 
         [HttpGet("season/players")]
-        public Object GetSeasonPlayers(int year = -1)
+        public Object GetSeasonPlayers(int from = 0, int limit = 10, int year = -1)
         {
-            return _repository.GetSeasonPlayers(year);
+            return _repository.GetSeasonPlayers(from, limit, year);
         }
 
         [HttpGet("selected/players")]
-        public Object GetMostSelectedPlayers(int from = 0, int count = 10)
+        public Object GetMostSelectedPlayers(int from = 0, int limit = 10)
         {
-            return _repository.GetMostSelectedPlayers(from, count);
+            return _repository.GetMostSelectedPlayers(from, limit);
         }
     }
 }

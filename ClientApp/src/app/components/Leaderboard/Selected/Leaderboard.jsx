@@ -37,7 +37,7 @@ export default class Leaderboard extends Component {
             });
         });
 
-        await getSelectedPlayersLeaderboard({count: LOAD_COUNT})
+        await getSelectedPlayersLeaderboard({limit: LOAD_COUNT})
             .then((res) => {
                 this.state.showButton = res.data.length === LOAD_COUNT;
                 this.setState({
@@ -69,7 +69,7 @@ export default class Leaderboard extends Component {
     async loadMore() {
         const {players} = this.state;
         this.setState({loadMore: true});
-        await getSelectedPlayersLeaderboard({from: players.length, count: LOAD_COUNT})
+        await getSelectedPlayersLeaderboard({from: players.length, limit: LOAD_COUNT})
             .then((res) => {
                 this.setState({
                     players: players.concat(res.data),
