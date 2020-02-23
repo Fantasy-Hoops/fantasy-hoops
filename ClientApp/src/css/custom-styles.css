@@ -1,1462 +1,1502 @@
 ﻿:root {
-  --primary-color: #2c3e50;
-  --secondary-color: #F1592A;
-  --tertiary-color: #ecf0f1;
-  --grey-text: #939598;
-  --grey-background: #f5f5f5;
+    --primary-color: #2c3e50;
+    --secondary-color: #F1592A;
+    --tertiary-color: #ecf0f1;
+    --grey-text: #939598;
+    --grey-background: #f5f5f5;
 }
 
 *,
 *::after,
 *::before {
-  margin: 0;
-  padding: 0; 
-  box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
 }
 
 html {
-  font-size: 62.5%;
+    font-size: 62.5%;
 }
 
 body {
-  font-family: "Lato", sans-serif;
-  font-weight: 400;
-  font-size: 1.6rem;
-  line-height: 1.7;
-  padding-top: 9.6rem;
-  box-sizing: border-box;
-  background-color: var(--tertiary-color);
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 1.7;
+    padding-top: 9.6rem;
+    box-sizing: border-box;
+    background-color: var(--tertiary-color);
 }
 
 @media screen and (max-width: 600px) {
-  body {
-    padding-top: 5.5rem
-  }
+    body {
+        padding-top: 5.5rem
+    }
 }
 
 a:hover {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 button:focus, div:focus {
-  outline: none;
+    outline: none;
 }
 
 span + ul {
-  margin-left: 4rem;
+    margin-left: 4rem;
 }
 
 .no-pointer-events {
-  pointer-events: none;
+    pointer-events: none;
 }
 
 .no-left-margin {
-  margin-left: 0 !important;
+    margin-left: 0 !important;
 }
 
 .tab-no-outline {
-  outline: none !important;
+    outline: none !important;
 }
 
 .cursor-default {
-  cursor: default;
+    cursor: default;
 }
 
 .cursor-pointer {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .col-md-12 {
-  padding: 0;
+    padding: 0;
 }
 
 .row {
-  margin-right: 0;
-  margin-left: 0;
+    margin-right: 0;
+    margin-left: 0;
 }
 
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-  background-color: var(--grey-background);
+    background-color: var(--grey-background);
 }
 
 .table-sm td {
-  vertical-align: middle;
+    vertical-align: middle;
 }
 
 .navbar {
-  min-height: 6.6rem;
+    min-height: 6.6rem;
 }
 
 .Loader {
-  margin: 0 auto;
-  width: 6rem;
-  height: 6rem;
-  background-image: url('../content/images/ballLoader.svg');
-  background-size: 6rem 6rem;
+    margin: 0 auto;
+    width: 6rem;
+    height: 6rem;
+    background-image: url('../content/images/ballLoader.svg');
+    background-size: 6rem 6rem;
 }
 
 .Navbar__Icon {
-  display: none;
+    display: none;
 }
 
 .Navbar__Title {
-  display: none;
+    display: none;
 }
 
 .Navbar__user-dropdown--username {
-  font-size: 2.5rem;
-  font-weight: 700;
+    font-size: 2.5rem;
+    font-weight: 700;
 }
 
 .no-arrow::after {
-  display: none;
+    display: none;
 }
 
 .navbar-login {
-  width: 30rem;
-  padding: 1rem;
+    width: 30rem;
+    padding: 1rem;
 }
 
 #main-text {
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  margin: 0 auto;
-  border: none;
-  font: normal "Anton", Helvetica, sans-serif;
-  font-size: 4.8rem;
-  line-height: normal;
-  color: var(--primary-color);
-  text-align: center;
-  text-transform: uppercase;
-  -o-text-overflow: clip;
-  text-overflow: clip;
-  letter-spacing: 1rem;
-  text-shadow: .4rem .4rem 0 var(--secondary-color), .6rem .6rem 0 var(--primary-color);
-  margin-top: 40%;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    margin: 0 auto;
+    border: none;
+    font: normal "Anton", Helvetica, sans-serif;
+    font-size: 4.8rem;
+    line-height: normal;
+    color: var(--primary-color);
+    text-align: center;
+    text-transform: uppercase;
+    -o-text-overflow: clip;
+    text-overflow: clip;
+    letter-spacing: 1rem;
+    text-shadow: .4rem .4rem 0 var(--secondary-color), .6rem .6rem 0 var(--primary-color);
+    margin-top: 40%;
 }
 
 .PostCard__Title {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .PostCard__Dots {
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-  cursor: pointer;
-  width: 2rem;
-  text-align: center;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    cursor: pointer;
+    width: 2rem;
+    text-align: center;
 }
 
 .PostCard__MenuItem:hover {
-  background: var(--grey-background);
-  cursor: pointer;
+    background: var(--grey-background);
+    cursor: pointer;
 }
 
 .PostCard__AuthorImage {
-  width: 2.5rem;
-  margin-right: 1rem;
+    width: 2.5rem;
+    margin-right: 1rem;
 }
 
 .PostCard__Body img {
-  max-width: 100%;
+    max-width: 100%;
 }
 
 .form-control.is-invalid {
-  background-image: none;
+    background-image: none;
 }
 
 .NotificationDropdown {
-  margin: 0 1rem 0 0;
-  display: flex;
-  align-self: center;
-  height: max-content;
+    margin: 0 1rem 0 0;
+    display: flex;
+    align-self: center;
+    height: max-content;
 }
 
 .NotificationBell {
-  padding: 0;
-  margin: 0;
-  font-size: 2.4rem;
+    padding: 0;
+    margin: 0;
+    font-size: 2.4rem;
 }
 
 .Notifications__UnreadCounter {
-  font-size: 1.1rem;
-  position: absolute;
-  right: -.5rem;
-  top: -.5rem;
+    font-size: 1.1rem;
+    position: absolute;
+    right: -.5rem;
+    top: -.5rem;
 }
 
 .AllNotifications {
-  padding: 0;
-  width: 27rem;
+    padding: 0;
+    width: 27rem;
 }
 
 .NotificationCard {
-  transition: background-color .3s;
+    transition: background-color .3s;
 }
 
 .NotificationCard:hover {
-  background-color: var(--grey-background);
-  transition: background-color .3s;
+    background-color: var(--grey-background);
+    transition: background-color .3s;
 }
 
 .NotificationCard--unread {
-  background-color: var(--grey-background);
-  border-left: .25rem solid var(--secondary-color);
-  transition: background-color .3s, border-left .3s;
+    background-color: var(--grey-background);
+    border-left: .25rem solid var(--secondary-color);
+    transition: background-color .3s, border-left .3s;
 }
 
 .NotificationCard--unread:hover {
-  background-color: #e8e8e8;
-  border-left: .25rem solid red;
-  transition: background-color .3s, border-left .3s;
+    background-color: #e8e8e8;
+    border-left: .25rem solid red;
+    transition: background-color .3s, border-left .3s;
 }
 
 .NotificationCard__Body {
-  margin: -.8rem;
-  color: var(--primary-color);
-  display: flex;
-  align-items: center;
+    margin: -.8rem;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
 }
 
 .NotificationCard__Image {
-  width: 4rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    width: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .NotificationCard__Image--player {
-  width: 5rem;
-  padding-top: .4rem;
-  margin-left: -.5rem;
+    width: 5rem;
+    padding-top: .4rem;
+    margin-left: -.5rem;
 }
 
 .notification-circle {
-  overflow: hidden;
-  border-radius: 100%;
-  width: 4rem;
-  height: 4rem;
+    overflow: hidden;
+    border-radius: 100%;
+    width: 4rem;
+    height: 4rem;
 }
 
 .NotificationCard__Title {
-  font-size: 1.7rem;
-  font-weight: 700;
-  opacity: .85;
-  margin: 0;
+    font-size: 1.7rem;
+    font-weight: 700;
+    opacity: .85;
+    margin: 0;
 }
 
 .NotificationCard__Text {
-  font-size: 1.6rem;
-  margin: 0;
+    font-size: 1.6rem;
+    margin: 0;
 }
 
 .NotificationCard__Date {
-  font-size: 1.6rem;
-  margin: 0;
+    font-size: 1.6rem;
+    margin: 0;
 }
 
 .injury-active {
-  background: green;
-  color: white !important;
+    background: green;
+    color: white !important;
 }
+
 .injury-out {
-  background: red;
+    background: red;
 }
+
 .injury-questionable {
-  background: #ffd700;
+    background: #ffd700;
 }
 
 .info::-webkit-scrollbar-track,
-.back::-webkit-scrollbar-track
-{
-  box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	border-radius: 1rem;
-	background-color: #F5F5F5;
+.back::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 1rem;
+    background-color: #F5F5F5;
 }
 
 .info::-webkit-scrollbar,
-.back::-webkit-scrollbar
-{
-	width: .3rem;
-	background-color: #F5F5F5;
+.back::-webkit-scrollbar {
+    width: .3rem;
+    background-color: #F5F5F5;
 }
 
 .info::-webkit-scrollbar-thumb,
-.back::-webkit-scrollbar-thumb
-{
-	border-radius: 1rem;
-	box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: #A5A5A5;
+.back::-webkit-scrollbar-thumb {
+    border-radius: 1rem;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    background-color: #A5A5A5;
 }
 
 .InjuryCard__BackInfo {
-  padding: 1rem 1.5rem;
+    padding: 1rem 1.5rem;
 }
 
 .Injury__Description {
-  font-size: 1.4rem;
-  overflow: hidden;
-  text-align: justify;
+    font-size: 1.4rem;
+    overflow: hidden;
+    text-align: justify;
 }
 
 .btn:focus,
 .btn:active {
-  outline: none !important;
-  box-shadow: none !important;
-  border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border: 0 !important;
 }
 
 .player-card::before,
 .player-card::after {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transition: opacity .38s ease-in-out, transform .7s ease-in-out;
-  content: "";
-  opacity: 0;
-  pointer-events: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transition: opacity .38s ease-in-out, transform .7s ease-in-out;
+    content: "";
+    opacity: 0;
+    pointer-events: none;
 }
+
 .player-card::before {
-  transform: scale3d(0, 1, 1);
-  transform-origin: left top;
-  border-top: .1rem solid #acacac;
-  border-bottom: .1rem solid #acacac;
+    transform: scale3d(0, 1, 1);
+    transform-origin: left top;
+    border-top: .1rem solid #acacac;
+    border-bottom: .1rem solid #acacac;
 }
+
 .player-card::after {
-  transform: scale3d(1, 0, 1);
-  transform-origin: right top;
-  border-right: .1rem solid #acacac;
-  border-left: .1rem solid #acacac;
+    transform: scale3d(1, 0, 1);
+    transform-origin: right top;
+    border-right: .1rem solid #acacac;
+    border-left: .1rem solid #acacac;
 }
+
 .player-card:hover::before,
 .player-card:focus::before,
 .player-card:hover::after,
 .player-card:focus::after {
-  transform: scale3d(1, 1, 1);
-  opacity: 1;
+    transform: scale3d(1, 1, 1);
+    opacity: 1;
 }
 
 .player-card:focus {
-  transform: scale(1.1);
-  -webkit-transform: scale(1.1);
-  -moz-transform: scale(1.1);
-  -ms-transform: scale(1.1);
-  -o-transform: scale(1.1);
-  background-color: #f8f8f8;
-  -webkit-transition: background-color 400ms linear;
-  -ms-transition: background-color 400ms linear;
-  transition: background-color 400ms linear;
-  outline: none !important;
-  z-index: 1000;
+    transform: scale(1.1);
+    -webkit-transform: scale(1.1);
+    -moz-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    -o-transform: scale(1.1);
+    background-color: #f8f8f8;
+    -webkit-transition: background-color 400ms linear;
+    -ms-transition: background-color 400ms linear;
+    transition: background-color 400ms linear;
+    outline: none !important;
+    z-index: 1000;
 }
 
 .bar {
-  border-radius: .35rem;
+    border-radius: .35rem;
 }
 
 .container {
-  display: block;
-  margin: auto;
-  width: 100%;
-  margin-top: 3rem;
+    display: block;
+    margin: auto;
+    width: 100%;
+    margin-top: 3rem;
 }
 
 .btn-no-outline {
-  outline: none !important;
-  box-shadow: none !important;
-  border: 0 !important;
-  cursor: pointer;
+    outline: none !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    cursor: pointer;
 }
 
 /*My profile*/
 .Profile__UserName {
-  font-weight: 700;
-  font-size: 4rem;
-  opacity: .7;
+    font-weight: 700;
+    font-size: 4rem;
+    opacity: .7;
 }
 
 .Profile__Avatar {
-  border-radius: 50%;
-  width: 20rem;
-  margin: 2rem;
+    border-radius: 50%;
+    width: 20rem;
+    margin: 2rem;
 }
 
 .Profile__About {
-  font-size: 1.4rem;
-  display: block;
-  word-wrap: break-word;
+    font-size: 1.4rem;
+    display: block;
+    word-wrap: break-word;
 }
 
 .src-image {
-  display: none;
+    display: none;
 }
 
 .UserPool__Search {
-  font-size: 1.6rem;
+    font-size: 1.6rem;
 }
 
 input[type="search"] {
-  width: 15rem;
-  -webkit-transition: width .4s ease-in-out;
-  transition: width .4s ease-in-out;
+    width: 15rem;
+    -webkit-transition: width .4s ease-in-out;
+    transition: width .4s ease-in-out;
 }
 
 input[type="search"]:focus {
-  width: 20rem;
+    width: 20rem;
 }
 
 .search {
-  position: relative;
+    position: relative;
 }
+
 .search input {
-  text-indent: 1.6rem;
+    text-indent: 1.6rem;
 }
+
 .search .fa-search {
-  position: absolute;
-  top: .7rem;
-  left: .5rem;
-  font-size: 1.6rem;
+    position: absolute;
+    top: .7rem;
+    left: .5rem;
+    font-size: 1.6rem;
 }
 
 .UserCard {
-  width: 10.7rem;
-  overflow: hidden;
-  position: relative;
-  background-color: var(--primary-color);
-  border-radius: 2rem;
-  text-align: center;
-  border: .1rem solid var(--tertiary-color);
-  margin: .5rem;
+    width: 10.7rem;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--primary-color);
+    border-radius: 2rem;
+    text-align: center;
+    border: .1rem solid var(--tertiary-color);
+    margin: .5rem;
 }
 
 .UserCard .header-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 7rem;
-  border-bottom: .1rem #fff solid;
-  z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 7rem;
+    border-bottom: .1rem #fff solid;
+    z-index: 1;
 }
+
 .UserCard .avatar {
-  width: 8rem;
-  height: 8rem;
-  margin: 1rem auto 0;
-  position: relative;
-  z-index: 100;
+    width: 8rem;
+    height: 8rem;
+    margin: 1rem auto 0;
+    position: relative;
+    z-index: 100;
 }
 
 .UserCard .avatar img {
-  width: 8rem;
-  height: 8rem;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  border-radius: 50%;
-  border: .35rem solid rgba(0, 0, 30, .8);
-  background-color: var(--primary-color);
+    width: 8rem;
+    height: 8rem;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    border: .35rem solid rgba(0, 0, 30, .8);
+    background-color: var(--primary-color);
 }
 
 .UserCard__UserName {
-  background:var(--grey-background);
-  color: #000;
-  margin: 1rem;
-  font-size: 75%;
-  font-weight: 800;
-  max-width: 81%;
-  text-overflow: ellipsis;
-  overflow: hidden;
+    background: var(--grey-background);
+    color: #000;
+    margin: 1rem;
+    font-size: 75%;
+    font-weight: 800;
+    max-width: 81%;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .UserCard__UserName--text {
-  opacity: .8;
+    opacity: .8;
 }
 
 .NewsCard__Info {
-  height: 4.5rem;
-  padding-left: 5rem;
+    height: 4.5rem;
+    padding-left: 5rem;
 }
 
 .NewsCard__TeamLogo {
-  width: 4.5rem;
+    width: 4.5rem;
 }
 
 /*Read more*/
 .read-more-state {
-  display: none;
+    display: none;
 }
 
 .read-more-target {
-  opacity: 0;
-  max-height: 0;
-  font-size: 0;
-  transition: .25s ease;
+    opacity: 0;
+    max-height: 0;
+    font-size: 0;
+    transition: .25s ease;
 }
 
 .read-more-state:checked ~ .read-more-wrap .read-more-target {
-  opacity: 1;
-  font-size: inherit;
-  max-height: 999em;
+    opacity: 1;
+    font-size: inherit;
+    max-height: 999em;
 }
 
 .read-more-state ~ .read-more-trigger:before {
-  content: "Show more";
+    content: "Show more";
 }
 
 .read-more-state:checked ~ .read-more-trigger:before {
-  content: "Show less";
+    content: "Show less";
 }
 
 .read-more-trigger {
-  cursor: pointer;
-  display: inline-block;
-  padding: 0 .5em;
-  font-size: .9em;
-  color:var(--grey-text);
-  line-height: 2;
-  border: .1rem solid #ddd;
-  border-radius: 25rem;
+    cursor: pointer;
+    display: inline-block;
+    padding: 0 .5em;
+    font-size: .9em;
+    color: var(--grey-text);
+    line-height: 2;
+    border: .1rem solid #ddd;
+    border-radius: 25rem;
 }
 
 /* Rounded sliders */
 .UserLeaderboard__FriendsOnly--slider.round {
-  border-radius: 3.4rem;
+    border-radius: 3.4rem;
 }
 
 .UserLeaderboard__FriendsOnly--slider.round:before {
-  border-radius: 50%;
+    border-radius: 50%;
 }
 
 .UserLeaderboard__FriendsOnly {
-  position: relative;
-  display: inline-block;
-  width: 6rem;
-  height: 3.4rem;
+    position: relative;
+    display: inline-block;
+    width: 6rem;
+    height: 3.4rem;
 }
 
 .UserLeaderboard__FriendsOnly input {
-  display: none;
+    display: none;
 }
 
 .UserLeaderboard__FriendsOnly--slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
 }
 
 .UserLeaderboard__FriendsOnly--slider:before {
-  position: absolute;
-  content: "";
-  height: 2.6rem;
-  width: 26px;
-  left: .4rem;
-  bottom: .4rem;
-  background-color: var(--tertiary-color);
-  -webkit-transition: .4s;
-  transition: .4s;
+    position: absolute;
+    content: "";
+    height: 2.6rem;
+    width: 26px;
+    left: .4rem;
+    bottom: .4rem;
+    background-color: var(--tertiary-color);
+    -webkit-transition: .4s;
+    transition: .4s;
 }
 
 input:checked + .UserLeaderboard__FriendsOnly--slider {
-  background-color: var(--secondary-color);
+    background-color: var(--secondary-color);
 }
 
 input:focus + .UserLeaderboard__FriendsOnly--slider {
-  box-shadow: 0 0 1px var(--secondary-color);
+    box-shadow: 0 0 1px var(--secondary-color);
 }
 
 input:checked + .UserLeaderboard__FriendsOnly--slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
 }
 
 .DatePicker {
-  position: relative;
-  margin: 0 auto;
-  margin-bottom: .8rem;
-  width: fit-content;
-  width: -moz-fit-content;
-  z-index: 1;
+    position: relative;
+    margin: 0 auto;
+    margin-bottom: .8rem;
+    width: fit-content;
+    width: -moz-fit-content;
+    z-index: 1;
 }
 
 .WeeklyDatePicker {
-  position: relative;
-  margin: 0 auto;
-  margin-bottom: .8rem;
-  width: 18rem;
+    position: relative;
+    margin: 0 auto;
+    margin-bottom: .8rem;
+    width: 18rem;
 }
 
 .react-datepicker {
-  transform: scale(1.6, 1.6);
-  margin-top: 5rem;
+    transform: scale(1.6, 1.6);
+    margin-top: 5rem;
 }
 
 .react-datepicker__day--selected {
- background: var(--primary-color)
+    background: var(--primary-color)
 }
 
 .DatePicker .react-datepicker__day:hover {
-  background: var(--secondary-color);
-  color: #fff;
+    background: var(--secondary-color);
+    color: #fff;
 }
 
 .react-datepicker__close-icon::after {
-  background: var(--secondary-color);
+    background: var(--secondary-color);
 }
 
 .WeeklyDatePicker .react-datepicker__week:hover {
-  background-color: var(--grey-text);
+    background-color: var(--grey-text);
 }
 
 .WeeklyDatePicker .react-datepicker__day:hover {
-  background-color: var(--grey-text);
+    background-color: var(--grey-text);
 }
 
 .select-year {
-  width: 18.5rem;
-  display: block;
-  margin: .5rem auto 2rem;
+    width: 18.5rem;
+    display: block;
+    margin: .5rem auto 2rem;
 }
 
 .UserLeaderboardCard {
-  margin: 0 auto;
-  margin-bottom: .2rem;
-  width: 100%;
-  max-width: 45rem;
-  min-width: 29rem;
-  height: 6rem;
+    margin: 0 auto;
+    margin-bottom: .2rem;
+    width: 100%;
+    max-width: 45rem;
+    min-width: 29rem;
+    height: 6rem;
 }
 
 .UserLeaderboardCard--daily {
-  height: 18rem;
+    height: 18rem;
 }
 
 .UserLeaderboardCard__body {
-  padding: 0;
-  display: grid;
-  grid-template-columns: 15% 15% 40% 30%;
-  grid-template-rows: 100%;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 15% 15% 40% 30%;
+    grid-template-rows: 100%;
 }
 
 .UserLeaderboardCard__body--daily {
-  padding: 0;
-  display: grid;
-  grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
-  grid-template-rows: 40% 60%;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
+    grid-template-rows: 40% 60%;
 }
 
 .UserLeaderboardCard__body-item {
-  align-self: center;
-  text-align: center;
-  overflow: hidden;
+    align-self: center;
+    text-align: center;
+    overflow: hidden;
 }
 
 .UserLeaderboardCard__user-ranking {
-  text-align: left;
-  font-weight: 700;
-  font-size: 2.3rem;
-  color: var(--primary-color);
-  padding-left: 1rem;
+    text-align: left;
+    font-weight: 700;
+    font-size: 2.3rem;
+    color: var(--primary-color);
+    padding-left: 1rem;
 }
 
 .UserLeaderboardCard__user-ranking--daily {
-  grid-column: 1 / span 2;
+    grid-column: 1 / span 2;
 }
 
 .UserLeaderboardCard__user-photo {
-  text-align: left;
-  grid-column: 3 / span 2;
+    text-align: left;
+    grid-column: 3 / span 2;
 }
 
 .UserLeaderboardCard__user-photo--image {
-  grid-column: 3 / span 2;
-  overflow: hidden;
-  height: 4rem;
+    grid-column: 3 / span 2;
+    overflow: hidden;
+    height: 4rem;
 }
 
 .UserLeaderboardCard__username {
-  text-align: left;
-  font-size: 1.8rem;
-  color: var(--primary-color);
-  font-weight: 400;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+    text-align: left;
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    font-weight: 400;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .UserLeaderboardCard__username--daily {
-  grid-column: 5 / span 3;
+    grid-column: 5 / span 3;
 }
 
 .UserLeaderboardCard__FP {
-  margin: 0;
-  align-self: center;
-  font-size: 1.9rem;
-  font-weight: 700;
+    margin: 0;
+    align-self: center;
+    font-size: 1.9rem;
+    font-weight: 700;
 }
 
 .UserLeaderboardCard__FP--daily {
-  grid-column: 8 / span 3;
+    grid-column: 8 / span 3;
 }
 
 .UserLeaderboardCard__FP--grey {
-  height: 100%;
-  border-left: .01rem solid #acacac;
-  background-color: var(--grey-background);
-  line-height: 6rem;
+    height: 100%;
+    border-left: .01rem solid #acacac;
+    background-color: var(--grey-background);
+    line-height: 6rem;
 }
 
 .UserLeaderboardCard__Date {
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 400;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 400;
 }
 
 .UserLeaderboardCard__player {
-  width: 100%;
-  height: 100%;
-  background-color: var(--grey-background);
-  padding-top: 1rem;
-  grid-column: span 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-top: .01rem solid lightgrey;
+    width: 100%;
+    height: 100%;
+    background-color: var(--grey-background);
+    padding-top: 1rem;
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top: .01rem solid lightgrey;
 }
 
 .UserLeaderboardCard__player-photo--background {
-  width: 4rem;
-  height: 4rem;
-  overflow: hidden;
-  border-radius: 50%;
-  margin: 0 auto;
+    width: 4rem;
+    height: 4rem;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 0 auto;
 }
 
 .UserLeaderboardCard__player-photo--image {
-  width: 5.5rem;
-  overflow: hidden;
-  margin: .3rem -.9rem;
+    width: 5.5rem;
+    overflow: hidden;
+    margin: .3rem -.9rem;
 }
 
 .UserLeaderboardCard__player-lastname {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  width: 100%;
-  margin: .1rem 0 0 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    width: 100%;
+    margin: .1rem 0 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .UserLeaderboardCard__player-fp {
-  font-size: 1.4rem;
-  font-weight: 400;
-  color: var(--primary-color);
-  margin: 0;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--primary-color);
+    margin: 0;
 }
 
 .PlayerLeaderboardCard {
-  margin: 0 auto;
-  margin-bottom: .2rem;
-  width: 100%;
-  max-width: 45rem;
-  min-width: 29rem;
-  height: 6rem;
+    margin: 0 auto;
+    margin-bottom: .2rem;
+    width: 100%;
+    max-width: 45rem;
+    min-width: 29rem;
+    height: 6rem;
 }
 
 .PlayerLeaderboardCard__body {
-  height: 100%;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 18% 15% 43% 24%;
-  grid-template-rows: 100%;
+    height: 100%;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 18% 15% 43% 24%;
+    grid-template-rows: 100%;
 }
 
 .PlayerLeaderboardCard__body-item {
-  align-self: center;
-  overflow: hidden;
+    align-self: center;
+    overflow: hidden;
 }
 
 .PlayerLeaderboardCard__player-ranking {
-  text-align: left;
-  font-weight: 700;
-  font-size: 2.3rem;
-  color: var(--primary-color);
-  padding-left: .7rem;
+    text-align: left;
+    font-weight: 700;
+    font-size: 2.3rem;
+    color: var(--primary-color);
+    padding-left: .7rem;
 }
 
 .PlayerLeaderboardCard__player-photo--background {
-  margin: 0 auto;
-  width: 3.5rem;
-  height: 3.5rem;
-  overflow: hidden;
-  border-radius: 50%;
+    margin: 0 auto;
+    width: 3.5rem;
+    height: 3.5rem;
+    overflow: hidden;
+    border-radius: 50%;
 }
 
 .PlayerLeaderboardCard__player-photo--image {
-  width: 4.5rem;
-  overflow: hidden;
-  margin: .5rem -.4rem;
+    width: 4.5rem;
+    overflow: hidden;
+    margin: .5rem -.4rem;
 }
 
 .PlayerLeaderboardCard__player-name--abbr {
-  text-align: left;
-  font-size: 1.5rem;
-  color: var(--primary-color);
-  font-weight: 400;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+    text-align: left;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 400;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .PlayerLeaderboardCard__FP {
-  position: relative;
-  height: 100%;
-  margin: 0;
-  border-left: .01rem solid #acacac;
-  background-color: var(--grey-background);
-  text-align: center;
-  align-self: center;
-  font-size: 1.9rem;
-  font-weight: 700;
+    position: relative;
+    height: 100%;
+    margin: 0;
+    border-left: .01rem solid #acacac;
+    background-color: var(--grey-background);
+    text-align: center;
+    align-self: center;
+    font-size: 1.9rem;
+    font-weight: 700;
 }
 
 .PlayerLeaderboardCard__FP--text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  transform: translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
 }
 
 .UserScoreCard {
-  width: 100%;
-  max-width: 45rem;
-  min-width: 29rem;
-  height: 9rem;
+    width: 100%;
+    max-width: 45rem;
+    min-width: 29rem;
+    height: 9rem;
 }
 
 .UserScoreCard__body {
-  padding: 0;
-  display: grid;
-  grid-template-columns: 16% 16% 16% 16% 16% 20%;
-  grid-template-rows: 100%;
-  justify-items: center;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 16% 16% 16% 16% 16% 20%;
+    grid-template-rows: 100%;
+    justify-items: center;
 }
 
 .UserScoreCard__body-item {
-  align-self: center;
-  text-align: center;
+    align-self: center;
+    text-align: center;
 }
 
 .UserScoreCard__player {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
 }
 
 .UserScoreCard__player-photo--background {
-  width: 3.5rem;
-  height: 3.5rem;
-  overflow: hidden;
-  border-radius: 50%;
-  margin: 0 auto;
-  margin-top: .5rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-top: .5rem;
 }
 
 .UserScoreCard__player-photo--image {
-  width: 5rem;
-  overflow: hidden;
-  margin: .3rem -.9rem;
+    width: 5rem;
+    overflow: hidden;
+    margin: .3rem -.9rem;
 }
 
 .UserScoreCard__loader {
-  position: static;
-  margin-left: -3.5rem;
-  margin-top: -2.2rem;
-  width: 11rem;
+    position: static;
+    margin-left: -3.5rem;
+    margin-top: -2.2rem;
+    width: 11rem;
 }
 
 .UserScoreCard__player-lastname {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  margin: .1rem 0 0 0;
-  white-space: nowrap;
-  overflow: hidden;
-  width: 100%;
-  text-overflow: ellipsis;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: .1rem 0 0 0;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
 }
 
 .UserScoreCard__player-FP {
-  font-size: 1.2rem;
-  font-weight: 400;
-  color: var(--primary-color);
-  margin: 0;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--primary-color);
+    margin: 0;
 }
 
 .UserScoreCard__result {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-left: .01rem solid #acacac;
-  background-color: #f5f5f5;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-left: .01rem solid #acacac;
+    background-color: #f5f5f5;
 }
 
 .UserScoreCard__FP {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 100%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  font-size: 2.1rem;
-  font-weight: 700;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 2.1rem;
+    font-weight: 700;
 }
 
 .UserScoreCard__date {
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 400;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 400;
 }
 
 .Lineup--sticky {
-  width: 100%;
-  position: sticky;
-  top: 9.6rem;
-  z-index: 10;
-  background: linear-gradient(
-    to bottom,
-    #FAFAFA 85%,
-    rgba(255, 255, 255, 0)
-  );
-  padding-bottom: 2.5rem;
+    width: 100%;
+    position: sticky;
+    top: 9.6rem;
+    z-index: 10;
+    background: linear-gradient(
+            to bottom,
+            #FAFAFA 93%,
+            rgba(255, 255, 255, 0)
+    );
+    padding-bottom: 2.5rem;
 }
 
 
 @media screen and (max-width: 600px) {
-  .Lineup--sticky {
-    top: 5.5rem
-  }
+    .Lineup--sticky {
+        top: 5.5rem
+    }
 }
 
 .Lineup__countdown {
-  padding: 1rem;
-  font-size: 1.6rem;
+    padding: 1rem;
+    font-size: 1.6rem;
 }
 
 .Lineup__info-button {
-  background-color: var(--secondary-color);
-  border-color: var(--secondary-color);
-  position: absolute;
-  right: -49%;
-  top: -20%;
-  width: 3rem;
-  height: 3rem;
-  font-size: 1.2rem;
-  border-radius: 2rem;
-  margin-top: 1rem;
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    position: absolute;
+    right: -49%;
+    top: -20%;
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.2rem;
+    border-radius: 2rem;
+    margin-top: 1rem;
 }
 
 .Lineup__body {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  list-style-type: none;
-  margin: 0 auto;
-  max-width: 60rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    list-style-type: none;
+    margin: 0 auto;
+    max-width: 60rem;
 }
 
 .Lineup__submit-button {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
 }
 
 .PlayerPool {
-  display: grid;
-  grid-gap: 1%;
-  grid-template-columns: repeat(4, 1fr);
-  list-style-type: none;
+    display: grid;
+    grid-gap: 1%;
+    grid-template-columns: repeat(4, 1fr);
+    list-style-type: none;
 }
 
 .PlayerCard {
-  position: relative;
-  max-width: 18rem;
+    position: relative;
+    max-width: 16rem;
 }
 
 .PlayerCard--pool {
-  margin: .25rem;
+    margin: .25rem;
 }
 
 .PlayerCard__position {
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  padding: .3rem 0 .3rem 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    padding: .3rem 0 .3rem 0;
 }
 
 .PlayerCard__player-logo--behind {
-  position: absolute;
-  width: 60%;
-  left: .5rem;
-  top: 1.2rem;
-  z-index: 1;
+    position: absolute;
+    width: 60%;
+    left: .5rem;
+    top: 1.2rem;
+    z-index: 1;
 }
 
 .PlayerCard__loader {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
 }
 
 .PlayerCard__image {
-  position: relative;
+    position: relative;
 }
 
 .PlayerCard__background {
-  position: relative;
-  z-index: 0;
-  width: 100%;
-  border-radius: .5rem 0 0 0;
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    border-radius: .5rem 0 0 0;
 }
 
 .PlayerCard__player-img {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 4;
-  width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 4;
+    width: 100%;
 }
 
 .PlayerCard__player-img--lineup {
-  width: 100%;
+    width: 100%;
 }
 
 .PlayerCard__player-attributes {
-  position: relative;
-  z-index: 3;
+    position: relative;
+    z-index: 3;
 }
 
 .PlayerCard__player-attributes--price {
-  position: absolute;
-  -webkit-transform: translateY(35%);
-  transform: translateY(35%);
-  left: 5%;
-  font-size: 1.4rem;
-  background-color: var(--primary-color);
+    position: absolute;
+    -webkit-transform: translateY(35%);
+    transform: translateY(35%);
+    left: 5%;
+    font-size: 1.4rem;
+    background-color: var(--primary-color);
 }
 
 .PlayerCard__player-attributes--price-lineup {
-  font-size: .95rem;
+    font-size: .95rem;
 }
 
 .PlayerCard__player-attributes--FPPG {
-  position: absolute;
-  color: white;
-  font-size: 1.4rem;
-  font-weight: 700;
-  right: 3%;
+    position: absolute;
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 700;
+    right: 3%;
 }
+
 .PlayerCard__player-attributes--FPPG-label {
-  position: absolute;
-  color: white;
-  font-size: 1.2rem;
-  font-weight: 700;
-  right: 3%;
-  transform: translateY(100%);
+    position: absolute;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    right: 3%;
+    transform: translateY(100%);
 }
 
 .PlayerCard__player-attributes--position {
-  position: absolute;
-  color: white;
-  font-weight: bold;
-  -webkit-transform: translateY(10%);
-  transform: translateY(10%);
-  right: 5%;
-  font-size: 1.9rem;
-  opacity: .7;
+    position: absolute;
+    color: white;
+    font-weight: bold;
+    -webkit-transform: translateY(10%);
+    transform: translateY(10%);
+    right: 5%;
+    font-size: 1.9rem;
+    opacity: .7;
 }
 
 .PlayerCard__player-attributes--opponent {
-  position: absolute;
-  right: 3%;
-  transform: translateY(180%);
-  font-size: 1.2rem;
-  font-weight: 400;
-  z-index: 8;
-  color: white;
-  opacity: .7;
+    position: absolute;
+    right: 3%;
+    transform: translateY(180%);
+    font-size: 1.2rem;
+    font-weight: 400;
+    z-index: 8;
+    color: white;
+    opacity: .7;
 }
 
 .PlayerCard__player-injury-badge {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  font-size: 1.2rem;
-  padding: .2rem;
-  color: black;
-  text-align: center;
-  font-weight: 700;
-  text-transform: uppercase;
-  z-index: 6;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    font-size: 1.2rem;
+    padding: .2rem;
+    color: black;
+    text-align: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    z-index: 6;
 }
 
 .PlayerCard__player-injury-badge--lineup {
-  font-size: .9rem;
+    font-size: .9rem;
 }
 
 .PlayerCard__button {
-  position: absolute;
-  color: white;
-  z-index: 6;
-  right: 5%;
-  bottom: 18%;
+    position: absolute;
+    color: white;
+    z-index: 6;
+    right: 5%;
+    bottom: 18%;
 }
 
 .PlayerCard__button--circle {
-  width: 4rem;
-  height: 4rem;
-  font-size: 1.6rem;
-  border-radius: 2rem;
+    width: 4rem;
+    height: 4rem;
+    font-size: 1.6rem;
+    border-radius: 2rem;
 }
 
 .PlayerCard__Button--selected {
-  transition: background-color .3s;
+    transition: background-color .3s;
 }
 
 .PlayerCard__Button--default {
-  transition: background-color .3s;
+    transition: background-color .3s;
 }
 
 .PlayerCard__Button__Icon {
-  transition: transform .3s;
+    transition: transform .3s;
 }
 
 .PlayerCard__Button__Icon--selected {
-  transform: rotate(45deg);
-  transform-origin: center center;
-  transition: transform .3s;
+    transform: rotate(45deg);
+    transform-origin: center center;
+    transition: transform .3s;
 }
 
 .PlayerCard__player-name {
-  position: relative;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  padding: .2rem;
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  margin: 0;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: .2rem;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0;
 }
 
 .PlayerCard__player-name--lineup {
-  text-align: center;
-  overflow: hidden;
-  white-space: nowrap;
-  margin: 0;
-  font-size: 1.2rem;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0;
+    font-size: 1.2rem;
 }
 
 .RequestCard {
-  width: 100%;
-  margin-bottom: 1.6rem;
+    width: 100%;
+    margin-bottom: 1.6rem;
 }
 
 .RequestCard__Body {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .RequestCard__Info {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .RequestCard__Avatar {
-  height: 6rem;
-  width: 6rem;
+    height: 6rem;
+    width: 6rem;
 }
 
 .RequestCard__Info__Name {
-  margin: 0 0 0 1rem;
-  font-size: 2.2rem;
+    margin: 0 0 0 1rem;
+    font-size: 2.2rem;
 }
 
 .RequestCard__Buttons {
-  height: 100%;
-  padding: 0 1.25rem;
-  background: var(--grey-background);
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  border-left: 0.1rem solid rgba(0, 0, 0, .15);
+    height: 100%;
+    padding: 0 1.25rem;
+    background: var(--grey-background);
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    border-left: 0.1rem solid rgba(0, 0, 0, .15);
 }
 
 .RequestCard__Buttons__Pending {
-  display: flex;
-  flex-direction: column-reverse;
+    display: flex;
+    flex-direction: column-reverse;
 }
 
 .RequestCard__Buttons__Pending__Accept {
-  margin-bottom: 6px;
+    margin-bottom: 6px;
 }
 
 @media screen and (min-width: 510px) {
-  .RequestCard__Buttons__Pending {
-    flex-direction: row;
-  }
+    .RequestCard__Buttons__Pending {
+        flex-direction: row;
+    }
 
-  .RequestCard__Buttons__Pending__Accept {
-    margin-bottom: 0px;
-    margin-left: 12px;
-  }
+    .RequestCard__Buttons__Pending__Accept {
+        margin-bottom: 0px;
+        margin-left: 12px;
+    }
 }
 
 .Charts {
-  max-width: 90rem;
-  width: 100%; 
+    max-width: 90rem;
+    width: 100%;
 }
 
 .InfoModal__thead {
-  background-color: var(--primary-color) !important;
-  font-weight: 700 !important;
+    background-color: var(--primary-color) !important;
+    font-weight: 700 !important;
 }
 
 .Avatar--round {
-  border-radius: 50%;
+    border-radius: 50%;
 }
 
 .GameLog__corner-cell {
-  background-color: var(--primary-color) !important;
-  font-weight: 700 !important;
+    background-color: var(--primary-color) !important;
+    font-weight: 700 !important;
 }
 
 .GameLog__LiveBadge {
-  font-size: .9rem;
+    font-size: .9rem;
 }
 
 .LiveBadge--pulse {
-  margin: .5rem;
-  cursor: pointer;
-  box-shadow: 0 0 0 rgba(231,76,60, 0.4);
-  animation: LiveBadgePulse 2s infinite;
+    margin: .5rem;
+    cursor: pointer;
+    box-shadow: 0 0 0 rgba(231, 76, 60, 0.4);
+    animation: LiveBadgePulse 2s infinite;
 }
 
 @-webkit-keyframes LiveBadgePulse {
-  0% {
-    -webkit-box-shadow: 0 0 0 0 rgba(231,76,60, 0.4);
-  }
-  70% {
-      -webkit-box-shadow: 0 0 0 .7rem rgba(204,169,44, 0);
-  }
-  100% {
-      -webkit-box-shadow: 0 0 0 0 rgba(204,169,44, 0);
-  }
+    0% {
+        -webkit-box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
+    }
+    70% {
+        -webkit-box-shadow: 0 0 0 .7rem rgba(204, 169, 44, 0);
+    }
+    100% {
+        -webkit-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+    }
 }
+
 @keyframes LiveBadgePulse {
-  0% {
-    -moz-box-shadow: 0 0 0 0 rgba(231,76,60, 0.4);
-    box-shadow: 0 0 0 0 rgba(231,76,60, 0.4);
-  }
-  70% {
-      -moz-box-shadow: 0 0 0 .7rem rgba(204,169,44, 0);
-      box-shadow: 0 0 0 .7rem rgba(204,169,44, 0);
-  }
-  100% {
-      -moz-box-shadow: 0 0 0 0 rgba(204,169,44, 0);
-      box-shadow: 0 0 0 0 rgba(204,169,44, 0);
-  }
+    0% {
+        -moz-box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
+    }
+    70% {
+        -moz-box-shadow: 0 0 0 .7rem rgba(204, 169, 44, 0);
+        box-shadow: 0 0 0 .7rem rgba(204, 169, 44, 0);
+    }
+    100% {
+        -moz-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+        box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+    }
 }
 
 @media screen and (min-width: 568px) {
-  #main-text {
-    font-size: 82px;
-    margin-top: 15%;
-  }
+    #main-text {
+        font-size: 82px;
+        margin-top: 15%;
+    }
 }
 
 @media only screen and (min-width: 330px) {
-  .Navbar__Title {
-    display: inline-block;
-    margin-left: .5rem;
-  }
+    .Navbar__Title {
+        display: inline-block;
+        margin-left: .5rem;
+    }
 }
 
 @media only screen and (min-width: 100px) {
-  .Navbar__Icon {
-    display: inline-block;
-    margin-left: .5rem;
-  }
+    .Navbar__Icon {
+        display: inline-block;
+        margin-left: .5rem;
+    }
 }
 
 @media only screen and (max-width: 992px) {
-  .navbar-nav .dropdown-menu {
-    position: absolute;
-  }
+    .navbar-nav .dropdown-menu {
+        position: absolute;
+    }
 
-  .Header__Login {
-    order: -1;
-    margin-right: 1em;
-  }
+    .Header__Login {
+        order: -1;
+        margin-right: 1em;
+    }
 
-  .Header__LoggedIn {
-    display: flex;
-    flex-direction: row;
-    order: -1;
-  }
+    .Header__LoggedIn {
+        display: flex;
+        flex-direction: row;
+        order: -1;
+    }
 
-  .Header__Burger {
-    margin-right: .5rem;
-    order: -10;
-    font-size: 1.6rem;
-  }
+    .Header__Burger {
+        margin-right: .5rem;
+        order: -10;
+        font-size: 1.6rem;
+    }
+}
+
+@media only screen and (min-width: 767px) {
+    .PlayerCard {
+        min-height: 11.7rem;
+    }
 }
 
 @media only screen and (max-width: 767px) {
-  .PlayerCard {
-    max-width: 15rem;
-  }
-  .PlayerCard__player-attributes--price {
-    font-size: 1.2rem;
-  }
-  .PlayerCard__player-attributes--price-lineup {
-    font-size: .9rem;
-  }
-  .PlayerCard__player-attributes--FPPG {
-    font-size: 1.2rem;
-  }
-  .PlayerCard__player-attributes--FPPG-label {
-    font-size: 1rem;
-  }
-  .PlayerCard__player-attributes--opponent {
-    font-size: 1rem;
-  }
-  .PlayerCard__player-name {
-    font-size: 1.4rem;
-    padding: .1rem;
-  }
-  .PlayerCard__player-name--lineup {
-    font-size: 1rem;
-  }
-  .PlayerCard__position {
-    font-size: 1rem;
-    padding: .5rem;
-  }
-  .PlayerCard__button--circle {
-    width: 3.5rem;
-    height: 3.5rem;
-    font-size: 1.2rem;
-  }
-  .PlayerCard__player-injury-badge {
-    font-size: 1rem;
-  }
-  .PlayerCard__player-injury-badge--lineup {
-    font-size: .8rem;
-  }
-  .Lineup__submit-button {
-    font-size: 1.6rem;
-  }
+    .PlayerCard {
+        max-width: 15rem;
+    }
+
+    .PlayerCard__player-attributes--price {
+        font-size: 1.2rem;
+    }
+
+    .PlayerCard__player-attributes--price-lineup {
+        font-size: .9rem;
+    }
+
+    .PlayerCard__player-attributes--FPPG {
+        font-size: 1.2rem;
+    }
+
+    .PlayerCard__player-attributes--FPPG-label {
+        font-size: 1rem;
+    }
+
+    .PlayerCard__player-attributes--opponent {
+        font-size: 1rem;
+    }
+
+    .PlayerCard__player-name {
+        font-size: 1.4rem;
+        padding: .1rem;
+    }
+
+    .PlayerCard__player-name--lineup {
+        font-size: 1rem;
+    }
+
+    .PlayerCard__position {
+        font-size: 1rem;
+        padding: .5rem;
+    }
+
+    .PlayerCard__button--circle {
+        width: 3.5rem;
+        height: 3.5rem;
+        font-size: 1.2rem;
+    }
+
+    .PlayerCard__player-injury-badge {
+        font-size: 1rem;
+    }
+
+    .PlayerCard__player-injury-badge--lineup {
+        font-size: .8rem;
+    }
+
+    .Lineup__submit-button {
+        font-size: 1.6rem;
+    }
 }
 
 @media only screen and (max-width: 440px) {
-  .PlayerCard__player-attributes--position {
-    font-size: 1.5rem;
-  }
-  .PlayerCard__player-injury-badge--lineup {
-    padding: .1rem;
-    font-size: .7rem;
-  }
-  .UserScoreCard__FP {
-    font-size: 1.5rem;
-  }
+    .PlayerCard__player-attributes--position {
+        font-size: 1.5rem;
+    }
+
+    .PlayerCard__player-injury-badge--lineup {
+        padding: .1rem;
+        font-size: .7rem;
+    }
+
+    .UserScoreCard__FP {
+        font-size: 1.5rem;
+    }
 }
 
 @media only screen and (max-width: 362px) {
-  .PlayerCard {
-    max-width: 14rem;
-  }
-  .PlayerCard__player-attributes--position {
-    font-size: 1.1rem;
-  }
-  .PlayerCard__player-attributes--price {
-    font-size: 1.2rem;
-  }
-  .PlayerCard__player-attributes--price-lineup {
-    font-size: .5rem;
-  }
-  .PlayerCard__player-attributes--FPPG {
-    font-size: 1.2rem;
-  }
-  .PlayerCard__player-attributes--FPPG-label {
-    font-size: 1rem;
-  }
-  .PlayerCard__player-attributes--opponent {
-    font-size: 1rem;
-  }
-  .PlayerCard__player-name {
-    font-size: 1.4rem;
-  }
-  .PlayerCard__button--circle {
-    width: 3.5rem;
-    height: 3.5rem;
-    font-size: 1.2rem;
-  }
-  .PlayerCard__player-injury-badge {
-    font-size: 1rem;
-  }
-  .PlayerCard__player-injury-badge--lineup {
-    padding: .1rem;
-    font-size: .65rem;
-  }
-  .Lineup__submit-button {
-    font-size: 1.2rem;
-  }
+    .PlayerCard {
+        max-width: 14rem;
+    }
+
+    .PlayerCard__player-attributes--position {
+        font-size: 1.1rem;
+    }
+
+    .PlayerCard__player-attributes--price {
+        font-size: 1.2rem;
+    }
+
+    .PlayerCard__player-attributes--price-lineup {
+        font-size: .5rem;
+    }
+
+    .PlayerCard__player-attributes--FPPG {
+        font-size: 1.2rem;
+    }
+
+    .PlayerCard__player-attributes--FPPG-label {
+        font-size: 1rem;
+    }
+
+    .PlayerCard__player-attributes--opponent {
+        font-size: 1rem;
+    }
+
+    .PlayerCard__player-name {
+        font-size: 1.4rem;
+    }
+
+    .PlayerCard__button--circle {
+        width: 3.5rem;
+        height: 3.5rem;
+        font-size: 1.2rem;
+    }
+
+    .PlayerCard__player-injury-badge {
+        font-size: 1rem;
+    }
+
+    .PlayerCard__player-injury-badge--lineup {
+        padding: .1rem;
+        font-size: .65rem;
+    }
+
+    .Lineup__submit-button {
+        font-size: 1.2rem;
+    }
 }
 
 @media only screen and (max-width: 380px) {
-  .PlayerCard__player-name--lineup {
-    font-size: .75rem;
-  }
-  .PlayerCard__position {
-    font-size: .8rem;
-  }
+    .PlayerCard__player-name--lineup {
+        font-size: .75rem;
+    }
+
+    .PlayerCard__position {
+        font-size: .8rem;
+    }
 }
 
 @media only screen and (max-width: 320px) {
-  .PlayerCard__player-name--lineup {
-    font-size: .6rem;
-  }
-  .PlayerCard__position {
-    font-size: .6rem;
-  }
+    .PlayerCard__player-name--lineup {
+        font-size: .6rem;
+    }
+
+    .PlayerCard__position {
+        font-size: .6rem;
+    }
 }
 
 @media only screen and (max-width: 420px) {
-  .InjuryCard__Title {
-    max-height: 8.5rem;
-  }
+    .InjuryCard__Title {
+        max-height: 8.5rem;
+    }
 }
 
 @media only screen and (max-width: 375px) {
-  .InjuryCard__Title {
-    max-height: 9.8rem;
-  }
+    .InjuryCard__Title {
+        max-height: 9.8rem;
+    }
 }
