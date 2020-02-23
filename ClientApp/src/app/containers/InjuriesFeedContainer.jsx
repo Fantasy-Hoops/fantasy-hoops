@@ -69,14 +69,14 @@ function InjuriesFeedContainer(props) {
 
     if (injuryLoader) {
         content = (
-            <div className="m-5">
+            <div className="my-5 mx-auto">
                 <div className="Loader"/>
             </div>
         );
     }
-    if (injuries && injuries.length === 0) {
+    if (!injuryLoader && injuries && injuries.length === 0) {
         content = (
-            <div className="p-5">
+            <div className="my-5 mx-auto">
                 <EmptyJordan message="No injuries report today..."/>
             </div>
         );

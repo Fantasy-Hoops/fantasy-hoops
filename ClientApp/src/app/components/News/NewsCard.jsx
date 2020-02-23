@@ -30,7 +30,7 @@ function NewsCard(props) {
     }
 
     const paragraphs = _.map(news.paragraphs,
-        paragraph => <p key={shortid()}>{paragraph}</p>);
+        paragraph => <p key={shortid()} className="NewsCard__Content">{paragraph}</p>);
     
     return (
         <>

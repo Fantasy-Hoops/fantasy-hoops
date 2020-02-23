@@ -132,6 +132,7 @@ namespace fantasy_hoops.Jobs
             if (!shouldAdd)
                 return;
             _context.News.Add(nObj);
+            _context.SaveChanges();
 
             string firstParagraph = paragraphs[0]["paragraph"].ToString();
             int beginIndex = firstParagraph.IndexOf("(AP)", StringComparison.Ordinal);
@@ -149,7 +150,6 @@ namespace fantasy_hoops.Jobs
                 };
                 _context.Paragraphs.Add(paragraph);
             }
-            _context.SaveChanges();
         }
 
         private string Today()

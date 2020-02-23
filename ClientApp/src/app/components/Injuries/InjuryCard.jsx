@@ -5,6 +5,8 @@ import Img from 'react-image';
 import { UTCNow } from '../../utils/date';
 import defaultLogo from '../../../content/images/defaultLogo.png';
 
+import './InjuryCard.css';
+
 const InjuryCard = (props) => {
   const { injury, animated } = props;
   let status = '';

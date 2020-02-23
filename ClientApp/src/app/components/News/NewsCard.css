@@ -1,28 +1,24 @@
-h2 {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 30px;
-    font-weight: 300;
-    line-height: 32px;
-    margin: 0 0 72px;
-    text-align: left;
+.NewsCard {
+    margin-bottom: 7rem;
 }
 
+.NewsCard__Title {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 300;
+    line-height: 2.5rem;
+    text-align: left;
+    display: table;
+    margin-bottom: 1rem;
+}
 
-p {
+.NewsCard__Content {
     font-family: 'Helvetica Neue', sans-serif;
     font-size: 14px;
     line-height: 24px;
     margin: 0 0 24px;
     text-align: justify;
     text-justify: inter-word;
-}
-
-.NewsCard {
-    margin-bottom: 7rem;
-}
-
-.NewsCard__Title {
-    display: table;
 }
 
 .NewsCard__Date {
