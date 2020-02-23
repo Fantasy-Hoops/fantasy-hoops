@@ -29,7 +29,7 @@ function MobileDrawer(props) {
             <Divider/>
             <List>
                 {isAuth()
-                    && <ListItem button component={Link} to={Routes.LINEUP} onClick={() => handleDrawerClose}
+                    && <ListItem button component={Link} to={Routes.LINEUP} onClick={() => handleDrawerClose()}
                                 selected={selectedTab === 0}>
                         <ListItemIcon>
                             <img
