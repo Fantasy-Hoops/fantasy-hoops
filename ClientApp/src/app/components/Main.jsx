@@ -11,6 +11,8 @@ import {registerPush} from '../utils/push';
 import './Main.css';
 import Button from "@material-ui/core/Button";
 import {useStyles} from "./MainStyle";
+import {Helmet} from "react-helmet";
+import {Canonicals, Meta} from "../utils/helpers";
 
 const positions = {
     PG: require('../../content/images/positions/pg.png'),
@@ -23,7 +25,7 @@ const positions = {
 function Main() {
     const [daily, setDaily] = useState([]);
     const classes = useStyles();
-    
+
     useEffect(() => {
         if (typeof Notification !== 'undefined' && Notification.permission !== 'denied') {
             registerPush();
@@ -33,19 +35,20 @@ function Main() {
             $('.navbar-collapse').removeClass('show');
         });
         document.querySelector('body').classList.add('Main__Background');
-        
+
         async function handleGetPlayersLeaderboard() {
             await getPlayersLeaderboard({type: 'daily', limit: 3})
                 .then(res => setDaily(res.data))
                 .catch(err => console.error(err.message));
         }
+
         handleGetPlayersLeaderboard();
 
         return () => {
             document.querySelector('body').classList.remove('Main__Background');
         }
     }, []);
-    
+
     useEffect(() => {
         let deferredPrompt;
         if (document.querySelector('.A2HS-Button')) {
@@ -80,7 +83,7 @@ function Main() {
             });
         }
     });
-    
+
     function createPlayers(players) {
         return _.map(
             players,
@@ -104,33 +107,40 @@ function Main() {
             </div>
         )
         : null;
-    
+
     return (
-        <div className="Main__Background">
-            {/*<button type="button" className="btn btn-outline-success A2HS-Button">*/}
-            {/*  <i className="far fa-bookmark" />*/}
-            {/*  {' Save'}*/}
-            {/*</button>*/}
-            <div className="Main__Logo--placeholder">
-                <img
-                    className="Main__Logo"
-                    alt="Fantasy Hoops"
-                    src={`${require('../../content/logo/fh.svg')}`}
-                />
+        <>
+            <Helmet>
+                <title>{Meta.TITLE}</title>
+                <meta name="description" content={Meta.DESCRIPTION}/>
+                <link rel="canonical" href={Canonicals.MAIN}/>
+            </Helmet>
+            <div className="Main__Background">
+                {/*<button type="button" className="btn btn-outline-success A2HS-Button">*/}
+                {/*  <i className="far fa-bookmark" />*/}
+                {/*  {' Save'}*/}
+                {/*</button>*/}
+                <div className="Main__Logo--placeholder">
+                    <img
+                        className="Main__Logo"
+                        alt="Fantasy Hoops"
+                        src={`${require('../../content/logo/fh.svg')}`}
+                    />
+                </div>
+                <div className="Main__PlayNowButton">
+                    <Button
+                        id="PlayNowBtn"
+                        className={classes.button}
+                        color="primary"
+                        component={Link}
+                        to={Routes.LINEUP}
+                    >
+                        Play Now!
+                    </Button>
+                </div>
+                {topPlayers}
             </div>
-            <div className="Main__PlayNowButton">
-                <Button
-                    id="PlayNowBtn"
-                    className={classes.button}
-                    color="primary"
-                    component={Link}
-                    to={Routes.LINEUP}
-                >
-                    Play Now!
-                </Button>
-            </div>
-            {topPlayers}
-        </div>
+        </>
     );
 }
 

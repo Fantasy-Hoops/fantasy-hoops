@@ -36,6 +36,7 @@
     "react-debounce-input": "^3.2.0",
     "react-dom": "^16.12.0",
     "react-google-login": "^5.0.7",
+    "react-helmet": "^5.2.1",
     "react-image": "^2.0.0",
     "react-infinite-scroll-component": "^4.5.0",
     "react-notifications-component": "^1.0.1",

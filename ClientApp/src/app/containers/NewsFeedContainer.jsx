@@ -16,6 +16,8 @@ import {useStyles} from "./NewsFeedContainerStyle";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import moment from "moment";
+import {Helmet} from "react-helmet";
+import {Canonicals} from "../utils/helpers";
 
 const Intro = {
     TITLE: "NEWS",
@@ -98,44 +100,51 @@ function NewsFeedContainer(props) {
     };
 
     return (
-        <Container maxWidth="md">
-            <article className="News__Intro">
-                <h1 className="News__Title">{Intro.TITLE}</h1>
-                <p className="News__Subtitle">{Intro.SUBTITLE}</p>
-                <p className="News__Subtitle">&copy; {Intro.COPYRIGHT}</p>
-            </article>
-            <Tabs
-                className={classes.tabs}
-                value={value}
-                indicatorColor="primary"
-                textColor="primary"
-                onChange={handleChange}
-                aria-label="disabled tabs example"
-            >
-                <Tab label="Previews"/>
-                <Tab label="Recaps"/>
-            </Tabs>
-            <TabPanel value={value} index={0}>
-                <InfiniteScroll
-                    dataLength={previews.length}
-                    next={() => loadMorePreviews(previews.length)}
-                    hasMore={hasMorePreviews}
-                    loader={<div className="Loader"/>}
+        <>
+            <Helmet>
+                <title>News | Fantasy Hoops</title>
+                <meta name="description" content={Intro.SUBTITLE} />
+                <link rel="canonical" href={Canonicals.NEWS} />
+            </Helmet>
+            <Container maxWidth="md">
+                <article className="News__Intro">
+                    <h1 className="News__Title">{Intro.TITLE}</h1>
+                    <h5 className="News__Subtitle">{Intro.SUBTITLE}</h5>
+                    <h5 className="News__Subtitle">&copy; {Intro.COPYRIGHT}</h5>
+                </article>
+                <Tabs
+                    className={classes.tabs}
+                    value={value}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    onChange={handleChange}
+                    aria-label="disabled tabs example"
                 >
-                    {previewsCards}
-                </InfiniteScroll>
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <InfiniteScroll
-                    dataLength={recaps.length}
-                    next={() => loadMoreRecaps(recaps.length)}
-                    hasMore={hasMoreRecaps}
-                    loader={<div className="Loader"/>}
-                >
-                    {recapsCards}
-                </InfiniteScroll>
-            </TabPanel>
-        </Container>
+                    <Tab label="Previews"/>
+                    <Tab label="Recaps"/>
+                </Tabs>
+                <TabPanel value={value} index={0}>
+                    <InfiniteScroll
+                        dataLength={previews.length}
+                        next={() => loadMorePreviews(previews.length)}
+                        hasMore={hasMorePreviews}
+                        loader={<div className="Loader"/>}
+                    >
+                        {previewsCards}
+                    </InfiniteScroll>
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                    <InfiniteScroll
+                        dataLength={recaps.length}
+                        next={() => loadMoreRecaps(recaps.length)}
+                        hasMore={hasMoreRecaps}
+                        loader={<div className="Loader"/>}
+                    >
+                        {recapsCards}
+                    </InfiniteScroll>
+                </TabPanel>
+            </Container>
+        </>
     );
 }
 

@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import {Helmet} from 'react-helmet';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -13,6 +14,7 @@ import {Container} from "@material-ui/core";
 import InjuriesInfoDialog from "../components/Injuries/InjuriesInfoDialog";
 import Button from "@material-ui/core/Button";
 import {useStyles} from "./InjuriesFeedContainerStyle";
+import {Canonicals} from "../utils/helpers";
 
 const Intro = {
     TITLE: "INJURIES",
@@ -87,17 +89,24 @@ function InjuriesFeedContainer(props) {
         return <InjuryCard key={shortid()} injury={injury} animated={animated}/>;
     });
     return (
-        <Container maxWidth="md">
-            <article className="Injuries__Intro">
-                <h1 className="Injuries__Title">{Intro.TITLE}</h1>
-                <p className="Injuries__Subtitle">{Intro.SUBTITLE}</p>
-            </article>
-            <Button className={classes.button} color="primary" onClick={handleClickOpen}>
-                INFO
-            </Button>
-            <div className="InjuryContainer__Cards">{content || injuryCards}</div>
-            <InjuriesInfoDialog handleClose={handleClose} open={open}/>
-        </Container>
+        <>
+            <Helmet>
+                <title>Injuries | Fantasy Hoops</title>
+                <meta name="description" content={Intro.SUBTITLE} />
+                <link rel="canonical" href={Canonicals.INJURIES} />
+            </Helmet>
+            <Container maxWidth="md">
+                <article className="Injuries__Intro">
+                    <h1 className="Injuries__Title">{Intro.TITLE}</h1>
+                    <h5 className="Injuries__Subtitle">{Intro.SUBTITLE}</h5>
+                </article>
+                <Button className={classes.button} color="primary" onClick={handleClickOpen}>
+                    INFO
+                </Button>
+                <div className="InjuryContainer__Cards">{content || injuryCards}</div>
+                <InjuriesInfoDialog handleClose={handleClose} open={open}/>
+            </Container>
+        </>
     );
 }
 

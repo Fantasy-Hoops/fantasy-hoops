@@ -1,5 +1,7 @@
 .NewsCard {
-    margin-bottom: 7rem;
+    margin: 0 auto 7rem;
+    overflow-x: hidden;
+    max-width: 60rem;
 }
 
 .NewsCard__Title {
