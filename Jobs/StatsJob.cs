@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -13,7 +14,7 @@ using Newtonsoft.Json.Linq;
 
 namespace fantasy_hoops.Jobs
 {
-    public class StatsJob : IJob
+    public class StatsJob
     {
         private readonly GameContext _context;
         private readonly IScoreService _scoreService;
@@ -50,7 +51,7 @@ namespace fantasy_hoops.Jobs
             return true;
         }
 
-        private void AddToDatabase(JToken player, Game game, DateTime date, int oppId, string score)
+        private async Task AddToDatabase(JToken player, Game game, DateTime date, int oppId, string score)
         {
             Stats statsObj = new Stats
             {
@@ -102,7 +103,7 @@ namespace fantasy_hoops.Jobs
 
                 statsObj.Price = playerPrice;
 
-                _context.Stats.Add(statsObj);
+                await _context.Stats.AddAsync(statsObj);
             }
             else
             {
@@ -138,7 +139,7 @@ namespace fantasy_hoops.Jobs
             }
         }
 
-        private Game GetGame(DateTime date, int homeTeamId, int awayTeamId, int homeScore, int awayScore)
+        private async Task<Game> GetGame(DateTime date, int homeTeamId, int awayTeamId, int homeScore, int awayScore)
         {
             Team homeTeam = _context.Teams.FirstOrDefault(team => team.NbaID == homeTeamId);
             if (homeTeam == null)
@@ -166,13 +167,13 @@ namespace fantasy_hoops.Jobs
                     AwayTeam = awayTeam,
                     AwayScore = awayScore
                 };
-                _context.Games.Add(gameObj);
+                await _context.Games.AddAsync(gameObj);
             }
 
             return gameObj;
         }
 
-        public void Execute()
+        public async Task Execute()
         {
             string gameDate = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).ToString("yyyyMMdd");
             JArray games = CommonFunctions.GetGames(gameDate);
@@ -198,13 +199,13 @@ namespace fantasy_hoops.Jobs
                 var players = boxscore["stats"]["activePlayers"];
                 int homeScore = (int) boxscore["basicGameData"]["hTeam"]["score"];
                 int awayScore = (int) boxscore["basicGameData"]["vTeam"]["score"];
-                Game gameObj = GetGame(date, hTeam, vTeam, homeScore, awayScore);
+                Game gameObj = await GetGame(date, hTeam, vTeam, homeScore, awayScore);
 
                 foreach (var player in (JArray) players)
                 {
                     int oppId;
 
-                    if (!_context.Players.Any(x => x.NbaID.Equals((int) player["personId"])))
+                    if (!await _context.Players.AnyAsync(x => x.NbaID.Equals((int) player["personId"])))
                         continue;
                     string score;
                     string liveToken = (int) game["statusNum"] != 3 ? ";LIVE" : "";
@@ -223,17 +224,15 @@ namespace fantasy_hoops.Jobs
 
                     if ((string) player["min"] == null || ((string) player["min"]).Length == 0)
                         continue;
-                    AddToDatabase(player, gameObj, date, oppId, score);
+                    await AddToDatabase(player, gameObj, date, oppId, score);
                 }
 
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
 
             if (!isAnyGameStarted)
             {
-                JobManager.AddJob(() => new Task(delegate {
-                        new StatsJob(_scoreService, _pushService).Execute();
-                    }).Start(),
+                JobManager.AddJob(() => Task.Run(async () => await  new StatsJob(_scoreService, _pushService).Execute()),
                     s => s.WithName("statsSeed")
                         .ToRunOnceIn(5).Minutes());
                 return;
@@ -242,9 +241,7 @@ namespace fantasy_hoops.Jobs
             if (!IsFinished(games))
             {
                 int minutesDelay = countOfActivatedGames == 0 ? 5 : 1;
-                JobManager.AddJob(() => new Task(delegate {
-                        new StatsJob(_scoreService, _pushService).Execute();
-                    }).Start(),
+                JobManager.AddJob(() => Task.Run(async () => await new StatsJob(_scoreService, _pushService).Execute()),
                     s => s.WithName("statsSeed")
                         .ToRunOnceIn(minutesDelay).Minutes());
             }
@@ -259,10 +256,8 @@ namespace fantasy_hoops.Jobs
                     }).Start(),
                     s => s.WithName("userScore")
                         .ToRunNow());
-
-                JobManager.AddJob(() => new Task(delegate {
-                        new StatsJob(_scoreService, _pushService).Execute();
-                    }).Start(),
+                
+                JobManager.AddJob(() =>Task.Run(async () => await new StatsJob(_scoreService, _pushService).Execute()),
                     s => s.WithName("statsSeed")
                         .ToRunOnceAt(NextGameJob.NEXT_GAME.AddMinutes(5)));
             }

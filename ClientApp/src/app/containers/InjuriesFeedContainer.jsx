@@ -23,6 +23,21 @@ const Intro = {
         "Click on cards to flip and reveal detailed information about player status."
 };
 
+const googleAd = (
+    <>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins className="adsbygoogle"
+             style={{display: "block"}}
+             data-ad-client="ca-pub-6391166063453559"
+             data-ad-slot="7873415467"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </>
+);
+
 const mapStateToProps = state => ({
     injuries: state.injuriesContainerReducer.injuries,
     injuryLoader: state.injuriesContainerReducer.injuryLoader
@@ -92,14 +107,15 @@ function InjuriesFeedContainer(props) {
         <>
             <Helmet>
                 <title>Injuries | Fantasy Hoops</title>
-                <meta name="description" content={Intro.SUBTITLE} />
-                <link rel="canonical" href={Canonicals.INJURIES} />
+                <meta name="description" content={Intro.SUBTITLE}/>
+                <link rel="canonical" href={Canonicals.INJURIES}/>
             </Helmet>
             <Container maxWidth="md">
                 <article className="Injuries__Intro">
                     <h1 className="Injuries__Title">{Intro.TITLE}</h1>
                     <h5 className="Injuries__Subtitle">{Intro.SUBTITLE}</h5>
                 </article>
+                {googleAd}
                 <Button className={classes.button} color="primary" onClick={handleClickOpen}>
                     INFO
                 </Button>

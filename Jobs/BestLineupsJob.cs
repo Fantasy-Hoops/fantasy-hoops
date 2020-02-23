@@ -29,7 +29,9 @@ namespace fantasy_hoops.Jobs
         {
             _context.Database.SetCommandTimeout(0);
             var previousGameStats = await GetPreviousGameStats();
-            var lineupsCombinations = CrossProductFunctions.CrossProduct(previousGameStats)
+            var allPossibleLineups = CrossProductFunctions.CrossProduct(previousGameStats).ToList();
+
+            var lineupsCombinations = allPossibleLineups
                 .Select(lineup => new
                 {
                     Players = lineup.Select(l => new PlayersBestLineups

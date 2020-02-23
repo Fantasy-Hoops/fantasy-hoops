@@ -25,18 +25,20 @@ import {Card} from "./Selected/Card";
 import {Intro, Positions} from "./utils";
 import TopLeaderboardLoader from "../Loader/TopLeaderboardLoader";
 
-const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus id venenatis purus." +
-    "Suspendisse condimentum ex felis, at rhoncus eros scelerisque non. Curabitur sed venenatis massa, ac feugiat augue." +
-    "Vivamus congue nisl felis, vitae semper mi interdum in. Sed posuere lectus consequat lorem mattis condimentum." +
-    "Nam non magna tempus, cursus diam lacinia, pharetra leo. Etiam nisi justo, ullamcorper ut mi non, pellentesque" +
-    "mollis mauris. In hac habitasse platea dictumst. Fusce vitae tempor erat, quis rhoncus est. Suspendisse porttitor" +
-    "finibus sapien, vitae fermentum lorem tempus id.";
-
-const halfLorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus id venenatis purus." +
-    "Suspendisse condimentum ex felis, at rhoncus eros scelerisque non. Curabitur sed venenatis massa, ac feugiat augue." +
-    "Vivamus congue nisl felis, vitae semper mi interdum in. Sed posuere lectus consequat lorem mattis condimentum.";
-
-
+const googleAd = (
+  <>
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+      <ins className="adsbygoogle"
+           style={{display: "block"}}
+           data-ad-client="ca-pub-6391166063453559"
+           data-ad-slot="3271809564"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+  </>    
+);
 
 function Leaderboards(props) {
     const classes = useStyles();
@@ -148,6 +150,7 @@ function Leaderboards(props) {
                     <h1 className="Leaderboards__Title">{Intro.TITLE}</h1>
                     <h5 className="Leaderboards__Subtitle">{Intro.SUBTITLE}</h5>
                 </article>
+                {googleAd}
                 <section className="Content__Container">
                     <article className="Content--left">
                         <h2 className="Content__Title">{Intro.USERS_TITLE}</h2>

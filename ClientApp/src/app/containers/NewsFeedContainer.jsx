@@ -19,6 +19,21 @@ import moment from "moment";
 import {Helmet} from "react-helmet";
 import {Canonicals} from "../utils/helpers";
 
+const googleAd = (
+    <>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins className="adsbygoogle"
+             style={{display: "block"}}
+             data-ad-format="fluid"
+             data-ad-layout-key="-fb+5w+4e-db+86"
+             data-ad-client="ca-pub-6391166063453559"
+             data-ad-slot="6919426443"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </>
+);
+
 const Intro = {
     TITLE: "NEWS",
     SUBTITLE: "Get to know the latest daily articles about NBA games - short previews and recaps available, including " +
@@ -103,8 +118,8 @@ function NewsFeedContainer(props) {
         <>
             <Helmet>
                 <title>News | Fantasy Hoops</title>
-                <meta name="description" content={Intro.SUBTITLE} />
-                <link rel="canonical" href={Canonicals.NEWS} />
+                <meta name="description" content={Intro.SUBTITLE}/>
+                <link rel="canonical" href={Canonicals.NEWS}/>
             </Helmet>
             <Container maxWidth="md">
                 <article className="News__Intro">
@@ -124,6 +139,7 @@ function NewsFeedContainer(props) {
                     <Tab label="Recaps"/>
                 </Tabs>
                 <TabPanel value={value} index={0}>
+                    {googleAd}
                     <InfiniteScroll
                         dataLength={previews.length}
                         next={() => loadMorePreviews(previews.length)}
@@ -134,6 +150,7 @@ function NewsFeedContainer(props) {
                     </InfiniteScroll>
                 </TabPanel>
                 <TabPanel value={value} index={1}>
+                    {googleAd}
                     <InfiniteScroll
                         dataLength={recaps.length}
                         next={() => loadMoreRecaps(recaps.length)}

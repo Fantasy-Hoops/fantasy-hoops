@@ -69,7 +69,7 @@ function NewsCard(props) {
                     className="read-more-state"
                     id={news.id}
                 />
-                <div className="read-more-wrap" style={{textAlign: 'justify'}}>
+                <article className="read-more-wrap" style={{textAlign: 'justify'}}>
                     {paragraphs.slice(0, 1)}
                     {index === 0
                         ? <>
@@ -90,7 +90,7 @@ function NewsCard(props) {
                     <span className="read-more-target">
                       {!expanded ? '' : paragraphs.slice(PARAGRAPHS_AMOUNT)}
                     </span>
-                </div>
+                </article>
                 <label htmlFor={news.id} className="read-more-trigger"/>
             </article>
         </>

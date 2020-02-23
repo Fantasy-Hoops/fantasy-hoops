@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using fantasy_hoops.Jobs;
 using fantasy_hoops.Models;
+using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,13 @@ namespace fantasy_hoops.Controllers
     [ApiController]
     public class JobController : ControllerBase
     {
+        private readonly IPushService _pushService;
+
+        public JobController(IPushService pushService)
+        {
+            _pushService = pushService;
+        }
+
         [HttpGet("news")]
         public IActionResult StartJobs()
         {
@@ -21,10 +29,11 @@ namespace fantasy_hoops.Controllers
                 if (JobManager.GetSchedule(NewsType.PREVIEW.GetDisplayName()) == null)
                 {
                     previewStarted = true;
-                    JobManager.AddJob( new NewsJob(NewsType.PREVIEW),
+                    JobManager.AddJob(new NewsJob(NewsType.PREVIEW),
                         s => s.WithName(NewsType.PREVIEW.GetDisplayName())
                             .ToRunNow());
                 }
+
                 if (JobManager.GetSchedule(NewsType.RECAP.GetDisplayName()) == null)
                 {
                     recapStarted = true;
@@ -37,12 +46,20 @@ namespace fantasy_hoops.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            
+
             return Ok(new
             {
                 Previews = previewStarted ? "Started." : "Failed.",
                 Recaps = recapStarted ? "Started." : "Failed."
             });
+        }
+
+        [HttpGet("best-lineup")]
+        public IActionResult StartBestLineup()
+        {
+            Task.Run(async () => await new BestLineupsJob(_pushService).Execute());
+
+            return Ok("Best lineups started.");
         }
     }
 }
