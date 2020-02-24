@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
@@ -94,7 +95,7 @@ namespace fantasy_hoops.Jobs
             _context.SaveChanges();
             SendPushNotifications().Wait();
 
-            Task.Run(async () => await new BestLineupsJob(_pushService).Execute());
+            new Thread(async () => await new BestLineupsJob(_pushService).Execute()).Start();
         }
     }
 }

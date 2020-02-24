@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using fantasy_hoops.Jobs;
 using fantasy_hoops.Models;
 using fantasy_hoops.Services.Interfaces;
@@ -57,8 +58,8 @@ namespace fantasy_hoops.Controllers
         [HttpGet("best-lineup")]
         public IActionResult StartBestLineup()
         {
-            Task.Run(async () => await new BestLineupsJob(_pushService).Execute());
-
+            new Thread(async () => await new BestLineupsJob(_pushService).Execute()).Start();
+            
             return Ok("Best lineups started.");
         }
     }
