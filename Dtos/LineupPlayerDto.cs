@@ -5,6 +5,7 @@ namespace fantasy_hoops.Dtos
     public class LineupPlayerDto
     {
         public Player Player { get; set; }
+        public string TeamColor { get; set; }
         public double FP { get; set; }
         public int Price { get; set; }
     }

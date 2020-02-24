@@ -14,6 +14,12 @@ export const Intro = {
         "Daily, weekly and monthly leaderboards available. During the games, daily rankings are updated live so you " +
         "will always be aware of your selected lineup performance.",
     PLAYERS_BUTTON_TITLE: "NBA PLAYERS LEADERBOARD",
+    BEST_LINEUPS_TITLE: "BEST LINEUPS",
+    BEST_LINEUPS_SUBTITLE: "Find out the best possible lineups of the previous night. Algorithm in Fantasy Hoops " +
+        "scans all the NBA players that have been available the night before, tries thousands and millions " +
+        "different kinds of lineup variations below the price limit and chooses top 10 lineups with highest FP. " +
+        "Do your best every single day and hope to see your lineup between the best ones.",
+    BEST_LINEUPS_BUTTON_TITLE: "BEST LINEUPS LEADERBOARD",
     SEASON_TITLE: "SEASON PERFORMERS",
     SEASON_SUBTITLE: "Become the best fantasy-hooper of the season by selecting the highest performing lineups. " +
         "Try to make as many spots in the ranking as you can and be eligible to unlock thrilling awards after the season.",

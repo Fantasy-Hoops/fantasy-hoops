@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using fantasy_hoops.Dtos;
-using fantasy_hoops.Models;
 using fantasy_hoops.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,9 +18,9 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet]
-        public List<BestLineupDto> GetBestLineups(string date)
+        public List<BestLineupDto> GetBestLineups(string date, int from = 0, int limit = 10)
         {
-            return _bestLineupsRepository.GetBestLineups(date);
+            return _bestLineupsRepository.GetBestLineups(date, from, limit);
         }
     }
 }

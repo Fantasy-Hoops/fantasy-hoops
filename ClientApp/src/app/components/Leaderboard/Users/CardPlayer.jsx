@@ -10,7 +10,7 @@ export default class CardPlayer extends PureComponent {
   }
 
   showModal() {
-    this.props.showModal(this.props.player);
+    this.props.showModal(this.props.player.nbaID);
   }
 
   render() {
@@ -20,7 +20,7 @@ export default class CardPlayer extends PureComponent {
           role="button"
           tabIndex="-1"
           className="UserLeaderboardCard__player-photo--background"
-          style={{ backgroundColor: this.props.player.teamColor, cursor: 'pointer' }}
+          style={{ backgroundColor: this.props.teamColor, cursor: 'pointer' }}
           data-toggle="modal"
           data-target="#playerModal"
           onClick={this.showModal}
@@ -31,7 +31,7 @@ export default class CardPlayer extends PureComponent {
             className="UserLeaderboardCard__player-photo--image"
             alt={this.props.player.fullName}
             src={[
-              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.nbaId}.png`,
+              `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/players/${this.props.player.nbaID}.png`,
               require(`../../../../content/images/positions/${this.props.player.position.toLowerCase()}.png`)
             ]}
             decode={false}
@@ -41,7 +41,7 @@ export default class CardPlayer extends PureComponent {
           {this.props.player.lastName}
         </p>
         <p className="UserLeaderboardCard__player-fp">
-          {this.props.player.fp.toFixed(1)}
+          {this.props.fp.toFixed(1)}
         </p>
       </div>
     );

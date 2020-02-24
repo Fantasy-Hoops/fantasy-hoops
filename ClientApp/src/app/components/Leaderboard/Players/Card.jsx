@@ -9,7 +9,7 @@ export class Card extends PureComponent {
 
   showModal() {
     const { showModal, player } = this.props;
-    showModal(player);
+    showModal(player.nbaId);
   }
 
   render() {

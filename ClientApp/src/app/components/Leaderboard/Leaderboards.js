@@ -4,6 +4,7 @@ import './Leaderboards.css';
 import {useStyles} from "./LeaderboarsStyle";
 import {Container} from "@material-ui/core";
 import {
+    getBestLineups,
     getPlayersLeaderboard,
     getSeasonLineupsLeaderboard,
     getSelectedPlayersLeaderboard,
@@ -24,6 +25,7 @@ import CustomLoader from "../Loader/CustomLoader";
 import {Card} from "./Selected/Card";
 import {Intro, Positions} from "./utils";
 import TopLeaderboardLoader from "../Loader/TopLeaderboardLoader";
+import {UserScore} from "../Profile/UserScore";
 
 const googleAd = (
   <>
@@ -47,6 +49,7 @@ function Leaderboards(props) {
     const [topPlayers, setTopNBAPlayers] = useState(null);
     const [topSeasonLineups, setTopSeasonLineups] = useState(null);
     const [mostSelectedPlayers, setMostSelectedPlayers] = useState(null);
+    const [bestLineups, setBestLineups] = useState(null);
 
     useEffect(() => {
         async function handleGetUserLeaderboard() {
@@ -70,7 +73,7 @@ function Leaderboards(props) {
         }
 
         async function handleGetTopSeasonPerformers() {
-            await getSeasonLineupsLeaderboard({limit: 3})
+            await getSeasonLineupsLeaderboard({limit: 3, year: moment().year()})
                 .then(response => setTopSeasonLineups(response.data))
                 .catch(err => console.error(err.message))
         }
@@ -80,11 +83,26 @@ function Leaderboards(props) {
                 .then(response => setMostSelectedPlayers(response.data))
                 .catch(err => console.error(err.message))
         }
+        
+        async function handleGetBestLineups() {
+            await getBestLineups({limit: 3})
+                .then(response => {
+                    if (response.data.length === 0) {
+                        getBestLineups({limit: 3, date: moment().subtract(1, "day").format('YYYYMMDD')})
+                            .then(response => setBestLineups(response.data))
+                            .catch(err => console.error(err.message))
+                    } else {
+                        setBestLineups(response.data);
+                    }
+                })
+                .catch(err => console.error(err.message));
+        }
 
         handleGetUserLeaderboard();
         handleGetPlayersLeaderboard();
         handleGetTopSeasonPerformers();
         handleGetMostSelectedPlayers();
+        handleGetBestLineups();
 
         setSectionWidth(document.getElementsByClassName("Content--right")[0].clientWidth);
     }, []);
@@ -113,6 +131,17 @@ function Leaderboards(props) {
         )
     );
 
+    const bestLineupsCards = _.map(
+        bestLineups,
+        lineup => (
+            <UserScore
+                className="no-pointer-events"
+                key={shortid()}
+                activity={lineup}
+            />
+        )
+    );
+
     const seasonLineupsCards = _.map(
         topSeasonLineups,
         (user, index) => (
@@ -137,7 +166,7 @@ function Leaderboards(props) {
             />
         )
     );
-
+    
     return (
         <>
             <Helmet>
@@ -197,6 +226,35 @@ function Leaderboards(props) {
                 </section>
                 <section className="Content__Container">
                     <article className="Content--left">
+                        <h2 className="Content__Title">{Intro.BEST_LINEUPS_TITLE}</h2>
+                        <p>{Intro.BEST_LINEUPS_SUBTITLE}</p>
+                        <Button
+                            className={`${classes.button} ${classes.buttonLeft}`}
+                            variant="contained"
+                            color="secondary"
+                            // component={Link}
+                            // to={Routes.LEADERBOARD_BEST_LINEUP}
+                        >
+                            {Intro.BEST_LINEUPS_BUTTON_TITLE}
+                        </Button>
+                    </article>
+                    <article className="Content--right">
+                        {bestLineups
+                            ? bestLineupsCards
+                            : <CustomLoader maxWidth={sectionWidth - 25}>
+                                <TopLeaderboardLoader maxWidth={sectionWidth - 25} />
+                            </CustomLoader>}
+                    </article>
+                </section>
+                <section className="Content__Container">
+                    <article className="Content--left">
+                        {topSeasonLineups
+                            ? seasonLineupsCards
+                            : <CustomLoader maxWidth={sectionWidth - 25}>
+                                <TopLeaderboardLoader maxWidth={sectionWidth - 25} />
+                            </CustomLoader>}
+                    </article>
+                    <article className="Content--right">
                         <h2 className="Content__Title">{Intro.SEASON_TITLE}</h2>
                         <p className="Content__Subtitle">{Intro.SEASON_SUBTITLE}</p>
                         <Button
@@ -209,27 +267,13 @@ function Leaderboards(props) {
                             {Intro.SEASON_BUTTON_TITLE}
                         </Button>
                     </article>
-                    <article className="Content--right">
-                        {topSeasonLineups
-                            ? seasonLineupsCards
-                            : <CustomLoader maxWidth={sectionWidth - 25}>
-                                <TopLeaderboardLoader maxWidth={sectionWidth - 25} />
-                            </CustomLoader>}
-                    </article>
                 </section>
                 <section className="Content__Container Content__Container--reverse">
                     <article className="Content--left">
-                        {mostSelectedPlayers
-                            ? mostSelectedPlayersCards
-                            : <CustomLoader maxWidth={sectionWidth - 25}>
-                                <TopLeaderboardLoader maxWidth={sectionWidth - 25} />
-                            </CustomLoader>}
-                    </article>
-                    <article className="Content--right">
                         <h2 className="Content__Title">{Intro.SELECTED_TITLE}</h2>
                         <p className="Content__Subtitle">{Intro.SELECTED_SUBTITLE}</p>
                         <Button
-                            className={`${classes.button} ${classes.buttonRight}`}
+                            className={`${classes.button} ${classes.buttonLeft}`}
                             variant="contained"
                             color="secondary"
                             component={Link}
@@ -238,25 +282,14 @@ function Leaderboards(props) {
                             {Intro.SELECTED_BUTTON_TITLE}
                         </Button>
                     </article>
+                    <article className="Content--right">
+                        {mostSelectedPlayers
+                            ? mostSelectedPlayersCards
+                            : <CustomLoader maxWidth={sectionWidth - 25}>
+                                <TopLeaderboardLoader maxWidth={sectionWidth - 25} />
+                            </CustomLoader>}
+                    </article>
                 </section>
-                {/*<section className="Content__Container">*/}
-                {/*    <article className="Content--left">*/}
-                {/*        <h2 className="Content__Title">BEST LINEUPS</h2>*/}
-                {/*        <p>{halfLorem}</p>*/}
-                {/*        <Button*/}
-                {/*            className={`${classes.button} ${classes.buttonRight}`}*/}
-                {/*            variant="contained"*/}
-                {/*            color="secondary"*/}
-                {/*            component={Link}*/}
-                {/*            to={Routes.LEADERBOARD_BEST_LINEUP}*/}
-                {/*        >*/}
-                {/*            BEST LINEUPS LEADERBOARD*/}
-                {/*        </Button>*/}
-                {/*    </article>*/}
-                {/*    <article className="Content--right">*/}
-                {/*        <CustomLoader maxWidth={sectionWidth - 25}/>*/}
-                {/*    </article>*/}
-                {/*</section>*/}
             </Container>
         </>
     );

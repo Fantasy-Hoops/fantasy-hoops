@@ -102,6 +102,10 @@ namespace fantasy_hoops
             {
                 configuration.RootPath = "ClientApp/build";
             });
+            
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
         }
 
         public void AddScopes(IServiceCollection services)

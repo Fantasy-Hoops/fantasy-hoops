@@ -208,8 +208,8 @@ function Leaderboard(props) {
             <button type="button" className="btn btn-primary mt-2" onClick={loadMore}>See more</button> : '';
     }
 
-    async function showModal(player) {
-        await getPlayerStats(player.nbaId)
+    async function showModal(nbaID) {
+        await getPlayerStats(nbaID)
             .then((res) => {
                 setStats(res.data);
                 setModalLoader(false);

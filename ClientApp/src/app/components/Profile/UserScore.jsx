@@ -12,7 +12,10 @@ export class UserScore extends PureComponent {
         player => (
           <UserScoreCard
             key={shortid()}
-            player={player}
+            player={player.player}
+            teamColor={player.teamColor}
+            fp={player.fp}
+            price={player.price}
             showModal={this.props.showModal}
           />
         )
@@ -20,7 +23,7 @@ export class UserScore extends PureComponent {
     }
     const { current } = this.props;
     return (
-      <div className="UserScoreCard card bg-white rounded" style={{ width: `${this.props.width}`, margin: `${this.props.center}`, marginBottom: '0.5rem' }}>
+      <div className={`UserScoreCard card bg-white rounded ${this.props.className}`} style={{ width: `${this.props.width}`, margin: `${this.props.center}`, marginBottom: '0.5rem' }}>
         <div className="UserScoreCard__body card-body">
           {players}
           <div className="UserScoreCard__body-item UserScoreCard__result">

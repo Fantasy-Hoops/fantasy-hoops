@@ -114,9 +114,9 @@ export class Leaderboard extends PureComponent {
         }
     }
 
-    async showModal(player) {
+    async showModal(nbaID) {
         this.setState({modalLoader: true});
-        await getPlayerStats(player.nbaId)
+        await getPlayerStats(nbaID)
             .then((res) => {
                 this.setState({
                     stats: res.data,

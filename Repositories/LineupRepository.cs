@@ -142,20 +142,16 @@ namespace fantasy_hoops.Repositories
                                 || player.PlayerID == lineup.SfID
                                 || player.PlayerID == lineup.PfID
                                 || player.PlayerID == lineup.CID)
-                            .Select(player => new PlayerDto
+                            .Select(player => new LineupPlayerDto
                             {
-                                NbaId = player.NbaID,
-                                Position = player.Position,
+                                Player = player,
                                 TeamColor = player.Team.Color,
-                                FullName = player.FullName,
-                                FirstName = player.FirstName,
-                                LastName = player.LastName,
-                                AbbrName = player.AbbrName,
                                 FP = _context.Stats.Where(stats => stats.Date.Date == lineup.Date.Date
                                     && stats.PlayerID == player.PlayerID)
-                                .Select(stats => stats.FP).FirstOrDefault()
+                                .Select(stats => stats.FP).FirstOrDefault(),
+                                Price = player.Price
                             })
-                            .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Position))
+                            .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
                             .ToList(),
                         IsLive = lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date)
                                  && !lineup.IsCalculated
@@ -185,20 +181,16 @@ namespace fantasy_hoops.Repositories
                             || player.PlayerID == lineup.SfID
                             || player.PlayerID == lineup.PfID
                             || player.PlayerID == lineup.CID)
-                        .Select(player => new PlayerDto
+                        .Select(player => new LineupPlayerDto
                         {
-                            NbaId = player.NbaID,
-                            Position = player.Position,
+                            Player = player,
                             TeamColor = player.Team.Color,
-                            FullName = player.FullName,
-                            FirstName = player.FirstName,
-                            LastName = player.LastName,
-                            AbbrName = player.AbbrName,
                             FP = _context.Stats.Where(stats => stats.Date.Date == lineup.Date.Date
                                                                && stats.PlayerID == player.PlayerID)
-                                .Select(stats => stats.FP).FirstOrDefault()
+                                .Select(stats => stats.FP).FirstOrDefault(),
+                            Price = player.Price
                         })
-                        .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Position))
+                        .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
                         .ToList()
                 })
                 .ToList();

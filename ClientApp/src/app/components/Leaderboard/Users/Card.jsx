@@ -40,14 +40,17 @@ export class Card extends PureComponent {
         <CardPlayer
           showModal={this.showModal}
           key={shortid()}
-          player={player}
+          player={player.player}
+          teamColor={player.teamColor}
+          fp={player.fp}
+          price={player.price}
         />
       )
     );
   }
 
-  showModal(player) {
-    this.props.showModal(player);
+  showModal(nbaID) {
+    this.props.showModal(nbaID);
   }
 
   render() {

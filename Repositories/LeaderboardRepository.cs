@@ -83,19 +83,14 @@ namespace fantasy_hoops.Repositories
                                 || player.PlayerID == lineup.SfID
                                 || player.PlayerID == lineup.PfID
                                 || player.PlayerID == lineup.CID)
-                            .Select(player => new PlayerDto
+                            .Select(player => new LineupPlayerDto
                             {
-                                PlayerId = player.PlayerID,
-                                NbaId = player.NbaID,
-                                Position = player.Position,
+                                Player = player,
                                 TeamColor = player.Team.Color,
-                                FullName = player.FullName,
-                                FirstName = player.FirstName,
-                                LastName = player.LastName,
-                                AbbrName = player.AbbrName,
-                                FP = dailyStats.FirstOrDefault(stats => stats.PlayerID == player.PlayerID).FP
+                                FP = dailyStats.FirstOrDefault(stats => stats.PlayerID == player.PlayerID).FP,
+                                Price = player.Price
                             })
-                            .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Position))
+                            .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
                             .ToList()
                     })
                     .Skip(from)
@@ -197,19 +192,14 @@ namespace fantasy_hoops.Repositories
                                 || player.PlayerID == lineup.SfID
                                 || player.PlayerID == lineup.PfID
                                 || player.PlayerID == lineup.CID)
-                            .Select(player => new PlayerDto
+                            .Select(player => new LineupPlayerDto
                             {
-                                PlayerId = player.PlayerID,
-                                NbaId = player.NbaID,
-                                Position = player.Position,
+                                Player = player,
                                 TeamColor = player.Team.Color,
-                                FullName = player.FullName,
-                                FirstName = player.FirstName,
-                                LastName = player.LastName,
-                                AbbrName = player.AbbrName,
-                                FP = dailyStats.FirstOrDefault(stats => stats.PlayerID == player.PlayerID).FP
+                                FP = dailyStats.FirstOrDefault(stats => stats.PlayerID == player.PlayerID).FP,
+                                Price = player.Price
                             })
-                            .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Position))
+                            .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
                             .ToList()
                     })
                     .Where(x => x.Lineup.Any())
@@ -270,6 +260,7 @@ namespace fantasy_hoops.Repositories
             DateTime seasonEnd = DateTime.MaxValue;
             if (year != -1)
             {
+                year = DateTime.Now < new DateTime(DateTime.Now.Year, 10, 1) ? year - 1 : year;
                 seasonStart = new DateTime(year, 10, 1);
                 seasonEnd = new DateTime(year + 1, 7, 1);
             }
@@ -297,19 +288,14 @@ namespace fantasy_hoops.Repositories
                             || player.PlayerID == lineup.SfID
                             || player.PlayerID == lineup.PfID
                             || player.PlayerID == lineup.CID)
-                        .Select(player => new PlayerDto
+                        .Select(player => new LineupPlayerDto
                         {
-                            NbaId = player.NbaID,
-                            PlayerId = player.PlayerID,
-                            Position = player.Position,
+                            Player = player,
                             TeamColor = player.Team.Color,
-                            FullName = player.FullName,
-                            FirstName = player.FirstName,
-                            LastName = player.LastName,
-                            AbbrName = player.AbbrName,
-                            FP = player.Stats.FirstOrDefault(stats => stats.Date.Equals(lineup.Date)).FP
+                            FP = player.Stats.FirstOrDefault(stats => stats.Date.Equals(lineup.Date)).FP,
+                            Price = player.Price
                         })
-                        .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Position))
+                        .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
                         .ToList()
                 })
                 .Skip(from)
