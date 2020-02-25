@@ -299,7 +299,6 @@ export class Lineup extends Component {
                         loader={this.state.modalLoader}
                         stats={this.state.stats}
                     />
-                    <InfoModal/>
                     <InfoDialog open={this.state.infoDialogOpen} onDialogOpen={this.handleDialogOpen} onDialogClose={this.handleDialogClose}/>
                 </Container>
             </>
