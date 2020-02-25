@@ -15,23 +15,21 @@ function NewsCard(props) {
     const [expanded, setExpanded] = useState(false);
 
     function toggleExpanded(e) {
-        if (!expanded) {
-            const div = e.target.parentElement.parentElement;
-            const position = div.getBoundingClientRect().top - 80;
-            const duration = (position * -1) / 15;
-            if (position < 0) {
-                Scroll.animateScroll.scrollMore(position, {
-                    duration,
-                    smooth: true
-                });
-            }
+        const div = e.target.parentElement;
+        const position = div.getBoundingClientRect().top - 120;
+        const duration = (position * -1) / 15;
+        if (position < 0) {
+            Scroll.animateScroll.scrollMore(position, {
+                duration,
+                smooth: true
+            });
         }
         setExpanded(!expanded);
     }
 
     const paragraphs = _.map(news.paragraphs,
         paragraph => <p key={shortid()} className="NewsCard__Content">{paragraph}</p>);
-    
+
     return (
         <>
             <article className="NewsCard">
@@ -47,7 +45,8 @@ function NewsCard(props) {
                             `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${news.vTeam}.svg`,
                             defaultLogo
                         ]}
-                        loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader"/>}
+                        loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')}
+                                     alt="Loader"/>}
                         decode={false}
                     />
                     <span className="NewsCard__Label--vs">vs.</span>
@@ -58,7 +57,8 @@ function NewsCard(props) {
                             `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/logos/${news.hTeam}.svg`,
                             defaultLogo
                         ]}
-                        loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')} alt="Loader"/>}
+                        loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')}
+                                     alt="Loader"/>}
                         decode={false}
                     />
                 </div>

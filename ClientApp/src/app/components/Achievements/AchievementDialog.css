@@ -1,0 +1,33 @@
+.AchievementDialog__Paper {
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+}
+
+.AchievementDialog__Title {
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.AchievementDialog__CloseIcon {
+    position: absolute;
+    right: -1rem;
+    top: -1rem;
+    background: white;
+    border-radius: 100%;
+    width: 3rem !important;;
+    height: 3rem !important;
+}
+
+.AchievementDialog__ProgressBar {
+    margin: 1rem 0;
+    height: 1rem !important;
+    border-radius: 5px;
+}
+
+.AchievementDialog__ProgressNumbers {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--grey-text);
+    opacity: .7;
+    text-align: center;
+}

@@ -8,10 +8,6 @@ import Slide from "@material-ui/core/Slide";
 
 import './InjuriesInfoDialog.css';
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="right" ref={ref} {...props} />;
-});
-
 function InjuriesInfoDialog(props) {
     const {handleClose, open} = props;
 
@@ -20,10 +16,9 @@ function InjuriesInfoDialog(props) {
             onClose={handleClose}
             aria-labelledby="customized-dialog-title"
             open={open}
-            TransitionComponent={Transition}
         >
             <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                INJURIES INFO
+                INFO
             </DialogTitle>
             <DialogContent dividers>
                 <article>
@@ -54,7 +49,7 @@ function InjuriesInfoDialog(props) {
                 </article>
             </DialogContent>
             <DialogActions>
-                <Button autoFocus onClick={handleClose} color="primary">
+                <Button onClick={handleClose} color="primary">
                     Close
                 </Button>
             </DialogActions>

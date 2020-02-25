@@ -6,7 +6,6 @@ import {ProgressBar} from './ProgressBar';
 import {parse} from '../../utils/auth';
 import {AlertNotification as Alert} from '../AlertNotification';
 import {PlayerModal} from '../PlayerModal/PlayerModal';
-import InfoModal from './InfoModal';
 import EmptyJordan from '../EmptyJordan';
 import {
     getNextGameInfo, getUserLineup, getPlayers, getPlayerStats, submitLineup
@@ -14,6 +13,7 @@ import {
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../../utils/helpers";
 import {Container} from "@material-ui/core";
+import InfoDialog from "./InfoDialog";
 
 const {$} = window;
 const budget = 300; // thousands
@@ -26,6 +26,8 @@ export class Lineup extends Component {
         this.filter = this.filter.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.showModal = this.showModal.bind(this);
+        this.handleDialogOpen = this.handleDialogOpen.bind(this);
+        this.handleDialogClose = this.handleDialogClose.bind(this);
 
         this.state = {
             position: '',
@@ -45,7 +47,8 @@ export class Lineup extends Component {
             isGame: true,
             modalLoader: true,
             poolLoader: true,
-            renderChild: true
+            renderChild: true,
+            infoDialogOpen: false
         };
     }
 
@@ -56,6 +59,18 @@ export class Lineup extends Component {
                 renderChild: false
             });
         });
+    }
+    
+    handleDialogOpen() {
+        this.setState({
+            infoDialogOpen: true
+        })
+    }
+
+    handleDialogClose() {
+        this.setState({
+            infoDialogOpen: false
+        })
     }
 
     async componentDidMount() {
@@ -271,8 +286,7 @@ export class Lineup extends Component {
                             <button
                                 type="button"
                                 className="btn btn-primary absolute Lineup__info-button"
-                                data-toggle="modal"
-                                data-target="#infoModal"
+                                onClick={this.handleDialogOpen}
                             >
                                 <i className="fa fa-info mx-auto" aria-hidden="true"/>
                             </button>
@@ -286,6 +300,7 @@ export class Lineup extends Component {
                         stats={this.state.stats}
                     />
                     <InfoModal/>
+                    <InfoDialog open={this.state.infoDialogOpen} onDialogOpen={this.handleDialogOpen} onDialogClose={this.handleDialogClose}/>
                 </Container>
             </>
         );

@@ -1,0 +1,13 @@
+.AchievementCard__Icon {
+    display: table;
+    margin: .5rem auto;
+    width: 50%;
+}
+
+.AchievementCard__Icon__Image {
+    width: 100%;
+}
+
+.AchievementCard__Level {
+    text-align: center;
+}

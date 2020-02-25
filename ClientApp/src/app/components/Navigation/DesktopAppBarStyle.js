@@ -53,7 +53,7 @@ export const useStyles = makeStyles(theme => ({
     toolbar: theme.mixins.toolbar,
     sectionDesktop: {
         order: 3,
-        width: '50%',
+        width: 'auto',
         display: 'flex',
         justifyContent: 'flex-end',
         margin: '0 .5rem 0 auto',
@@ -62,7 +62,8 @@ export const useStyles = makeStyles(theme => ({
         [theme.breakpoints.up('sm')]: {
             order: 0,
             height: '3rem',
-            margin: '.6rem 0'
+            margin: '.6rem 0',
+            width: '50%'
         },
     },
     logo: {
