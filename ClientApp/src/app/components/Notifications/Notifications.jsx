@@ -141,7 +141,7 @@ export class Notifications extends Component {
                     {badge}
                 </a>
                 <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink"
-                     style={{width: '26rem'}}>
+                     style={{width: '28rem'}}>
                     <p className="Notifications__dropdown dropdown-header">
                         Notifications
                         <a

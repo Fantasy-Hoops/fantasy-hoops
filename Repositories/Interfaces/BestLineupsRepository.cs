@@ -21,14 +21,18 @@ namespace fantasy_hoops.Repositories.Interfaces
 
         public List<BestLineupDto> GetBestLineups(string date, int from, int limit)
         {
-            DateTime dateTime = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date;
+            DateTime dateTime;
             if (date != null && date.Length == 8)
             {
                 dateTime = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
             }
+            else
+            {
+                dateTime = _context.BestLineups.Max(lineup => lineup.Date);
+            }
             
             return _context.BestLineups
-                .Where(l => l.Date == dateTime)
+                .Where(lineup => lineup.Date.Equals(dateTime))
                 .Include(lineup => lineup.Lineup)
                 .ThenInclude(lineup => lineup.Player)
                 .ThenInclude(player => player.Team)

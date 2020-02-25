@@ -34,23 +34,16 @@ function DesktopAppBar(props) {
     const user = parse();
     return (
         <AppBar position="fixed" className={classes.appBar}>
-            <Link id="NavbarLogo" className={`${classes.logo} navbar-brand btn-no-outline Navbar__Logo`}
-                  to={Routes.MAIN}>
-                <img className="Navbar__Icon" src={require('../../../content/images/logo.png')} width="25"
-                     height="25" alt="FH"/>
-                <img className="Navbar__Title ml-2 mt-2" src={require('../../../content/images/title.png')}
-                     height="25" alt="Fantasy Hoops"/>
-            </Link>
+            <div className={classes.logo}>
+                <Link id="NavbarLogo" className="navbar-brand btn-no-outline"
+                      to={Routes.MAIN}>
+                    <img className="Navbar__Icon" src={require('../../../content/images/logo.png')} width="25"
+                         height="25" alt="FH"/>
+                    <img className="Navbar__Title ml-2 mt-2" src={require('../../../content/images/title.png')}
+                         height="25" alt="Fantasy Hoops"/>
+                </Link>
+            </div>
             <div className={classes.sectionDesktop}>
-                {/*<IconButton aria-label="show 17 new notifications" color="inherit"*/}
-                {/*            id="navbarDropdownMenuLink"*/}
-                {/*            data-toggle="dropdown"*/}
-                {/*            aria-haspopup="true"*/}
-                {/*            aria-expanded="false">*/}
-                {/*    <Badge badgeContent={17} color="secondary">*/}
-                {/*        <NotificationsIcon/>*/}
-                {/*    </Badge>*/}
-                {/*</IconButton>*/}
                 {isAuth() && <Notifications/>}
                 <IconButton
                     className={classes.avatar}
@@ -84,6 +77,7 @@ function DesktopAppBar(props) {
                 <Tabs
                     value={selectedTab}
                     className={classes.tabs}
+                    classes={{ indicator: classes.indicator }}
                     variant="scrollable"
                     scrollButtons="auto"
                     indicatorColor="secondary"

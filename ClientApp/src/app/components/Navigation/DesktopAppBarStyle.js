@@ -11,13 +11,17 @@ export const useStyles = makeStyles(theme => ({
             display: 'block'
         }
     },
+    indicator: {
+        height: 4
+    },
     tabs: {
         margin: '0 auto',
     },
     tab: {
         minWidth: 150,
         width: 150,
-        color: 'white'
+        color: 'white',
+        fontWeight: 600
     },
     appBar: {
         height: '5.5rem',
@@ -49,26 +53,26 @@ export const useStyles = makeStyles(theme => ({
     toolbar: theme.mixins.toolbar,
     sectionDesktop: {
         order: 3,
-        width: 'fit-content',
+        width: '50%',
         display: 'flex',
+        justifyContent: 'flex-end',
         margin: '0 .5rem 0 auto',
+        paddingRight: '1rem',
         height: '100%',
         [theme.breakpoints.up('sm')]: {
-            width: 'auto',
             order: 0,
             height: '3rem',
-            margin: '1rem 1rem .6rem auto'
+            margin: '.6rem 0'
         },
     },
     logo: {
         order: 2,
-        height: 'fit-content',
-        width: 'fit-content',
+        width: 'auto',
         margin: '.6rem 0',
         [theme.breakpoints.up('sm')]: {
             order: 0,
-            width: 'auto',
-            margin: '.6rem 50% .6rem 1rem'
+            paddingLeft: '1rem',
+            width: '50%'
         },
     },
     avatar: {

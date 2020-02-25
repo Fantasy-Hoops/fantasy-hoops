@@ -20,7 +20,7 @@ function MobileDrawer(props) {
     const classes = useStyles();
     return (
         <div>
-            <Link id="NavbarLogo" className={`navbar-brand btn-no-outline Navbar__Logo`} to={Routes.MAIN}  onClick={() => handleDrawerClose()}>
+            <Link id="NavbarLogo" className={`navbar-brand btn-no-outline`} to={Routes.MAIN}  onClick={() => handleDrawerClose()}>
                 <img className="Navbar__Icon" src={require('../../../content/images/logo.png')} width="35" height="35"
                      alt="FH"/>
                 <img className="Navbar__Title ml-2 mt-2" src={require('../../../content/images/title.png')} height="30"

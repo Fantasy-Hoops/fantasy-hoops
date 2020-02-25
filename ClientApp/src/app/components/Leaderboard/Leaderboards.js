@@ -86,15 +86,7 @@ function Leaderboards(props) {
         
         async function handleGetBestLineups() {
             await getBestLineups({limit: 3})
-                .then(response => {
-                    if (response.data.length === 0) {
-                        getBestLineups({limit: 3, date: moment().subtract(2, "day").format('YYYYMMDD')})
-                            .then(response => setBestLineups(response.data))
-                            .catch(err => console.error(err.message))
-                    } else {
-                        setBestLineups(response.data);
-                    }
-                })
+                .then(response => setBestLineups(response.data))
                 .catch(err => console.error(err.message));
         }
 
@@ -227,7 +219,7 @@ function Leaderboards(props) {
                 <section className="Content__Container">
                     <article className="Content--left">
                         <h2 className="Content__Title">{Intro.BEST_LINEUPS_TITLE}</h2>
-                        <p>{Intro.BEST_LINEUPS_SUBTITLE}</p>
+                        <p className="Content__Subtitle">{Intro.BEST_LINEUPS_SUBTITLE}</p>
                         <Button
                             className={`${classes.button} ${classes.buttonLeft}`}
                             variant="contained"
