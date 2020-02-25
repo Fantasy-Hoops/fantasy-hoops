@@ -95,7 +95,7 @@ namespace fantasy_hoops.Jobs
             _context.SaveChanges();
             SendPushNotifications().Wait();
 
-            new Thread(async () => await new BestLineupsJob(_pushService).Execute()).Start();
+            Task.Run(() => new BestLineupsJob(_pushService).Execute()).Start();
         }
     }
 }

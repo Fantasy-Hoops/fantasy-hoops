@@ -189,9 +189,7 @@ namespace fantasy_hoops.Jobs
 
             if (bool.Parse(Environment.GetEnvironmentVariable("IS_PRODUCTION") ?? "false"))
             {
-                new Task(delegate {
-                    new StatsJob(_scoreService, _pushService).Execute();
-                }).Start();
+                Task.Run(() => new StatsJob(_scoreService, _pushService).Execute());
             }
         }
     }

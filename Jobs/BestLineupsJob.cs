@@ -9,12 +9,13 @@ using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Services.Interfaces;
+using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 
 namespace fantasy_hoops.Jobs
 {
-    public class BestLineupsJob
+    public class BestLineupsJob : IJob
     {
         private readonly List<(List<LineupPlayerDto>, double)> _playersList = new List<(List<LineupPlayerDto>, double)>();
         
@@ -28,10 +29,10 @@ namespace fantasy_hoops.Jobs
             _pushService = pushService;
         }
 
-        public async Task Execute()
+        public void Execute()
         {
             _context.Database.SetCommandTimeout(0);
-            var previousGameStats = await GetPreviousGameStats();
+            var previousGameStats = GetPreviousGameStats();
             var lineupsCombinations = CrossProductFunctions.CrossProduct(previousGameStats);
             using var lineupsEnumerator = lineupsCombinations.GetEnumerator();
             do
@@ -97,16 +98,16 @@ namespace fantasy_hoops.Jobs
                     }
                 });
 
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             PushNotificationViewModel notification =
                 new PushNotificationViewModel("Admin notification", "BestLineupsJob completed successfully");
-            await _pushService.SendAdminNotification(notification);
+            _pushService.SendAdminNotification(notification);
         }
 
-        private async Task<IDictionary<string, List<LineupPlayerDto>>> GetPreviousGameStats()
+        private IDictionary<string, List<LineupPlayerDto>> GetPreviousGameStats()
         {
-            var allStats = await _context.Stats
+            var allStats = _context.Stats
                 .Where(stats => stats.Date.Date.Equals(_date) && stats.FP > 0)
                 .Include(stats => stats.Player)
                 .ThenInclude(player => player.Team)
@@ -116,7 +117,7 @@ namespace fantasy_hoops.Jobs
                     FP = stats.FP,
                     Price = stats.Price
                 })
-                .ToListAsync();
+                .ToList();
             return allStats.GroupBy(stats => stats.Player.Position)
                 .ToDictionary(group => group.Key, group => group.ToList());
         }
