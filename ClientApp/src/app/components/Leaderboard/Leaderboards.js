@@ -88,7 +88,7 @@ function Leaderboards(props) {
             await getBestLineups({limit: 3})
                 .then(response => {
                     if (response.data.length === 0) {
-                        getBestLineups({limit: 3, date: moment().subtract(1, "day").format('YYYYMMDD')})
+                        getBestLineups({limit: 3, date: moment().subtract(2, "day").format('YYYYMMDD')})
                             .then(response => setBestLineups(response.data))
                             .catch(err => console.error(err.message))
                     } else {
@@ -246,7 +246,7 @@ function Leaderboards(props) {
                             </CustomLoader>}
                     </article>
                 </section>
-                <section className="Content__Container">
+                <section className="Content__Container Content__Container--reverse">
                     <article className="Content--left">
                         {topSeasonLineups
                             ? seasonLineupsCards
@@ -268,7 +268,7 @@ function Leaderboards(props) {
                         </Button>
                     </article>
                 </section>
-                <section className="Content__Container Content__Container--reverse">
+                <section className="Content__Container">
                     <article className="Content--left">
                         <h2 className="Content__Title">{Intro.SELECTED_TITLE}</h2>
                         <p className="Content__Subtitle">{Intro.SELECTED_SUBTITLE}</p>
