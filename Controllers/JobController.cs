@@ -58,7 +58,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet("best-lineup")]
         public IActionResult StartBestLineup()
         {
-            new Thread(async () => await new BestLineupsJob(_pushService).Execute()).Start();
+            Task.Run(() => new BestLineupsJob(_pushService).Execute()).Start();
             
             return Ok("Best lineups started.");
         }
