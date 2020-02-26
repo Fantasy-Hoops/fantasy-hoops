@@ -14,10 +14,10 @@ function InjuriesInfoDialog(props) {
     return (
         <Dialog
             onClose={handleClose}
-            aria-labelledby="customized-dialog-title"
+            aria-labelledby="injuries-info-dialog"
             open={open}
         >
-            <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+            <DialogTitle id="injuries-info-dialog" onClose={handleClose}>
                 INFO
             </DialogTitle>
             <DialogContent dividers>

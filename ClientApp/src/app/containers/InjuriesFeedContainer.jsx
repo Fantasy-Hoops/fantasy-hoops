@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Helmet} from 'react-helmet';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
@@ -15,6 +15,7 @@ import InjuriesInfoDialog from "../components/Injuries/InjuriesInfoDialog";
 import Button from "@material-ui/core/Button";
 import {useStyles} from "./InjuriesFeedContainerStyle";
 import {Canonicals} from "../utils/helpers";
+import InjuryPlayerDialog from "../components/Injuries/InjuryPlayerDialog";
 
 const Intro = {
     TITLE: "INJURIES",
@@ -49,6 +50,8 @@ function InjuriesFeedContainer(props) {
     let content;
     const {injuries, injuryLoader, loadInjuries} = props;
     const [open, setOpen] = React.useState(false);
+    const [dialogInjury, setDialogInjury] = useState(null);
+    const [injuryPlayerDialogOpen, setInjuryPlayerDialogOpen] = React.useState(false);
     const classes = useStyles();
 
     const handleClickOpen = () => {
@@ -58,17 +61,13 @@ function InjuriesFeedContainer(props) {
         setOpen(false);
     };
 
-    function transition() {
-        if (this.classList.contains('active')) {
-            this.lastChild.classList.add('overflow-hidden');
-            this.lastChild.classList.remove('overflow-auto');
-            this.classList.remove('active');
-        } else if (this.lastChild.lastChild.lastChild.innerHTML !== '') {
-            this.classList.add('active');
-            this.lastChild.classList.add('overflow-auto');
-            this.lastChild.classList.remove('overflow-hidden');
-        }
-    }
+    const handleInjuryPlayerDialogClose = () => {
+        setInjuryPlayerDialogOpen(false);
+    };
+    const handleInjuryPlayerDialogOpen = injury => {
+        setDialogInjury(injury);
+        setInjuryPlayerDialogOpen(true);
+    };
 
     useEffect(() => {
         async function handleLoadInjuries() {
@@ -77,12 +76,6 @@ function InjuriesFeedContainer(props) {
 
         handleLoadInjuries();
     }, []);
-
-    useEffect(() => {
-        const cards = document.querySelectorAll('.InjuryCard');
-
-        cards.forEach(card => card.addEventListener('click', transition));
-    });
 
     if (injuryLoader) {
         content = (
@@ -101,7 +94,7 @@ function InjuriesFeedContainer(props) {
 
     const injuryCards = _.map(injuries, (injury, index) => {
         const animated = index === 0 ? 'animated pulse delay-2s' : '';
-        return <InjuryCard key={shortid()} injury={injury} animated={animated}/>;
+        return <InjuryCard key={shortid()} injury={injury} animated={animated} handleOpenDialog={handleInjuryPlayerDialogOpen}/>;
     });
     return (
         <>
@@ -121,6 +114,7 @@ function InjuriesFeedContainer(props) {
                 </Button>
                 <div className="InjuryContainer__Cards">{injuryCards.length > 0 ? injuryCards : content}</div>
                 <InjuriesInfoDialog handleClose={handleClose} open={open}/>
+                <InjuryPlayerDialog handleDialogClose={handleInjuryPlayerDialogClose} open={injuryPlayerDialogOpen} injury={dialogInjury}/>
             </Container>
         </>
     );

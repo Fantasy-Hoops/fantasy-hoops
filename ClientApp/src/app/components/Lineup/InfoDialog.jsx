@@ -11,10 +11,10 @@ function InfoDialog(props) {
     return (
         <Dialog
             onClose={onDialogClose}
-            aria-labelledby="customized-dialog-title"
+            aria-labelledby="lineup-info-dialog"
             open={open}
         >
-            <DialogTitle id="customized-dialog-title" onClose={onDialogClose}>
+            <DialogTitle id="lineup-info-dialog" onClose={onDialogClose}>
                 INFO
             </DialogTitle>
             <DialogContent dividers style={{width: '80vw', maxWidth: '40rem'}}>

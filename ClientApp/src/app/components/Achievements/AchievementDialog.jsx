@@ -11,7 +11,7 @@ import './AchievementDialog.css';
 function AchievementDialog(props) {
     const {achievement, handleClose, open} = props;
     return (
-        <Dialog maxWidth="xs" classes={{paper: 'AchievementDialog__Paper'}} onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+        <Dialog maxWidth="xs" classes={{paper: 'AchievementDialog__Paper'}} onClose={handleClose} aria-labelledby="achievement-dialog" open={open}>
             <HighlightOffIcon className="AchievementDialog__CloseIcon" onClick={handleClose} />
             <DialogContent>
                 <div className="AchievementCard__Icon">

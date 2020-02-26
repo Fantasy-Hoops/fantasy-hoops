@@ -1,0 +1,31 @@
+.InjuryPlayerDialog__Content {
+    padding: 0;
+}
+
+.InjuryPlayerDialog__Image {
+    position: relative;
+    text-align: center;
+    min-height: 20rem;
+}
+
+.InjuryPlayerDialog__PlayerImage {
+    position: absolute;
+    bottom: 0;
+    transform: translateX(-50%);
+    left: 50%;
+}
+
+.InjuryPlayerDialog__PlayerPosition {
+    font-size: 1.5rem !important;
+}
+
+.InjuryPlayerDialog__Title {
+    margin: 1.5rem 0;
+}
+
+.InjuryPlayerDialog__Description {
+    text-align: justify;
+    max-height: 25vh;
+    overflow: auto;
+    margin: 1rem 0;
+}
