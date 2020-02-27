@@ -19,11 +19,13 @@ namespace fantasy_hoops.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
+        private readonly IAchievementsService _achievementsService;
 
-        public UserController(IUserRepository repository, IUserService service)
+        public UserController(IUserRepository repository, IUserService service, IAchievementsService achievementsService)
         {
             _userRepository = repository;
             _userService = service;
+            _achievementsService = achievementsService;
         }
 
         [HttpPost("login")]
@@ -86,7 +88,10 @@ namespace fantasy_hoops.Controllers
                 return StatusCode(422, "Entered email is invalid!");
 
             if (await _userService.Register(model))
+            {
+                _achievementsService.AssignAchievements(model.UserName);
                 return Ok("You have registered successfully!");
+            }
             return StatusCode(500, "Registration has failed!");
         }
 

@@ -58,9 +58,17 @@ namespace fantasy_hoops.Controllers
         [HttpGet("best-lineup")]
         public IActionResult StartBestLineup()
         {
-            Task.Run(() => new BestLineupsJob(_pushService).Execute()).Start();
-            
+            Task.Run(() => new BestLineupsJob(_pushService).Execute());
+
             return Ok("Best lineups started.");
+        }
+
+        [HttpGet("achievements")]
+        public IActionResult StartAchievements()
+        {
+            Task.Run(() => new AchievementsJob(_pushService,null, null).ExecuteStreakAchievements());
+
+            return Ok("Achievements job started.");
         }
     }
 }

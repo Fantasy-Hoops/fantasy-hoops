@@ -115,6 +115,7 @@ export const googleLogin = tokenId => axios.create({
 
 // Achievements
 export const getExistingAchievements = () => axios.get(achievementsApiUrlBase);
+export const getUserAchievements = userId => axios.get(`${achievementsApiUrlBase}/user/${userId}`);
 
 // BestLineups
 export const getBestLineups = parameters => axios.get(`${bestLineupsApiUrlBase}${createParameters(parameters)}`);

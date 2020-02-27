@@ -136,14 +136,10 @@ export class UserProfile extends Component {
                         <a href="#friends" data-target="#friends" data-toggle="tab" id="navLinkFriends"
                            className="nav-link tab-no-outline">Friends</a>
                     </li>
-                    {!readOnly
-                    && (
-                        <li className="nav-item">
-                            <a href="#achievements" data-target="#achievements" data-toggle="tab" id="navLinkEdit"
-                               className="nav-link tab-no-outline">Achievements</a>
-                        </li>
-                    )
-                    }
+                    <li className="nav-item">
+                        <a href="#achievements" data-target="#achievements" data-toggle="tab" id="navLinkEdit"
+                           className="nav-link tab-no-outline">Achievements</a>
+                    </li>
                     {!readOnly
                     && (
                         <li className="nav-item">
@@ -156,7 +152,7 @@ export class UserProfile extends Component {
                 <div className="tab-content py-4">
                     <InfoPanel user={user} readOnly={readOnly}/>
                     <Friends user={user}/>
-                    <Achievements/>
+                    <Achievements user={user} readOnly={readOnly}/>
                     <EditProfile user={user}/>
                 </div>
             </div>
@@ -171,11 +167,11 @@ export class UserProfile extends Component {
 
         return (
             <>
-              <Helmet>
-                <title>{`${(user && user.userName) || 'User Profile'} | Fantasy Hoops`}</title>
-                <meta name="description" content={Meta.DESCRIPTION}/>
-                <link rel="canonical" href={Canonicals.PROFILE}/>
-              </Helmet>
+                <Helmet>
+                    <title>{`${(user && user.userName) || 'User Profile'} | Fantasy Hoops`}</title>
+                    <meta name="description" content={Meta.DESCRIPTION}/>
+                    <link rel="canonical" href={Canonicals.PROFILE}/>
+                </Helmet>
                 <Container maxWidth="md">
                     <div className="row mx-auto">
                         <div className="col-lg-4 order-lg-1 p-0 pt-3">

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Repositories.Interfaces;
@@ -19,6 +20,18 @@ namespace fantasy_hoops.Controllers
         public List<AchievementDto> GetExistingAchievements()
         {
             return _achievementsRepository.GetExistingAchievements();
+        }
+        
+        [HttpGet("user")]
+        public Dictionary<String, List<UserAchievementDto>> GetAllUserAchievements()
+        {
+            return _achievementsRepository.GetAllUserAchievements();
+        }
+        
+        [HttpGet("user/{userId}")]
+        public List<UserAchievementDto> GetUserAchievements(String userId)
+        {
+            return _achievementsRepository.GetUserAchievements(userId);
         }
     }
 }

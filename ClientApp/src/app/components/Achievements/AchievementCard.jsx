@@ -7,32 +7,40 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 
 import './AchievementCard.css';
 
+/**
+ * @return {null}
+ */
 function AchievementCard(props) {
     const classes = useStyles();
-    const {achievement, onDialogOpen} = props;
+    const {achievement, onDialogOpen, className} = props;
     
     const handleDialogOpen = achievement => {
         onDialogOpen(achievement);
     };
     
+    if (!achievement) {
+        return null;
+    }
+    
+    const progressBarValue = achievement.progress / achievement.levelUpGoal * 100;
     return (
-        <Card className={classes.root} onClick={() => handleDialogOpen(achievement)}>
+        <Card className={`${classes.root} ${className}`} onClick={() => handleDialogOpen(achievement)}>
             <CardContent className={classes.content}>
                 <Typography className={classes.title}>
-                    {achievement.title}
+                    {achievement.achievement.title}
                 </Typography>
                 <div className="AchievementCard__Icon">
                     <img
                         className="AchievementCard__Icon__Image"
-                        alt={achievement.title}
-                        src={require(`../../../content/icons${achievement.icon}`)}
+                        alt={achievement.achievement.title}
+                        src={require(`../../../content/icons${achievement.achievement.icon}`)}
                         width="30"
                     />
                 </div>
                 <Typography className="AchievementCard__Level" variant="body2" component="p">
-                    LEVEL 1
+                    LEVEL {achievement.level}
                 </Typography>
-                <LinearProgress variant="determinate" value={70} />
+                <LinearProgress variant="determinate" value={progressBarValue} />
             </CardContent>
         </Card>
     );

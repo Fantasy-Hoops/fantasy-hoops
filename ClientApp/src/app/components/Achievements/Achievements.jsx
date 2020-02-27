@@ -1,31 +1,25 @@
 import React, {useState, useEffect} from 'react';
-import {getExistingAchievements} from "../../utils/networkFunctions";
+import {getExistingAchievements, getUserAchievements} from "../../utils/networkFunctions";
 import _ from 'lodash';
 import AchievementCard from "./AchievementCard";
 import AchievementDialog from "./AchievementDialog";
+import {parse} from "../../utils/auth";
 
-function Achievements() {
+function Achievements(props) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogAchievement, setDialogAchievement] = useState(null);
     const [achievements, setAchievements] = useState([]);
-
+    const {user, readOnly} = props;
+    
     useEffect(() => {
-        async function handleGetExistingAchievements() {
-            await getExistingAchievements()
+        async function handleGetUserAchievements() {
+            await getUserAchievements(user.id)
                 .then(response => setAchievements(response.data))
                 .catch(err => console.error(err.message));
         }
 
-        handleGetExistingAchievements();
+        handleGetUserAchievements();
     }, []);
-
-    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'production') {
-        return (
-            <div className="tab-pane" id="achievements">
-                <h2>Coming soon!</h2>
-            </div>
-        );
-    }
 
     const handleDialogOpen = achievement => {
         setDialogAchievement(achievement);
@@ -36,18 +30,18 @@ function Achievements() {
         setDialogOpen(false);
     };
 
+    function parseExistingAchievements() {
+        return _.map(achievements, (achievement, key) => (
+            <AchievementCard className={readOnly && "no-pointer-events"} key={key} achievement={achievement} onDialogOpen={handleDialogOpen}/>
+        ))
+    }
+
     return (
         <div className="tab-pane" id="achievements">
             {parseExistingAchievements()}
             {dialogAchievement ? <AchievementDialog open={dialogOpen} handleClose={handleDialogClose} achievement={dialogAchievement} /> : null}
         </div>
     );
-
-    function parseExistingAchievements() {
-        return _.map(achievements, (achievement, key) => (
-            <AchievementCard key={key} achievement={achievement} onDialogOpen={handleDialogOpen}/>
-        ))
-    }
 }
 
 export default Achievements;

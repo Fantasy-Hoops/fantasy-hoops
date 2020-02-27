@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 
@@ -51,5 +52,7 @@ namespace fantasy_hoops.Services.Interfaces
 
         Task SendAdminNotification(PushNotificationViewModel notification);
         void SendNudgeNotifications();
+
+        void SendAchievementLevelUpNotification(Tuple<string, string, int> notificationData);
     }
 }

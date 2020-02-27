@@ -8,7 +8,7 @@ namespace fantasy_hoops.Models.Achievements
     {
         [DefaultValue(0)]
         public double Progress { get; set; }
-        [DefaultValue(0)]
+        [DefaultValue(1)]
         public int Level { get; set; }
         public int LevelUpGoal { get; set; }
         

@@ -128,5 +128,14 @@ namespace fantasy_hoops.Services
             foreach (var user in userNotSelected)
                 Send(user.Id, notification).Wait();
         }
+
+        public void SendAchievementLevelUpNotification(Tuple<string, string, int> notificationData)
+        {
+            PushNotificationViewModel notification =
+                new PushNotificationViewModel($"{notificationData.Item2} Achievement Level Up!",
+                    $"You have reached {notificationData.Item3}!");
+
+            Send(notificationData.Item1, notification).Wait();
+        }
     }
 }
