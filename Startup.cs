@@ -117,6 +117,7 @@ namespace fantasy_hoops
             services.AddScoped<IPushService, PushService>();
             services.AddScoped<IScoreService, ScoreService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAchievementsService, AchievementsService>();
 
             // Repositories
             services.AddScoped<IBlogRepository, BlogRepository>();
@@ -134,6 +135,7 @@ namespace fantasy_hoops
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAchievementsRepository, AchievementsRepository>();
             services.AddScoped<IBestLineupsRepository, BestLineupsRepository>();
+            services.AddScoped<IAchievementsRepository, AchievementsRepository>();
         }
 
         private void ConfigureAuth(IServiceCollection services)
