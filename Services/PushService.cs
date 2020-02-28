@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using fantasy_hoops.Database;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
@@ -77,6 +78,12 @@ namespace fantasy_hoops.Services
             if (!_pushNotificationRepository.SubscriptionExists(subscription)) return;
 
             _pushNotificationRepository.RemoveSubscription(subscription);
+        }
+
+        public async Task SendToAllUsers(PushNotificationViewModel notification)
+        {
+            foreach (var user in new GameContext().Users)
+                Send(user.Id, notification).Wait();
         }
 
         public async Task Send(string userId, PushNotificationViewModel notification)

@@ -36,6 +36,8 @@ namespace fantasy_hoops.Services.Interfaces
         /// <param name="subscription">push subscription</param>
         Task Unsubscribe(PushSubscription subscription);
 
+        Task SendToAllUsers(PushNotificationViewModel notification);
+
         /// <summary>
         /// Send a plain text push notification to a user without any special option
         /// </summary>

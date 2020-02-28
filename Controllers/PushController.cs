@@ -8,6 +8,7 @@ using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Services;
 using fantasy_hoops.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -61,6 +62,19 @@ namespace fantasy_hoops.Controllers
             await _pushService.Unsubscribe(subscription);
 
             return subscription;
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("send/all")]
+        public async Task<IActionResult> SendAll([FromBody] PushNotificationViewModel notification, [FromQuery] int? delay)
+        {
+            // if (!_env.IsDevelopment()) return Forbid();
+
+            if (delay != null) Thread.Sleep((int)delay);
+
+            await _pushService.SendToAllUsers(notification);
+
+            return Ok("Notifications sent");
         }
 
         [HttpPost("send/{userId}")]
