@@ -42,7 +42,8 @@ namespace fantasy_hoops.Jobs
 
             foreach (var userAchievement in userAchievements)
             {
-                if (userAchievement.Progress > userAchievement.User.Streak)
+                User user = _context.Users.Find(userAchievement.UserID);
+                if (user == null || userAchievement.Progress > user.Streak)
                 {
                     continue;
                 }
@@ -50,14 +51,14 @@ namespace fantasy_hoops.Jobs
                 // Add Progress
                 if (userAchievement.Progress.CompareTo(userAchievement.LevelUpGoal) == -1)
                 {
-                    userAchievement.Progress = userAchievement.User.Streak;
+                    userAchievement.Progress = user.Streak;
                     continue;
                 }
 
                 // Level Up
                 if (userAchievement.Progress.CompareTo(userAchievement.LevelUpGoal - 1) == 0)
                 {
-                    userAchievement.Progress = userAchievement.User.Streak;
+                    userAchievement.Progress = user.Streak;
                     userAchievement.Level++;
                     userAchievement.LevelUpGoal *= 2;
                     
