@@ -80,7 +80,7 @@ namespace fantasy_hoops.Database
                     .AddEnvironmentVariables()
                    .Build();
                 string connectionString = configuration.GetConnectionString("DefaultConnection");
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseLazyLoadingProxies().UseSqlServer(connectionString);
             }
         }
     }

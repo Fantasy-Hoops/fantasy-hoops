@@ -93,7 +93,7 @@ namespace fantasy_hoops
                 });
             });
 #endif
-            services.AddDbContext<GameContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<GameContext>(o => o.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             ConfigureAuth(services);
 

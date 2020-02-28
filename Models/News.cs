@@ -26,8 +26,8 @@ namespace fantasy_hoops.Models
         public virtual ICollection<Paragraph> Paragraphs { get; set; }
         
         [ForeignKey("hTeamID")]
-        public Team hTeam { get; set; }
+        public virtual Team hTeam { get; set; }
         [ForeignKey("vTeamID")]
-        public Team vTeam { get; set; }
+        public virtual Team vTeam { get; set; }
     }
 }

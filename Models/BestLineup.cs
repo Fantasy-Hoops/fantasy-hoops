@@ -11,7 +11,7 @@ namespace fantasy_hoops.Models
         public int Id { get; set; }
         [Column(TypeName = "Date")]
         public DateTime Date { get; set; }
-        public IEnumerable<PlayersBestLineups> Lineup { get; set; }
+        public virtual IEnumerable<PlayersBestLineups> Lineup { get; set; }
         public double TotalFP { get; set; }
         public int LineupPrice { get; set; }
     }

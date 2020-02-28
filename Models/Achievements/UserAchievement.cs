@@ -17,9 +17,9 @@ namespace fantasy_hoops.Models.Achievements
 
         [Key]
         public string UserID { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; }
         [Key]
         public int AchievementID { get; set; }
-        public Achievement Achievement { get; set; }
+        public virtual Achievement Achievement { get; set; }
     }
 }
