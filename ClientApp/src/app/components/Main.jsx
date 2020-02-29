@@ -112,7 +112,11 @@ function Main() {
         <>
             <Helmet>
                 <title>{Meta.TITLE}</title>
+                <meta property="title" content={Meta.TITLE}/>
+                <meta property="og:title" content={Meta.TITLE}/>
+                <meta property="og:description" content={Meta.DESCRIPTION}/>
                 <meta name="description" content={Meta.DESCRIPTION}/>
+                <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.MAIN}/>
             </Helmet>
             <div className="Main__Background">

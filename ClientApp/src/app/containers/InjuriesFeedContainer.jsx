@@ -14,7 +14,7 @@ import {Container} from "@material-ui/core";
 import InjuriesInfoDialog from "../components/Injuries/InjuriesInfoDialog";
 import Button from "@material-ui/core/Button";
 import {useStyles} from "./InjuriesFeedContainerStyle";
-import {Canonicals} from "../utils/helpers";
+import {Canonicals, Meta} from "../utils/helpers";
 import InjuryPlayerDialog from "../components/Injuries/InjuryPlayerDialog";
 
 const Intro = {
@@ -99,7 +99,11 @@ function InjuriesFeedContainer(props) {
         <>
             <Helmet>
                 <title>Injuries | Fantasy Hoops</title>
+                <meta property="title" content="Injuries | Fantasy Hoops"/>
+                <meta property="og:title" content="Injuries | Fantasy Hoops"/>
                 <meta name="description" content={Intro.SUBTITLE}/>
+                <meta property="og:description" content={Intro.SUBTITLE}/>
+                <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.INJURIES}/>
             </Helmet>
             <Container maxWidth="md">
@@ -108,12 +112,15 @@ function InjuriesFeedContainer(props) {
                     <h5 className="Injuries__Subtitle">{Intro.SUBTITLE}</h5>
                 </article>
                 {googleAd}
-                <Button className={classes.button} color="primary" onClick={handleClickOpen}>
-                    INFO
-                </Button>
+                <div className="Injuries__InfoButton">
+                    <Button className={classes.button} color="primary" onClick={handleClickOpen}>
+                        INFO
+                    </Button>
+                </div>
                 <div className="InjuryContainer__Cards">{injuryCards.length > 0 ? injuryCards : content}</div>
                 <InjuriesInfoDialog handleClose={handleClose} open={open}/>
-                <InjuryPlayerDialog handleDialogClose={handleInjuryPlayerDialogClose} open={injuryPlayerDialogOpen} injury={dialogInjury}/>
+                <InjuryPlayerDialog handleDialogClose={handleInjuryPlayerDialogClose} open={injuryPlayerDialogOpen}
+                                    injury={dialogInjury}/>
             </Container>
         </>
     );

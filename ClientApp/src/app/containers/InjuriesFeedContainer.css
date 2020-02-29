@@ -24,6 +24,14 @@
     text-justify: inter-word;
 }
 
+.Injuries__InfoButton {
+    position: sticky;
+    background: var(--grey-background);
+    z-index: 1;
+    padding: 2rem 0;
+    top: 5.5rem;
+}
+
 .InjuryStatus__Badge {
     width: fit-content;
     font-size: 1.4rem;
@@ -41,4 +49,10 @@
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 3rem;
+}
+
+@media screen and (min-width: 600px)  {
+    .Injuries__InfoButton {
+        top: 9.6rem;
+    }
 }

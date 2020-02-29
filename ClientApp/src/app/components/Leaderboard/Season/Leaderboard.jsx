@@ -167,7 +167,11 @@ export class Leaderboard extends PureComponent {
             <>
                 <Helmet>
                     <title>Season Leaderboard | Fantasy Hoops</title>
+                    <meta property="title" content="Season Leaderboard | Fantasy Hoops"/>
+                    <meta property="og:title" content="Season Leaderboard | Fantasy Hoops"/>
                     <meta name="description" content={Meta.DESCRIPTION}/>
+                    <meta property="og:description" content={Meta.DESCRIPTION}/>
+                    <meta name="robots" content="index,follow"/>
                     <link rel="canonical" href={Canonicals.SEASON_LEADERBOARD}/>
                 </Helmet>
                 <Container maxWidth="md">

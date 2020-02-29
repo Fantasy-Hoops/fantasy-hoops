@@ -57,7 +57,11 @@ export class UserPoolContainer extends Component {
             <>
                 <Helmet>
                     <title>Users | Fantasy Hoops</title>
+                    <meta property="title" content="Users | Fantasy Hoops"/>
+                    <meta property="og:title" content="Users | Fantasy Hoops"/>
                     <meta name="description" content={Meta.DESCRIPTION}/>
+                    <meta property="og:description" content={Meta.DESCRIPTION}/>
+                    <meta name="robots" content="noindex,nofollow"/>
                     <link rel="canonical" href={Canonicals.USERS}/>
                 </Helmet>
                 <div className="container ">

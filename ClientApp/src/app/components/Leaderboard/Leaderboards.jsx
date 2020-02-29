@@ -163,7 +163,11 @@ function Leaderboards(props) {
         <>
             <Helmet>
                 <title>Leaderboards | Fantasy Hoops</title>
+                <meta property="title" content="Leaderboards | Fantasy Hoops"/>
+                <meta property="og:title" content="Leaderboards | Fantasy Hoops"/>
                 <meta name="description" content={Intro.SUBTITLE}/>
+                <meta property="og:description" content={Intro.SUBTITLE}/>
+                <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.LEADERBOARDS}/>
             </Helmet>
             <Container maxWidth="md">

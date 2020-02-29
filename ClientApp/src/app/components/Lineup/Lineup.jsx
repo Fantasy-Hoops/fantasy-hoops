@@ -234,7 +234,11 @@ export class Lineup extends Component {
             <>
                 <Helmet>
                     <title>Lineup | Fantasy Hoops</title>
+                    <meta property="title" content="Lineup | Fantasy Hoops"/>
+                    <meta property="og:title" content="Lineup | Fantasy Hoops"/>
+                    <meta property="og:description" content={Meta.DESCRIPTION}/>
                     <meta name="description" content={Meta.DESCRIPTION}/>
+                    <meta name="robots" content="noindex,nofollow"/>
                     <link rel="canonical" href={Canonicals.LINEUP}/>
                 </Helmet>
                 <Container maxWidth="md">

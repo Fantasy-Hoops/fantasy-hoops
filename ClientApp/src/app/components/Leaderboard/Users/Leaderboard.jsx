@@ -236,7 +236,11 @@ function Leaderboard(props) {
         <>
             <Helmet>
                 <title>Users Leaderboard | Fantasy Hoops</title>
-                <meta name="description" content={Meta.DESCRIPTION} />
+                <meta property="title" content="Users Leaderboard | Fantasy Hoops"/>
+                <meta property="og:title" content="Users Leaderboard | Fantasy Hoops"/>
+                <meta name="description" content={Meta.DESCRIPTION}/>
+                <meta property="og:description" content={Meta.DESCRIPTION}/>
+                <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.USERS_LEADERBOARD} />
             </Helmet>
             <Container maxWidth="md">

@@ -51,7 +51,11 @@ export class BlogContainer extends Component {
             <>
                 <Helmet>
                     <title>Blog | Fantasy Hoops</title>
+                    <meta property="title" content="Blog | Fantasy Hoops"/>
+                    <meta property="og:title" content="Blog | Fantasy Hoops"/>
                     <meta name="description" content={Meta.DESCRIPTION}/>
+                    <meta property="og:description" content={Meta.DESCRIPTION}/>
+                    <meta name="robots" content="index,follow"/>
                     <link rel="canonical" href={Canonicals.BLOG}/>
                 </Helmet>
                 <div className="container">

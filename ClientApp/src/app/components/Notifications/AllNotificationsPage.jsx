@@ -138,7 +138,11 @@ export class AllNotificationsPage extends Component {
             <>
                 <Helmet>
                     <title>Notifications | Fantasy Hoops</title>
+                    <meta property="title" content="Notifications | Fantasy Hoops"/>
+                    <meta property="og:title" content="Notifications | Fantasy Hoops"/>
                     <meta name="description" content={Meta.DESCRIPTION}/>
+                    <meta property="og:description" content={Meta.DESCRIPTION}/>
+                    <meta name="robots" content="noindex,nofollow"/>
                     <link rel="canonical" href={Canonicals.NOTIFICATIONS}/>
                 </Helmet>
                 <Container maxWidth="md">

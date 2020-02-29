@@ -95,8 +95,12 @@ export class LineupHistory extends Component {
         return (
             <>
                 <Helmet>
-                    <title>Lineups History | Fantasy Hoops</title>
+                    <title>Lineup History | Fantasy Hoops</title>
+                    <meta property="title" content="Lineup History | Fantasy Hoops"/>
+                    <meta property="og:title" content="Lineup History | Fantasy Hoops"/>
                     <meta name="description" content={Meta.DESCRIPTION}/>
+                    <meta property="og:description" content={Meta.DESCRIPTION}/>
+                    <meta name="robots" content="noindex,nofollow"/>
                     <link rel="canonical" href={Canonicals.LINEUPS_HISTORY}/>
                 </Helmet>
                 <Container maxWidth="md">

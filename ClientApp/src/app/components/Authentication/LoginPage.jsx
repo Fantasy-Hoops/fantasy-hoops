@@ -124,7 +124,11 @@ export default class LoginPage extends Component {
             <>
                 <Helmet>
                     <title>Login | Fantasy Hoops</title>
+                    <meta property="title" content="Login | Fantasy Hoops"/>
+                    <meta property="og:title" content="Login | Fantasy Hoops"/>
+                    <meta property="og:description" content={Meta.DESCRIPTION}/>
                     <meta name="description" content={Meta.DESCRIPTION}/>
+                    <meta name="robots" content="noindex,follow"/>
                     <link rel="canonical" href={Canonicals.LOGIN}/>
                 </Helmet>
                 <div className="container pb-3  vertical-center" style={{maxWidth: '420px'}}>

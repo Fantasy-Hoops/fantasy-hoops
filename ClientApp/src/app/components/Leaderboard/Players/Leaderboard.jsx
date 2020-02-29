@@ -14,6 +14,13 @@ import {Container} from "@material-ui/core";
 const {$} = window;
 const LOAD_COUNT = 30;
 
+const Intro = {
+    TITLE: "NBA Players Leaderboard | Fantasy Hoops",
+    DESCRIPTION: "Ranking of the NBA players by the Official NBA Fantasy Scoring formula. Daily, weekly and monthly " +
+        "leaderboards available. During the games, daily rankings are updated live so you will always be aware of " +
+        "your selected lineup performance."
+};
+
 export default class Leaderboard extends Component {
     constructor(props) {
         super(props);
@@ -142,8 +149,12 @@ export default class Leaderboard extends Component {
         return (
             <>
                 <Helmet>
-                    <title>NBA Players Leaderboard | Fantasy Hoops</title>
-                    <meta name="description" content={Meta.DESCRIPTION}/>
+                    <title>{Intro.TITLE}</title>
+                    <meta property="title" content={Intro.TITLE}/>
+                    <meta property="og:title" content={Intro.TITLE}/>
+                    <meta name="description" content={Intro.DESCRIPTION}/>
+                    <meta property="og:description" content={Intro.DESCRIPTION}/>
+                    <meta name="robots" content="index,follow"/>
                     <link rel="canonical" href={Canonicals.PLAYERS_LEADERBOARD}/>
                 </Helmet>
                 <Container maxWidth="md">

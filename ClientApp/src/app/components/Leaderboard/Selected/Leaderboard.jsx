@@ -13,6 +13,13 @@ import {Container} from "@material-ui/core";
 const {$} = window;
 const LOAD_COUNT = 30;
 
+const Intro = {
+    TITLE: "Most Selected NBA Players Leaderboard | Fantasy Hoops",
+    DESCRIPTION: "Leaderboard of the NBA players that Fantasy Hoops users tend to choose most often. Find out who " +
+        "are the most popular selections of all time and make a decision whether you are going to follow the trends " +
+        "or build a lineup of underdogs."
+};
+
 export default class Leaderboard extends Component {
     constructor(props) {
         super(props);
@@ -111,8 +118,12 @@ export default class Leaderboard extends Component {
         return (
             <>
                 <Helmet>
-                    <title>Most Selected NBA Players Leaderboard | Fantasy Hoops</title>
-                    <meta name="description" content={Meta.DESCRIPTION}/>
+                    <title>{Intro.TITLE}</title>
+                    <meta property="title" content={Intro.TITLE}/>
+                    <meta property="og:title" content={Intro.TITLE}/>
+                    <meta name="description" content={Intro.DESCRIPTION}/>
+                    <meta property="og:description" content={Intro.DESCRIPTION}/>
+                    <meta name="robots" content="index,follow"/>
                     <link rel="canonical" href={Canonicals.SELECTED_PLAYERS_LEADERBOARD}/>
                 </Helmet>
                 <Container maxWidth="md">

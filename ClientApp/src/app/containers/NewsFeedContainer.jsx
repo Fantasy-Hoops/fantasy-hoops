@@ -118,7 +118,11 @@ function NewsFeedContainer(props) {
         <>
             <Helmet>
                 <title>News | Fantasy Hoops</title>
+                <meta property="title" content="News | Fantasy Hoops"/>
+                <meta property="og:title" content="News | Fantasy Hoops"/>
                 <meta name="description" content={Intro.SUBTITLE}/>
+                <meta property="og:description" content={Intro.SUBTITLE}/>
+                <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.NEWS}/>
             </Helmet>
             <Container maxWidth="md">

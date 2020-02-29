@@ -169,8 +169,12 @@ export class UserProfile extends Component {
             <>
                 <Helmet>
                     <title>{`${(user && user.userName) || 'User Profile'} | Fantasy Hoops`}</title>
+                    <meta property="title" content={`${(user && user.userName) || 'User Profile'} | Fantasy Hoops`}/>
+                    <meta property="og:title" content={`${(user && user.userName) || 'User Profile'} | Fantasy Hoops`}/>
+                    <meta property="og:description" content={Meta.DESCRIPTION}/>
                     <meta name="description" content={Meta.DESCRIPTION}/>
-                    <link rel="canonical" href={Canonicals.PROFILE}/>
+                    <meta name="robots" content="noindex,nofollow"/>
+                    <link rel="canonical" href={Canonicals.REGISTER}/>
                 </Helmet>
                 <Container maxWidth="md">
                     <div className="row mx-auto">

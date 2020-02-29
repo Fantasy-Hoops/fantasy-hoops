@@ -91,7 +91,11 @@ export class Registration extends Component {
             <>
                 <Helmet>
                     <title>Register | Fantasy Hoops</title>
+                    <meta property="title" content="Register | Fantasy Hoops"/>
+                    <meta property="og:title" content="Register | Fantasy Hoops"/>
+                    <meta property="og:description" content={Meta.DESCRIPTION}/>
                     <meta name="description" content={Meta.DESCRIPTION}/>
+                    <meta name="robots" content="noindex,follow"/>
                     <link rel="canonical" href={Canonicals.REGISTER}/>
                 </Helmet>
                 <div className="container pb-3 vertical-center" style={{maxWidth: '420px'}}>
