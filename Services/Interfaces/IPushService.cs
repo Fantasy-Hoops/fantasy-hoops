@@ -56,5 +56,6 @@ namespace fantasy_hoops.Services.Interfaces
         void SendNudgeNotifications();
 
         void SendAchievementLevelUpNotification(Tuple<string, string, int> notificationData);
+        void SendAchievementUnlockedNotification(Tuple<string, string, string> notificationData);
     }
 }

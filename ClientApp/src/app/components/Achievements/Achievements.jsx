@@ -3,7 +3,8 @@ import {getExistingAchievements, getUserAchievements} from "../../utils/networkF
 import _ from 'lodash';
 import AchievementCard from "./AchievementCard";
 import AchievementDialog from "./AchievementDialog";
-import {parse} from "../../utils/auth";
+
+import './Achievements.css';
 
 function Achievements(props) {
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -35,11 +36,14 @@ function Achievements(props) {
             <AchievementCard className={readOnly && "no-pointer-events"} key={key} achievement={achievement} onDialogOpen={handleDialogOpen}/>
         ))
     }
-
+    
     return (
         <div className="tab-pane" id="achievements">
-            {parseExistingAchievements()}
-            {dialogAchievement ? <AchievementDialog open={dialogOpen} handleClose={handleDialogClose} achievement={dialogAchievement} /> : null}
+            <div className="Achievements">
+                {parseExistingAchievements()}
+                {dialogAchievement ? <AchievementDialog open={dialogOpen} handleClose={handleDialogClose}
+                                                        achievement={dialogAchievement}/> : null}
+            </div>
         </div>
     );
 }

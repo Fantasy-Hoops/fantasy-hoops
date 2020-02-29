@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
+using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Repositories.Interfaces;
 
 namespace fantasy_hoops.Repositories
@@ -17,20 +18,9 @@ namespace fantasy_hoops.Repositories
             _context = new GameContext();
         }
         
-        public List<AchievementDto> GetExistingAchievements()
+        public List<Achievement> GetExistingAchievements()
         {
             return _context.Achievements
-                .Select(achievement => new AchievementDto
-                {
-                    Id = achievement.Id,
-                    Type = achievement.Type,
-                    Title = achievement.Title,
-                    Description = achievement.Description
-                        .Replace("{}", achievement.GoalBase.ToString()),
-                    CompletedMessage = achievement.CompletedMessage,
-                    Icon = achievement.Icon,
-                    GoalBase = achievement.GoalBase
-                })
                 .ToList();
         }
 
@@ -88,7 +78,27 @@ namespace fantasy_hoops.Repositories
                         GoalBase = achievement.Achievement.GoalBase
                     }
                 })
+                .OrderByDescending(ua => ua.IsAchieved)
+                .ThenByDescending(ua => ua.Progress)
                 .ToList();
+        }
+
+        public bool AchievementExists(Achievement achievement)
+        {
+            return _context.Achievements.Any(a => a.Title.Equals(achievement.Title)
+                                                  && a.Type == achievement.Type);
+        }
+
+        public bool SaveAchievement(Achievement achievement)
+        {
+            if (AchievementExists(achievement))
+            {
+                return false;
+            }
+            
+            _context.Achievements.Add(achievement);
+            int entitiesWritten = _context.SaveChanges();
+            return entitiesWritten > 0;
         }
     }
 }

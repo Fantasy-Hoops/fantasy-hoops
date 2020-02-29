@@ -9,6 +9,7 @@ using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Jobs
@@ -96,7 +97,7 @@ namespace fantasy_hoops.Jobs
             SendPushNotifications().Wait();
 
             Task.Run(() => new BestLineupsJob(_pushService).Execute());
-            Task.Run(() => new AchievementsJob(_pushService, null, null).ExecuteStreakAchievements());
+            Task.Run(() => new AchievementsJob(_pushService, null, null).ExecuteAllAchievements());
         }
     }
 }

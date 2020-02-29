@@ -66,7 +66,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet("achievements")]
         public IActionResult StartAchievements()
         {
-            Task.Run(() => new AchievementsJob(_pushService,null, null).ExecuteStreakAchievements());
+            Task.Run(() => new AchievementsJob(_pushService,null, null).ExecuteAllAchievements());
 
             return Ok("Achievements job started.");
         }

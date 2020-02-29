@@ -3,7 +3,9 @@ using FluentScheduler;
 using System.Linq;
 using System.Threading.Tasks;
 using fantasy_hoops.Jobs;
+using fantasy_hoops.Models;
 using fantasy_hoops.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace fantasy_hoops
 {

@@ -92,9 +92,8 @@ function InjuriesFeedContainer(props) {
         );
     }
 
-    const injuryCards = _.map(injuries, (injury, index) => {
-        const animated = index === 0 ? 'animated pulse delay-2s' : '';
-        return <InjuryCard key={shortid()} injury={injury} animated={animated} handleOpenDialog={handleInjuryPlayerDialogOpen}/>;
+    const injuryCards = _.map(injuries, (injury) => {
+        return <InjuryCard key={shortid()} injury={injury} handleOpenDialog={handleInjuryPlayerDialogOpen}/>;
     });
     return (
         <>

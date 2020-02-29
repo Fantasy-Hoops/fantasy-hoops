@@ -139,8 +139,17 @@ namespace fantasy_hoops.Services
         public void SendAchievementLevelUpNotification(Tuple<string, string, int> notificationData)
         {
             PushNotificationViewModel notification =
-                new PushNotificationViewModel($"{notificationData.Item2} Achievement Level Up!",
-                    $"You have reached {notificationData.Item3}!");
+                new PushNotificationViewModel($"'{notificationData.Item2}' Achievement Level Up",
+                    $"You have reached level {notificationData.Item3}!");
+
+            Send(notificationData.Item1, notification).Wait();
+        }
+
+        public void SendAchievementUnlockedNotification(Tuple<string, string, string> notificationData)
+        {
+            PushNotificationViewModel notification =
+                new PushNotificationViewModel($"Achievement '{notificationData.Item2}' Unlocked",
+                    notificationData.Item3);
 
             Send(notificationData.Item1, notification).Wait();
         }

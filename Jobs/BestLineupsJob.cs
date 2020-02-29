@@ -111,6 +111,7 @@ namespace fantasy_hoops.Jobs
                 .Where(stats => stats.Date.Date.Equals(_date) && stats.FP > 0)
                 .Include(stats => stats.Player)
                 .ThenInclude(player => player.Team)
+                .Where(stats => !stats.Player.Position.ToLower().Equals("na"))
                 .Select(stats => new LineupPlayerDto
                 {
                     Player = stats.Player,

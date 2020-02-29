@@ -21,8 +21,15 @@ function AchievementCard(props) {
     if (!achievement) {
         return null;
     }
+
+    const isSingleLevel = achievement.type === 0;
+    
+    const checkColor = () => {
+        return achievement.progress === 0 || (isSingleLevel && !achievement.isAchieved);
+    };
     
     const progressBarValue = achievement.progress / achievement.levelUpGoal * 100;
+    const color = checkColor() ? 'no' : '';
     return (
         <Card className={`${classes.root} ${className}`} onClick={() => handleDialogOpen(achievement)}>
             <CardContent className={classes.content}>
@@ -33,14 +40,14 @@ function AchievementCard(props) {
                     <img
                         className="AchievementCard__Icon__Image"
                         alt={achievement.achievement.title}
-                        src={require(`../../../content/icons${achievement.achievement.icon}`)}
+                        src={require(`../../../content/icons/achievements/${color}color${achievement.achievement.icon}`)}
                         width="30"
                     />
                 </div>
                 <Typography className="AchievementCard__Level" variant="body2" component="p">
                     LEVEL {achievement.level}
                 </Typography>
-                <LinearProgress variant="determinate" value={progressBarValue} />
+                <LinearProgress className="AchievementCard__ProgressBar" variant="determinate" value={progressBarValue} />
             </CardContent>
         </Card>
     );

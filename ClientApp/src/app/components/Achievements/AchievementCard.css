@@ -11,3 +11,8 @@
 .AchievementCard__Level {
     text-align: center;
 }
+
+.AchievementCard__ProgressBar {
+    margin: .5rem 0;
+    border-radius: 5px;
+}

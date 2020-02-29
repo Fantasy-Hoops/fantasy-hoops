@@ -292,12 +292,14 @@ namespace fantasy_hoops.Jobs
                                 }
                             };
                             dbPlayers.Add(playerObj);
-                            if (playerObj.Position.Equals("NA"))
+                            if (player["primary_position"].ToString().ToLower().Equals("na"))
+                            {
                                 _pushService.SendAdminNotification(
                                     new PushNotificationViewModel(
                                         "Fantasy Hoops Notification",
                                         $"Player '{playerObj.FullName}' with position {playerObj.Position} was added to database.")
-                                    );
+                                ); 
+                            }
                         }
                         catch (ArgumentNullException)
                         {
