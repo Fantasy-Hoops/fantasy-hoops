@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Countdown from 'react-countdown-now';
+import Countdown from 'react-countdown';
 import {PlayerPool} from './PlayerPool';
 import {PlayerCard} from './PlayerCard';
 import {ProgressBar} from './ProgressBar';
@@ -14,6 +14,7 @@ import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../../utils/helpers";
 import {Container} from "@material-ui/core";
 import InfoDialog from "./InfoDialog";
+import moment from "moment";
 
 const {$} = window;
 const budget = 300; // thousands
@@ -151,9 +152,8 @@ export class Lineup extends Component {
 
     getDate() {
         const dt = new Date();
-        const toDate = new Date(this.state.nextGame);
         const tz = dt.getTimezoneOffset();
-        return toDate.setMinutes(toDate.getMinutes() - tz);
+        return moment(this.state.nextGame).add(-tz, 'minutes').format();
     }
 
     render() {
@@ -250,12 +250,13 @@ export class Lineup extends Component {
                     />
                     <div className="Lineup--sticky">
                         <div className="Lineup__countdown text-center">
-                            <Countdown
+                            {this.state.nextGame && <Countdown
+                                now={moment}
                                 date={this.getDate()}
                                 zeroPadTime={3}
                                 zeroPadDays={3}
                                 renderer={renderer}
-                            />
+                            />}
                         </div>
                         <div className="Lineup__body">
                             {this.state.lineup.pg}

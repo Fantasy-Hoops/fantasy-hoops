@@ -602,32 +602,6 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
     width: 18rem;
 }
 
-.react-datepicker {
-    transform: scale(1.6, 1.6);
-    margin-top: 5rem;
-}
-
-.react-datepicker__day--selected {
-    background: var(--primary-color)
-}
-
-.DatePicker .react-datepicker__day:hover {
-    background: var(--secondary-color);
-    color: #fff;
-}
-
-.react-datepicker__close-icon::after {
-    background: var(--secondary-color);
-}
-
-.WeeklyDatePicker .react-datepicker__week:hover {
-    background-color: var(--grey-text);
-}
-
-.WeeklyDatePicker .react-datepicker__day:hover {
-    background-color: var(--grey-text);
-}
-
 .select-year {
     width: 18.5rem;
     display: block;
