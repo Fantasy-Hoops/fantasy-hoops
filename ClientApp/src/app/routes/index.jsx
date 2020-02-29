@@ -39,22 +39,22 @@ export default function configureRoutes() {
             <Route path="/" component={Header}/>
             <main>
                 <Switch>
-                    <Route exact path={Routes.MAIN} component={Main}/>
-                    <Route exact path={Routes.LOGIN} component={LoginPage}/>
-                    <Route exact path={Routes.REGISTER} component={Registration}/>
+                    <Route path={Routes.MAIN} component={Main}/>
+                    <Route path={Routes.LOGIN} component={LoginPage}/>
+                    <Route path={Routes.REGISTER} component={Registration}/>
                     <PrivateRoute path={`${Routes.PROFILE}/:name?/:edit?`} component={UserProfile}/>
                     <PrivateRoute path={Routes.LINEUP} component={Lineup}/>
                     <Route path={Routes.INJURIES} component={InjuriesFeed}/>
                     <Route path={Routes.NEWS} component={NewsFeed}/>
-                    <PrivateRoute exact path={Routes.LEADERBOARD_USERS} component={UserLeaderboard}/>
-                    <Route exact path={Routes.LEADERBOARD_PLAYERS} component={PlayerLeaderboard}/>
-                    <Route exact path={Routes.LEADERBOARD_SELECTED} component={SelectedLeaderboard}/>
-                    <PrivateRoute exact path={Routes.LEADERBOARD_SEASON} component={SeasonLeaderboard}/>
+                    <PrivateRoute path={Routes.LEADERBOARD_USERS} component={UserLeaderboard}/>
+                    <Route path={Routes.LEADERBOARD_PLAYERS} component={PlayerLeaderboard}/>
+                    <Route path={Routes.LEADERBOARD_SELECTED} component={SelectedLeaderboard}/>
+                    <PrivateRoute path={Routes.LEADERBOARD_SEASON} component={SeasonLeaderboard}/>
                     <PrivateRoute path={Routes.USER_POOL} component={UserPool}/>
                     <PrivateRoute path={Routes.ALL_NOTIFICATIONS} component={AllNotificationsPage}/>
                     <PrivateRoute path={Routes.LINEUP_HISTORY} component={LineupHistory}/>
-                    <Route exact path={Routes.BLOG} component={Blog}/>
-                    <Route exact path={Routes.LEADERBOARDS} component={Leaderboards}/>
+                    <Route path={Routes.BLOG} component={Blog}/>
+                    <Route path={Routes.LEADERBOARDS} component={Leaderboards}/>
                     <Route render={() => <Error status={404} message="Page not found"/>}/>
                 </Switch>
             </main>
