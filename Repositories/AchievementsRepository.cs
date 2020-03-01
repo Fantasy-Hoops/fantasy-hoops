@@ -78,8 +78,9 @@ namespace fantasy_hoops.Repositories
                         GoalBase = achievement.Achievement.GoalBase
                     }
                 })
-                .OrderByDescending(ua => ua.IsAchieved)
-                .ThenByDescending(ua => ua.Level)
+                .OrderByDescending(ua => ua.Level)
+                .ThenByDescending(ua => ua.IsAchieved)
+                .ThenByDescending(ua => ua.Progress / ua.LevelUpGoal)
                 .ToList();
         }
 

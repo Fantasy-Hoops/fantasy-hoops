@@ -36,13 +36,15 @@ function AchievementCard(props) {
                 <Typography className={classes.title}>
                     {achievement.achievement.title}
                 </Typography>
-                <div className="AchievementCard__Icon">
-                    <img
-                        className="AchievementCard__Icon__Image"
-                        alt={achievement.achievement.title}
-                        src={require(`../../../content/icons/achievements/${color}color${achievement.achievement.icon}`)}
-                        width="30"
-                    />
+                <div className="AchievementCard__IconWrapper">
+                    <div className="AchievementCard__Icon">
+                        <img
+                            className="AchievementCard__Icon__Image"
+                            alt={achievement.achievement.title}
+                            src={require(`../../../content/icons/achievements/${color}color${achievement.achievement.icon}`)}
+                            width="30"
+                        />
+                    </div>
                 </div>
                 <Typography className="AchievementCard__Level" variant="body2" component="p">
                     LEVEL {achievement.level}

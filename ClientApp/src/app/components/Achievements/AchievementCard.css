@@ -1,3 +1,8 @@
+.AchievementCard__IconWrapper {
+    height: 4.5rem;
+    width: 8rem;
+}
+
 .AchievementCard__Icon {
     display: table;
     margin: .5rem auto;

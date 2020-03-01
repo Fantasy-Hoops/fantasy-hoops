@@ -429,14 +429,14 @@ input[type="search"]:focus {
 }
 
 .UserCard {
-    width: 10.7rem;
+    width: 10rem;
     overflow: hidden;
     position: relative;
     background-color: var(--primary-color);
     border-radius: 2rem;
     text-align: center;
     border: .1rem solid var(--tertiary-color);
-    margin: .5rem;
+    margin: .25rem;
 }
 
 .UserCard .header-bg {

@@ -64,23 +64,19 @@ export class UserPoolContainer extends Component {
                     <meta name="robots" content="noindex,nofollow"/>
                     <link rel="canonical" href={Canonicals.USERS}/>
                 </Helmet>
-                <div className="container ">
-                    <div className="search m-3 mb-4">
-                        <span className="fa fa-search"/>
-                        <DebounceInput
-                            className="UserPool__Search form-control"
-                            type="search"
-                            name="search"
-                            placeholder="Search..."
-                            debounceTimeout={600}
-                            onChange={this.handleFilterUsers}
-                        />
-                    </div>
-                    <div className="center col">
-                        <div className="row justify-content-center">
-                            {userCards}
-                        </div>
-                    </div>
+                <div className="search m-3 mb-4">
+                    <span className="fa fa-search"/>
+                    <DebounceInput
+                        className="UserPool__Search form-control"
+                        type="search"
+                        name="search"
+                        placeholder="Search..."
+                        debounceTimeout={600}
+                        onChange={this.handleFilterUsers}
+                    />
+                </div>
+                <div className="row justify-content-center">
+                    {userCards}
                 </div>
             </>
         );

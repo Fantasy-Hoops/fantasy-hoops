@@ -35,6 +35,10 @@ namespace fantasy_hoops.Jobs
             Task.Run(() => ExecuteStreakAchievements());
             Task.Run(() => ExecuteVeteranAchievements());
             Task.Run(() => ExecuteKobeAchievements());
+            Task.Run(() => ExecuteBalancerAchievements());
+            Task.Run(() => ExecuteInjuredAchievements());
+            Task.Run(() => ExecuteStrategistAchievements());
+            Task.Run(() => ExecuteAgentZeroAchievements());
 
             if (_ectPrevious.DayOfWeek == DayOfWeek.Sunday)
             {
@@ -161,8 +165,9 @@ namespace fantasy_hoops.Jobs
         {
             List<String> kobeLineupUserIds = _context.UserLineups
                 .Where(lineup => lineup.Date.Equals(_ectPrevious.Date))
-                .Where(lineup => isKobeNumber(lineup.Pg) || isKobeNumber(lineup.Sg) || isKobeNumber(lineup.Sf)
-                                 || isKobeNumber(lineup.Pf) || isKobeNumber(lineup.C))
+                .ToList()
+                .Where(lineup => IsKobeNumber(lineup.PgID) || IsKobeNumber(lineup.SgID) || IsKobeNumber(lineup.SfID)
+                                 || IsKobeNumber(lineup.PfID) || IsKobeNumber(lineup.CID))
                 .Select(lineup => lineup.UserID)
                 .ToList();
 
@@ -222,8 +227,14 @@ namespace fantasy_hoops.Jobs
             }
         }
 
-        private bool isKobeNumber(Player player)
+        private bool IsKobeNumber(int playerId)
         {
+            Player player = _context.Players.Find(playerId);
+            if (player == null)
+            {
+                return false;
+            }
+
             int playerNumber = int.Parse(player.Number);
             return playerNumber == 8 || playerNumber == 24;
         }
@@ -295,6 +306,60 @@ namespace fantasy_hoops.Jobs
 
         public void ExecuteBalancerAchievements()
         {
+            List<string> userIds = _context.UserLineups
+                .Where(lineup => _ectPrevious.Date.Equals(lineup.Date))
+                .ToList()
+                .Where(lineup => IsPlayerPriceSixty(lineup.PgID)
+                                 && IsPlayerPriceSixty(lineup.SgID)
+                                 && IsPlayerPriceSixty(lineup.SfID)
+                                 && IsPlayerPriceSixty(lineup.PfID)
+                                 && IsPlayerPriceSixty(lineup.CID))
+                .Select(lineup => lineup.UserID)
+                .ToList();
+
+            if (userIds.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var userId in userIds)
+            {
+                User user = _context.Users.Find(userId);
+                if (user == null)
+                {
+                    continue;
+                }
+
+                UserAchievement userAchievement = _context.UserAchievements
+                    .Include(ua => ua.Achievement)
+                    .FirstOrDefault(ua => ua.Achievement.Title.Equals("Balancer")
+                                          && ua.UserID.Equals(user.Id));
+
+                if (userAchievement == null)
+                {
+                    continue;
+                }
+
+                userAchievement.IsAchieved = true;
+                userAchievement.Progress = userAchievement.LevelUpGoal;
+
+                _context.SaveChanges();
+
+                _pushService.SendAchievementUnlockedNotification(Tuple.Create(
+                    user.Id, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
+                ));
+            }
+        }
+
+        private bool IsPlayerPriceSixty(int playerId)
+        {
+            Player player = _context.Players.Find(playerId);
+            if (player == null)
+            {
+                return false;
+            }
+
+            return player.Price == 60;
         }
 
         public void ExecuteInjuredAchievements()
@@ -303,6 +368,65 @@ namespace fantasy_hoops.Jobs
 
         public void ExecuteStrategistAchievements()
         {
+            List<string> userIds = _context.UserLineups
+                .Where(lineup => _ectPrevious.Date.Equals(lineup.Date))
+                .ToList()
+                .Select(lineup => (
+                    lineup.UserID,
+                    new List<bool>
+                    {
+                        IsPlayerPriceOverHundred(lineup.PgID), IsPlayerPriceOverHundred(lineup.SgID),
+                        IsPlayerPriceOverHundred(lineup.SfID), IsPlayerPriceOverHundred(lineup.PfID),
+                        IsPlayerPriceOverHundred(lineup.CID)
+                    }
+                ))
+                .Where(x => x.Item2.Count(price => price) > 1)
+                .Select(lineup => lineup.UserID)
+                .ToList();
+            
+            if (userIds.Count == 0)
+            {
+                return;
+            }
+            
+            foreach (var userId in userIds)
+            {
+                User user = _context.Users.Find(userId);
+                if (user == null)
+                {
+                    continue;
+                }
+
+                UserAchievement userAchievement = _context.UserAchievements
+                    .Include(ua => ua.Achievement)
+                    .FirstOrDefault(ua => ua.Achievement.Title.Equals("Strategist")
+                                          && ua.UserID.Equals(user.Id));
+
+                if (userAchievement == null)
+                {
+                    continue;
+                }
+
+                userAchievement.IsAchieved = true;
+                userAchievement.Progress = userAchievement.LevelUpGoal;
+
+                _context.SaveChanges();
+
+                _pushService.SendAchievementUnlockedNotification(Tuple.Create(
+                    user.Id, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
+                ));
+            }
+        }
+
+        private bool IsPlayerPriceOverHundred(int playerId)
+        {
+            Player player = _context.Players.Find(playerId);
+            if (player == null)
+            {
+                return false;
+            }
+
+            return player.Price >= 100;
         }
 
         public void ExecuteVeteranAchievements()
@@ -349,8 +473,67 @@ namespace fantasy_hoops.Jobs
                         user.Id, ua.Achievement.Title, ua.Level
                     ));
                 }
+
                 _context.SaveChanges();
             }
+        }
+
+        public void ExecuteAgentZeroAchievements()
+        {
+            List<string> userIds = _context.UserLineups
+                .Where(lineup => _ectPrevious.Date.Equals(lineup.Date))
+                .ToList()
+                .Where(lineup => IsPlayerZero(lineup.PgID)
+                                 && IsPlayerZero(lineup.SgID)
+                                 && IsPlayerZero(lineup.SfID)
+                                 && IsPlayerZero(lineup.PfID)
+                                 && IsPlayerZero(lineup.CID))
+                .Select(lineup => lineup.UserID)
+                .ToList();
+
+            if (userIds.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var userId in userIds)
+            {
+                User user = _context.Users.Find(userId);
+                if (user == null)
+                {
+                    continue;
+                }
+
+                UserAchievement userAchievement = _context.UserAchievements
+                    .Include(ua => ua.Achievement)
+                    .FirstOrDefault(ua => ua.Achievement.Title.Equals("Agent Zero")
+                                          && ua.UserID.Equals(user.Id));
+
+                if (userAchievement == null)
+                {
+                    continue;
+                }
+
+                userAchievement.IsAchieved = true;
+                userAchievement.Progress = userAchievement.LevelUpGoal;
+
+                _context.SaveChanges();
+
+                _pushService.SendAchievementUnlockedNotification(Tuple.Create(
+                    user.Id, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
+                ));
+            }
+        }
+
+        private bool IsPlayerZero(int playerId)
+        {
+            Player player = _context.Players.Find(playerId);
+            if (player == null)
+            {
+                return false;
+            }
+
+            return int.Parse(player.Number) == 0;
         }
     }
 }

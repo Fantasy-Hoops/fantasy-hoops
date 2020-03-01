@@ -44,7 +44,6 @@
 .Content__Container {
     display: flex;
     flex-direction: column;
-    padding: 1rem;
     margin-left: 0;
     min-height: 30rem;
     margin-bottom: 5rem;
