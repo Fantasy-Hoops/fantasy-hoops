@@ -103,23 +103,21 @@ export class LineupHistory extends Component {
                     <meta name="robots" content="noindex,nofollow"/>
                     <link rel="canonical" href={Canonicals.LINEUPS_HISTORY}/>
                 </Helmet>
-                <Container maxWidth="md">
-                    <h1 className="text-center p-3">
-                        <span className="fa fa-history"/>
-                        {' '}
-                        Your lineup history
-                    </h1>
-                    {recentActivity}
-                    {this.state.loader ? <div className="Loader"/> : null}
-                    <div className="text-center">
-                        {!this.state.loader ? btn : ''}
-                    </div>
-                    <PlayerModal
-                        renderChild={this.state.renderChild}
-                        loader={this.state.modalLoader}
-                        stats={this.state.stats}
-                    />
-                </Container>
+                <h1 className="text-center p-3">
+                    <span className="fa fa-history"/>
+                    {' '}
+                    Your lineup history
+                </h1>
+                {recentActivity}
+                {this.state.loader ? <div className="Loader"/> : null}
+                <div className="text-center">
+                    {!this.state.loader ? btn : ''}
+                </div>
+                <PlayerModal
+                    renderChild={this.state.renderChild}
+                    loader={this.state.modalLoader}
+                    stats={this.state.stats}
+                />
             </>
         );
     }

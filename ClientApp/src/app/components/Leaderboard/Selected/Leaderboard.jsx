@@ -126,33 +126,31 @@ export default class Leaderboard extends Component {
                     <meta name="robots" content="index,follow"/>
                     <link rel="canonical" href={Canonicals.SELECTED_PLAYERS_LEADERBOARD}/>
                 </Helmet>
-                <Container maxWidth="md">
-                    <div className="text-center">
-                        <img
-                            src={leaderboardLogo}
-                            alt="Leaderboard Logo"
-                            width="60rem"
-                        />
-                        <h1>Most selected NBA Players</h1>
-                    </div>
-                    <div className="tab-content" id="myTabContent">
-                        <div className="pt-4 pb-1 tab-pane show active animated bounceInUp" id="daily" role="tabpanel">
-                            {!loader
-                                ? players.length > 0
-                                    ? playerCards
-                                    : <EmptyJordan message="Such empty..."/>
-                                : ''}
-                            <div className="text-center">
-                                {seeMoreBtn}
-                            </div>
+                <div className="text-center">
+                    <img
+                        src={leaderboardLogo}
+                        alt="Leaderboard Logo"
+                        width="60rem"
+                    />
+                    <h1>Most selected NBA Players</h1>
+                </div>
+                <div className="tab-content" id="myTabContent">
+                    <div className="pt-4 pb-1 tab-pane show active animated bounceInUp" id="daily" role="tabpanel">
+                        {!loader
+                            ? players.length > 0
+                                ? playerCards
+                                : <EmptyJordan message="Such empty..."/>
+                            : ''}
+                        <div className="text-center">
+                            {seeMoreBtn}
                         </div>
                     </div>
-                    <PlayerModal
-                        renderChild={renderChild}
-                        loader={modalLoader}
-                        stats={stats}
-                    />
-                </Container>
+                </div>
+                <PlayerModal
+                    renderChild={renderChild}
+                    loader={modalLoader}
+                    stats={stats}
+                />
             </>
         );
     }

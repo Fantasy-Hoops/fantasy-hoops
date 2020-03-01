@@ -125,46 +125,44 @@ function NewsFeedContainer(props) {
                 <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.NEWS}/>
             </Helmet>
-            <Container maxWidth="md">
-                <article className="News__Intro">
-                    <h1 className="News__Title">{Intro.TITLE}</h1>
-                    <h5 className="News__Subtitle">{Intro.SUBTITLE}</h5>
-                    <h5 className="News__Subtitle">&copy; {Intro.COPYRIGHT}</h5>
-                </article>
-                <Tabs
-                    className={classes.tabs}
-                    value={value}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    onChange={handleChange}
-                    aria-label="disabled tabs example"
+            <article className="News__Intro">
+                <h1 className="News__Title">{Intro.TITLE}</h1>
+                <h5 className="News__Subtitle">{Intro.SUBTITLE}</h5>
+                <h5 className="News__Subtitle">&copy; {Intro.COPYRIGHT}</h5>
+            </article>
+            <Tabs
+                className={classes.tabs}
+                value={value}
+                indicatorColor="primary"
+                textColor="primary"
+                onChange={handleChange}
+                aria-label="disabled tabs example"
+            >
+                <Tab label="Previews"/>
+                <Tab label="Recaps"/>
+            </Tabs>
+            <TabPanel value={value} index={0}>
+                {googleAd}
+                <InfiniteScroll
+                    dataLength={previews.length}
+                    next={() => loadMorePreviews(previews.length)}
+                    hasMore={hasMorePreviews}
+                    loader={<div className="Loader"/>}
                 >
-                    <Tab label="Previews"/>
-                    <Tab label="Recaps"/>
-                </Tabs>
-                <TabPanel value={value} index={0}>
-                    {googleAd}
-                    <InfiniteScroll
-                        dataLength={previews.length}
-                        next={() => loadMorePreviews(previews.length)}
-                        hasMore={hasMorePreviews}
-                        loader={<div className="Loader"/>}
-                    >
-                        {previewsCards}
-                    </InfiniteScroll>
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                    {googleAd}
-                    <InfiniteScroll
-                        dataLength={recaps.length}
-                        next={() => loadMoreRecaps(recaps.length)}
-                        hasMore={hasMoreRecaps}
-                        loader={<div className="Loader"/>}
-                    >
-                        {recapsCards}
-                    </InfiniteScroll>
-                </TabPanel>
-            </Container>
+                    {previewsCards}
+                </InfiniteScroll>
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+                {googleAd}
+                <InfiniteScroll
+                    dataLength={recaps.length}
+                    next={() => loadMoreRecaps(recaps.length)}
+                    hasMore={hasMoreRecaps}
+                    loader={<div className="Loader"/>}
+                >
+                    {recapsCards}
+                </InfiniteScroll>
+            </TabPanel>
         </>
     );
 }

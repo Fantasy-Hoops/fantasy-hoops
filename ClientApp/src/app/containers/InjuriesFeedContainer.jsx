@@ -106,22 +106,20 @@ function InjuriesFeedContainer(props) {
                 <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.INJURIES}/>
             </Helmet>
-            <Container maxWidth="md">
-                <article className="Injuries__Intro">
-                    <h1 className="Injuries__Title">{Intro.TITLE}</h1>
-                    <h5 className="Injuries__Subtitle">{Intro.SUBTITLE}</h5>
-                </article>
-                {googleAd}
-                <div className="Injuries__InfoButton">
-                    <Button className={classes.button} color="primary" onClick={handleClickOpen}>
-                        INFO
-                    </Button>
-                </div>
-                <div className="InjuryContainer__Cards">{injuryCards.length > 0 ? injuryCards : content}</div>
-                <InjuriesInfoDialog handleClose={handleClose} open={open}/>
-                <InjuryPlayerDialog handleDialogClose={handleInjuryPlayerDialogClose} open={injuryPlayerDialogOpen}
-                                    injury={dialogInjury}/>
-            </Container>
+            <article className="Injuries__Intro">
+                <h1 className="Injuries__Title">{Intro.TITLE}</h1>
+                <h5 className="Injuries__Subtitle">{Intro.SUBTITLE}</h5>
+            </article>
+            {googleAd}
+            <div className="Injuries__InfoButton">
+                <Button className={classes.button} color="primary" onClick={handleClickOpen}>
+                    INFO
+                </Button>
+            </div>
+            <div className="InjuryContainer__Cards">{injuryCards.length > 0 ? injuryCards : content}</div>
+            <InjuriesInfoDialog handleClose={handleClose} open={open}/>
+            <InjuryPlayerDialog handleDialogClose={handleInjuryPlayerDialogClose} open={injuryPlayerDialogOpen}
+                                injury={dialogInjury}/>
         </>
     );
 }

@@ -145,20 +145,18 @@ export class AllNotificationsPage extends Component {
                     <meta name="robots" content="noindex,nofollow"/>
                     <link rel="canonical" href={Canonicals.NOTIFICATIONS}/>
                 </Helmet>
-                <Container maxWidth="md">
-                    <h1 className="text-center">
-                        <i className="fa fa-bell"/>
-                        {' '}
-                        User notifications
-                    </h1>
-                    <div className="AllNotifications mt-3 mb-3 mx-auto">
-                        {notifications}
-                    </div>
-                    <div className="text-center m-3">
-                        {!loader ? btn : ''}
-                    </div>
-                    {loader ? <div className="Loader"/> : null}
-                </Container>
+                <h1 className="text-center">
+                    <i className="fa fa-bell"/>
+                    {' '}
+                    User notifications
+                </h1>
+                <div className="AllNotifications mt-3 mb-3 mx-auto">
+                    {notifications}
+                </div>
+                <div className="text-center m-3">
+                    {!loader ? btn : ''}
+                </div>
+                {loader ? <div className="Loader"/> : null}
             </>
         );
     }

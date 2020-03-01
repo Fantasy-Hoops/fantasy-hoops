@@ -241,71 +241,70 @@ export class Lineup extends Component {
                     <meta name="robots" content="noindex,nofollow"/>
                     <link rel="canonical" href={Canonicals.LINEUP}/>
                 </Helmet>
-                <Container maxWidth="md">
-                    <Alert
-                        ref="alert"
-                        {...this.props}
-                        type={this.state.alertType}
-                        text={this.state.alertText}
-                    />
-                    <div className="Lineup--sticky">
-                        <div className="Lineup__countdown text-center">
-                            {this.state.nextGame && <Countdown
-                                now={moment}
-                                date={this.getDate()}
-                                zeroPadTime={3}
-                                zeroPadDays={3}
-                                renderer={renderer}
-                            />}
-                        </div>
-                        <div className="Lineup__body">
-                            {this.state.lineup.pg}
-                            {this.state.lineup.sg}
-                            {this.state.lineup.sf}
-                            {this.state.lineup.pf}
-                            {this.state.lineup.c}
-                        </div>
-                        <p
-                            className="text-center m-2"
-                            style={{color: remaining < 0 ? 'red' : 'black'}}
-                        >
-                            Remaining
-                            {' '}
-                            {remaining}
-                            K
-                        </p>
-                        <ProgressBar players={this.state}/>
-                        <div
-                            className="text-center mt-3 pb-3 mx-auto position-relative"
-                            style={{width: '50%'}}
-                        >
-                            <form onSubmit={this.handleSubmit}>
-                                <button
-                                    id="submit"
-                                    disabled
-                                    className="Lineup__submit-button btn btn-outline-primary"
-                                >
-                                    Submit
-                                </button>
-                            </form>
-                            <button
-                                type="button"
-                                className="btn btn-primary absolute Lineup__info-button"
-                                onClick={this.handleDialogOpen}
-                            >
-                                <i className="fa fa-info mx-auto" aria-hidden="true"/>
-                            </button>
-                        </div>
+                <Alert
+                    ref="alert"
+                    {...this.props}
+                    type={this.state.alertType}
+                    text={this.state.alertText}
+                />
+                <div className="Lineup--sticky">
+                    <div className="Lineup__countdown text-center">
+                        {this.state.nextGame && <Countdown
+                            now={moment}
+                            date={this.getDate()}
+                            zeroPadTime={3}
+                            zeroPadDays={3}
+                            renderer={renderer}
+                        />}
                     </div>
-                    {this.state.playerLoader ? <div className="Loader"/> : null}
-                    {playerPool()}
-                    <PlayerModal
-                        renderChild={this.state.renderChild}
-                        loader={this.state.modalLoader}
-                        stats={this.state.stats}
-                    />
-                    <InfoDialog open={this.state.infoDialogOpen} onDialogOpen={this.handleDialogOpen} onDialogClose={this.handleDialogClose}/>
-                </Container>
+                    <div className="Lineup__body">
+                        {this.state.lineup.pg}
+                        {this.state.lineup.sg}
+                        {this.state.lineup.sf}
+                        {this.state.lineup.pf}
+                        {this.state.lineup.c}
+                    </div>
+                    <p
+                        className="text-center m-2"
+                        style={{color: remaining < 0 ? 'red' : 'black'}}
+                    >
+                        Remaining
+                        {' '}
+                        {remaining}
+                        K
+                    </p>
+                    <ProgressBar players={this.state}/>
+                    <div
+                        className="text-center mt-3 pb-3 mx-auto position-relative"
+                        style={{width: '50%'}}
+                    >
+                        <form onSubmit={this.handleSubmit}>
+                            <button
+                                id="submit"
+                                disabled
+                                className="Lineup__submit-button btn btn-outline-primary"
+                            >
+                                Submit
+                            </button>
+                        </form>
+                        <button
+                            type="button"
+                            className="btn btn-primary absolute Lineup__info-button"
+                            onClick={this.handleDialogOpen}
+                        >
+                            <i className="fa fa-info mx-auto" aria-hidden="true"/>
+                        </button>
+                    </div>
+                </div>
+                {this.state.playerLoader ? <div className="Loader"/> : null}
+                {playerPool()}
+                <PlayerModal
+                    renderChild={this.state.renderChild}
+                    loader={this.state.modalLoader}
+                    stats={this.state.stats}
+                />
+                <InfoDialog open={this.state.infoDialogOpen} onDialogOpen={this.handleDialogOpen}
+                            onDialogClose={this.handleDialogClose}/>
             </>
         );
     }

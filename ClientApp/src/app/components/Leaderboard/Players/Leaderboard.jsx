@@ -157,67 +157,65 @@ export default class Leaderboard extends Component {
                     <meta name="robots" content="index,follow"/>
                     <link rel="canonical" href={Canonicals.PLAYERS_LEADERBOARD}/>
                 </Helmet>
-                <Container maxWidth="md">
-                    <div className="text-center">
-                        <img
-                            src={leaderboardLogo}
-                            alt="Leaderboard Logo"
-                            width="60rem"
-                        />
-                        <h1>Top NBA Players</h1>
-                    </div>
-                    <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
-                        <li className="nav-item">
-                            <a className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" href="#daily"
-                               role="tab" onClick={this.switchTab}>Daily</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link tab-no-outline" id="weekly-tab" data-toggle="tab" href="#weekly"
-                               role="tab" onClick={this.switchTab}>Weekly</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link tab-no-outline" id="monthly-tab" data-toggle="tab" href="#monthly"
-                               role="tab" onClick={this.switchTab}>Monthly</a>
-                        </li>
-                    </ul>
-                    <div className="tab-content" id="myTabContent">
-                        <div className="pt-4 pb-1 tab-pane show active animated bounceInUp" id="daily" role="tabpanel">
-                            {!this.state.loader
-                                ? daily.length > 0
-                                    ? daily
-                                    : <EmptyJordan message="Such empty..."/>
-                                : ''}
-                            <div className="text-center">
-                                {seeMoreBtn}
-                            </div>
-                        </div>
-                        <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="weekly" role="tabpanel">
-                            {!this.state.loader
-                                ? weekly.length > 0
-                                    ? weekly
-                                    : <EmptyJordan message="Such empty..."/>
-                                : ''}
-                            <div className="text-center">
-                                {seeMoreBtn}
-                            </div>
-                        </div>
-                        <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="monthly" role="tabpanel">
-                            {!this.state.loader
-                                ? monthly.length > 0
-                                    ? monthly
-                                    : <EmptyJordan message="Such empty..."/>
-                                : ''}
-                            <div className="text-center">
-                                {seeMoreBtn}
-                            </div>
-                        </div>
-                    </div>
-                    <PlayerModal
-                        renderChild={this.state.renderChild}
-                        loader={this.state.modalLoader}
-                        stats={this.state.stats}
+                <div className="text-center">
+                    <img
+                        src={leaderboardLogo}
+                        alt="Leaderboard Logo"
+                        width="60rem"
                     />
-                </Container>
+                    <h1>Top NBA Players</h1>
+                </div>
+                <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
+                    <li className="nav-item">
+                        <a className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" href="#daily"
+                           role="tab" onClick={this.switchTab}>Daily</a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link tab-no-outline" id="weekly-tab" data-toggle="tab" href="#weekly"
+                           role="tab" onClick={this.switchTab}>Weekly</a>
+                    </li>
+                    <li className="nav-item">
+                        <a className="nav-link tab-no-outline" id="monthly-tab" data-toggle="tab" href="#monthly"
+                           role="tab" onClick={this.switchTab}>Monthly</a>
+                    </li>
+                </ul>
+                <div className="tab-content" id="myTabContent">
+                    <div className="pt-4 pb-1 tab-pane show active animated bounceInUp" id="daily" role="tabpanel">
+                        {!this.state.loader
+                            ? daily.length > 0
+                                ? daily
+                                : <EmptyJordan message="Such empty..."/>
+                            : ''}
+                        <div className="text-center">
+                            {seeMoreBtn}
+                        </div>
+                    </div>
+                    <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="weekly" role="tabpanel">
+                        {!this.state.loader
+                            ? weekly.length > 0
+                                ? weekly
+                                : <EmptyJordan message="Such empty..."/>
+                            : ''}
+                        <div className="text-center">
+                            {seeMoreBtn}
+                        </div>
+                    </div>
+                    <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="monthly" role="tabpanel">
+                        {!this.state.loader
+                            ? monthly.length > 0
+                                ? monthly
+                                : <EmptyJordan message="Such empty..."/>
+                            : ''}
+                        <div className="text-center">
+                            {seeMoreBtn}
+                        </div>
+                    </div>
+                </div>
+                <PlayerModal
+                    renderChild={this.state.renderChild}
+                    loader={this.state.modalLoader}
+                    stats={this.state.stats}
+                />
             </>
         );
     }

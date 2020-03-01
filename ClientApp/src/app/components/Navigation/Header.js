@@ -25,7 +25,7 @@ function Header(props) {
     const [selectedTab, setSelectedTab] = React.useState(0);
 
     React.useEffect(() => {
-        const {pathname} = props.location;
+        const {pathname} = location;
         setSelectedTab(getLocationEnumValue(pathname));
     });
 

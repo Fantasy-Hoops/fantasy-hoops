@@ -176,14 +176,12 @@ export class UserProfile extends Component {
                     <meta name="robots" content="noindex,nofollow"/>
                     <link rel="canonical" href={Canonicals.REGISTER}/>
                 </Helmet>
-                <Container maxWidth="md">
-                    <div className="row mx-auto">
-                        <div className="col-lg-4 order-lg-1 p-0 pt-3">
-                            {user ? <Avatar user={user} readOnly={readOnly}/> : ''}
-                        </div>
-                        {content()}
+                <div className="row mx-auto">
+                    <div className="col-lg-4 order-lg-1 p-0 pt-3">
+                        {user ? <Avatar user={user} readOnly={readOnly}/> : ''}
                     </div>
-                </Container>
+                    {content()}
+                </div>
             </>
         );
     }

@@ -158,7 +158,7 @@ function Leaderboards(props) {
             />
         )
     );
-    
+
     return (
         <>
             <Helmet>
@@ -170,123 +170,121 @@ function Leaderboards(props) {
                 <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.LEADERBOARDS}/>
             </Helmet>
-            <Container maxWidth="md">
-                <article className="Leaderboards__Intro">
-                    <h1 className="Leaderboards__Title">{Intro.TITLE}</h1>
-                    <h5 className="Leaderboards__Subtitle">{Intro.SUBTITLE}</h5>
+            <article className="Leaderboards__Intro">
+                <h1 className="Leaderboards__Title">{Intro.TITLE}</h1>
+                <h5 className="Leaderboards__Subtitle">{Intro.SUBTITLE}</h5>
+            </article>
+            {googleAd}
+            <section className="Content__Container">
+                <article className="Content--left">
+                    <h2 className="Content__Title">{Intro.USERS_TITLE}</h2>
+                    <p className="Content__Subtitle">{Intro.USERS_SUBTITLE}</p>
+                    <Button
+                        className={clsx(classes.button, classes.buttonLeft)}
+                        variant="contained"
+                        color="secondary"
+                        component={Link}
+                        to={Routes.LEADERBOARD_USERS}
+                    >
+                        {Intro.USERS_BUTTON_TITLE}
+                    </Button>
                 </article>
-                {googleAd}
-                <section className="Content__Container">
-                    <article className="Content--left">
-                        <h2 className="Content__Title">{Intro.USERS_TITLE}</h2>
-                        <p className="Content__Subtitle">{Intro.USERS_SUBTITLE}</p>
-                        <Button
-                            className={clsx(classes.button, classes.buttonLeft)}
-                            variant="contained"
-                            color="secondary"
-                            component={Link}
-                            to={Routes.LEADERBOARD_USERS}
-                        >
-                            {Intro.USERS_BUTTON_TITLE}
-                        </Button>
-                    </article>
-                    <article className="Content--right">
-                        {weeklyUsers
-                            ? weeklyUsersCards
-                            : <CustomLoader maxWidth={sectionWidth - 25}>
-                                <TopLeaderboardLoader maxWidth={sectionWidth - 25} />
-                            </CustomLoader>}
-                    </article>
-                </section>
-                <section className="Content__Container Content__Container--reverse">
-                    <article className="Content--left">
-                        {topPlayers
-                            ? topPlayersCards
-                            : <CustomLoader maxWidth={sectionWidth - 25}>
-                                <TopLeaderboardLoader maxWidth={sectionWidth - 25} />
-                            </CustomLoader>}
-                    </article>
-                    <article className="Content--right">
-                        <h2 className="Content__Title">{Intro.PLAYERS_TITLE}</h2>
-                        <p className="Content__Subtitle">{Intro.PLAYERS_SUBTITLE}</p>
-                        <Button
-                            className={`${classes.button} ${classes.buttonRight}`}
-                            variant="contained"
-                            color="secondary"
-                            component={Link}
-                            to={Routes.LEADERBOARD_PLAYERS}
-                        >
-                            {Intro.PLAYERS_BUTTON_TITLE}
-                        </Button>
-                    </article>
-                </section>
-                <section className="Content__Container">
-                    <article className="Content--left">
-                        <h2 className="Content__Title">{Intro.BEST_LINEUPS_TITLE}</h2>
-                        <p className="Content__Subtitle">{Intro.BEST_LINEUPS_SUBTITLE}</p>
-                        <Button
-                            className={`${classes.button} ${classes.buttonLeft}`}
-                            variant="contained"
-                            color="secondary"
-                            // component={Link}
-                            // to={Routes.LEADERBOARD_BEST_LINEUP}
-                        >
-                            {Intro.BEST_LINEUPS_BUTTON_TITLE}
-                        </Button>
-                    </article>
-                    <article className="Content--right">
-                        {bestLineups
-                            ? bestLineupsCards
-                            : <CustomLoader maxWidth={sectionWidth - 25}>
-                                <TopLeaderboardLoader maxWidth={sectionWidth - 25} />
-                            </CustomLoader>}
-                    </article>
-                </section>
-                <section className="Content__Container Content__Container--reverse">
-                    <article className="Content--left">
-                        {topSeasonLineups
-                            ? seasonLineupsCards
-                            : <CustomLoader maxWidth={sectionWidth - 25}>
-                                <TopLeaderboardLoader maxWidth={sectionWidth - 25} />
-                            </CustomLoader>}
-                    </article>
-                    <article className="Content--right">
-                        <h2 className="Content__Title">{Intro.SEASON_TITLE}</h2>
-                        <p className="Content__Subtitle">{Intro.SEASON_SUBTITLE}</p>
-                        <Button
-                            className={`${classes.button} ${classes.buttonRight}`}
-                            variant="contained"
-                            color="secondary"
-                            component={Link}
-                            to={Routes.LEADERBOARD_SEASON}
-                        >
-                            {Intro.SEASON_BUTTON_TITLE}
-                        </Button>
-                    </article>
-                </section>
-                <section className="Content__Container">
-                    <article className="Content--left">
-                        <h2 className="Content__Title">{Intro.SELECTED_TITLE}</h2>
-                        <p className="Content__Subtitle">{Intro.SELECTED_SUBTITLE}</p>
-                        <Button
-                            className={`${classes.button} ${classes.buttonLeft}`}
-                            variant="contained"
-                            color="secondary"
-                            component={Link}
-                            to={Routes.LEADERBOARD_SELECTED}
-                        >
-                            {Intro.SELECTED_BUTTON_TITLE}
-                        </Button>
-                    </article>
-                    <article className="Content--right">
-                        {mostSelectedPlayers
-                            ? mostSelectedPlayersCards
-                            : <CustomLoader maxWidth={sectionWidth - 25}>
-                                <TopLeaderboardLoader maxWidth={sectionWidth - 25} />
-                            </CustomLoader>}
-                    </article>
-                </section>
-            </Container>
+                <article className="Content--right">
+                    {weeklyUsers
+                        ? weeklyUsersCards
+                        : <CustomLoader maxWidth={sectionWidth - 25}>
+                            <TopLeaderboardLoader maxWidth={sectionWidth - 25}/>
+                        </CustomLoader>}
+                </article>
+            </section>
+            <section className="Content__Container Content__Container--reverse">
+                <article className="Content--left">
+                    {topPlayers
+                        ? topPlayersCards
+                        : <CustomLoader maxWidth={sectionWidth - 25}>
+                            <TopLeaderboardLoader maxWidth={sectionWidth - 25}/>
+                        </CustomLoader>}
+                </article>
+                <article className="Content--right">
+                    <h2 className="Content__Title">{Intro.PLAYERS_TITLE}</h2>
+                    <p className="Content__Subtitle">{Intro.PLAYERS_SUBTITLE}</p>
+                    <Button
+                        className={`${classes.button} ${classes.buttonRight}`}
+                        variant="contained"
+                        color="secondary"
+                        component={Link}
+                        to={Routes.LEADERBOARD_PLAYERS}
+                    >
+                        {Intro.PLAYERS_BUTTON_TITLE}
+                    </Button>
+                </article>
+            </section>
+            <section className="Content__Container">
+                <article className="Content--left">
+                    <h2 className="Content__Title">{Intro.BEST_LINEUPS_TITLE}</h2>
+                    <p className="Content__Subtitle">{Intro.BEST_LINEUPS_SUBTITLE}</p>
+                    <Button
+                        className={`${classes.button} ${classes.buttonLeft}`}
+                        variant="contained"
+                        color="secondary"
+                        // component={Link}
+                        // to={Routes.LEADERBOARD_BEST_LINEUP}
+                    >
+                        {Intro.BEST_LINEUPS_BUTTON_TITLE}
+                    </Button>
+                </article>
+                <article className="Content--right">
+                    {bestLineups
+                        ? bestLineupsCards
+                        : <CustomLoader maxWidth={sectionWidth - 25}>
+                            <TopLeaderboardLoader maxWidth={sectionWidth - 25}/>
+                        </CustomLoader>}
+                </article>
+            </section>
+            <section className="Content__Container Content__Container--reverse">
+                <article className="Content--left">
+                    {topSeasonLineups
+                        ? seasonLineupsCards
+                        : <CustomLoader maxWidth={sectionWidth - 25}>
+                            <TopLeaderboardLoader maxWidth={sectionWidth - 25}/>
+                        </CustomLoader>}
+                </article>
+                <article className="Content--right">
+                    <h2 className="Content__Title">{Intro.SEASON_TITLE}</h2>
+                    <p className="Content__Subtitle">{Intro.SEASON_SUBTITLE}</p>
+                    <Button
+                        className={`${classes.button} ${classes.buttonRight}`}
+                        variant="contained"
+                        color="secondary"
+                        component={Link}
+                        to={Routes.LEADERBOARD_SEASON}
+                    >
+                        {Intro.SEASON_BUTTON_TITLE}
+                    </Button>
+                </article>
+            </section>
+            <section className="Content__Container">
+                <article className="Content--left">
+                    <h2 className="Content__Title">{Intro.SELECTED_TITLE}</h2>
+                    <p className="Content__Subtitle">{Intro.SELECTED_SUBTITLE}</p>
+                    <Button
+                        className={`${classes.button} ${classes.buttonLeft}`}
+                        variant="contained"
+                        color="secondary"
+                        component={Link}
+                        to={Routes.LEADERBOARD_SELECTED}
+                    >
+                        {Intro.SELECTED_BUTTON_TITLE}
+                    </Button>
+                </article>
+                <article className="Content--right">
+                    {mostSelectedPlayers
+                        ? mostSelectedPlayersCards
+                        : <CustomLoader maxWidth={sectionWidth - 25}>
+                            <TopLeaderboardLoader maxWidth={sectionWidth - 25}/>
+                        </CustomLoader>}
+                </article>
+            </section>
         </>
     );
 }

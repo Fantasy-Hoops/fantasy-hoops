@@ -241,114 +241,112 @@ function Leaderboard(props) {
                 <meta name="description" content={Meta.DESCRIPTION}/>
                 <meta property="og:description" content={Meta.DESCRIPTION}/>
                 <meta name="robots" content="index,follow"/>
-                <link rel="canonical" href={Canonicals.USERS_LEADERBOARD} />
+                <link rel="canonical" href={Canonicals.USERS_LEADERBOARD}/>
             </Helmet>
-            <Container maxWidth="md">
-                <div className="text-center">
-                    <img
-                        src={leaderboardLogo}
-                        alt="Leaderboard Logo"
-                        width="60rem"
-                    />
-                    <h1>Top Users</h1>
-                </div>
-                <div className="row justify-content-center">
-                    <div className="col-xs">
-                        <div style={{ transform: 'scale(0.7, 0.7)' }}>
-                            <label className="UserLeaderboard__FriendsOnly">
-                                <input type="checkbox" checked={friendsOnly} onChange={toggleFriendsOnly} />
-                                <span className="UserLeaderboard__FriendsOnly--slider round" />
-                            </label>
-                        </div>
-                    </div>
-                    <div className="col-xs pt-2">
-                        <div>Friends only</div>
-                    </div>
-                </div>
-                <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
-                    <li className="nav-item">
-                        <a className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" href="#daily"
-                            role="tab" onClick={switchTab}>Daily</a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link tab-no-outline" id="weekly-tab" data-toggle="tab" href="#weekly"
-                            role="tab" onClick={switchTab}>Weekly</a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link tab-no-outline" id="monthly-tab" data-toggle="tab" href="#monthly"
-                            role="tab" onClick={switchTab}>Monthly</a>
-                    </li>
-                </ul>
-                <div className="tab-content" id="myTabContent">
-                    <div className="pt-4 pb-1 tab-pane animated bounceInUp show active" id="daily" role="tabpanel">
-                        {!loader
-                            ? (
-                                <div className="DatePicker">
-                                    <CustomDatePicker
-                                        autoOk
-                                        type={DatePickerTypes.DAY}
-                                        label={"Select date"}
-                                        styles={datePickerStyles}
-                                        selectedDate={date}
-                                        minDate={minDate}
-                                        maxDate={maxDate}
-                                        onDateChange={onDateChange}
-                                    />
-                                </div>
-                            )
-                            : null}
-                        {!loader
-                            ? dailyUsers.length > 0
-                                ? dailyUsers
-                                : <EmptyJordan message="Such empty..." />
-                            : <div className="Loader" />}
-                        <div className="text-center">
-                            {seeMoreButton}
-                        </div>
-                    </div>
-                    <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="weekly" role="tabpanel">
-                        {!loader
-                            ? (
-                                <div className="WeeklyDatePicker">
-                                    <CustomDatePicker
-                                        autoOk={true}
-                                        type={DatePickerTypes.WEEK}
-                                        label={"Select week"}
-                                        styles={datePickerStyles}
-                                        selectedWeek={week}
-                                        minDate={minDate}
-                                        maxDate={endOfWeek(maxDate, { locale: enLocale })}
-                                        onWeekChange={onWeekChange}
-                                    />
-                                </div>
-                            )
-                            : null}
-                        {!loader
-                            ? weeklyUsers.length > 0
-                                ? weeklyUsers
-                                : <EmptyJordan message="Such empty..." />
-                            : <div className="Loader" />}
-                        <div className="text-center">
-                            {seeMoreBtn()}
-                        </div>
-                    </div>
-                    <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="monthly" role="tabpanel">
-                        {!loader
-                            ? monthlyUsers.length > 0
-                                ? monthlyUsers
-                                : <EmptyJordan message="Such empty..." />
-                            : <div className="Loader" />}
-                        <div className="text-center">
-                            {seeMoreBtn()}
-                        </div>
-                    </div>
-                </div>
-                <PlayerModal
-                    renderChild={renderChild}
-                    loader={modalLoader}
-                    stats={stats}
+            <div className="text-center">
+                <img
+                    src={leaderboardLogo}
+                    alt="Leaderboard Logo"
+                    width="60rem"
                 />
-            </Container>
+                <h1>Top Users</h1>
+            </div>
+            <div className="row justify-content-center">
+                <div className="col-xs">
+                    <div style={{transform: 'scale(0.7, 0.7)'}}>
+                        <label className="UserLeaderboard__FriendsOnly">
+                            <input type="checkbox" checked={friendsOnly} onChange={toggleFriendsOnly}/>
+                            <span className="UserLeaderboard__FriendsOnly--slider round"/>
+                        </label>
+                    </div>
+                </div>
+                <div className="col-xs pt-2">
+                    <div>Friends only</div>
+                </div>
+            </div>
+            <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
+                <li className="nav-item">
+                    <a className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" href="#daily"
+                       role="tab" onClick={switchTab}>Daily</a>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link tab-no-outline" id="weekly-tab" data-toggle="tab" href="#weekly"
+                       role="tab" onClick={switchTab}>Weekly</a>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link tab-no-outline" id="monthly-tab" data-toggle="tab" href="#monthly"
+                       role="tab" onClick={switchTab}>Monthly</a>
+                </li>
+            </ul>
+            <div className="tab-content" id="myTabContent">
+                <div className="pt-4 pb-1 tab-pane animated bounceInUp show active" id="daily" role="tabpanel">
+                    {!loader
+                        ? (
+                            <div className="DatePicker">
+                                <CustomDatePicker
+                                    autoOk
+                                    type={DatePickerTypes.DAY}
+                                    label={"Select date"}
+                                    styles={datePickerStyles}
+                                    selectedDate={date}
+                                    minDate={minDate}
+                                    maxDate={maxDate}
+                                    onDateChange={onDateChange}
+                                />
+                            </div>
+                        )
+                        : null}
+                    {!loader
+                        ? dailyUsers.length > 0
+                            ? dailyUsers
+                            : <EmptyJordan message="Such empty..."/>
+                        : <div className="Loader"/>}
+                    <div className="text-center">
+                        {seeMoreButton}
+                    </div>
+                </div>
+                <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="weekly" role="tabpanel">
+                    {!loader
+                        ? (
+                            <div className="WeeklyDatePicker">
+                                <CustomDatePicker
+                                    autoOk={true}
+                                    type={DatePickerTypes.WEEK}
+                                    label={"Select week"}
+                                    styles={datePickerStyles}
+                                    selectedWeek={week}
+                                    minDate={minDate}
+                                    maxDate={endOfWeek(maxDate, {locale: enLocale})}
+                                    onWeekChange={onWeekChange}
+                                />
+                            </div>
+                        )
+                        : null}
+                    {!loader
+                        ? weeklyUsers.length > 0
+                            ? weeklyUsers
+                            : <EmptyJordan message="Such empty..."/>
+                        : <div className="Loader"/>}
+                    <div className="text-center">
+                        {seeMoreBtn()}
+                    </div>
+                </div>
+                <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="monthly" role="tabpanel">
+                    {!loader
+                        ? monthlyUsers.length > 0
+                            ? monthlyUsers
+                            : <EmptyJordan message="Such empty..."/>
+                        : <div className="Loader"/>}
+                    <div className="text-center">
+                        {seeMoreBtn()}
+                    </div>
+                </div>
+            </div>
+            <PlayerModal
+                renderChild={renderChild}
+                loader={modalLoader}
+                stats={stats}
+            />
         </>
     );
 }
