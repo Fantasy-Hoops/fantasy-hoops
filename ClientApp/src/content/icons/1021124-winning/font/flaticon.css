@@ -1,0 +1,81 @@
+	/*
+  	Flaticon icon font: Flaticon
+  	Creation date: 13/07/2018 08:30
+  	*/
+
+@font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after {   
+  font-family: Flaticon;
+        font-size: 20px;
+font-style: normal;
+margin-left: 20px;
+}
+
+.flaticon-001-foam:before { content: "\f100"; }
+.flaticon-002-winner-7:before { content: "\f101"; }
+.flaticon-003-trophy-6:before { content: "\f102"; }
+.flaticon-004-crown-1:before { content: "\f103"; }
+.flaticon-005-winner-6:before { content: "\f104"; }
+.flaticon-006-winner-5:before { content: "\f105"; }
+.flaticon-007-trophy-5:before { content: "\f106"; }
+.flaticon-008-first-5:before { content: "\f107"; }
+.flaticon-009-second-prize:before { content: "\f108"; }
+.flaticon-010-torch:before { content: "\f109"; }
+.flaticon-011-winning-2:before { content: "\f10a"; }
+.flaticon-012-best:before { content: "\f10b"; }
+.flaticon-013-winning-1:before { content: "\f10c"; }
+.flaticon-014-victory-1:before { content: "\f10d"; }
+.flaticon-015-diamond:before { content: "\f10e"; }
+.flaticon-016-first-4:before { content: "\f10f"; }
+.flaticon-017-finish-line:before { content: "\f110"; }
+.flaticon-018-star-4:before { content: "\f111"; }
+.flaticon-019-winning:before { content: "\f112"; }
+.flaticon-020-winner-4:before { content: "\f113"; }
+.flaticon-021-star-3:before { content: "\f114"; }
+.flaticon-022-medal:before { content: "\f115"; }
+.flaticon-023-champagne:before { content: "\f116"; }
+.flaticon-024-trophy-4:before { content: "\f117"; }
+.flaticon-025-victory:before { content: "\f118"; }
+.flaticon-026-first-3:before { content: "\f119"; }
+.flaticon-027-cinema:before { content: "\f11a"; }
+.flaticon-028-soccer:before { content: "\f11b"; }
+.flaticon-029-star-2:before { content: "\f11c"; }
+.flaticon-030-first-2:before { content: "\f11d"; }
+.flaticon-031-trophy-3:before { content: "\f11e"; }
+.flaticon-032-trophy-2:before { content: "\f11f"; }
+.flaticon-033-winner-3:before { content: "\f120"; }
+.flaticon-034-trophy-1:before { content: "\f121"; }
+.flaticon-035-crown:before { content: "\f122"; }
+.flaticon-036-podium:before { content: "\f123"; }
+.flaticon-037-winner-2:before { content: "\f124"; }
+.flaticon-038-american-football:before { content: "\f125"; }
+.flaticon-039-second:before { content: "\f126"; }
+.flaticon-040-first-1:before { content: "\f127"; }
+.flaticon-041-basketball:before { content: "\f128"; }
+.flaticon-042-third-1:before { content: "\f129"; }
+.flaticon-043-flag:before { content: "\f12a"; }
+.flaticon-044-first:before { content: "\f12b"; }
+.flaticon-045-star-1:before { content: "\f12c"; }
+.flaticon-046-winner-1:before { content: "\f12d"; }
+.flaticon-047-third:before { content: "\f12e"; }
+.flaticon-048-winner:before { content: "\f12f"; }
+.flaticon-049-trophy:before { content: "\f130"; }
+.flaticon-050-star:before { content: "\f131"; }
