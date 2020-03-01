@@ -79,7 +79,7 @@ namespace fantasy_hoops.Repositories
                     }
                 })
                 .OrderByDescending(ua => ua.IsAchieved)
-                .ThenByDescending(ua => ua.Progress)
+                .ThenByDescending(ua => ua.Level)
                 .ToList();
         }
 
