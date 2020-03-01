@@ -77,7 +77,10 @@ namespace fantasy_hoops.Jobs
 		{
 			int price = _scoreService.GetPrice(p);
 			if (price < PRICE_FLOOR)
+			{
 				return PRICE_FLOOR;
+			}
+			
 			return price;
 		}
 
@@ -130,7 +133,9 @@ namespace fantasy_hoops.Jobs
                     player.GP = gamesPlayed;
                     player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
                     if (_updatePrice)
-                        player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(player);
+                    {
+	                    player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(player);
+                    }
                     player.IsPlaying = IsPlaying(player);
                 }
             }

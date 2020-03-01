@@ -13,7 +13,6 @@ namespace fantasy_hoops.Services
 {
     public class ScoreService : IScoreService
     {
-
         private readonly IScoreRepository _repository;
 
         public ScoreService(IScoreRepository repository)
@@ -25,7 +24,7 @@ namespace fantasy_hoops.Services
             int assists, int steals, int blocks, int turnovers)
         {
             return Math.Round(points + 1.2 * (defensiveRebounds + offensiveRebounds)
-                    + 1.5 * assists + 3 * steals + 3 * blocks - turnovers, 2);
+                                     + 1.5 * assists + 3 * steals + 3 * blocks - turnovers, 2);
         }
 
         public double GetGameScore(int points, int fieldGoalsMade, int offensiveRebounds,
@@ -33,8 +32,8 @@ namespace fantasy_hoops.Services
             int freeThrowsMissed, int fouls, int turnovers)
         {
             return Math.Round(points + 0.4 * fieldGoalsMade + 0.7 * offensiveRebounds
-                    + 0.3 * defensiveRebounds + steals + 0.7 * assists + 0.7 * blocks
-                    - 0.7 * fieldGoalsAttempted - 0.4 * freeThrowsMissed - 0.4 * fouls - turnovers, 2);
+                              + 0.3 * defensiveRebounds + steals + 0.7 * assists + 0.7 * blocks
+                              - 0.7 * fieldGoalsAttempted - 0.4 * freeThrowsMissed - 0.4 * fouls - turnovers, 2);
         }
 
         public int GetPrice(Player p)
@@ -43,7 +42,7 @@ namespace fantasy_hoops.Services
                 return PlayersJob.PRICE_FLOOR;
 
             double GSavg = _repository.LastFiveAverage(p);
-            return (int)((p.FPPG + GSavg) * 7 / 5);
+            return (int) ((p.FPPG + GSavg) * 7 / 5);
         }
     }
 }

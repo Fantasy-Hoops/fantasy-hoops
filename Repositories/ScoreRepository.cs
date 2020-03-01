@@ -10,7 +10,6 @@ namespace fantasy_hoops.Repositories
 {
     public class ScoreRepository : IScoreRepository
     {
-
         private readonly GameContext _context;
 
         public ScoreRepository()
@@ -26,11 +25,12 @@ namespace fantasy_hoops.Repositories
         public double LastFiveAverage(Player player)
         {
             return _context.Stats
-                            .Where(x => x.Player.NbaID == player.NbaID)
-                            .OrderByDescending(s => s.Date)
-                            .Take(5)
-                            .Select(s => s.GS)
-                            .Average();
+                .Where(x => x.Player.NbaID == player.NbaID
+                            && !x.Score.ToLower().Contains("live"))
+                .OrderByDescending(s => s.Date)
+                .Take(5)
+                .Select(s => s.GS)
+                .Average();
         }
     }
 }
