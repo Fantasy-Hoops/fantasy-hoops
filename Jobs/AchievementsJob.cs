@@ -340,14 +340,7 @@ namespace fantasy_hoops.Jobs
                     continue;
                 }
 
-                userAchievement.IsAchieved = true;
-                userAchievement.Progress = userAchievement.LevelUpGoal;
-
-                _context.SaveChanges();
-
-                _pushService.SendAchievementUnlockedNotification(Tuple.Create(
-                    user.Id, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
-                ));
+                UpdateAchievement(userAchievement);
             }
         }
 
@@ -364,6 +357,56 @@ namespace fantasy_hoops.Jobs
 
         public void ExecuteInjuredAchievements()
         {
+            var winnerTuple = _context.UserLineups
+                .Where(lineup => lineup.Date.Equals(_ectPrevious.Date))
+                .ToList()
+                .Where(lineup => IsPlayerInjured(lineup.PgID)
+                                 || IsPlayerInjured(lineup.SgID)
+                                 || IsPlayerInjured(lineup.SfID)
+                                 || IsPlayerInjured(lineup.PfID)
+                                 || IsPlayerInjured(lineup.CID))
+                .GroupBy(lineup => lineup.UserID)
+                .Select(lineup => (lineup.Max(x => x.UserID), lineup.Sum(x => x.FP)))
+                .OrderByDescending(lineup => lineup.Item2)
+                .FirstOrDefault();
+            User winner = _context.Users.FirstOrDefault(user => user.Id.Equals(winnerTuple.Item1));
+
+            if (winner == null)
+            {
+                return;
+            }
+            
+            UserAchievement userAchievement = _context.UserAchievements
+                .Include(ua => ua.Achievement)
+                .FirstOrDefault(ua => ua.Achievement.Title.Equals("Injured")
+                                      && ua.UserID.Equals(winner.Id));
+
+            if (userAchievement == null)
+            {
+                return;
+            }
+
+            UpdateAchievement(userAchievement);
+        }
+
+        private bool IsPlayerInjured(int playerId)
+        {
+            Player player = _context.Players.Find(playerId);
+            if (player == null)
+            {
+                return false;
+            }
+
+            Stats stats = _context.Stats
+                .FirstOrDefault(stats => stats.Date.Equals(_ectPrevious.Date)
+                                         && stats.PlayerID == playerId);
+            if (stats == null)
+            {
+                return false;
+            }
+
+            Injury injury = _context.Injuries.Find(player.InjuryID);
+            return stats.MIN.Equals("0:00") || injury != null && !injury.Status.Equals("Active");
         }
 
         public void ExecuteStrategistAchievements()
@@ -383,12 +426,12 @@ namespace fantasy_hoops.Jobs
                 .Where(x => x.Item2.Count(price => price) > 1)
                 .Select(lineup => lineup.UserID)
                 .ToList();
-            
+
             if (userIds.Count == 0)
             {
                 return;
             }
-            
+
             foreach (var userId in userIds)
             {
                 User user = _context.Users.Find(userId);
@@ -407,14 +450,7 @@ namespace fantasy_hoops.Jobs
                     continue;
                 }
 
-                userAchievement.IsAchieved = true;
-                userAchievement.Progress = userAchievement.LevelUpGoal;
-
-                _context.SaveChanges();
-
-                _pushService.SendAchievementUnlockedNotification(Tuple.Create(
-                    user.Id, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
-                ));
+                UpdateAchievement(userAchievement);
             }
         }
 
@@ -514,14 +550,7 @@ namespace fantasy_hoops.Jobs
                     continue;
                 }
 
-                userAchievement.IsAchieved = true;
-                userAchievement.Progress = userAchievement.LevelUpGoal;
-
-                _context.SaveChanges();
-
-                _pushService.SendAchievementUnlockedNotification(Tuple.Create(
-                    user.Id, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
-                ));
+                UpdateAchievement(userAchievement);
             }
         }
 
@@ -534,6 +563,17 @@ namespace fantasy_hoops.Jobs
             }
 
             return int.Parse(player.Number) == 0;
+        }
+
+        private void UpdateAchievement(UserAchievement userAchievement)
+        {
+            userAchievement.IsAchieved = true;
+            userAchievement.Progress = userAchievement.LevelUpGoal;
+            _context.SaveChanges();
+
+            _pushService.SendAchievementUnlockedNotification(Tuple.Create(
+                userAchievement.UserID, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
+            ));
         }
     }
 }
