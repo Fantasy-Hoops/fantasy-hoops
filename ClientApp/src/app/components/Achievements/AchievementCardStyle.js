@@ -11,6 +11,6 @@ export const useStyles = makeStyles({
     },
     title: {
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: 14,
     }
 });
