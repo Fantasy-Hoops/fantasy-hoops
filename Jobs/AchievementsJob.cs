@@ -20,7 +20,8 @@ namespace fantasy_hoops.Jobs
         private readonly IAchievementsRepository _achievementsRepository;
         private readonly DateTime _ectPrevious;
 
-        public AchievementsJob(IPushService pushService, IAchievementsService achievementsService, IAchievementsRepository achievementsRepository)
+        public AchievementsJob(IPushService pushService, IAchievementsService achievementsService,
+            IAchievementsRepository achievementsRepository)
         {
             _context = new GameContext();
             _pushService = pushService;
@@ -32,8 +33,9 @@ namespace fantasy_hoops.Jobs
         public void ExecuteAllAchievements()
         {
             Task.Run(() => ExecuteStreakAchievements());
+            Task.Run(() => ExecuteVeteranAchievements());
             Task.Run(() => ExecuteKobeAchievements());
-            
+
             if (_ectPrevious.DayOfWeek == DayOfWeek.Sunday)
             {
                 Task.Run(() => ExecuteWeeklyWinners());
@@ -54,7 +56,7 @@ namespace fantasy_hoops.Jobs
             {
                 return;
             }
-            
+
             var userAchievements = _context.UserAchievements
                 .Include(userAchievement => userAchievement.Achievement)
                 .Include(userAchievement => userAchievement.User)
@@ -64,7 +66,7 @@ namespace fantasy_hoops.Jobs
             foreach (var userAchievement in userAchievements)
             {
                 User user = _context.Users.Find(userAchievement.UserID);
-                if (user == null || userAchievement.Progress > user.Streak)
+                if (user == null || userAchievement.Progress >= user.Streak)
                 {
                     continue;
                 }
@@ -73,22 +75,21 @@ namespace fantasy_hoops.Jobs
                 if (userAchievement.Progress.CompareTo(userAchievement.LevelUpGoal) == -1)
                 {
                     userAchievement.Progress = user.Streak;
-                    continue;
                 }
 
                 // Level Up
-                if (userAchievement.Progress.CompareTo(userAchievement.LevelUpGoal - 1) == 0)
+                if (userAchievement.Progress.CompareTo(userAchievement.LevelUpGoal) == 0)
                 {
                     userAchievement.Progress = user.Streak;
                     userAchievement.Level++;
                     userAchievement.LevelUpGoal *= 2;
-                    
+
                     _pushService.SendAchievementLevelUpNotification(Tuple.Create(
                         userAchievement.UserID, userAchievement.Achievement.Title, userAchievement.Level
-                        ));
+                    ));
                 }
             }
-            
+
             _context.SaveChanges();
         }
 
@@ -98,7 +99,7 @@ namespace fantasy_hoops.Jobs
             {
                 return;
             }
-            
+
             var winnerTuple = _context.UserLineups
                 .Where(lineup => lineup.Date >= _ectPrevious.AddDays(-6).Date
                                  && lineup.Date <= CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date)
@@ -108,7 +109,7 @@ namespace fantasy_hoops.Jobs
                 .OrderByDescending(lineup => lineup.Item2)
                 .FirstOrDefault();
             User winner = _context.Users.FirstOrDefault(user => user.Id.Equals(winnerTuple.Item1));
-            
+
             if (winner == null)
             {
                 return;
@@ -144,16 +145,16 @@ namespace fantasy_hoops.Jobs
                 {
                     return;
                 }
-                
+
                 userAchievement.IsAchieved = true;
                 userAchievement.Progress = userAchievement.LevelUpGoal;
             }
 
             _context.SaveChanges();
-            
+
             _pushService.SendAchievementUnlockedNotification(Tuple.Create(
                 userAchievement.UserID, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
-                ));
+            ));
         }
 
         public void ExecuteKobeAchievements()
@@ -177,7 +178,7 @@ namespace fantasy_hoops.Jobs
                 {
                     continue;
                 }
-                
+
                 UserAchievement userAchievement = _context.UserAchievements
                     .Include(ua => ua.Achievement)
                     .FirstOrDefault(ua => ua.UserID.Equals(userId) && ua.Achievement.Title.Equals("Kobe"));
@@ -199,7 +200,7 @@ namespace fantasy_hoops.Jobs
                         LevelUpGoal = 1,
                         IsAchieved = true
                     };
-                    
+
                     _context.UserAchievements
                         .Add(userAchievement);
                 }
@@ -213,7 +214,7 @@ namespace fantasy_hoops.Jobs
                     userAchievement.IsAchieved = true;
                     userAchievement.Progress = userAchievement.LevelUpGoal;
                 }
-                
+
                 _context.SaveChanges();
                 _pushService.SendAchievementUnlockedNotification(Tuple.Create(
                     userId, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
@@ -233,7 +234,7 @@ namespace fantasy_hoops.Jobs
             {
                 return;
             }
-            
+
             var firstDayOfMonth = new DateTime(_ectPrevious.Year, _ectPrevious.Month, 1);
             var winnerTuple = _context.UserLineups
                 .Where(lineup => lineup.Date >= firstDayOfMonth.Date
@@ -244,7 +245,7 @@ namespace fantasy_hoops.Jobs
                 .OrderByDescending(lineup => lineup.Item2)
                 .FirstOrDefault();
             User winner = _context.Users.FirstOrDefault(user => user.Id.Equals(winnerTuple.Item1));
-            
+
             if (winner == null)
             {
                 return;
@@ -280,36 +281,76 @@ namespace fantasy_hoops.Jobs
                 {
                     return;
                 }
-                
+
                 userAchievement.IsAchieved = true;
                 userAchievement.Progress = userAchievement.LevelUpGoal;
             }
 
             _context.SaveChanges();
-            
+
             _pushService.SendAchievementUnlockedNotification(Tuple.Create(
                 userAchievement.UserID, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
-                ));
+            ));
         }
 
         public void ExecuteBalancerAchievements()
         {
-            
         }
 
         public void ExecuteInjuredAchievements()
         {
-            
         }
 
         public void ExecuteStrategistAchievements()
         {
-            
         }
 
         public void ExecuteVeteranAchievements()
         {
-            
+            Achievement achievement = _context.Achievements
+                .FirstOrDefault(a => a.Title.Equals("Veteran"));
+
+            if (achievement == null)
+            {
+                return;
+            }
+
+            var userLineups = _context.UserLineups
+                .Where(lineup => lineup.Date.Equals(_ectPrevious.Date) && lineup.IsCalculated)
+                .ToList()
+                .Select(lineup => (lineup.UserID, lineup.FP));
+
+            foreach (var userLineup in userLineups)
+            {
+                User user = _context.Users.Find(userLineup.UserID);
+                if (user == null)
+                {
+                    continue;
+                }
+
+                UserAchievement ua = _context.UserAchievements
+                    .FirstOrDefault(uu => uu.UserID.Equals(user.Id)
+                                          && uu.AchievementID == achievement.Id);
+
+                if (ua == null)
+                {
+                    continue;
+                }
+
+                ua.Progress += userLineup.FP;
+
+                // Level Up
+                if (ua.Progress.CompareTo(ua.LevelUpGoal) >= 0)
+                {
+                    ua.Level++;
+                    ua.LevelUpGoal *= 2;
+
+                    _pushService.SendAchievementLevelUpNotification(Tuple.Create(
+                        user.Id, ua.Achievement.Title, ua.Level
+                    ));
+                }
+                _context.SaveChanges();
+            }
         }
     }
 }
