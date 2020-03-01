@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import {Route, Switch} from 'react-router';
 import {PrivateRoute} from '../components/Authentication/PrivateRoute';
 import {Lineup} from '../components/Lineup/Lineup';
 import InjuriesFeed from '../containers/InjuriesFeedContainer';
@@ -20,6 +19,7 @@ import Routes from './routes';
 import {Error} from '../components/Error';
 import Header from "../components/Navigation/Header";
 import Leaderboards from "../components/Leaderboard/Leaderboards";
+import {Switch,Route} from "react-router-dom";
 
 function ScrollToTop(props) {
     useEffect(() => {

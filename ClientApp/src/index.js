@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
-import {ConnectedRouter} from 'connected-react-router';
+import {BrowserRouter} from 'react-router-dom';
 import * as Sentry from '@sentry/browser';
 import browserHistory from './app/utils/history';
 import configureStore from './app/store';
@@ -69,9 +69,9 @@ const rootElement = document.getElementById('root');
 ReactDOM.render(
     <ThemeProvider theme={theme}>
         <Provider store={configureStore()}>
-            <ConnectedRouter history={browserHistory}>
+            <BrowserRouter history={browserHistory}>
                 {configureRoutes()}
-            </ConnectedRouter>
+            </BrowserRouter>
         </Provider>
     </ThemeProvider>,
     rootElement
