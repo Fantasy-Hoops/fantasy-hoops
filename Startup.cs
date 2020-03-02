@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using fantasy_hoops.Auth;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
@@ -37,15 +39,6 @@ namespace fantasy_hoops
         {
             Configuration = configuration;
             HostingEnvironment = env;
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json",
-                             optional: false,
-                             reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-
-            Configuration = builder.Build();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -93,7 +86,7 @@ namespace fantasy_hoops
                 });
             });
 #endif
-            services.AddDbContext<GameContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<GameContext>(o => o.UseSqlServer(Configuration["fh-connection-string"]));
 
             ConfigureAuth(services);
 
@@ -106,6 +99,9 @@ namespace fantasy_hoops
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
+
+            services.AddDataProtection()
+                .SetDefaultKeyLifetime(TimeSpan.FromDays(14));
         }
 
         public void AddScopes(IServiceCollection services)
