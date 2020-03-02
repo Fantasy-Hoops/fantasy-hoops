@@ -1,0 +1,78 @@
+.PostCard {
+    margin: 4rem auto;
+    overflow-x: hidden;
+    max-width: 60rem;
+}
+
+.PostCard__Title {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 400;
+    line-height: 3.5rem;
+    text-align: left;
+    display: table;
+    margin-bottom: 1rem;
+}
+
+.PostCard__Date {
+    color: rgba(0, 0, 0, .3);
+    line-height: 0.5;
+    margin-left: 6rem;
+}
+
+.PostCard__Date span {
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 1.6rem;
+    display: inline-block;
+    position: relative;
+}
+
+.PostCard__Date span:before,
+.PostCard__Date span:after {
+    content: "";
+    position: absolute;
+    height: 5px;
+    border-bottom: 1px solid;
+    top: 0;
+    width: 600px;
+}
+
+.PostCard__Date span:before {
+    right: 100%;
+    margin-right: 15px;
+}
+
+.PostCard__Date span:after {
+    left: 100%;
+    margin-left: 15px;
+}
+
+.PostCard__Author {
+    position: relative;
+    margin-top: 1rem;
+}
+
+.PostCard__AuthorName {
+    margin: 0 1rem;
+}
+
+.PostCard__Body {
+    text-align: justify;
+    padding: 3rem 0;
+}
+
+.PostCard__Body h3 {
+    font-weight: 400;
+    font-size: 2.5rem;
+}
+
+.PostCard__Body img {
+    max-width: 100%;
+}
+
+.PostCard__Menu {
+    position: absolute;
+    right: 0;
+    top: 0;
+}

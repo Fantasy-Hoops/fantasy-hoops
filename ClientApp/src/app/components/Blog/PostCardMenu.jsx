@@ -1,33 +1,42 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuIcon from '@material-ui/icons/Menu';
+import IconButton from "@material-ui/core/IconButton";
 
-class PostCardMenu extends PureComponent {
-	constructor(props) {
-		super(props);
-		this.handleRemove = this.handleRemove.bind(this);
-	}
+function PostCardMenu(props) {
+    const [anchorEl, setAnchorEl] = React.useState(null);
 
-	handleRemove() {
-		const { post, handleRemove } = this.props;
-		handleRemove(post);
-	}
+    const handleClick = event => {
+        setAnchorEl(event.currentTarget);
+    };
 
-	render() {
-		return (
-			<>
-				<span className="PostCard__Dots" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="fas fa-ellipsis-v" /></span>
-				<div className="dropdown-menu">
-					<button className="PostCard__MenuItem dropdown-item">
-						<i className="fas fa-edit" />
-						{' Edit'}
-					</button>
-					<button role="button" className="PostCard__MenuItem dropdown-item" onClick={this.handleRemove} onKeyDown={this.handleRemove}>
-						<i className="fas fa-trash-alt text-danger" />
-						{' Remove'}
-					</button>
-				</div>
-			</>
-		);
-	}
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    function handleRemove() {
+        const {post, handleRemove} = props;
+        handleRemove(post);
+    }
+
+    return (
+        <div className="PostCard__Menu">
+            <IconButton aria-controls="post-card-menu" aria-haspopup="true" onClick={handleClick}>
+                <MenuIcon fontSize="inherit"/>
+            </IconButton>
+            <Menu
+                id="simple-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+            >
+                <MenuItem onClick={handleClose}><i className="fas fa-edit"/>Edit</MenuItem>
+                <MenuItem onClick={handleRemove}><i className="fas fa-trash-alt text-danger"/>Remove</MenuItem>
+            </Menu>
+        </div>
+    );
 }
 
 export default PostCardMenu;

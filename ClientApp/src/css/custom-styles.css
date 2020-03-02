@@ -136,10 +136,6 @@ span + ul {
     margin-top: 40%;
 }
 
-.PostCard__Title {
-    margin-bottom: 0;
-}
-
 .PostCard__Dots {
     position: absolute;
     right: 1rem;
