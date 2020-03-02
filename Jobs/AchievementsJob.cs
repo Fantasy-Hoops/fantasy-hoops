@@ -14,7 +14,6 @@ namespace fantasy_hoops.Jobs
 {
     public class AchievementsJob
     {
-        private readonly GameContext _context;
         private readonly IPushService _pushService;
         private readonly IAchievementsService _achievementsService;
         private readonly IAchievementsRepository _achievementsRepository;
@@ -23,7 +22,6 @@ namespace fantasy_hoops.Jobs
         public AchievementsJob(IPushService pushService, IAchievementsService achievementsService,
             IAchievementsRepository achievementsRepository)
         {
-            _context = new GameContext();
             _pushService = pushService;
             _achievementsService = achievementsService;
             _achievementsRepository = achievementsRepository;
@@ -39,12 +37,12 @@ namespace fantasy_hoops.Jobs
             Task.Run(() => ExecuteInjuredAchievements());
             Task.Run(() => ExecuteStrategistAchievements());
             Task.Run(() => ExecuteAgentZeroAchievements());
-
+            
             if (_ectPrevious.DayOfWeek == DayOfWeek.Sunday)
             {
                 Task.Run(() => ExecuteWeeklyWinners());
             }
-
+            
             if (DateTime.DaysInMonth(_ectPrevious.Year, _ectPrevious.Month) == _ectPrevious.Day)
             {
                 Task.Run(() => ExecuteMonthWinners());
@@ -53,7 +51,8 @@ namespace fantasy_hoops.Jobs
 
         public void ExecuteStreakAchievements()
         {
-            Achievement achievement = _context.Achievements
+            GameContext context = new GameContext();
+            Achievement achievement = context.Achievements
                 .FirstOrDefault(a => a.Title.Equals("Wildfire"));
 
             if (achievement == null)
@@ -61,7 +60,7 @@ namespace fantasy_hoops.Jobs
                 return;
             }
 
-            var userAchievements = _context.UserAchievements
+            var userAchievements = context.UserAchievements
                 .Include(userAchievement => userAchievement.Achievement)
                 .Include(userAchievement => userAchievement.User)
                 .Where(userAchievement => achievement.Id.Equals(userAchievement.AchievementID))
@@ -69,7 +68,7 @@ namespace fantasy_hoops.Jobs
 
             foreach (var userAchievement in userAchievements)
             {
-                User user = _context.Users.Find(userAchievement.UserID);
+                User user = context.Users.Find(userAchievement.UserID);
                 if (user == null || userAchievement.Progress >= user.Streak)
                 {
                     continue;
@@ -94,7 +93,7 @@ namespace fantasy_hoops.Jobs
                 }
             }
 
-            _context.SaveChanges();
+            context.SaveChanges();
         }
 
         public void ExecuteWeeklyWinners()
@@ -104,7 +103,15 @@ namespace fantasy_hoops.Jobs
                 return;
             }
 
-            var winnerTuple = _context.UserLineups
+            GameContext context = new GameContext();
+            Achievement achievement = context.Achievements
+                .FirstOrDefault(a => a.Title.Equals("Winner"));
+            if (achievement == null)
+            {
+                return;
+            }
+
+            var winnerTuple = context.UserLineups
                 .Where(lineup => lineup.Date >= _ectPrevious.AddDays(-6).Date
                                  && lineup.Date <= CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date)
                 .ToList()
@@ -112,26 +119,20 @@ namespace fantasy_hoops.Jobs
                 .Select(lineup => (lineup.Max(x => x.UserID), lineup.Sum(x => x.FP)))
                 .OrderByDescending(lineup => lineup.Item2)
                 .FirstOrDefault();
-            User winner = _context.Users.FirstOrDefault(user => user.Id.Equals(winnerTuple.Item1));
+            
+            User winner = context.Users.FirstOrDefault(user => user.Id.Equals(winnerTuple.Item1));
 
             if (winner == null)
             {
                 return;
             }
 
-            UserAchievement userAchievement = _context.UserAchievements
+            UserAchievement userAchievement = context.UserAchievements
                 .Include(ua => ua.Achievement)
                 .FirstOrDefault(ua => ua.UserID.Equals(winner.Id) && ua.Achievement.Title.Equals("Winner"));
 
             if (userAchievement == null)
             {
-                Achievement achievement = _context.Achievements
-                    .FirstOrDefault(a => a.Title.Equals("Winner"));
-                if (achievement == null)
-                {
-                    return;
-                }
-
                 userAchievement = new UserAchievement
                 {
                     UserID = winner.Id,
@@ -140,7 +141,7 @@ namespace fantasy_hoops.Jobs
                     LevelUpGoal = 1,
                     IsAchieved = true
                 };
-                _context.UserAchievements
+                context.UserAchievements
                     .Add(userAchievement);
             }
             else
@@ -154,7 +155,7 @@ namespace fantasy_hoops.Jobs
                 userAchievement.Progress = userAchievement.LevelUpGoal;
             }
 
-            _context.SaveChanges();
+            context.SaveChanges();
 
             _pushService.SendAchievementUnlockedNotification(Tuple.Create(
                 userAchievement.UserID, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
@@ -163,7 +164,15 @@ namespace fantasy_hoops.Jobs
 
         public void ExecuteKobeAchievements()
         {
-            List<String> kobeLineupUserIds = _context.UserLineups
+            GameContext context = new GameContext();
+            Achievement achievement = context.Achievements
+                .FirstOrDefault(a => a.Title.Equals("Kobe"));
+            if (achievement == null)
+            {
+                return;
+            }
+            
+            List<String> kobeLineupUserIds = context.UserLineups
                 .Where(lineup => lineup.Date.Equals(_ectPrevious.Date))
                 .ToList()
                 .Where(lineup => IsKobeNumber(lineup.PgID) || IsKobeNumber(lineup.SgID) || IsKobeNumber(lineup.SfID)
@@ -175,27 +184,21 @@ namespace fantasy_hoops.Jobs
             {
                 return;
             }
-
+            
             foreach (var userId in kobeLineupUserIds)
             {
-                User kobeWinner = _context.Users.FirstOrDefault(user => user.Id.Equals(userId));
+                User kobeWinner = context.Users.FirstOrDefault(user => user.Id.Equals(userId));
                 if (kobeWinner == null)
                 {
                     continue;
                 }
 
-                UserAchievement userAchievement = _context.UserAchievements
+                UserAchievement userAchievement = context.UserAchievements
                     .Include(ua => ua.Achievement)
                     .FirstOrDefault(ua => ua.UserID.Equals(userId) && ua.Achievement.Title.Equals("Kobe"));
 
                 if (userAchievement == null)
                 {
-                    Achievement achievement = _context.Achievements
-                        .FirstOrDefault(a => a.Title.Equals("Kobe"));
-                    if (achievement == null)
-                    {
-                        return;
-                    }
 
                     userAchievement = new UserAchievement
                     {
@@ -206,7 +209,7 @@ namespace fantasy_hoops.Jobs
                         IsAchieved = true
                     };
 
-                    _context.UserAchievements
+                    context.UserAchievements
                         .Add(userAchievement);
                 }
                 else
@@ -219,17 +222,22 @@ namespace fantasy_hoops.Jobs
                     userAchievement.IsAchieved = true;
                     userAchievement.Progress = userAchievement.LevelUpGoal;
                 }
+            }
 
-                _context.SaveChanges();
+            context.SaveChanges();
+
+            foreach (var userId in kobeLineupUserIds)
+            {
                 _pushService.SendAchievementUnlockedNotification(Tuple.Create(
-                    userId, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
-                ));
+                    userId, achievement.Title, achievement.CompletedMessage
+                )); 
             }
         }
 
         private bool IsKobeNumber(int playerId)
         {
-            Player player = _context.Players.Find(playerId);
+            GameContext context = new GameContext();
+            Player player = context.Players.Find(playerId);
             if (player == null)
             {
                 return false;
@@ -246,8 +254,16 @@ namespace fantasy_hoops.Jobs
                 return;
             }
 
+            GameContext context = new GameContext();
+            Achievement achievement = context.Achievements
+                .FirstOrDefault(a => a.Title.Equals("Month King"));
+            if (achievement == null)
+            {
+                return;
+            }
+            
             var firstDayOfMonth = new DateTime(_ectPrevious.Year, _ectPrevious.Month, 1);
-            var winnerTuple = _context.UserLineups
+            var winnerTuple = context.UserLineups
                 .Where(lineup => lineup.Date >= firstDayOfMonth.Date
                                  && lineup.Date <= _ectPrevious.Date)
                 .ToList()
@@ -255,26 +271,20 @@ namespace fantasy_hoops.Jobs
                 .Select(lineup => (lineup.Max(x => x.UserID), lineup.Sum(x => x.FP)))
                 .OrderByDescending(lineup => lineup.Item2)
                 .FirstOrDefault();
-            User winner = _context.Users.FirstOrDefault(user => user.Id.Equals(winnerTuple.Item1));
+            
+            User winner = context.Users.FirstOrDefault(user => user.Id.Equals(winnerTuple.Item1));
 
             if (winner == null)
             {
                 return;
             }
 
-            UserAchievement userAchievement = _context.UserAchievements
+            UserAchievement userAchievement = context.UserAchievements
                 .Include(ua => ua.Achievement)
                 .FirstOrDefault(ua => ua.UserID.Equals(winner.Id) && ua.Achievement.Title.Equals("Month King"));
 
             if (userAchievement == null)
             {
-                Achievement achievement = _context.Achievements
-                    .FirstOrDefault(a => a.Title.Equals("Month King"));
-                if (achievement == null)
-                {
-                    return;
-                }
-
                 userAchievement = new UserAchievement
                 {
                     UserID = winner.Id,
@@ -283,7 +293,7 @@ namespace fantasy_hoops.Jobs
                     LevelUpGoal = 1,
                     IsAchieved = true
                 };
-                _context.UserAchievements
+                context.UserAchievements
                     .Add(userAchievement);
             }
             else
@@ -297,16 +307,25 @@ namespace fantasy_hoops.Jobs
                 userAchievement.Progress = userAchievement.LevelUpGoal;
             }
 
-            _context.SaveChanges();
+            context.SaveChanges();
 
             _pushService.SendAchievementUnlockedNotification(Tuple.Create(
-                userAchievement.UserID, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
+                userAchievement.UserID, achievement.Title, achievement.CompletedMessage
             ));
         }
 
         public void ExecuteBalancerAchievements()
         {
-            List<string> userIds = _context.UserLineups
+            GameContext context = new GameContext();
+            Achievement achievement = context.Achievements
+                .FirstOrDefault(a => a.Title.Equals("Balancer"));
+
+            if (achievement == null)
+            {
+                return;
+            }
+            
+            List<string> userIds = context.UserLineups
                 .Where(lineup => _ectPrevious.Date.Equals(lineup.Date))
                 .ToList()
                 .Where(lineup => IsPlayerPriceSixty(lineup.PgID)
@@ -321,16 +340,16 @@ namespace fantasy_hoops.Jobs
             {
                 return;
             }
-
+            
             foreach (var userId in userIds)
             {
-                User user = _context.Users.Find(userId);
+                User user = context.Users.Find(userId);
                 if (user == null)
                 {
                     continue;
                 }
 
-                UserAchievement userAchievement = _context.UserAchievements
+                UserAchievement userAchievement = context.UserAchievements
                     .Include(ua => ua.Achievement)
                     .FirstOrDefault(ua => ua.Achievement.Title.Equals("Balancer")
                                           && ua.UserID.Equals(user.Id));
@@ -340,13 +359,24 @@ namespace fantasy_hoops.Jobs
                     continue;
                 }
 
-                UpdateAchievement(userAchievement);
+                userAchievement.IsAchieved = true;
+                userAchievement.Progress = userAchievement.LevelUpGoal;
+            }
+
+            context.SaveChanges();
+
+            foreach (var userId in userIds)
+            {
+                _pushService.SendAchievementUnlockedNotification(Tuple.Create(
+                    userId, achievement.Title, achievement.CompletedMessage
+                ));
             }
         }
 
         private bool IsPlayerPriceSixty(int playerId)
         {
-            Player player = _context.Players.Find(playerId);
+            GameContext context = new GameContext();
+            Player player = context.Players.Find(playerId);
             if (player == null)
             {
                 return false;
@@ -357,7 +387,16 @@ namespace fantasy_hoops.Jobs
 
         public void ExecuteInjuredAchievements()
         {
-            var winnerTuple = _context.UserLineups
+            GameContext context = new GameContext();
+            Achievement achievement = context.Achievements
+                .FirstOrDefault(a => a.Title.Equals("Injured"));
+
+            if (achievement == null)
+            {
+                return;
+            }
+            
+            var winnerTuple = context.UserLineups
                 .Where(lineup => lineup.Date.Equals(_ectPrevious.Date))
                 .ToList()
                 .Where(lineup => IsPlayerInjured(lineup.PgID)
@@ -369,14 +408,15 @@ namespace fantasy_hoops.Jobs
                 .Select(lineup => (lineup.Max(x => x.UserID), lineup.Sum(x => x.FP)))
                 .OrderByDescending(lineup => lineup.Item2)
                 .FirstOrDefault();
-            User winner = _context.Users.FirstOrDefault(user => user.Id.Equals(winnerTuple.Item1));
+            
+            User winner = context.Users.FirstOrDefault(user => user.Id.Equals(winnerTuple.Item1));
 
             if (winner == null)
             {
                 return;
             }
             
-            UserAchievement userAchievement = _context.UserAchievements
+            UserAchievement userAchievement = context.UserAchievements
                 .Include(ua => ua.Achievement)
                 .FirstOrDefault(ua => ua.Achievement.Title.Equals("Injured")
                                       && ua.UserID.Equals(winner.Id));
@@ -386,32 +426,48 @@ namespace fantasy_hoops.Jobs
                 return;
             }
 
-            UpdateAchievement(userAchievement);
+            userAchievement.IsAchieved = true;
+            userAchievement.Progress = userAchievement.LevelUpGoal;
+            
+            context.SaveChanges();
+            _pushService.SendAchievementUnlockedNotification(Tuple.Create(
+                userAchievement.UserID, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
+            ));
         }
 
         private bool IsPlayerInjured(int playerId)
         {
-            Player player = _context.Players.Find(playerId);
+            GameContext context = new GameContext();
+            Player player = context.Players.Find(playerId);
             if (player == null)
             {
                 return false;
             }
 
-            Stats stats = _context.Stats
-                .FirstOrDefault(stats => stats.Date.Equals(_ectPrevious.Date)
-                                         && stats.PlayerID == playerId);
+            Stats stats = context.Stats
+                .FirstOrDefault(s => s.Date.Equals(_ectPrevious.Date)
+                                         && s.PlayerID == playerId);
             if (stats == null)
             {
-                return false;
+                return true;
             }
 
-            Injury injury = _context.Injuries.Find(player.InjuryID);
-            return stats.MIN.Equals("0:00") || injury != null && !injury.Status.Equals("Active");
+            Injury injury = context.Injuries.Find(player.InjuryID);
+            return stats.MIN.Equals("0:00") && injury != null && !injury.Status.Equals("Active");
         }
 
         public void ExecuteStrategistAchievements()
         {
-            List<string> userIds = _context.UserLineups
+            GameContext context = new GameContext();
+            Achievement achievement = context.Achievements
+                .FirstOrDefault(a => a.Title.Equals("Strategist"));
+
+            if (achievement == null)
+            {
+                return;
+            }
+            
+            List<string> userIds = context.UserLineups
                 .Where(lineup => _ectPrevious.Date.Equals(lineup.Date))
                 .ToList()
                 .Select(lineup => (
@@ -431,16 +487,16 @@ namespace fantasy_hoops.Jobs
             {
                 return;
             }
-
+            
             foreach (var userId in userIds)
             {
-                User user = _context.Users.Find(userId);
+                User user = context.Users.Find(userId);
                 if (user == null)
                 {
                     continue;
                 }
 
-                UserAchievement userAchievement = _context.UserAchievements
+                UserAchievement userAchievement = context.UserAchievements
                     .Include(ua => ua.Achievement)
                     .FirstOrDefault(ua => ua.Achievement.Title.Equals("Strategist")
                                           && ua.UserID.Equals(user.Id));
@@ -449,14 +505,25 @@ namespace fantasy_hoops.Jobs
                 {
                     continue;
                 }
+                
+                userAchievement.IsAchieved = true;
+                userAchievement.Progress = userAchievement.LevelUpGoal;
+            }
+            
+            context.SaveChanges();
 
-                UpdateAchievement(userAchievement);
+            foreach (var userId in userIds)
+            {
+                _pushService.SendAchievementUnlockedNotification(Tuple.Create(
+                    userId, achievement.Title, achievement.CompletedMessage
+                ));
             }
         }
 
         private bool IsPlayerPriceOverHundred(int playerId)
         {
-            Player player = _context.Players.Find(playerId);
+            GameContext context = new GameContext();
+            Player player = context.Players.Find(playerId);
             if (player == null)
             {
                 return false;
@@ -467,7 +534,8 @@ namespace fantasy_hoops.Jobs
 
         public void ExecuteVeteranAchievements()
         {
-            Achievement achievement = _context.Achievements
+            GameContext context = new GameContext();
+            Achievement achievement = context.Achievements
                 .FirstOrDefault(a => a.Title.Equals("Veteran"));
 
             if (achievement == null)
@@ -475,20 +543,20 @@ namespace fantasy_hoops.Jobs
                 return;
             }
 
-            var userLineups = _context.UserLineups
+            var userLineups = context.UserLineups
                 .Where(lineup => lineup.Date.Equals(_ectPrevious.Date) && lineup.IsCalculated)
                 .ToList()
                 .Select(lineup => (lineup.UserID, lineup.FP));
 
             foreach (var userLineup in userLineups)
             {
-                User user = _context.Users.Find(userLineup.UserID);
+                User user = context.Users.Find(userLineup.UserID);
                 if (user == null)
                 {
                     continue;
                 }
 
-                UserAchievement ua = _context.UserAchievements
+                UserAchievement ua = context.UserAchievements
                     .FirstOrDefault(uu => uu.UserID.Equals(user.Id)
                                           && uu.AchievementID == achievement.Id);
 
@@ -497,7 +565,7 @@ namespace fantasy_hoops.Jobs
                     continue;
                 }
 
-                ua.Progress += userLineup.FP;
+                ua.Progress = Math.Round(ua.Progress + userLineup.FP, 1);
 
                 // Level Up
                 if (ua.Progress.CompareTo(ua.LevelUpGoal) >= 0)
@@ -509,14 +577,23 @@ namespace fantasy_hoops.Jobs
                         user.Id, ua.Achievement.Title, ua.Level
                     ));
                 }
-
-                _context.SaveChanges();
             }
+
+            context.SaveChanges();
         }
 
         public void ExecuteAgentZeroAchievements()
         {
-            List<string> userIds = _context.UserLineups
+            GameContext context = new GameContext();
+            Achievement achievement = context.Achievements
+                .FirstOrDefault(a => a.Title.Equals("Agent Zero"));
+
+            if (achievement == null)
+            {
+                return;
+            }
+            
+            List<string> userIds = context.UserLineups
                 .Where(lineup => _ectPrevious.Date.Equals(lineup.Date))
                 .ToList()
                 .Where(lineup => IsPlayerZero(lineup.PgID)
@@ -534,13 +611,13 @@ namespace fantasy_hoops.Jobs
 
             foreach (var userId in userIds)
             {
-                User user = _context.Users.Find(userId);
+                User user = context.Users.Find(userId);
                 if (user == null)
                 {
                     continue;
                 }
 
-                UserAchievement userAchievement = _context.UserAchievements
+                UserAchievement userAchievement = context.UserAchievements
                     .Include(ua => ua.Achievement)
                     .FirstOrDefault(ua => ua.Achievement.Title.Equals("Agent Zero")
                                           && ua.UserID.Equals(user.Id));
@@ -550,30 +627,30 @@ namespace fantasy_hoops.Jobs
                     continue;
                 }
 
-                UpdateAchievement(userAchievement);
+                userAchievement.IsAchieved = true;
+                userAchievement.Progress = userAchievement.LevelUpGoal;
+            }
+
+            context.SaveChanges();
+
+            foreach (var userId in userIds)
+            {
+                _pushService.SendAchievementUnlockedNotification(Tuple.Create(
+                    userId, achievement.Title, achievement.CompletedMessage
+                ));
             }
         }
 
         private bool IsPlayerZero(int playerId)
         {
-            Player player = _context.Players.Find(playerId);
+            GameContext context = new GameContext();
+            Player player = context.Players.Find(playerId);
             if (player == null)
             {
                 return false;
             }
 
             return int.Parse(player.Number) == 0;
-        }
-
-        private void UpdateAchievement(UserAchievement userAchievement)
-        {
-            userAchievement.IsAchieved = true;
-            userAchievement.Progress = userAchievement.LevelUpGoal;
-            _context.SaveChanges();
-
-            _pushService.SendAchievementUnlockedNotification(Tuple.Create(
-                userAchievement.UserID, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
-            ));
         }
     }
 }
