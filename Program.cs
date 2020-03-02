@@ -23,7 +23,9 @@ namespace fantasy_hoops
                         var keyVaultEndpoint = GetKeyVaultEndpoint();
                         if (!string.IsNullOrEmpty(keyVaultEndpoint))
                         {
-                            var azureServiceTokenProvider = new AzureServiceTokenProvider();
+                            var azureServiceTokenProvider = new AzureServiceTokenProvider(
+                                "RunAs=App;AppId=9c1be78d-8e41-4887-9be3-1b54eaefb2d1;TenantId=4c6b4065-35b7-4671-b6fe-2f7ca805942b;AppKey=3-Eh7n8[e6TQ:W.-d=RLG-[@PYAMdDnq"
+                                );
                             var keyVaultClient = new KeyVaultClient(
                                 new KeyVaultClient.AuthenticationCallback(
                                     azureServiceTokenProvider.KeyVaultTokenCallback));
