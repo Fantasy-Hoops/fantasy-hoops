@@ -1,10 +1,7 @@
-using System;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Models.Notifications;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.Azure.KeyVault;
-using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureKeyVault;
@@ -73,21 +70,13 @@ namespace fantasy_hoops.Database
         {
             if (!optionsBuilder.IsConfigured)
             {
-                var keyVaultEndpoint = GetKeyVaultEndpoint();
-                var azureServiceTokenProvider = new AzureServiceTokenProvider(
-                    "RunAs=App;AppId=9c1be78d-8e41-4887-9be3-1b54eaefb2d1;TenantId=4c6b4065-35b7-4671-b6fe-2f7ca805942b;AppKey=3-Eh7n8[e6TQ:W.-d=RLG-[@PYAMdDnq"
-                );
-                var keyVaultClient = new KeyVaultClient(
-                    new KeyVaultClient.AuthenticationCallback(
-                        azureServiceTokenProvider.KeyVaultTokenCallback));
                 IConfigurationRoot configuration = new ConfigurationBuilder()
                     .AddAzureKeyVault(
-                        keyVaultEndpoint, keyVaultClient, new DefaultKeyVaultSecretManager())
+                        Program.KEY_VAULT_ENDPOINT, Program.GetKeyVaultClient(), new DefaultKeyVaultSecretManager())
                     .AddEnvironmentVariables()
                    .Build();
                 optionsBuilder.UseSqlServer(configuration["fh-connection-string"]);
             }
         }
-        private static string GetKeyVaultEndpoint() => "https://fantasy-hoops.vault.azure.net";
     }
 }
