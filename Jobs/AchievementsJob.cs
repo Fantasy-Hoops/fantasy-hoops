@@ -396,20 +396,27 @@ namespace fantasy_hoops.Jobs
                 return;
             }
             
-            var winnerTuple = context.UserLineups
+            var winnerLineup = context.UserLineups
                 .Where(lineup => lineup.Date.Equals(_ectPrevious.Date))
                 .ToList()
-                .Where(lineup => IsPlayerInjured(lineup.PgID)
-                                 || IsPlayerInjured(lineup.SgID)
-                                 || IsPlayerInjured(lineup.SfID)
-                                 || IsPlayerInjured(lineup.PfID)
-                                 || IsPlayerInjured(lineup.CID))
-                .GroupBy(lineup => lineup.UserID)
-                .Select(lineup => (lineup.Max(x => x.UserID), lineup.Sum(x => x.FP)))
-                .OrderByDescending(lineup => lineup.Item2)
+                .OrderByDescending(lineup => lineup.FP)
                 .FirstOrDefault();
+
+            if (winnerLineup == null)
+            {
+                return;
+            }
+
+            if (!(IsPlayerInjured(winnerLineup.PgID)
+                || IsPlayerInjured(winnerLineup.SgID)
+                || IsPlayerInjured(winnerLineup.SfID)
+                || IsPlayerInjured(winnerLineup.PfID)
+                || IsPlayerInjured(winnerLineup.CID)))
+            {
+                return;
+            }
             
-            User winner = context.Users.FirstOrDefault(user => user.Id.Equals(winnerTuple.Item1));
+            User winner = context.Users.FirstOrDefault(user => user.Id.Equals(winnerLineup.UserID));
 
             if (winner == null)
             {
