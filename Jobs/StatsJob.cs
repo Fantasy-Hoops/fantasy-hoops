@@ -139,6 +139,8 @@ namespace fantasy_hoops.Jobs
 
                 dbStats.FP = _scoreService.GetFantasyPoints(dbStats.PTS, dbStats.DREB, dbStats.OREB,
                     dbStats.AST, dbStats.STL, dbStats.BLK, dbStats.TOV);
+                
+                context.Stats.Update(dbStats);
             }
         }
 

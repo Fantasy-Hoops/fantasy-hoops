@@ -33,8 +33,8 @@ namespace fantasy_hoops
     public class Startup
     {
         public IWebHostEnvironment HostingEnvironment;
-        public IConfiguration Configuration { get; }
-
+        public static IConfiguration Configuration { get; set; }
+        
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;

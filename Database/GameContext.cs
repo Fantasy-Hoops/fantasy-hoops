@@ -3,8 +3,6 @@ using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Models.Notifications;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureKeyVault;
 
 namespace fantasy_hoops.Database
 {
@@ -68,15 +66,7 @@ namespace fantasy_hoops.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                IConfigurationRoot configuration = new ConfigurationBuilder()
-                    .AddAzureKeyVault(
-                        Program.KEY_VAULT_ENDPOINT, Program.GetKeyVaultClient(), new DefaultKeyVaultSecretManager())
-                    .AddEnvironmentVariables()
-                   .Build();
-                optionsBuilder.UseSqlServer(configuration["fh-connection-string"]);
-            }
+            optionsBuilder.UseSqlServer(Startup.Configuration["fh-connection-string"]);
         }
     }
 }
