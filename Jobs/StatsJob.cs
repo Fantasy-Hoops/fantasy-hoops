@@ -23,11 +23,6 @@ namespace fantasy_hoops.Jobs
             _pushService = pushService;
         }
 
-        public void Execute()
-        {
-            Task.Run(() => CalculateStats());
-        }
-
         private JObject GetBoxscore(string url)
         {
             HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
@@ -179,7 +174,7 @@ namespace fantasy_hoops.Jobs
             return gameObj;
         }
 
-        private void CalculateStats()
+        public void Execute()
         {
             string gameDate = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).ToString("yyyyMMdd");
             JArray games = CommonFunctions.GetGames(gameDate);

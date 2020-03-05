@@ -96,7 +96,7 @@ namespace fantasy_hoops.Jobs
             _context.SaveChanges();
             SendPushNotifications().Wait();
 
-            Task.Run(() => new BestLineupsJob(_pushService).Execute());
+            Task.Run(() => new BestLineupsJob().Execute());
             Task.Run(() => new AchievementsJob(_pushService, null, null).ExecuteAllAchievements());
         }
     }

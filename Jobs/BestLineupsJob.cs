@@ -20,13 +20,11 @@ namespace fantasy_hoops.Jobs
         private readonly List<(List<LineupPlayerDto>, double)> _playersList = new List<(List<LineupPlayerDto>, double)>();
         
         private readonly GameContext _context;
-        private readonly IPushService _pushService;
         private readonly DateTime _date = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date;
 
-        public BestLineupsJob(IPushService pushService)
+        public BestLineupsJob()
         {
             _context = new GameContext();
-            _pushService = pushService;
         }
 
         public void Execute()
@@ -99,10 +97,6 @@ namespace fantasy_hoops.Jobs
                 });
 
             _context.SaveChanges();
-
-            PushNotificationViewModel notification =
-                new PushNotificationViewModel("Admin notification", "BestLineupsJob completed successfully");
-            _pushService.SendAdminNotification(notification);
         }
 
         private IDictionary<string, List<LineupPlayerDto>> GetPreviousGameStats()
