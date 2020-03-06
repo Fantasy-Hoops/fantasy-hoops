@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace fantasy_hoops.Models.Achievements
 {
@@ -15,10 +16,10 @@ namespace fantasy_hoops.Models.Achievements
         [DefaultValue(0)]
         public bool IsAchieved { get; set; }
 
-        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None), Key]
         public string UserID { get; set; }
         public virtual User User { get; set; }
-        [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.None), Key]
         public int AchievementID { get; set; }
         public virtual Achievement Achievement { get; set; }
     }

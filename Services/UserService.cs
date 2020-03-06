@@ -52,10 +52,10 @@ namespace fantasy_hoops.Services
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            if (result.Succeeded)
-            {
-                await SendRegisterNotification(model.UserName);
-            }
+            // if (result.Succeeded)
+            // {
+            //     await SendRegisterNotification(model.UserName);
+            // }
 
             return result.Succeeded;
         }

@@ -29,8 +29,8 @@ namespace fantasy_hoops.Services
             {
                 _context.UserAchievements.Add(new UserAchievement
                 {
-                    Achievement = achievement,
-                    User = user,
+                    AchievementID = achievement.Id,
+                    UserID = user.Id,
                     Level = 1,
                     LevelUpGoal = achievement.GoalBase
                 });
