@@ -22,7 +22,7 @@ function AchievementCard(props) {
         return null;
     }
 
-    const isSingleLevel = achievement.type === 0;
+    const isSingleLevel = achievement.achievement.type === 0;
     
     const checkColor = () => {
         return achievement.progress === 0 || (isSingleLevel && !achievement.isAchieved);

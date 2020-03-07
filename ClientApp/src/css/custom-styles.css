@@ -1086,7 +1086,7 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
     position: absolute;
     left: 0;
     bottom: 0;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     padding: .2rem;
     color: black;
     text-align: center;

@@ -12,13 +12,13 @@ function AchievementDialog(props) {
     const progressBarValue = achievement.progress / achievement.levelUpGoal * 100;
     const classes = useStyles();
     
-    const isSingleLevel = achievement.type === 0;
+    const isSingleLevel = achievement.achievement.type === 0;
 
     const checkColor = () => {
         return achievement.progress === 0 || (isSingleLevel && !achievement.isAchieved);
     };
 
-    const description = isSingleLevel && !achievement.isAchieved
+    const description = isSingleLevel && achievement.isAchieved
         ? (
             <p className="AchievementDialog__Description">
                 {achievement.achievement.completedMessage}
