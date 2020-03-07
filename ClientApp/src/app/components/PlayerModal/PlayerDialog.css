@@ -32,7 +32,7 @@
     z-index: 1;
     margin: auto;
     overflow: auto;
-    height: 40vh;
+    height: 33vh;
 }
 #PlayerDialog #table-scroll  table {
     width: 100%;

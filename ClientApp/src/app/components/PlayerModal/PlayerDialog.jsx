@@ -74,7 +74,7 @@ function PlayerDialog(props) {
                 }
             </DialogContent>
             <DialogActions>
-                <Button onClick={onDialogClose} color="primary">
+                <Button onClick={handleDialogClose} color="primary">
                     Close
                 </Button>
             </DialogActions>
