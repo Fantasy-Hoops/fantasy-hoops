@@ -132,15 +132,15 @@ function Main() {
                     />
                 </div>
                 <div className="Main__PlayNowButton">
-                    <Button
-                        id="PlayNowBtn"
-                        className={classes.button}
-                        color="primary"
-                        component={Link}
-                        to={Routes.LINEUP}
-                    >
-                        Play Now!
-                    </Button>
+                    <Link to={Routes.LINEUP}>
+                        <Button
+                            id="PlayNowBtn"
+                            className={classes.button}
+                            color="primary"
+                        >
+                            Play Now
+                        </Button>
+                    </Link>
                 </div>
                 {topPlayers}
             </div>

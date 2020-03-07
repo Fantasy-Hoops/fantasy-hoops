@@ -28,18 +28,18 @@ import TopLeaderboardLoader from "../Loader/TopLeaderboardLoader";
 import {UserScore} from "../Profile/UserScore";
 
 const googleAd = (
-  <>
-      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-      <ins className="adsbygoogle"
-           style={{display: "block"}}
-           data-ad-client="ca-pub-6391166063453559"
-           data-ad-slot="3271809564"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
-  </>    
+    <>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins className="adsbygoogle"
+             style={{display: "block"}}
+             data-ad-client="ca-pub-6391166063453559"
+             data-ad-slot="3271809564"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </>
 );
 
 function Leaderboards(props) {
@@ -83,7 +83,7 @@ function Leaderboards(props) {
                 .then(response => setMostSelectedPlayers(response.data))
                 .catch(err => console.error(err.message))
         }
-        
+
         async function handleGetBestLineups() {
             await getBestLineups({limit: 3})
                 .then(response => setBestLineups(response.data))
@@ -179,15 +179,15 @@ function Leaderboards(props) {
                 <article className="Content--left">
                     <h2 className="Content__Title">{Intro.USERS_TITLE}</h2>
                     <p className="Content__Subtitle">{Intro.USERS_SUBTITLE}</p>
-                    <Button
-                        className={clsx(classes.button, classes.buttonLeft)}
-                        variant="contained"
-                        color="secondary"
-                        component={Link}
-                        to={Routes.LEADERBOARD_USERS}
-                    >
-                        {Intro.USERS_BUTTON_TITLE}
-                    </Button>
+                    <Link to={Routes.LEADERBOARD_USERS}>
+                        <Button
+                            className={clsx(classes.button, classes.buttonLeft)}
+                            variant="contained"
+                            color="secondary"
+                        >
+                            {Intro.USERS_BUTTON_TITLE}
+                        </Button>
+                    </Link>
                 </article>
                 <article className="Content--right">
                     {weeklyUsers
@@ -208,15 +208,16 @@ function Leaderboards(props) {
                 <article className="Content--right">
                     <h2 className="Content__Title">{Intro.PLAYERS_TITLE}</h2>
                     <p className="Content__Subtitle">{Intro.PLAYERS_SUBTITLE}</p>
-                    <Button
-                        className={`${classes.button} ${classes.buttonRight}`}
-                        variant="contained"
-                        color="secondary"
-                        component={Link}
-                        to={Routes.LEADERBOARD_PLAYERS}
-                    >
-                        {Intro.PLAYERS_BUTTON_TITLE}
-                    </Button>
+                    <Link
+                        to={Routes.LEADERBOARD_PLAYERS}>
+                        <Button
+                            className={`${classes.button} ${classes.buttonRight}`}
+                            variant="contained"
+                            color="secondary"
+                        >
+                            {Intro.PLAYERS_BUTTON_TITLE}
+                        </Button>
+                    </Link>
                 </article>
             </section>
             <section className="Content__Container">
@@ -252,30 +253,30 @@ function Leaderboards(props) {
                 <article className="Content--right">
                     <h2 className="Content__Title">{Intro.SEASON_TITLE}</h2>
                     <p className="Content__Subtitle">{Intro.SEASON_SUBTITLE}</p>
-                    <Button
-                        className={`${classes.button} ${classes.buttonRight}`}
-                        variant="contained"
-                        color="secondary"
-                        component={Link}
-                        to={Routes.LEADERBOARD_SEASON}
-                    >
-                        {Intro.SEASON_BUTTON_TITLE}
-                    </Button>
+                    <Link to={Routes.LEADERBOARD_SEASON}>
+                        <Button
+                            className={`${classes.button} ${classes.buttonRight}`}
+                            variant="contained"
+                            color="secondary"
+                        >
+                            {Intro.SEASON_BUTTON_TITLE}
+                        </Button>
+                    </Link>
                 </article>
             </section>
             <section className="Content__Container">
                 <article className="Content--left">
                     <h2 className="Content__Title">{Intro.SELECTED_TITLE}</h2>
                     <p className="Content__Subtitle">{Intro.SELECTED_SUBTITLE}</p>
-                    <Button
-                        className={`${classes.button} ${classes.buttonLeft}`}
-                        variant="contained"
-                        color="secondary"
-                        component={Link}
-                        to={Routes.LEADERBOARD_SELECTED}
-                    >
-                        {Intro.SELECTED_BUTTON_TITLE}
-                    </Button>
+                    <Link to={Routes.LEADERBOARD_SELECTED}>
+                        <Button
+                            className={`${classes.button} ${classes.buttonLeft}`}
+                            variant="contained"
+                            color="secondary"
+                        >
+                            {Intro.SELECTED_BUTTON_TITLE}
+                        </Button>
+                    </Link>
                 </article>
                 <article className="Content--right">
                     {mostSelectedPlayers
