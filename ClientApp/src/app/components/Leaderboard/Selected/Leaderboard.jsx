@@ -9,6 +9,8 @@ import {getSelectedPlayersLeaderboard, getPlayerStats} from '../../../utils/netw
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../../../utils/helpers";
 import {Container} from "@material-ui/core";
+import InfoDialog from "../../Lineup/InfoDialog";
+import PlayerDialog from "../../PlayerModal/PlayerDialog";
 
 const {$} = window;
 const LOAD_COUNT = 30;
@@ -25,6 +27,8 @@ export default class Leaderboard extends Component {
         super(props);
         this.showModal = this.showModal.bind(this);
         this.loadMore = this.loadMore.bind(this);
+        this.handlePlayerDialogOpen = this.handlePlayerDialogOpen.bind(this);
+        this.handlePlayerDialogClose = this.handlePlayerDialogClose.bind(this);
 
         this.state = {
             players: [],
@@ -32,18 +36,12 @@ export default class Leaderboard extends Component {
             modalLoader: true,
             renderChild: true,
             loader: true,
-            showButton: false
+            showButton: false,
+            playerDialogOpen: false
         };
     }
 
     async componentDidMount() {
-        $('#playerModal').on('hidden.bs.modal', () => {
-            this.setState({
-                modalLoader: true,
-                renderChild: false
-            });
-        });
-
         await getSelectedPlayersLeaderboard({limit: LOAD_COUNT})
             .then((res) => {
                 this.state.showButton = res.data.length === LOAD_COUNT;
@@ -61,8 +59,21 @@ export default class Leaderboard extends Component {
         });
     }
 
+    handlePlayerDialogOpen() {
+        this.setState({
+            playerDialogOpen: true
+        })
+    }
+
+    handlePlayerDialogClose() {
+        this.setState({
+            playerDialogOpen: false
+        })
+    }
+
     async showModal(player) {
         this.setState({modalLoader: true});
+        this.handlePlayerDialogOpen();
         await getPlayerStats(player.nbaId)
             .then((res) => {
                 this.setState({
@@ -146,10 +157,13 @@ export default class Leaderboard extends Component {
                         </div>
                     </div>
                 </div>
-                <PlayerModal
-                    renderChild={renderChild}
-                    loader={modalLoader}
-                    stats={stats}
+                <PlayerDialog
+                    renderChild={this.state.renderChild}
+                    loader={this.state.modalLoader}
+                    stats={this.state.stats}
+                    open={this.state.playerDialogOpen}
+                    onDialogOpen={this.handlePlayerDialogOpen}
+                    onDialogClose={this.handlePlayerDialogClose}
                 />
             </>
         );

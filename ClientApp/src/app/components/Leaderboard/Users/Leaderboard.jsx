@@ -17,6 +17,7 @@ import enLocale from "date-fns/locale/en-GB";
 import { Container } from "@material-ui/core";
 import { Helmet } from "react-helmet";
 import { Canonicals, Meta } from "../../../utils/helpers";
+import PlayerDialog from "../../PlayerModal/PlayerDialog";
 
 const LEADERBOARD_SUPPORT_START_DATE = '2019-02-24';
 const loggedInUser = parse();
@@ -64,6 +65,7 @@ function Leaderboard(props) {
     const [week, setWeek] = useState(new Date());
     const [weekNumber, setWeekNumber] = useState(getWeek(new Date()));
     const [dateFormat, setDateFormat] = useState(null);
+    const [playerDialogOpen, setPlayerDialogOpen] = useState(false);
 
 
     const activeType = friendsOnly ? `${activeTab}Friends` : activeTab;
@@ -73,11 +75,6 @@ function Leaderboard(props) {
     const seeMoreButton = seeMoreBtn(activeType);
 
     useEffect(() => {
-        $('#playerModal').on('hidden.bs.modal', () => {
-            setModalLoader(true);
-            setRenderChild(false);
-        });
-
         async function handleGetUsersLeaderboard() {
             await getUsersLeaderboard({ type: 'daily', date: '' })
                 .then((res) => {
@@ -208,7 +205,16 @@ function Leaderboard(props) {
             <button type="button" className="btn btn-primary mt-2" onClick={loadMore}>See more</button> : '';
     }
 
+    function handlePlayerDialogOpen() {
+        setPlayerDialogOpen(true);
+    }
+
+    function handlePlayerDialogClose() {
+        setPlayerDialogOpen(false);
+    }
+
     async function showModal(nbaID) {
+        handlePlayerDialogOpen();
         await getPlayerStats(nbaID)
             .then((res) => {
                 setStats(res.data);
@@ -342,10 +348,13 @@ function Leaderboard(props) {
                     </div>
                 </div>
             </div>
-            <PlayerModal
+            <PlayerDialog
                 renderChild={renderChild}
                 loader={modalLoader}
                 stats={stats}
+                open={playerDialogOpen}
+                onDialogOpen={handlePlayerDialogOpen}
+                onDialogClose={handlePlayerDialogClose}
             />
         </>
     );

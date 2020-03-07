@@ -10,6 +10,7 @@ import {getPlayersLeaderboard, getPlayerStats} from '../../../utils/networkFunct
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../../../utils/helpers";
 import {Container} from "@material-ui/core";
+import PlayerDialog from "../../PlayerModal/PlayerDialog";
 
 const {$} = window;
 const LOAD_COUNT = 30;
@@ -27,6 +28,8 @@ export default class Leaderboard extends Component {
         this.showModal = this.showModal.bind(this);
         this.switchTab = this.switchTab.bind(this);
         this.loadMore = this.loadMore.bind(this);
+        this.handlePlayerDialogOpen = this.handlePlayerDialogOpen.bind(this);
+        this.handlePlayerDialogClose = this.handlePlayerDialogClose.bind(this);
 
         this.state = {
             activeTab: 'daily',
@@ -41,18 +44,12 @@ export default class Leaderboard extends Component {
                 daily: false,
                 weekly: false,
                 monthly: false
-            }
+            },
+            playerDialogOpen: false
         };
     }
 
     async componentDidMount() {
-        $('#playerModal').on('hidden.bs.modal', () => {
-            this.setState({
-                modalLoader: true,
-                renderChild: false
-            });
-        });
-
         await getPlayersLeaderboard({type: 'daily'})
             .then((res) => {
                 this.state.showButton.daily = res.data.length === LOAD_COUNT;
@@ -71,8 +68,21 @@ export default class Leaderboard extends Component {
         });
     }
 
+    handlePlayerDialogOpen() {
+        this.setState({
+            playerDialogOpen: true
+        })
+    }
+
+    handlePlayerDialogClose() {
+        this.setState({
+            playerDialogOpen: false
+        })
+    }
+
     async showModal(nbaID) {
         this.setState({modalLoader: true});
+        this.handlePlayerDialogOpen();
         await getPlayerStats(nbaID)
             .then((res) => {
                 this.setState({
@@ -211,10 +221,13 @@ export default class Leaderboard extends Component {
                         </div>
                     </div>
                 </div>
-                <PlayerModal
+                <PlayerDialog
                     renderChild={this.state.renderChild}
                     loader={this.state.modalLoader}
                     stats={this.state.stats}
+                    open={this.state.playerDialogOpen}
+                    onDialogOpen={this.handlePlayerDialogOpen}
+                    onDialogClose={this.handlePlayerDialogClose}
                 />
             </>
         );

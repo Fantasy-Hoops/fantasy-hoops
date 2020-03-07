@@ -15,6 +15,7 @@ import {
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../../../utils/helpers";
 import {Container} from "@material-ui/core";
+import PlayerDialog from "../../PlayerModal/PlayerDialog";
 
 const {$} = window;
 
@@ -28,7 +29,8 @@ export class Leaderboard extends PureComponent {
             loader: true,
             stats: '',
             modalLoader: true,
-            renderChild: false
+            renderChild: false,
+            playerDialogOpen: false
         };
         this.showModal = this.showModal.bind(this);
         this.loadLineups = this.loadLineups.bind(this);
@@ -36,15 +38,11 @@ export class Leaderboard extends PureComponent {
         this.switchTab = this.switchTab.bind(this);
         this.onLineupsDateChange = this.onLineupsDateChange.bind(this);
         this.onPlayersDateChange = this.onPlayersDateChange.bind(this);
+        this.handlePlayerDialogOpen = this.handlePlayerDialogOpen.bind(this);
+        this.handlePlayerDialogClose = this.handlePlayerDialogClose.bind(this);
     }
 
     async componentDidMount() {
-        $('#playerModal').on('hidden.bs.modal', () => {
-            this.setState({
-                modalLoader: true,
-                renderChild: false
-            });
-        });
         await getSeasonLineupsLeaderboard()
             .then((res) => {
                 this.setState({
@@ -114,8 +112,21 @@ export class Leaderboard extends PureComponent {
         }
     }
 
+    handlePlayerDialogOpen() {
+        this.setState({
+            playerDialogOpen: true
+        })
+    }
+
+    handlePlayerDialogClose() {
+        this.setState({
+            playerDialogOpen: false
+        })
+    }
+
     async showModal(nbaID) {
         this.setState({modalLoader: true});
+        this.handlePlayerDialogOpen();
         await getPlayerStats(nbaID)
             .then((res) => {
                 this.setState({
@@ -239,10 +250,13 @@ export class Leaderboard extends PureComponent {
                         </div>
                     </div>
                 </div>
-                <PlayerModal
+                <PlayerDialog
                     renderChild={renderChild}
                     loader={modalLoader}
                     stats={stats}
+                    open={this.state.playerDialogOpen}
+                    onDialogOpen={this.handlePlayerDialogOpen}
+                    onDialogClose={this.handlePlayerDialogClose}
                 />
             </>
         );

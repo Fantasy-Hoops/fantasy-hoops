@@ -15,6 +15,7 @@ import {Canonicals, Meta} from "../../utils/helpers";
 import {Container} from "@material-ui/core";
 import InfoDialog from "./InfoDialog";
 import moment from "moment";
+import PlayerDialog from "../PlayerModal/PlayerDialog";
 
 const {$} = window;
 const budget = 300; // thousands
@@ -29,6 +30,8 @@ export class Lineup extends Component {
         this.showModal = this.showModal.bind(this);
         this.handleDialogOpen = this.handleDialogOpen.bind(this);
         this.handleDialogClose = this.handleDialogClose.bind(this);
+        this.handlePlayerDialogOpen = this.handlePlayerDialogOpen.bind(this);
+        this.handlePlayerDialogClose = this.handlePlayerDialogClose.bind(this);
 
         this.state = {
             position: '',
@@ -49,19 +52,11 @@ export class Lineup extends Component {
             modalLoader: true,
             poolLoader: true,
             renderChild: true,
-            infoDialogOpen: false
+            infoDialogOpen: false,
+            playerDialogOpen: false
         };
     }
 
-    setModal() {
-        $('#playerModal').on('hidden.bs.modal', () => {
-            this.setState({
-                modalLoader: true,
-                renderChild: false
-            });
-        });
-    }
-    
     handleDialogOpen() {
         this.setState({
             infoDialogOpen: true
@@ -71,6 +66,18 @@ export class Lineup extends Component {
     handleDialogClose() {
         this.setState({
             infoDialogOpen: false
+        })
+    }
+
+    handlePlayerDialogOpen() {
+        this.setState({
+            playerDialogOpen: true
+        })
+    }
+
+    handlePlayerDialogClose() {
+        this.setState({
+            playerDialogOpen: false
         })
     }
 
@@ -92,7 +99,6 @@ export class Lineup extends Component {
                         poolLoader: false
                     });
                 }
-                this.setModal();
             });
 
         if (!this.state.isGame) return;
@@ -298,13 +304,19 @@ export class Lineup extends Component {
                 </div>
                 {this.state.playerLoader ? <div className="Loader"/> : null}
                 {playerPool()}
-                <PlayerModal
+                <InfoDialog
+                    open={this.state.infoDialogOpen}
+                    onDialogOpen={this.handleDialogOpen}
+                    onDialogClose={this.handleDialogClose}
+                />
+                <PlayerDialog
                     renderChild={this.state.renderChild}
                     loader={this.state.modalLoader}
                     stats={this.state.stats}
+                    open={this.state.playerDialogOpen}
+                    onDialogOpen={this.handlePlayerDialogOpen}
+                    onDialogClose={this.handlePlayerDialogClose}
                 />
-                <InfoDialog open={this.state.infoDialogOpen} onDialogOpen={this.handleDialogOpen}
-                            onDialogClose={this.handleDialogClose}/>
             </>
         );
     }
@@ -337,6 +349,7 @@ export class Lineup extends Component {
 
     async showModal(player) {
         this.setState({modalLoader: true});
+        this.handlePlayerDialogOpen();
         await getPlayerStats(player.id)
             .then((res) => {
                 this.setState({

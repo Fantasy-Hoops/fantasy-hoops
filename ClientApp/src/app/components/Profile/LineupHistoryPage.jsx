@@ -8,6 +8,7 @@ import {getPlayerStats, getRecentLineups} from '../../utils/networkFunctions';
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../../utils/helpers";
 import Container from "@material-ui/core/Container";
+import PlayerDialog from "../PlayerModal/PlayerDialog";
 
 const {$} = window;
 const user = parse();
@@ -18,6 +19,8 @@ export class LineupHistory extends Component {
         super(props);
         this.loadMore = this.loadMore.bind(this);
         this.showModal = this.showModal.bind(this);
+        this.handlePlayerDialogOpen = this.handlePlayerDialogOpen.bind(this);
+        this.handlePlayerDialogClose = this.handlePlayerDialogClose.bind(this);
 
         this.state = {
             stats: '',
@@ -25,17 +28,9 @@ export class LineupHistory extends Component {
             user,
             recentActivity: [],
             loader: true,
-            modalLoader: true
+            modalLoader: true,
+            playerDialogOpen: false
         };
-    }
-
-    setModal() {
-        $('#playerModal').on('hidden.bs.modal', () => {
-            this.setState({
-                modalLoader: true,
-                renderChild: false
-            });
-        });
     }
 
     async componentDidMount() {
@@ -49,9 +44,22 @@ export class LineupHistory extends Component {
             });
     }
 
-    async showModal(player) {
+    handlePlayerDialogOpen() {
+        this.setState({
+            playerDialogOpen: true
+        })
+    }
+
+    handlePlayerDialogClose() {
+        this.setState({
+            playerDialogOpen: false
+        })
+    }
+
+    async showModal(playerId) {
         this.setState({modalLoader: true});
-        await getPlayerStats(player.nbaId)
+        this.handlePlayerDialogOpen();
+        await getPlayerStats(playerId)
             .then((res) => {
                 this.setState({
                     stats: res.data,
@@ -113,10 +121,13 @@ export class LineupHistory extends Component {
                 <div className="text-center">
                     {!this.state.loader ? btn : ''}
                 </div>
-                <PlayerModal
+                <PlayerDialog
                     renderChild={this.state.renderChild}
                     loader={this.state.modalLoader}
                     stats={this.state.stats}
+                    open={this.state.playerDialogOpen}
+                    onDialogOpen={this.handlePlayerDialogOpen}
+                    onDialogClose={this.handlePlayerDialogClose}
                 />
             </>
         );
