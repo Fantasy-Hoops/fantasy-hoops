@@ -12,6 +12,7 @@ namespace fantasy_hoops.Repositories.Interfaces
         object GetProfile(string id, int start = 0, int count = 0);
         User GetUser(string id);
         User GetUserByName(string username);
+        User GetUserByEmail(string email);
         IQueryable<Object> GetFriends(string id);
         IQueryable<Object> GetUserPool();
         bool UserExists(string username);

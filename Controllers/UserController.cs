@@ -61,6 +61,13 @@ namespace fantasy_hoops.Controllers
             if (token == null)
                 return Unauthorized("Unable to provide access token.");
 
+            User user = _userRepository.GetUserByEmail(email);
+            if (user == null)
+            {
+                return UnprocessableEntity("Unable to find registered user.");
+            }
+            _achievementsService.AssignAchievements(user.UserName);
+            
             return Ok(token);
         }
 

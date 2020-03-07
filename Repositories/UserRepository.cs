@@ -65,6 +65,12 @@ namespace fantasy_hoops.Repositories
                 .FirstOrDefault(x => x.UserName.ToLower().Equals(username.ToLower()));
         }
 
+        public User GetUserByEmail(string email)
+        {
+            return _context.Users
+                .FirstOrDefault(user => user.Email.ToLower().Equals(email.ToLower()));
+        }
+
         public IQueryable<object> Roles(string id)
         {
             return _context.UserRoles
