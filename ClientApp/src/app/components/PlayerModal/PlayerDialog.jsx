@@ -36,6 +36,7 @@ function PlayerDialog(props) {
             onClose={handleDialogClose}
             aria-labelledby="player-dialog"
             open={open || false}
+            PaperProps={{ classes: {root: classes.root } }}
         >
             <DialogContent className={classes.content} dividers>
                 {

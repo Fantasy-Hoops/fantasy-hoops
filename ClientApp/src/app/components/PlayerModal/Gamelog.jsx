@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import shortid from 'shortid';
 import moment from 'moment';
 import {getPlayerStats} from '../../utils/networkFunctions';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import IconButton from "@material-ui/core/IconButton";
 
 const LOAD_COUNT = 10;
 
@@ -114,7 +116,11 @@ export default class Gamelog extends Component {
     render() {
         const btn = (!(this.state.loadCounter * LOAD_COUNT + 10 > this.state.games.length)
             && !this.state.loader)
-            ? <button type="button" className="btn btn-primary float-left mt-2" onClick={this.loadMore}>See more</button>
+            ? (
+                <IconButton type="button" classes={{root: "GameLog__SeeMoreButton"}} onClick={this.loadMore}>
+                    See more <ExpandMoreIcon/>
+                </IconButton>
+            )
             : this.state.loader ? <div className="Loader"/> : null;
         return (
             <div>
