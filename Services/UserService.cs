@@ -215,7 +215,7 @@ namespace fantasy_hoops.Services
                         Avatar = await CommonFunctions.GetImageAsBase64Url(imageURL.Value)
                     });
                 }
-                // await SendRegisterNotification(username);
+                await SendRegisterNotification(username);
             }
 
             return result.Succeeded;
