@@ -16,7 +16,7 @@ namespace fantasy_hoops.Services.Interfaces
         Task<string> RequestTokenById(string id);
         Task<string> RequestTokenByEmail(string id);
         Task<bool> UpdateProfile(EditProfileViewModel model);
-        bool UploadAvatar(AvatarViewModel model);
+        Task<bool> UploadAvatar(AvatarViewModel model);
         bool ClearAvatar(AvatarViewModel model);
         Task<bool> DeleteProfile(ClaimsPrincipal user);
 

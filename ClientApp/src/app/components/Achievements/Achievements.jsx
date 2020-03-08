@@ -5,17 +5,14 @@ import AchievementCard from "./AchievementCard";
 import AchievementDialog from "./AchievementDialog";
 
 import './Achievements.css';
-import {isAuth, parse} from "../../utils/auth";
-import {Helmet} from "react-helmet";
-import {Intro} from "./utils";
-import {Canonicals} from "../../utils/helpers";
+import {isAuth} from "../../utils/auth";
 
 function Achievements(props) {
-    const user = isAuth();
+    const isLoggedIn = isAuth();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogAchievement, setDialogAchievement] = useState(null);
     const [achievements, setAchievements] = useState([]);
-    const {readOnly} = props;
+    const {user, readOnly} = props;
 
 
     useEffect(() => {
@@ -31,7 +28,7 @@ function Achievements(props) {
                 .catch(err => console.error(err.message));
         }
 
-        if (user) {
+        if (isLoggedIn) {
             handleGetUserAchievements();
         } else {
             handleGetExistingAchievements();
@@ -62,7 +59,7 @@ function Achievements(props) {
                     levelUpGoal: ach.levelUpGoal,
                     isAchieved: ach.isAchieved
                 };
-                return <AchievementCard className={readOnly && 'no-pointer-events'} readOnly={!user} key={key}
+                return <AchievementCard isLoggedIn={isLoggedIn} readOnly={readOnly} key={key}
                                         achievement={achievement}
                                         onDialogOpen={handleDialogOpen}/>
             }
@@ -74,7 +71,7 @@ function Achievements(props) {
             <div className="Achievements">
                 {parseExistingAchievements()}
                 {dialogOpen && dialogAchievement ?
-                    <AchievementDialog open={dialogOpen} readOnly={!user} handleClose={handleDialogClose}
+                    <AchievementDialog open={dialogOpen} readOnly={readOnly} handleClose={handleDialogClose}
                                        achievement={dialogAchievement}/> : null}
             </div>
         </div>

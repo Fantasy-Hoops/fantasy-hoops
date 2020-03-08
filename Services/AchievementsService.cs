@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
@@ -21,7 +22,7 @@ namespace fantasy_hoops.Services
             _achievementsRepository = achievementsRepository;
         }
         
-        public async void AssignAchievements(string userName)
+        public async Task AssignAchievements(string userName)
         {
             User user = await _userManager.FindByNameAsync(userName);
             _achievementsRepository.GetExistingAchievements().ToList()

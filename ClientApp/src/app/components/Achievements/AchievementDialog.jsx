@@ -8,7 +8,7 @@ import './AchievementDialog.css';
 import {useStyles} from "./AchievementDialogStyle";
 
 function AchievementDialog(props) {
-    const {achievement, handleClose, open, readOnly} = props;
+    const {achievement, handleClose, open, isLoggedIn, readOnly} = props;
     const progressBarValue = achievement.progress / achievement.levelUpGoal * 100;
     const classes = useStyles();
 
@@ -51,7 +51,7 @@ function AchievementDialog(props) {
                 <h2 className="AchievementDialog__Title">{achievement.title}</h2>
                 {description}
                 {
-                    !readOnly &&
+                    isLoggedIn &&
                     <>
                         <p className="AchievementDialog__Level">
                             LEVEL {achievement.level}

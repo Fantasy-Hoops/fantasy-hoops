@@ -12,7 +12,7 @@ import './AchievementCard.css';
  */
 function AchievementCard(props) {
     const classes = useStyles();
-    const {achievement, onDialogOpen, className, readOnly} = props;
+    const {achievement, onDialogOpen, className, isLoggedIn, readOnly} = props;
 
     const handleDialogOpen = achievement => {
         onDialogOpen(achievement);
@@ -25,7 +25,7 @@ function AchievementCard(props) {
     const isSingleLevel = achievement.type === 0;
 
     const checkColor = () => {
-        if (readOnly) {
+        if (!isLoggedIn) {
             return false;
         }
 
@@ -51,7 +51,7 @@ function AchievementCard(props) {
                     </div>
                 </div>
                 {
-                    !readOnly &&
+                    isLoggedIn &&
                     <>
                         <Typography className="AchievementCard__Level" variant="body2" component="p">
                             LEVEL {achievement.level}

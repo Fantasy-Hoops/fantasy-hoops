@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Services;
 using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
@@ -49,6 +50,7 @@ namespace fantasy_hoops.Controllers
             if(!emailExists)
             {
                 await _userService.GoogleRegister(User);
+                await _achievementsService.AssignAchievements(CommonFunctions.GetUsernameFromEmail(email));
             }
 
             bool success = await _userService.GoogleLogin(User);
@@ -174,7 +176,7 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpPost("uploadAvatar")]
-        public IActionResult UploadAvatar([FromBody]AvatarViewModel model)
+        public async Task<IActionResult> UploadAvatar([FromBody]AvatarViewModel model)
         {
             if (model.Avatar == null || model.Avatar.Length < 15)
                 return StatusCode(400, "Please select a file!");
@@ -186,7 +188,7 @@ namespace fantasy_hoops.Controllers
             if (!(fileType.Equals("png") || fileType.Equals("jpg")))
                 return StatusCode(415, "Only .png and .jpg extensions are allowed!");
 
-            if(!_userService.UploadAvatar(model))
+            if(!await _userService.UploadAvatar(model))
                 return StatusCode(500, "Avatar cannot be uploaded!");
 
             return Ok(_userService.RequestTokenById(model.Id));

@@ -150,6 +150,11 @@ namespace fantasy_hoops.Helpers
 	        return "image/jpeg;base64,     " + Convert.ToBase64String(bytes);
         }
         
-        
+        public static string GetUsernameFromEmail(string email)
+        {
+	        int atIndex = email.IndexOf('@');
+	        string username = email.Substring(0, atIndex);
+	        return username;
+        }
     }
 }

@@ -26,16 +26,14 @@ namespace fantasy_hoops.Services
         private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly IAchievementsService _achievementsService;
 
-        public UserService(IConfiguration configuration, IPushService pushService, IUserRepository userRepository, UserManager<User> userManager, SignInManager<User> signInManager, IAchievementsService achievementsService)
+        public UserService(IConfiguration configuration, IPushService pushService, IUserRepository userRepository, UserManager<User> userManager, SignInManager<User> signInManager)
         {
             Configuration = configuration;
             _pushService = pushService;
             _userRepository = userRepository;
             _userManager = userManager;
             _signInManager = signInManager;
-            _achievementsService = achievementsService;
         }
 
         public async Task<bool> Login(LoginViewModel model)
@@ -134,13 +132,13 @@ namespace fantasy_hoops.Services
             return true;
         }
 
-        public bool UploadAvatar(AvatarViewModel model)
+        public async Task<bool> UploadAvatar(AvatarViewModel model)
         {
             string avatarDir = @"./ClientApp/build/content/images/avatars";
             if (!Directory.Exists(avatarDir))
                 Directory.CreateDirectory(avatarDir);
 
-            User user = _userManager.FindByIdAsync(model.Id).Result;
+            User user = await _userManager.FindByIdAsync(model.Id);
             string oldFilePath = avatarDir + "/" + user.AvatarURL + ".png";
 
             if (user.AvatarURL != null && File.Exists(oldFilePath))
@@ -149,7 +147,7 @@ namespace fantasy_hoops.Services
             string avatarId = Guid.NewGuid().ToString();
             string newFilePath = avatarDir + "/" + avatarId + ".png";
             user.AvatarURL = avatarId;
-            _userManager.UpdateAsync(user).Wait();
+            await _userManager.UpdateAsync(user);
 
             model.Avatar = model.Avatar.Substring(22);
             try
@@ -196,8 +194,8 @@ namespace fantasy_hoops.Services
         public async Task<bool> GoogleRegister(ClaimsPrincipal user)
         {
             string email = GetEmail(user);
-            string username = GetUsernameFromEmail(email);
-            Claim imageURL = user.Claims.Where(c => c.Type == "picture").FirstOrDefault();
+            string username = CommonFunctions.GetUsernameFromEmail(email);
+            Claim imageURL = user.Claims.FirstOrDefault(c => c.Type == "picture");
             var newUser = new User
             {
                 UserName = username,
@@ -211,13 +209,12 @@ namespace fantasy_hoops.Services
             {
                 if(imageURL != null)
                 {
-                    UploadAvatar(new AvatarViewModel
+                    await UploadAvatar(new AvatarViewModel
                     {
                         Id = newUser.Id,
                         Avatar = await CommonFunctions.GetImageAsBase64Url(imageURL.Value)
                     });
                 }
-                _achievementsService.AssignAchievements(username);
                 // await SendRegisterNotification(username);
             }
 
@@ -243,13 +240,6 @@ namespace fantasy_hoops.Services
             List<Claim> claims = user.Claims.ToList();
             string email = claims[4].Value;
             return email;
-        }
-
-        private string GetUsernameFromEmail(string email)
-        {
-            int atIndex = email.IndexOf('@');
-            string username = email.Substring(0, atIndex);
-            return username;
         }
 
         private async Task SendRegisterNotification(string username)
