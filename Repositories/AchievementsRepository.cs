@@ -18,9 +18,20 @@ namespace fantasy_hoops.Repositories
             _context = new GameContext();
         }
         
-        public List<Achievement> GetExistingAchievements()
+        public List<AchievementDto> GetExistingAchievements()
         {
             return _context.Achievements
+                .Select(achievement => new AchievementDto
+                {
+                    Id = achievement.Id,
+                    Type = achievement.Type,
+                    Title = achievement.Title,
+                    Description = achievement.Description
+                        .Replace("{}", achievement.GoalBase.ToString()),
+                    CompletedMessage = achievement.CompletedMessage,
+                    Icon = achievement.Icon,
+                    GoalBase = achievement.GoalBase
+                })
                 .ToList();
         }
 

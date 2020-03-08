@@ -21,7 +21,7 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet]
-        public List<Achievement> GetExistingAchievements()
+        public List<AchievementDto> GetExistingAchievements()
         {
             return _achievementsRepository.GetExistingAchievements();
         }

@@ -8,6 +8,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import React from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import {isAuth} from "../../utils/auth";
+import {Route} from "../../utils/locationSlug";
 
 const useStyles = makeStyles(theme => ({
     listItemText: {
@@ -20,7 +21,8 @@ function MobileDrawer(props) {
     const classes = useStyles();
     return (
         <div>
-            <Link id="NavbarLogo" className={`navbar-brand btn-no-outline`} to={Routes.MAIN}  onClick={() => handleDrawerClose()}>
+            <Link id="NavbarLogo" className={`navbar-brand btn-no-outline`} to={Routes.MAIN}
+                  onClick={() => handleDrawerClose()}>
                 <img className="Navbar__Icon" src={require('../../../content/images/logo.png')} width="35" height="35"
                      alt="FH"/>
                 <img className="Navbar__Title ml-2 mt-2" src={require('../../../content/images/title.png')} height="30"
@@ -29,46 +31,57 @@ function MobileDrawer(props) {
             <Divider/>
             <List>
                 {isAuth()
-                    && <ListItem button component={Link} to={Routes.LINEUP} onClick={() => handleDrawerClose()}
-                                selected={selectedTab === 0}>
-                        <ListItemIcon>
-                            <img
-                                width="40" height="40"
-                                src={require('../../../content/icons/2330831-basketball/svg/008-tactic.svg')}
-                                alt=""
-                            />
-                        </ListItemIcon>
-                        <ListItemText classes={{primary: classes.listItemText}} className={classes.listItemText}
-                                      primary="Lineup"/>
-                    </ListItem>}
-                <ListItem button component={Link} to={Routes.LEADERBOARDS} onClick={() => handleDrawerClose()}
-                          selected={selectedTab === 1}>
+                && <ListItem button component={Link} to={Routes.LINEUP} onClick={() => handleDrawerClose()}
+                             selected={selectedTab === Route.lineup}>
                     <ListItemIcon>
                         <img
                             width="40" height="40"
-                            src={require('../../../content/icons/2330831-basketball/svg/025-podium.svg')}
+                            src={require('../../../content/icons/navigation/lineup.svg')}
+                            alt=""
+                        />
+                    </ListItemIcon>
+                    <ListItemText classes={{primary: classes.listItemText}} className={classes.listItemText}
+                                  primary="Lineup"/>
+                </ListItem>}
+                <ListItem button component={Link} to={Routes.LEADERBOARDS} onClick={() => handleDrawerClose()}
+                          selected={selectedTab === Route.leaderboard}>
+                    <ListItemIcon>
+                        <img
+                            width="40" height="40"
+                            src={require('../../../content/icons/navigation/leaderboards.svg')}
                             alt=""
                         />
                     </ListItemIcon>
                     <ListItemText classes={{primary: classes.listItemText}} primary="Leaderboards"/>
                 </ListItem>
-                <ListItem button component={Link} to={Routes.INJURIES} onClick={() => handleDrawerClose()}
-                          selected={selectedTab === 2}>
+                <ListItem button component={Link} to={Routes.ACHIEVEMENTS} onClick={() => handleDrawerClose()}
+                          selected={selectedTab === Route.achievements}>
                     <ListItemIcon>
                         <img
                             width="40" height="40"
-                            src={require('../../../content/icons/2330831-basketball/svg/013-first aid kit.svg')}
+                            src={require('../../../content/icons/navigation/achievements.svg')}
+                            alt=""
+                        />
+                    </ListItemIcon>
+                    <ListItemText classes={{primary: classes.listItemText}} primary="Achievements"/>
+                </ListItem>
+                <ListItem button component={Link} to={Routes.INJURIES} onClick={() => handleDrawerClose()}
+                          selected={selectedTab === Route.injuries}>
+                    <ListItemIcon>
+                        <img
+                            width="40" height="40"
+                            src={require('../../../content/icons/navigation/injuries.svg')}
                             alt=""
                         />
                     </ListItemIcon>
                     <ListItemText classes={{primary: classes.listItemText}} primary="Injuries"/>
                 </ListItem>
                 <ListItem button component={Link} to={Routes.NEWS} onClick={() => handleDrawerClose()}
-                          selected={selectedTab === 3}>
+                          selected={selectedTab === Route.news}>
                     <ListItemIcon>
                         <img
                             width="40" height="40"
-                            src={require('../../../content/icons/2330831-basketball/svg/019-live streaming.svg')}
+                            src={require('../../../content/icons/navigation/news.svg')}
                             alt=""
                         />
                     </ListItemIcon>
@@ -78,19 +91,19 @@ function MobileDrawer(props) {
             <Divider/>
             <List>
                 {isAuth()
-                    && <ListItem button component={Link} to={Routes.USER_POOL} onClick={() => handleDrawerClose()}
-                                selected={selectedTab === 4}>
-                        <ListItemIcon>
-                            <img width="40" height="40"
-                                 src={require('../../../content/icons/2330831-basketball/svg/024-player.svg')}
-                                 alt=""/>
-                        </ListItemIcon>
-                        <ListItemText classes={{primary: classes.listItemText}} primary="Users"/>
-                    </ListItem>}
-                <ListItem button component={Link} to={Routes.BLOG} onClick={() => handleDrawerClose()}
-                          selected={selectedTab === 5}>
+                && <ListItem button component={Link} to={Routes.USER_POOL} onClick={() => handleDrawerClose()}
+                             selected={selectedTab === Route.users}>
                     <ListItemIcon>
-                        <img width="35" height="35" src={require('../../../content/icons/pencil.svg')} alt=""/>
+                        <img width="40" height="40"
+                             src={require('../../../content/icons/navigation/users.svg')}
+                             alt=""/>
+                    </ListItemIcon>
+                    <ListItemText classes={{primary: classes.listItemText}} primary="Users"/>
+                </ListItem>}
+                <ListItem button component={Link} to={Routes.BLOG} onClick={() => handleDrawerClose()}
+                          selected={selectedTab === Route.blog}>
+                    <ListItemIcon>
+                        <img width="35" height="35" src={require('../../../content/icons/navigation/blog.svg')} alt=""/>
                     </ListItemIcon>
                     <ListItemText classes={{primary: classes.listItemText}} primary="Blog"/>
                 </ListItem>

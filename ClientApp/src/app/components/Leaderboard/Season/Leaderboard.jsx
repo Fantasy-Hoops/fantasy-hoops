@@ -250,14 +250,17 @@ export class Leaderboard extends PureComponent {
                         </div>
                     </div>
                 </div>
-                <PlayerDialog
-                    renderChild={renderChild}
-                    loader={modalLoader}
-                    stats={stats}
-                    open={this.state.playerDialogOpen}
-                    onDialogOpen={this.handlePlayerDialogOpen}
-                    onDialogClose={this.handlePlayerDialogClose}
-                />
+                {
+                    this.state.playerDialogOpen &&
+                    <PlayerDialog
+                        renderChild={renderChild}
+                        loader={modalLoader}
+                        stats={stats}
+                        open={this.state.playerDialogOpen}
+                        onDialogOpen={this.handlePlayerDialogOpen}
+                        onDialogClose={this.handlePlayerDialogClose}
+                    />
+                }
             </>
         );
     }

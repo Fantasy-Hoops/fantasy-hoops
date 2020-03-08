@@ -157,14 +157,17 @@ export default class Leaderboard extends Component {
                         </div>
                     </div>
                 </div>
-                <PlayerDialog
-                    renderChild={this.state.renderChild}
-                    loader={this.state.modalLoader}
-                    stats={this.state.stats}
-                    open={this.state.playerDialogOpen}
-                    onDialogOpen={this.handlePlayerDialogOpen}
-                    onDialogClose={this.handlePlayerDialogClose}
-                />
+                {
+                    this.state.playerDialogOpen &&
+                    <PlayerDialog
+                        renderChild={this.state.renderChild}
+                        loader={this.state.modalLoader}
+                        stats={this.state.stats}
+                        open={this.state.playerDialogOpen}
+                        onDialogOpen={this.handlePlayerDialogOpen}
+                        onDialogClose={this.handlePlayerDialogClose}
+                    />
+                }
             </>
         );
     }

@@ -1,10 +1,9 @@
-import Routes from "../routes/routes";
 import {isAuth} from "./auth";
 
 const isLoggedIn = isAuth();
 export const getLocationSlug = pathname => {
     let slug = pathname.substring(1);
-    const parsedSlug = slug.substring(0, slug.indexOf("/"))
+    const parsedSlug = slug.substring(0, slug.indexOf("/"));
         
      return parsedSlug.length === 0
     ? slug
@@ -20,12 +19,13 @@ export const getLocationEnumValue = pathname => {
     return Route[slug];
 };
 
-const Route = {
+export const Route = {
     lineup: 0,
     leaderboards: isLoggedIn ? 1 : 0,
     leaderboard: isLoggedIn ? 1 : 0,
-    injuries: isLoggedIn ? 2 : 1,
-    news: isLoggedIn ? 3 : 2,
-    users: isLoggedIn ? 4 : 3,
-    blog: isLoggedIn ? 5 : 3
+    achievements: isLoggedIn ? 2 : 1,
+    injuries: isLoggedIn ? 3 : 2,
+    news: isLoggedIn ? 4 : 3,
+    users: isLoggedIn ? 5 : 4,
+    blog: isLoggedIn ? 6 : 4
 };

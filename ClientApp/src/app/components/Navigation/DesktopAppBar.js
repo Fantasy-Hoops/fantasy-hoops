@@ -86,6 +86,7 @@ function DesktopAppBar(props) {
                 >
                     {isAuth() && <Tab className={classes.tab} component={Link} to={Routes.LINEUP} label="Lineup"/>}
                     <Tab className={classes.tab} component={Link} to={Routes.LEADERBOARDS} label="Leaderboards"/>
+                    <Tab className={classes.tab} component={Link} to={Routes.ACHIEVEMENTS} label="Achievements"/>
                     <Tab className={classes.tab} component={Link} to={Routes.INJURIES} label="Injuries"/>
                     <Tab className={classes.tab} component={Link} to={Routes.NEWS} label="News"/>
                     {isAuth() && <Tab className={classes.tab} component={Link} to={Routes.USER_POOL} label="Users"/>}

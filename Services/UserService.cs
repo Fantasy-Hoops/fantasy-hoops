@@ -26,14 +26,16 @@ namespace fantasy_hoops.Services
         private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IAchievementsService _achievementsService;
 
-        public UserService(IConfiguration configuration, IPushService pushService, IUserRepository userRepository, UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserService(IConfiguration configuration, IPushService pushService, IUserRepository userRepository, UserManager<User> userManager, SignInManager<User> signInManager, IAchievementsService achievementsService)
         {
             Configuration = configuration;
             _pushService = pushService;
             _userRepository = userRepository;
             _userManager = userManager;
             _signInManager = signInManager;
+            _achievementsService = achievementsService;
         }
 
         public async Task<bool> Login(LoginViewModel model)
@@ -209,13 +211,14 @@ namespace fantasy_hoops.Services
             {
                 if(imageURL != null)
                 {
-                    UploadAvatar(new AvatarViewModel()
+                    UploadAvatar(new AvatarViewModel
                     {
                         Id = newUser.Id,
                         Avatar = await CommonFunctions.GetImageAsBase64Url(imageURL.Value)
                     });
                 }
-                await SendRegisterNotification(username);
+                _achievementsService.AssignAchievements(username);
+                // await SendRegisterNotification(username);
             }
 
             return result.Succeeded;

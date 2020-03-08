@@ -7,7 +7,7 @@ namespace fantasy_hoops.Repositories.Interfaces
 {
     public interface IAchievementsRepository
     {
-        public List<Achievement> GetExistingAchievements();
+        public List<AchievementDto> GetExistingAchievements();
         public Dictionary<String, List<UserAchievementDto>> GetAllUserAchievements();
         public List<UserAchievementDto> GetUserAchievements(String userId);
         public bool AchievementExists(Achievement achievement);

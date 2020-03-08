@@ -18,7 +18,8 @@ import Blog from '../containers/BlogContainer';
 import Routes from './routes.js';
 import {Error} from '../components/Error';
 import Leaderboards from "../components/Leaderboard/Leaderboards";
-import {Switch,Route} from "react-router-dom";
+import {Switch, Route} from "react-router-dom";
+import Achievements from "../components/Achievements/AchievementsPage";
 
 export default () => (
     <Switch>
@@ -38,6 +39,7 @@ export default () => (
         <PrivateRoute path={Routes.LINEUP_HISTORY} component={LineupHistory}/>
         <Route exact path={Routes.BLOG} component={Blog}/>
         <Route exact path={Routes.LEADERBOARDS} component={Leaderboards}/>
+        <Route exact path={Routes.ACHIEVEMENTS} component={Achievements}/>
         <Route render={() => <Error status={404} message="Page not found"/>}/>
     </Switch>
 );

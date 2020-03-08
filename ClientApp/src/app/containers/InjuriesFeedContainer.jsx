@@ -10,7 +10,6 @@ import EmptyJordan from '../components/EmptyJordan';
 import * as actionCreators from '../actions/injuries';
 
 import './InjuriesFeedContainer.css';
-import {Container} from "@material-ui/core";
 import InjuriesInfoDialog from "../components/Injuries/InjuriesInfoDialog";
 import Button from "@material-ui/core/Button";
 import {useStyles} from "./InjuriesFeedContainerStyle";
@@ -117,9 +116,12 @@ function InjuriesFeedContainer(props) {
                 </Button>
             </div>
             <div className="InjuryContainer__Cards">{injuryCards.length > 0 ? injuryCards : content}</div>
-            <InjuriesInfoDialog handleClose={handleClose} open={open}/>
-            <InjuryPlayerDialog handleDialogClose={handleInjuryPlayerDialogClose} open={injuryPlayerDialogOpen}
-                                injury={dialogInjury}/>
+            {open && <InjuriesInfoDialog handleClose={handleClose} open={open}/>}
+            {
+                injuryPlayerDialogOpen &&
+                <InjuryPlayerDialog handleDialogClose={handleInjuryPlayerDialogClose} open={injuryPlayerDialogOpen}
+                                    injury={dialogInjury}/>
+            }
         </>
     );
 }

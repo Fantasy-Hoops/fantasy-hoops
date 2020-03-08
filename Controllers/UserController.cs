@@ -66,7 +66,6 @@ namespace fantasy_hoops.Controllers
             {
                 return UnprocessableEntity("Unable to find registered user.");
             }
-            _achievementsService.AssignAchievements(user.UserName);
             
             return Ok(token);
         }

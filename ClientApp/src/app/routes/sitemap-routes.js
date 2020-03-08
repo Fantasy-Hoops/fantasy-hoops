@@ -6,7 +6,6 @@ export default (
     <Route>
         <Route path={Routes.LOGIN}/>
         <Route path={Routes.REGISTER}/>
-        <Route path={`${Routes.PROFILE}/:name?`}/>
         <Route path={Routes.LINEUP}/>
         <Route path={Routes.INJURIES}/>
         <Route path={Routes.NEWS}/>
@@ -15,8 +14,6 @@ export default (
         <Route path={Routes.LEADERBOARD_SELECTED}/>
         <Route path={Routes.LEADERBOARD_SEASON}/>
         <Route path={Routes.USER_POOL}/>
-        <Route path={Routes.ALL_NOTIFICATIONS}/>
-        <Route path={Routes.LINEUP_HISTORY}/>
         <Route path={Routes.BLOG}/>
         <Route path={Routes.LEADERBOARDS}/>
     </Route>

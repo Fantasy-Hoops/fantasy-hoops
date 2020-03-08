@@ -21,5 +21,6 @@ export const Canonicals = {
     NOTIFICATIONS: `${url}/notifications`,
     LINEUPS_HISTORY: `${url}/history`,
     LOGIN: `${url}/login`,
-    REGISTER: `${url}/register`
+    REGISTER: `${url}/register`,
+    ACHIEVEMENTS: `${url}/achievements`
 };
