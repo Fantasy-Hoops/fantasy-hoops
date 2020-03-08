@@ -309,17 +309,14 @@ export class Lineup extends Component {
                     onDialogOpen={this.handleDialogOpen}
                     onDialogClose={this.handleDialogClose}
                 />
-                {
-                    this.state.playerDialogOpen &&
-                    <PlayerDialog
-                        renderChild={this.state.renderChild}
-                        loader={this.state.modalLoader}
-                        stats={this.state.stats}
-                        open={this.state.playerDialogOpen}
-                        onDialogOpen={this.handlePlayerDialogOpen}
-                        onDialogClose={this.handlePlayerDialogClose}
-                    />
-                }
+                <PlayerDialog
+                    renderChild={this.state.renderChild}
+                    loader={this.state.modalLoader}
+                    stats={this.state.stats}
+                    open={this.state.playerDialogOpen}
+                    onDialogOpen={this.handlePlayerDialogOpen}
+                    onDialogClose={this.handlePlayerDialogClose}
+                />
             </>
         );
     }

@@ -4,8 +4,6 @@ import Routes from "./routes";
 
 export default (
     <Route>
-        <Route path={Routes.LOGIN}/>
-        <Route path={Routes.REGISTER}/>
         <Route path={Routes.LINEUP}/>
         <Route path={Routes.INJURIES}/>
         <Route path={Routes.NEWS}/>

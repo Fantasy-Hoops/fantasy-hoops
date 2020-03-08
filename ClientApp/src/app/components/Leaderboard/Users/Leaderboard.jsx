@@ -348,17 +348,14 @@ function Leaderboard(props) {
                     </div>
                 </div>
             </div>
-            {
-                playerDialogOpen &&
-                <PlayerDialog
-                    renderChild={renderChild}
-                    loader={modalLoader}
-                    stats={stats}
-                    open={playerDialogOpen}
-                    onDialogOpen={handlePlayerDialogOpen}
-                    onDialogClose={handlePlayerDialogClose}
-                />
-            }
+            <PlayerDialog
+                renderChild={renderChild}
+                loader={modalLoader}
+                stats={stats}
+                open={playerDialogOpen}
+                onDialogOpen={handlePlayerDialogOpen}
+                onDialogClose={handlePlayerDialogClose}
+            />
         </>
     );
 }

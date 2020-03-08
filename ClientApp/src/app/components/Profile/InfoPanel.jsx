@@ -128,17 +128,14 @@ export class InfoPanel extends Component {
                     {this.getCurrentLineup()}
                     {this.getRecentLineups()}
                 </div>
-                {
-                    this.state.playerDialogOpen &&
-                    <PlayerDialog
-                        renderChild={this.state.renderChild}
-                        loader={this.state.modalLoader}
-                        stats={this.state.stats}
-                        open={this.state.playerDialogOpen}
-                        onDialogOpen={this.handlePlayerDialogOpen}
-                        onDialogClose={this.handlePlayerDialogClose}
-                    />
-                }
+                <PlayerDialog
+                    renderChild={this.state.renderChild}
+                    loader={this.state.modalLoader}
+                    stats={this.state.stats}
+                    open={this.state.playerDialogOpen}
+                    onDialogOpen={this.handlePlayerDialogOpen}
+                    onDialogClose={this.handlePlayerDialogClose}
+                />
                 {seeMore()}
             </div>
         );
