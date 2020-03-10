@@ -35,7 +35,7 @@ function AchievementCard(props) {
     const progressBarValue = achievement.progress / achievement.levelUpGoal * 100;
     const color = checkColor() ? 'no' : '';
     return (
-        <Card className={`${classes.root} ${className}`} onClick={() => handleDialogOpen(achievement)}>
+        <Card className={`${classes.root} ${!isLoggedIn || readOnly && 'no-pointer-events'}`} onClick={() => handleDialogOpen(achievement)}>
             <CardContent className={classes.content}>
                 <Typography className={classes.title}>
                     {achievement.title}

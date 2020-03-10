@@ -8,13 +8,11 @@ import './Achievements.css';
 import {isAuth} from "../../utils/auth";
 
 function Achievements(props) {
-    const isLoggedIn = isAuth();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogAchievement, setDialogAchievement] = useState(null);
     const [achievements, setAchievements] = useState([]);
     const {user, readOnly} = props;
-
-
+    
     useEffect(() => {
         async function handleGetUserAchievements() {
             await getUserAchievements(user.id)
@@ -28,7 +26,7 @@ function Achievements(props) {
                 .catch(err => console.error(err.message));
         }
 
-        if (isLoggedIn) {
+        if (user) {
             handleGetUserAchievements();
         } else {
             handleGetExistingAchievements();
@@ -59,7 +57,7 @@ function Achievements(props) {
                     levelUpGoal: ach.levelUpGoal,
                     isAchieved: ach.isAchieved
                 };
-                return <AchievementCard isLoggedIn={isLoggedIn} readOnly={readOnly} key={key}
+                return <AchievementCard isLoggedIn={user} readOnly={readOnly} key={key}
                                         achievement={achievement}
                                         onDialogOpen={handleDialogOpen}/>
             }

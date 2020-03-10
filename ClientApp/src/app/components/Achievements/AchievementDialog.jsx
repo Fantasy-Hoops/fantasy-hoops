@@ -51,7 +51,7 @@ function AchievementDialog(props) {
                 <h2 className="AchievementDialog__Title">{achievement.title}</h2>
                 {description}
                 {
-                    isLoggedIn &&
+                    !readOnly &&
                     <>
                         <p className="AchievementDialog__Level">
                             LEVEL {achievement.level}
