@@ -1,5 +1,4 @@
 using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using fantasy_hoops.Database;
@@ -12,23 +11,21 @@ namespace fantasy_hoops.Jobs
 {
     public class NewsJob : IJob
     {
-        private readonly GameContext _context;
         private readonly NewsType _newsType;
 
         public NewsJob(NewsType newsType)
         {
-            _context = new GameContext();
             _newsType = newsType;
         }
 
-        public void ExtractPreviews()
+        private void ExtractPreviews()
         {
             string today = Today();
             JArray tGames = CommonFunctions.GetGames(today);
             GetPreviews(today, tGames);
         }
 
-        public void ExtractRecaps()
+        private void ExtractRecaps()
         {
             string yesterday = Yesterday();
             JArray yGames = CommonFunctions.GetGames(yesterday);
@@ -38,8 +35,9 @@ namespace fantasy_hoops.Jobs
         private void GetPreviews(string date, JArray games)
         {
             JArray previews = new JArray();
-            foreach (JObject game in games)
+            foreach (var jToken in games)
             {
+                var game = (JObject) jToken;
                 string preview = "http://data.nba.net/10s/prod/v1/" + date + "/" + game["gameId"] + "_preview_article.json";
                 JObject previewJson;
                 try
@@ -65,10 +63,8 @@ namespace fantasy_hoops.Jobs
             foreach (var jToken in previews)
             {
                 var previewObj = (JObject) jToken;
-                AddToDatabaseAsync(previewObj, NewsType.PREVIEW);
+                AddToDatabase(previewObj, NewsType.PREVIEW);
             }
-
-            _context.SaveChanges();
         }
 
         private void GetRecaps(string date, JArray games)
@@ -101,16 +97,15 @@ namespace fantasy_hoops.Jobs
             foreach (var jToken in news)
             {
                 var newsObj = (JObject) jToken;
-                AddToDatabaseAsync(newsObj, NewsType.RECAP);
+                AddToDatabase(newsObj, NewsType.RECAP);
             }
-
-            _context.SaveChanges();
         }
 
-        private void AddToDatabaseAsync(JToken newsObj, NewsType type)
+        private void AddToDatabase(JToken newsObj, NewsType type)
         {
-            Team hTeam = _context.Teams.FirstOrDefault(team => team.NbaID == (int) newsObj["hTeamID"]);
-            Team vTeam = _context.Teams.FirstOrDefault(team => team.NbaID == (int) newsObj["vTeamID"]);
+            GameContext context = new GameContext();
+            Team hTeam = context.Teams.FirstOrDefault(team => team.NbaID == (int) newsObj["hTeamID"]);
+            Team vTeam = context.Teams.FirstOrDefault(team => team.NbaID == (int) newsObj["vTeamID"]);
             var nObj = new News
             {
                 Type = type,
@@ -121,18 +116,16 @@ namespace fantasy_hoops.Jobs
             };
 
             JArray paragraphs = (JArray)newsObj["paragraphs"];
-            bool shouldAdd = !_context.News
-                .Include(news => news.hTeam)
-                .Include(news => news.vTeam)
+            bool shouldAdd = !context.News
                 .AsEnumerable()
                 .Any(x => x.hTeamID == nObj.hTeamID
                           && x.vTeamID == nObj.vTeamID
-                          && x.Date.Equals(nObj.Date));
+                          && nObj.Date >= x.Date);
 
             if (!shouldAdd)
                 return;
-            _context.News.Add(nObj);
-            _context.SaveChanges();
+            context.News.Add(nObj);
+            context.SaveChanges();
 
             string firstParagraph = paragraphs[0]["paragraph"].ToString();
             int beginIndex = firstParagraph.IndexOf("(AP)", StringComparison.Ordinal);
@@ -148,8 +141,10 @@ namespace fantasy_hoops.Jobs
                     Content = parObj["paragraph"].ToString().Replace("\xFFFD", ""),
                     ParagraphNumber = i++
                 };
-                _context.Paragraphs.Add(paragraph);
+                context.Paragraphs.Add(paragraph);
             }
+
+            context.SaveChanges();
         }
 
         private string Today()
