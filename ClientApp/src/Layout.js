@@ -7,8 +7,8 @@ import CoronaAlert from "./app/components/CoronaAlert";
 export default (props) => (
     <>
         <Header />
-        <CoronaAlert/>
         <Container maxWidth="md">
+            <CoronaAlert/>
             {props.children}
         </Container>
     </>

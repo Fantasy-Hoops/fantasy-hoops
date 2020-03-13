@@ -30,7 +30,8 @@ body {
 
 .CoronaAlert {
     margin: 5rem auto;
-    width: 50%;
+    width: 90vw;
+    max-width: 100%;
 }
 
 @media screen and (max-width: 600px) {

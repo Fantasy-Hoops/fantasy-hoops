@@ -14,6 +14,7 @@ import {useStyles} from "./MainStyle";
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../utils/helpers";
 import CoronaAlert from "./CoronaAlert";
+import Container from "@material-ui/core/Container";
 
 const positions = {
     PG: require('../../content/images/positions/pg.png'),
@@ -143,8 +144,10 @@ function Main() {
                         </Button>
                     </Link>
                 </div>
-                <CoronaAlert />
-                {topPlayers}
+                <Container maxWidth="md">
+                    <CoronaAlert />
+                    {topPlayers}
+                </Container>
             </div>
         </>
     );
