@@ -6,7 +6,6 @@ export default function CoronaAlert() {
     return <Alert className="CoronaAlert" severity="error">
         <AlertTitle>The COVID-19 Suspension</AlertTitle>
         Due to Coronavirus the NBA season is suspended as well as Fantasy Hoops.
-        <br />
         We will be back as soon as the NBA season continues.
     </Alert>;
 }
