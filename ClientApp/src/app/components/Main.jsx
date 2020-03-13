@@ -13,6 +13,7 @@ import Button from "@material-ui/core/Button";
 import {useStyles} from "./MainStyle";
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../utils/helpers";
+import CoronaAlert from "./CoronaAlert";
 
 const positions = {
     PG: require('../../content/images/positions/pg.png'),
@@ -42,7 +43,7 @@ function Main() {
                 .catch(err => console.error(err.message));
         }
 
-        handleGetPlayersLeaderboard();
+        //handleGetPlayersLeaderboard();
 
         return () => {
             document.querySelector('body').classList.remove('Main__Background');
@@ -142,6 +143,7 @@ function Main() {
                         </Button>
                     </Link>
                 </div>
+                <CoronaAlert />
                 {topPlayers}
             </div>
         </>

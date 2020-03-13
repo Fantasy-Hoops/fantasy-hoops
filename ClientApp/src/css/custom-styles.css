@@ -28,6 +28,11 @@ body {
     background-color: var(--tertiary-color);
 }
 
+.CoronaAlert {
+    margin: 5rem auto;
+    width: 50%;
+}
+
 @media screen and (max-width: 600px) {
     body {
         padding-top: 5.5rem

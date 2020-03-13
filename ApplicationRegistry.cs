@@ -20,9 +20,12 @@ namespace fantasy_hoops
 
             Task.Run(() => RostersJob.UpdateTeamColors(new GameContext()));
 
-            Schedule(new NextGameJob(scoreService, pushService, false))
-                .WithName("nextGameJob")
-                .ToRunNow();
+            if (!bool.Parse(Startup.Configuration["corona-suspended"]))
+            {
+                Schedule(new NextGameJob(scoreService, pushService, false))
+                    .WithName("nextGameJob")
+                    .ToRunNow();
+            }
 
             Schedule(new InjuriesJob(pushService))
                 .WithName("injuriesJob")

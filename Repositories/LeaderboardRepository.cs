@@ -25,6 +25,10 @@ namespace fantasy_hoops.Repositories
         public List<PlayerLeaderboardRecordDto> GetPlayerLeaderboard(int from, int limit, string type)
         {
             DateTime date = CommonFunctions.GetDate(type);
+            if (type.Equals("daily"))
+            {
+                date = _context.Stats.Max(stats => stats.Date);
+            }
 
             return _context.Stats
                 .Where(stats => stats.Date >= date)
