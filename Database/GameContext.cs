@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Models.Notifications;
+using fantasy_hoops.Models.Tournaments;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,15 +29,17 @@ namespace fantasy_hoops.Database
         public DbSet<UserAchievement> UserAchievements { get; set; }
         public DbSet<BestLineup> BestLineups { get; set; }
         public DbSet<PlayersBestLineups> PlayersBestLineups { get; set; }
+        public DbSet<Tournament> Tournaments { get; set; }
+        public DbSet<TournamentUsers> TournamentUsers { get; set; }
+        public DbSet<Contest> Contests { get; set; }
+        public DbSet<MatchupPair> TournamentMatchups { get; set; }
 
         public GameContext()
         {
-
         }
 
         public GameContext(DbContextOptions options) : base(options)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -50,19 +53,25 @@ namespace fantasy_hoops.Database
 
             builder.Entity<PlayersBestLineups>()
                 .HasKey(playerLineups => new {playerLineups.PlayerID, playerLineups.BestLineupID});
-            
+
             builder.Entity<PlayersBestLineups>()
                 .HasOne(x => x.Player)
                 .WithMany(x => x.BestLineups)
                 .HasForeignKey(x => x.PlayerID);
-            
+
             builder.Entity<PlayersBestLineups>()
                 .HasOne(x => x.BestLineup)
                 .WithMany(x => x.Lineup)
                 .HasForeignKey(x => x.BestLineupID);
-            
+
             builder.Entity<UserAchievement>()
-                .HasKey(userAchievement => new { userAchievement.UserID, userAchievement.AchievementID });
+                .HasKey(userAchievement => new {userAchievement.UserID, userAchievement.AchievementID});
+
+            builder.Entity<MatchupPair>()
+                .HasKey(matchup => new {matchup.TournamentID, matchup.FirstUserID, matchup.SecondUserID});
+
+            builder.Entity<TournamentUsers>()
+                .HasKey(tournamentUser => new {tournamentUser.TournamentID, tournamentUser.UserID});
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

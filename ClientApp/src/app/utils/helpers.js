@@ -22,5 +22,7 @@ export const Canonicals = {
     LINEUPS_HISTORY: `${url}/history`,
     LOGIN: `${url}/login`,
     REGISTER: `${url}/register`,
-    ACHIEVEMENTS: `${url}/achievements`
+    ACHIEVEMENTS: `${url}/achievements`,
+    TOURNAMENTS: `${url}/tournaments`,
+    TOURNAMENTS_CREATE: `${url}/tournaments/create`
 };

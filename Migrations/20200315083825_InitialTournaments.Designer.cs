@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200315083825_InitialTournaments")]
+    partial class InitialTournaments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -691,123 +693,6 @@ namespace fantasy_hoops.Migrations
                     b.ToTable("Teams");
                 });
 
-            modelBuilder.Entity("fantasy_hoops.Models.Tournaments.Contest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("ContestStart")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TournamentID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TournamentID");
-
-                    b.ToTable("Contests");
-                });
-
-            modelBuilder.Entity("fantasy_hoops.Models.Tournaments.MatchupPair", b =>
-                {
-                    b.Property<int>("TournamentID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FirstUserID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SecondUserID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("ContestId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("FirstUserScore")
-                        .HasColumnType("float");
-
-                    b.Property<bool>("IsFinished")
-                        .HasColumnType("bit");
-
-                    b.Property<double>("SecondUserScore")
-                        .HasColumnType("float");
-
-                    b.HasKey("TournamentID", "FirstUserID", "SecondUserID");
-
-                    b.HasIndex("ContestId");
-
-                    b.HasIndex("FirstUserID");
-
-                    b.HasIndex("SecondUserID");
-
-                    b.ToTable("TournamentMatchups");
-                });
-
-            modelBuilder.Entity("fantasy_hoops.Models.Tournaments.Tournament", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Contests")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DroppedContests")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Entrants")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageURL")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tournaments");
-                });
-
-            modelBuilder.Entity("fantasy_hoops.Models.Tournaments.TournamentUsers", b =>
-                {
-                    b.Property<int>("TournamentID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Losses")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Ties")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Wins")
-                        .HasColumnType("int");
-
-                    b.HasKey("TournamentID", "UserID");
-
-                    b.HasIndex("UserID");
-
-                    b.ToTable("TournamentUsers");
-                });
-
             modelBuilder.Entity("fantasy_hoops.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -1172,55 +1057,6 @@ namespace fantasy_hoops.Migrations
                     b.HasOne("fantasy_hoops.Models.Team", "NextOpponent")
                         .WithMany()
                         .HasForeignKey("NextOpponentID");
-                });
-
-            modelBuilder.Entity("fantasy_hoops.Models.Tournaments.Contest", b =>
-                {
-                    b.HasOne("fantasy_hoops.Models.Tournaments.Tournament", "Tournament")
-                        .WithMany()
-                        .HasForeignKey("TournamentID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("fantasy_hoops.Models.Tournaments.MatchupPair", b =>
-                {
-                    b.HasOne("fantasy_hoops.Models.Tournaments.Contest", null)
-                        .WithMany("ContestPairs")
-                        .HasForeignKey("ContestId");
-
-                    b.HasOne("fantasy_hoops.Models.User", "FirstUser")
-                        .WithMany()
-                        .HasForeignKey("FirstUserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("fantasy_hoops.Models.User", "SecondUser")
-                        .WithMany()
-                        .HasForeignKey("SecondUserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("fantasy_hoops.Models.Tournaments.Tournament", "Tournament")
-                        .WithMany()
-                        .HasForeignKey("TournamentID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("fantasy_hoops.Models.Tournaments.TournamentUsers", b =>
-                {
-                    b.HasOne("fantasy_hoops.Models.Tournaments.Tournament", "Tournament")
-                        .WithMany()
-                        .HasForeignKey("TournamentID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("fantasy_hoops.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.User", b =>

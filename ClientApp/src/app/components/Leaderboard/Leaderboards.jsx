@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 
 import './Leaderboards.css';
 import {useStyles} from "./LeaderboarsStyle";
-import {Container} from "@material-ui/core";
 import {
     getBestLineups,
     getPlayersLeaderboard,
