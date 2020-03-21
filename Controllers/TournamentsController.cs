@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Castle.Core;
 using fantasy_hoops.Models.Tournaments;
@@ -20,6 +21,12 @@ namespace fantasy_hoops.Controllers
         public List<Tournament.TournamentType> GetTypes()
         {
             return _tournamentsRepository.GetTournamentTypes();
+        }
+        
+        [HttpGet("start-dates")]
+        public List<DateTime> GetStartDates()
+        {
+            return _tournamentsRepository.GetUpcomingStartDates();
         }
     }
 }

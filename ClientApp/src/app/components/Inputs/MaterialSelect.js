@@ -5,11 +5,12 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import _ from "lodash";
 import MenuItem from "@material-ui/core/MenuItem";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
 const useStyles = makeStyles(theme => ({
     formControl: {
         margin: theme.spacing(1),
-        width: 200
+        width: 175
     },
     selectEmpty: {
         marginTop: theme.spacing(2),
@@ -17,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function MaterialSelect(props) {
-    const {id, label, values, value, onChange} = props;
+    const {id, label, values, value, onChange, emptyOption, disabled, required, error, helperText} = props;
     const classes = useStyles();
 
     const handleChange = event => {
@@ -29,19 +30,21 @@ export default function MaterialSelect(props) {
     ));
 
     return (
-        <FormControl className={classes.formControl}>
+        <FormControl required={required} error={!disabled && error} className={classes.formControl}>
             <InputLabel htmlFor="age-native-simple">{label}</InputLabel>
             <Select
                 id={id}
                 name={id}
                 value={value}
                 onChange={handleChange}
+                disabled={disabled}
             >
-                <MenuItem value="">
+                {emptyOption && <MenuItem value="">
                     <em>None</em>
-                </MenuItem>
+                </MenuItem>}
                 {menuItems}
             </Select>
+            {!disabled && <FormHelperText>{helperText}</FormHelperText>}
         </FormControl>
     );
 }

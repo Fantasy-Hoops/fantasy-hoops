@@ -13,5 +13,22 @@ export const newTournamentValidation = Yup.object().shape({
   tournamentTitle: Yup.string()
       .required('Tournament title is required'),
   tournamentDescription: Yup.string()
-      .required('Tournament description is required')
+      .required('Tournament description is required'),
+  startDate: Yup.date()
+      .required('Tournament start date is required'),
+  tournamentType: Yup.number()
+      .min(1, "Wrong type selected")
+      .max(2, "Wrong type selected")
+      .required('Tournament type is required'),
+  contests: Yup.number()
+      .required('Number of contests is required'),
+  droppedContests: Yup.number()
+      .lessThan(Yup.ref('contests'), "Dropped contests must be less than number of contests")
+      .required('Number of dropped contests is required'),
+  entrants: Yup.number()
+      .when('droppedContests', (droppedContests, schema) => {
+        return droppedContests > 0
+            ? schema.moreThan(Yup.ref('droppedContests'), "Number of entrants must be higher than dropped contests")
+            : schema.required('Number of entrants is required');
+      })
 });
