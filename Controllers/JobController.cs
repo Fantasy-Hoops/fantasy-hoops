@@ -69,5 +69,13 @@ namespace fantasy_hoops.Controllers
 
             return Ok("Achievements job started.");
         }
+        
+        [HttpGet("league-schedule")]
+        public IActionResult StartLeagueSchedule()
+        {
+            Task.Run(() => new ScheduleJob().Execute());
+
+            return Ok("League schedule job started.");
+        }
     }
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200321084724_ChangeGameColumnType")]
+    partial class ChangeGameColumnType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,14 +283,11 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("HomeTeamID")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsFinished")
+                    b.Property<bool>("IsGameFinished")
                         .HasColumnType("bit");
 
                     b.Property<string>("Reference")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isTBD")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

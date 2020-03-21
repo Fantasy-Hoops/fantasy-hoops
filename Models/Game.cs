@@ -9,27 +9,20 @@ namespace fantasy_hoops.Models
 {
     public class Game
     {
-
         [Key]
-        public int GameID { get; set; }
-
-        [Column(TypeName = "Date")]
+        public int Id { get; set; }
+        public string Reference { get; set; }
+        public bool IsFinished { get; set; }
+        public bool isTBD { get; set; }
         public DateTime? Date { get; set; }
-
         public int HomeTeamID { get; set; }
-
         public int HomeScore { get; set; }
-
         public int AwayTeamID { get; set; }
-
         public int AwayScore { get; set; }
 
         [ForeignKey("HomeTeamID")]
         public virtual Team HomeTeam { get; set; }
-
         [ForeignKey("AwayTeamID")]
         public virtual Team AwayTeam { get; set; }
-
-
     }
 }
