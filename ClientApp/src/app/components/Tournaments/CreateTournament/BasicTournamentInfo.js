@@ -1,5 +1,4 @@
-import React, {useState} from "react";
-import {Formik, Form, Field} from 'formik';
+import React from "react";
 import _ from 'lodash';
 import Avatar from "@material-ui/core/Avatar";
 
@@ -7,34 +6,36 @@ import './BasicTournamentInfo.css';
 import TournamentIcon from "./TournamentIcon";
 import {TextField} from "@material-ui/core";
 
+function importAll(r) {
+    return r.keys().map(r);
+}
+const iconFiles = importAll(require.context('../../../../content/icons/tournaments', false, /\.(png|jpe?g|svg)$/));
+
 export default function BasicTournamentInfo(props) {
     const {formProps} = props;
     const { values, errors, touched, handleChange, setFieldTouched, setFieldValue } = formProps;
     
-    function importAll(r) {
-        return r.keys().map(r);
-    }
-
     function handleSetSelectedIcon(selectedIcon, selectedIndex) {
-        icons.forEach((icon, index) => {
-            if (index === selectedIndex) {
-                icon.props.customProps.selected = true;
-            } else {
-                icon.props.customProps.selected = false;
-            }
-        });
-        formProps.setFieldValue('tournamentIcon', selectedIcon, true);
+        // icons.forEach((icon, index) => {
+        //     if (index === selectedIndex) {
+        //         icon.props.customProps.selected = true;
+        //     } else {
+        //         icon.props.customProps.selected = false;
+        //     }
+        // });
+        setFieldValue('tournamentIcon', selectedIcon, true);
     }
-
-    const iconFiles = importAll(require.context('../../../../content/icons/tournaments', false, /\.(png|jpe?g|svg)$/));
-    const icons = iconFiles.map((iconPath, index) => (
-        <TournamentIcon iconPath={iconPath} key={index} uniqueKey={index} handleSetSelectedIcon={handleSetSelectedIcon} customProps={{selected: false}}/>
-    ));
+    
     const change = (name, e) => {
         e.persist();
         handleChange(e);
         setFieldTouched(name, true, false);
     };
+
+    const icons = iconFiles.map((iconPath, index) => (
+        <TournamentIcon iconPath={iconPath} key={index} uniqueKey={index} handleSetSelectedIcon={handleSetSelectedIcon} customProps={{selected: false}}/>
+    ));
+    
     return (
         <>
             <p>Select the avatar for your tournament, create a title and description.</p>
@@ -54,7 +55,7 @@ export default function BasicTournamentInfo(props) {
                 fullWidth
                 required
                 id="tournamentTitle"
-                label="Tilte"
+                label="Title"
                 name="tournamentTitle"
                 value={values.tournamentTitle}
                 onChange={change.bind(null, "tournamentTitle")}

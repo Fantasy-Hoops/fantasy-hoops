@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -13,31 +13,18 @@ import {Helmet} from "react-helmet";
 import {TournamentsCreate, TournamentsMain} from "../utils";
 import {Canonicals} from "../../../utils/helpers";
 import BasicTournamentInfo from "./BasicTournamentInfo";
+import _ from "lodash";
+import TournamentType from "./TournamentType";
 
 const initialValues = {
     tournamentIcon: null,
     tournamentTitle: '',
-    tournamentDescription: ''
+    tournamentDescription: '',
+    tournamentType: ''
 };
 
 function getSteps() {
     return ['Create basic tournament info', 'Customize tournament type', 'Invite friends'];
-}
-
-function getStepContent(step, formProps) {
-    switch (step) {
-        case 0:
-            return <BasicTournamentInfo formProps={formProps} />;
-        case 1:
-            return 'An ad group contains one or more ads which target a shared set of keywords.';
-        case 2:
-            return `Try out different ad text to see what brings in the most customers,
-              and learn how to enhance your ads using features like ad extensions.
-              If you run into any problems with your ads, find out how to tell if
-              they're running and how to resolve approval issues.`;
-        default:
-            return 'Unknown step';
-    }
 }
 
 /**
@@ -64,6 +51,38 @@ export default function CreateTournament() {
         setActiveStep(0);
     };
 
+    function getStepContent(step, formProps) {
+        switch (step) {
+            case 0:
+                return <BasicTournamentInfo formProps={formProps} />;
+            case 1:
+                return <TournamentType formProps={formProps} />;
+            case 2:
+                return `Try out different ad text to see what brings in the most customers,
+              and learn how to enhance your ads using features like ad extensions.
+              If you run into any problems with your ads, find out how to tell if
+              they're running and how to resolve approval issues.`;
+            default:
+                return 'Unknown step';
+        }
+    }
+    
+    function handleCanContinue(step, formProps) {
+        const {touched, errors} = formProps;
+        switch (step) {
+            case 0:
+                const isIconSelected = _.isEmpty(errors.tournamentIcon);
+                const isTitleEntered = touched.tournamentTitle && _.isEmpty(errors.tournamentTitle);
+                const isDescriptionEntered = touched.tournamentDescription && _.isEmpty(errors.tournamentDescription);
+                return isIconSelected && isTitleEntered && isDescriptionEntered;
+            case 1:
+                return isIconSelected && isTitleEntered && isDescriptionEntered;
+            case 2:
+                return isIconSelected && isTitleEntered && isDescriptionEntered;
+            default:
+                return isIconSelected && isTitleEntered && isDescriptionEntered;
+        }
+    }
     return (
         <>
             <Helmet>
@@ -89,6 +108,7 @@ export default function CreateTournament() {
                 }}
                 render={(formProps) => {
                     const {values} = formProps;
+                    const canContinue = handleCanContinue(activeStep, formProps);
                     return (
                         <div className={classes.root}>
                             <Stepper activeStep={activeStep} orientation="vertical">
@@ -111,6 +131,7 @@ export default function CreateTournament() {
                                                         color="primary"
                                                         onClick={handleNext}
                                                         className={classes.button}
+                                                        disabled={!canContinue}
                                                     >
                                                         {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                                                     </Button>

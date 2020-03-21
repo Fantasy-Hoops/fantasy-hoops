@@ -15,6 +15,7 @@ const pushNotificationsApiUrlBase = `${apiUrlBase}/push`;
 const blogApiUrlBase = `${apiUrlBase}/blog`;
 const achievementsApiUrlBase = `${apiUrlBase}/achievements`;
 const bestLineupsApiUrlBase = `${apiUrlBase}/bestLineups`;
+const tournamentsApiUrlBase = `${apiUrlBase}/tournaments`;
 
 const createParameters = (parameters) => {
   if (parameters === undefined) return '';
@@ -119,3 +120,6 @@ export const getUserAchievements = userId => axios.get(`${achievementsApiUrlBase
 
 // BestLineups
 export const getBestLineups = parameters => axios.get(`${bestLineupsApiUrlBase}${createParameters(parameters)}`);
+
+// Tournaments
+export const getTournamentTypes = () => axios.get(`${tournamentsApiUrlBase}/types`);

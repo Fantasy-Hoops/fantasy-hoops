@@ -7,6 +7,7 @@ namespace fantasy_hoops.Models.Tournaments
     {
         [Key]
         public int Id { get; set; }
+        public int TypeID { get; set; }
         public TournamentType Type { get; set; }
         public DateTime StartDate { get;set; }
         public DateTime EndDate { get; set; }
@@ -17,9 +18,11 @@ namespace fantasy_hoops.Models.Tournaments
         public int Contests { get; set; }
         public int DroppedContests { get; set; }
         
-        public enum TournamentType
+        public class TournamentType
         {
-            SINGLE, MATCHUPS
+            [Key]
+            public int Id { get; set; }
+            public string Name { get; set; }
         }
     }
 }

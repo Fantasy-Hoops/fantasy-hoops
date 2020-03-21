@@ -131,6 +131,7 @@ namespace fantasy_hoops
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IBestLineupsRepository, BestLineupsRepository>();
             services.AddScoped<IAchievementsRepository, AchievementsRepository>();
+            services.AddScoped<ITournamentsRepository, TournamentsRepository>();
         }
 
         private void ConfigureAuth(IServiceCollection services)

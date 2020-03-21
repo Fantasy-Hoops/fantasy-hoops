@@ -30,6 +30,7 @@ namespace fantasy_hoops.Database
         public DbSet<BestLineup> BestLineups { get; set; }
         public DbSet<PlayersBestLineups> PlayersBestLineups { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
+        public DbSet<Tournament.TournamentType> TournamentTypes { get; set; }
         public DbSet<TournamentUsers> TournamentUsers { get; set; }
         public DbSet<Contest> Contests { get; set; }
         public DbSet<MatchupPair> TournamentMatchups { get; set; }
