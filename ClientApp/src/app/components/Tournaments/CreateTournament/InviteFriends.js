@@ -11,6 +11,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Avatar from "@material-ui/core/Avatar";
+import Alert from "@material-ui/lab/Alert";
+
+const ERROR_MESSAGE = friendsCount => `You must choose up to ${friendsCount} friends!`;
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -36,11 +39,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function not(a, b) {
-    return a.filter(value => b.indexOf(value) === -1);
+    return a.filter(user => b.map(usr => usr.id).indexOf(user.id) === -1);
 }
 
 function intersection(a, b) {
-    return a.filter(value => b.indexOf(value) !== -1);
+    return a.filter(user => b.map(usr => usr.id).indexOf(user.id) !== -1);
 }
 
 function union(a, b) {
@@ -52,18 +55,19 @@ export default function InviteFriends(props) {
     const {values} = formProps;
     const classes = useStyles();
     const [checked, setChecked] = React.useState([]);
-    const [left, setLeft] = React.useState(userFriends);
+    const [left, setLeft] = React.useState(not(userFriends, values.userFriends));
     const [right, setRight] = React.useState(values.userFriends);
+    const [error, setError] = useState(null);
     
     const leftChecked = intersection(checked, left);
     const rightChecked = intersection(checked, right);
 
-    const handleToggle = value => () => {
-        const currentIndex = checked.indexOf(value);
+    const handleToggle = user => () => {
+        const currentIndex = checked.map(usr => usr.id).indexOf(user.id);
         const newChecked = [...checked];
 
         if (currentIndex === -1) {
-            newChecked.push(value);
+            newChecked.push(user);
         } else {
             newChecked.splice(currentIndex, 1);
         }
@@ -82,15 +86,37 @@ export default function InviteFriends(props) {
     };
 
     const handleCheckedRight = () => {
-        setRight(right.concat(leftChecked));
-        setLeft(not(left, leftChecked));
-        setChecked(not(checked, leftChecked));
+        const {values, errors, setFieldValue, setFieldError, validateField} = formProps;
+        const rightValues = right.concat(leftChecked);
+        const rightValuesTrimmed = right.concat(leftChecked).slice(0, values.entrants);
+
+        setError(null);
+        if (right.length >= values.entrants) {
+            setError(<Alert severity="error">{ERROR_MESSAGE(values.entrants)}</Alert>);
+            return;
+        }
+        
+        if (rightValues.length !== rightValuesTrimmed.length) {
+            setError(<Alert severity="error">{ERROR_MESSAGE(values.entrants)}</Alert>);
+        }
+        
+        const notAddedUsers = not(rightValues, rightValuesTrimmed);
+        
+        setRight(rightValuesTrimmed);
+        setLeft(not(left, rightValuesTrimmed));
+        setChecked(notAddedUsers);
+        setFieldValue('userFriends', rightValuesTrimmed);
     };
 
     const handleCheckedLeft = () => {
+        const {setFieldValue} = formProps;
+
+        setError(null);
+        const rightValues = not(right, rightChecked);
         setLeft(left.concat(rightChecked));
-        setRight(not(right, rightChecked));
-        setChecked(not(checked, rightChecked));
+        setRight(rightValues);
+        setChecked([]);
+        setFieldValue('userFriends', rightValues);
     };
 
     const customList = (title, items) => (
@@ -114,10 +140,10 @@ export default function InviteFriends(props) {
                 {items.map(user => {
                     const labelId = `transfer-list-all-item-${user.username}-label`;
                     return (
-                        <ListItem key={user.id} role="listitem" button onClick={handleToggle(user.id)}>
+                        <ListItem key={user.id} role="listitem" button onClick={handleToggle(user)}>
                             <ListItemIcon>
                                 <Checkbox
-                                    checked={checked.indexOf(user.id) !== -1}
+                                    checked={checked.map(usr => usr.id).indexOf(user.id) !== -1}
                                     tabIndex={-1}
                                     disableRipple
                                     inputProps={{ 'aria-labelledby': labelId }}
@@ -137,9 +163,10 @@ export default function InviteFriends(props) {
     return (
         <>
             <p>
-                {'Choose your friends from the list below to send invitations to their emails or finish the creation' +
+                {'Choose your friends from the list below to send invitations to their emails or finish the creation ' +
                 'of the tournament to get a generated invitation link'}
             </p>
+            {error}
             <Grid container spacing={2} justify="center" alignItems="center" className={classes.root}>
                 <Grid item>{customList('Choices', left)}</Grid>
                 <Grid item>

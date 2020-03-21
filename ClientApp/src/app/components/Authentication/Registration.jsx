@@ -7,6 +7,7 @@ import {register} from '../../utils/networkFunctions';
 import Routes from '../../routes/routes';
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../../utils/helpers";
+import FullscreenLoader from "../FullscreenLoader";
 
 export class Registration extends Component {
     constructor(props) {
@@ -18,7 +19,8 @@ export class Registration extends Component {
             confirmPassword: '',
             showAlert: false,
             alertType: '',
-            alertText: ''
+            alertText: '',
+            showLoader: false
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -51,6 +53,9 @@ export class Registration extends Component {
     }
 
     handleSubmit(e) {
+        this.setState({
+            showLoader: true
+        });
         document.getElementById('submit').disabled = true;
         e.preventDefault();
         const data = {
@@ -73,6 +78,7 @@ export class Registration extends Component {
                 document.getElementById('submit').disabled = false;
                 this.setState({
                     showAlert: true,
+                    showLoader: false,
                     alertType: 'alert-danger',
                     alertText: err.response.data
                 });
@@ -87,6 +93,7 @@ export class Registration extends Component {
     }
 
     render() {
+        const {showLoader} = this.state;
         return (
             <>
                 <Helmet>
@@ -158,6 +165,7 @@ export class Registration extends Component {
                         </small>
                     </div>
                 </div>
+                {showLoader && <FullscreenLoader/>}
             </>
         );
     }

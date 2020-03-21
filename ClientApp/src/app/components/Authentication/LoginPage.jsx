@@ -9,6 +9,7 @@ import {login, googleLogin} from '../../utils/networkFunctions';
 import Routes from '../../routes/routes';
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../../utils/helpers";
+import FullscreenLoader from "../FullscreenLoader";
 
 export default class LoginPage extends Component {
     constructor(props) {
@@ -22,7 +23,8 @@ export default class LoginPage extends Component {
             password: '',
             showAlert: error,
             alertType: error ? 'alert-danger' : '',
-            alertText: error ? location.state.error : ''
+            alertText: error ? location.state.error : '',
+            showLoader: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -37,6 +39,9 @@ export default class LoginPage extends Component {
     }
 
     responseGoogle = (response) => {
+        this.setState({
+            showLoader: true
+        });
         const {location} = this.props;
         googleLogin(response.tokenId)
             .then((res) => {
@@ -53,6 +58,7 @@ export default class LoginPage extends Component {
             .catch((err) => {
                 this.setState({
                     showAlert: true,
+                    showLoader: false,
                     alertType: 'alert-danger',
                     alertText: err.response.data
                 });
@@ -86,6 +92,9 @@ export default class LoginPage extends Component {
     }
 
     handleSubmit(e) {
+        this.setState({
+            showLoader: true
+        });
         e.preventDefault();
         const {username, password} = this.state;
         const {location} = this.props;
@@ -118,7 +127,7 @@ export default class LoginPage extends Component {
 
     render() {
         const {
-            alertType, alertText, showAlert, username, password
+            alertType, alertText, showAlert, username, password, showLoader
         } = this.state;
         return (
             <>
@@ -170,6 +179,7 @@ export default class LoginPage extends Component {
                         />
                     </form>
                 </div>
+                {showLoader && <FullscreenLoader />}
             </>
         );
     }

@@ -22,6 +22,7 @@ import {parse} from "../../../utils/auth";
 import moment from "moment";
 import {loadImage} from "../../../utils/loadImage";
 import defaultPhoto from "../../../../content/images/default.png";
+import FullscreenLoader from "../../FullscreenLoader";
 
 const DATE_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
 
@@ -168,9 +169,9 @@ export default function CreateTournament() {
                 return isTypeSelected && isStartDateSelected && isContestsSelected
                     && isDroppedContestsSelected && isEntrantsSelected;
             case 2:
-                return isIconSelected && isTitleEntered && isDescriptionEntered;
+                return true;
             default:
-                return isIconSelected && isTitleEntered && isDescriptionEntered;
+                return false;
         }
     }
 
@@ -199,6 +200,7 @@ export default function CreateTournament() {
                 }}
                 render={(formProps) => {
                     const {values, errors} = formProps;
+                    console.log(values.userFriends);
                     const canContinue = handleCanContinue(activeStep, formProps);
                     return (
                         <div className={classes.root}>
@@ -234,12 +236,13 @@ export default function CreateTournament() {
                                 ))}
                             </Stepper>
                             {activeStep === steps.length && (
-                                <Paper square elevation={0} className={classes.resetContainer}>
-                                    <Typography>All steps completed - you&apos;re finished</Typography>
-                                    <Button onClick={handleReset} className={classes.button}>
-                                        Reset
-                                    </Button>
-                                </Paper>
+                                <FullscreenLoader />
+                                // <Paper square elevation={0} className={classes.resetContainer}>
+                                //     <Typography>All steps completed - you&apos;re finished</Typography>
+                                //     <Button onClick={handleReset} className={classes.button}>
+                                //         Reset
+                                //     </Button>
+                                // </Paper>
                             )}
                         </div>
                     )
