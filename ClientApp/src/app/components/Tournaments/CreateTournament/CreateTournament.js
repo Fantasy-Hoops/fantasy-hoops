@@ -4,13 +4,12 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import {Formik, Form, Field, ErrorMessage} from 'formik';
+import {Formik} from 'formik';
 import {useStyles} from "./CreateTournamentStyle";
 import {newTournamentValidation} from "../../../utils/validation";
 import {Helmet} from "react-helmet";
-import {TournamentsCreate, TournamentsMain} from "../utils";
+import {TournamentsCreate} from "../utils";
 import {Canonicals} from "../../../utils/helpers";
 import BasicTournamentInfo from "./BasicTournamentInfo";
 import _ from "lodash";
@@ -23,6 +22,8 @@ import moment from "moment";
 import {loadImage} from "../../../utils/loadImage";
 import defaultPhoto from "../../../../content/images/default.png";
 import FullscreenLoader from "../../FullscreenLoader";
+import TournamentSummary from "./TournamentSummary";
+import {useSnackbar} from "notistack";
 
 const DATE_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
 
@@ -42,33 +43,41 @@ function getSteps() {
     return ['Create basic tournament info', 'Customize tournament type', 'Invite friends'];
 }
 
-export default function CreateTournament() {
-    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'production') {
-        return <Error status={404}/>;
-    }
 
+export default function CreateTournament() {
+    const {enqueueSnackbar} = useSnackbar();
     const [tournamentTypes, setTournamentTypes] = useState([]);
     const [startDates, setStartDates] = useState([]);
     const [initialContests, setInitialContests] = useState([]);
     const [initialDroppedContests, setInitialDroppedContests] = useState([]);
     const [userFriends, setUserFriends] = useState([]);
+    const [typesLoader, setTypesLoader] = useState(false);
+    const [datesLoader, setDatesLoader] = useState(false);
+    const [friendsLoader, setFriendsLoader] = useState(false);
+    const [submitLoader, setSubmitLoader] = useState(false);
 
     useEffect(() => {
         async function handleGetTournamentTypes() {
+            setTypesLoader(true);
             await getTournamentTypes().then(response => {
                 const tournamentTypes = response.data.map(tournament => ({
                     value: tournament.id,
                     label: tournament.name
                 }));
                 setTournamentTypes(tournamentTypes);
-            }).catch(error => console.error(error.message));
+            }).catch(error => {
+                console.error(error.message);
+            });
+            setTypesLoader(false);
         }
 
         async function handleGetUserFriends() {
+            setFriendsLoader(true);
+
             async function loadUserImage(avatarURL) {
                 return await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${avatarURL}.png`, defaultPhoto);
             }
-            
+
             await getUserFriends(parse().id)
                 .then(response => {
                     const friends = response.data.map(async friend => {
@@ -80,16 +89,23 @@ export default function CreateTournament() {
                         };
                     });
                     Promise.all(friends)
-                        .then(data => setUserFriends(data))
-                        .catch(err => console.error(err.message));
-                }).catch(error => console.error(error.message));
+                        .then(data => {
+                            setUserFriends(data);
+                        })
+                        .catch(err => enqueueSnackbar(err.message, {variant: 'warning'}));
+
+                }).catch(error => {
+                    enqueueSnackbar(error.message, {variant: 'warning'});
+                });
+            setFriendsLoader(false);
         }
 
         async function handleGetTournamentStartDates() {
+            setDatesLoader(true);
             await getTournamentStartDates().then(response => {
                 const startDates = response.data.map((date, index) => ({
                     index: index,
-                    value: moment(date),
+                    value: date,
                     label: moment(date).format(DATE_FORMAT)
                 }));
                 const contests = response.data.map((date, index) => ({
@@ -105,28 +121,28 @@ export default function CreateTournament() {
                 setStartDates(startDates);
                 setInitialContests(contests);
                 setInitialDroppedContests(droppedContests);
-            }).catch(error => console.error(error.message));
+            }).catch(error => {
+                console.error(error.message);
+            });
+            setDatesLoader(false);
         }
 
         handleGetTournamentTypes();
-        handleGetTournamentStartDates();
         handleGetUserFriends();
+        handleGetTournamentStartDates();
     }, []);
 
     const classes = useStyles();
     const [activeStep, setActiveStep] = React.useState(0);
     const steps = getSteps();
 
-    const handleNext = () => {
+    const handleNext = (values) => {
+        localStorage.setItem('tournamentValues', JSON.stringify(values));
         setActiveStep(prevActiveStep => prevActiveStep + 1);
     };
 
     const handleBack = () => {
         setActiveStep(prevActiveStep => prevActiveStep - 1);
-    };
-
-    const handleReset = () => {
-        setActiveStep(0);
     };
 
     function getStepContent(step, formProps) {
@@ -151,21 +167,19 @@ export default function CreateTournament() {
     }
 
     function handleCanContinue(step, formProps) {
-        return true;
-
-        const {touched, errors} = formProps;
+        const {values, touched, errors} = formProps;
         switch (step) {
             case 0:
                 const isIconSelected = _.isEmpty(errors.tournamentIcon);
-                const isTitleEntered = touched.tournamentTitle && _.isEmpty(errors.tournamentTitle);
-                const isDescriptionEntered = touched.tournamentDescription && _.isEmpty(errors.tournamentDescription);
+                const isTitleEntered = (values.tournamentTitle !== '' || touched.tournamentTitle) && _.isEmpty(errors.tournamentTitle);
+                const isDescriptionEntered = (values.tournamentDescription !== '' || touched.tournamentDescription) && _.isEmpty(errors.tournamentDescription);
                 return isIconSelected && isTitleEntered && isDescriptionEntered;
             case 1:
-                const isTypeSelected = touched.tournamentType && _.isEmpty(errors.tournamentType);
-                const isStartDateSelected = touched.startDate && _.isEmpty(errors.startDate);
-                const isContestsSelected = touched.contests && _.isEmpty(errors.contests);
-                const isDroppedContestsSelected = touched.droppedContests && _.isEmpty(errors.droppedContests);
-                const isEntrantsSelected = touched.entrants && _.isEmpty(errors.entrants);
+                const isTypeSelected = (values.tournamentType !== '' || touched.tournamentType) && _.isEmpty(errors.tournamentType);
+                const isStartDateSelected = (values.startDate !== '' || touched.startDate) && _.isEmpty(errors.startDate);
+                const isContestsSelected = (values.contests !== '' || touched.contests) && _.isEmpty(errors.contests);
+                const isDroppedContestsSelected = (values.droppedContests !== '' || touched.droppedContests) && _.isEmpty(errors.droppedContests);
+                const isEntrantsSelected = (values.entrants !== '' || touched.entrants) && _.isEmpty(errors.entrants);
                 return isTypeSelected && isStartDateSelected && isContestsSelected
                     && isDroppedContestsSelected && isEntrantsSelected;
             case 2:
@@ -174,7 +188,13 @@ export default function CreateTournament() {
                 return false;
         }
     }
+    
+    const showLoader = typesLoader || datesLoader || friendsLoader || submitLoader;
 
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'production') {
+        return <Error status={404}/>;
+    }
+    
     return (
         <>
             <Helmet>
@@ -187,20 +207,20 @@ export default function CreateTournament() {
                 <h5 className="Tournaments__Subtitle">{TournamentsCreate.SUBTITLE}</h5>
             </article>
             <Formik
-                initialValues={initialValues}
+                initialValues={JSON.parse(localStorage.getItem('tournamentValues')) || initialValues}
                 validationSchema={newTournamentValidation}
                 onSubmit={(values, actions) => {
                     actions.setSubmitting(true);
-                    const preview = document.getElementsByClassName('markdown-preview')[0];
-                    preview.innerHTML = null;
-                    const {savePost} = this.props;
-                    savePost({title: values.title, body: values.body, authorID: author.id});
-                    actions.resetForm({});
+                    setSubmitLoader(true);
+                    // forceUpdate();
+                    setTimeout(() => {
+                        enqueueSnackbar('submit', {variant: 'success'});
+                        setSubmitLoader(false);
+                    }, 3000);
                     actions.setSubmitting(false);
                 }}
                 render={(formProps) => {
-                    const {values, errors} = formProps;
-                    console.log(values.userFriends);
+                    const {values} = formProps;
                     const canContinue = handleCanContinue(activeStep, formProps);
                     return (
                         <div className={classes.root}>
@@ -223,7 +243,7 @@ export default function CreateTournament() {
                                                     <Button
                                                         variant="contained"
                                                         color="primary"
-                                                        onClick={handleNext}
+                                                        onClick={() => handleNext(values)}
                                                         className={classes.button}
                                                         disabled={!canContinue}
                                                     >
@@ -236,18 +256,13 @@ export default function CreateTournament() {
                                 ))}
                             </Stepper>
                             {activeStep === steps.length && (
-                                <FullscreenLoader />
-                                // <Paper square elevation={0} className={classes.resetContainer}>
-                                //     <Typography>All steps completed - you&apos;re finished</Typography>
-                                //     <Button onClick={handleReset} className={classes.button}>
-                                //         Reset
-                                //     </Button>
-                                // </Paper>
+                                <TournamentSummary formProps={formProps} handleBack={handleBack}/>
                             )}
                         </div>
                     )
                 }}
             />
+            {showLoader && <FullscreenLoader/>}
         </>
     );
 }

@@ -26,3 +26,19 @@ export const Canonicals = {
     TOURNAMENTS: `${url}/tournaments`,
     TOURNAMENTS_CREATE: `${url}/tournaments/create`
 };
+
+export const camelCaseToSentenceCase = (text) => {
+    const result = text.replace(/([A-Z])/g, " $1");
+    return result.charAt(0).toUpperCase() + result.slice(1);
+};
+
+export const getTournamentType = (value) => {
+    switch (value) {
+        case 1:
+            return 'One For All';
+        case 2:
+            return 'Matchups';
+        default:
+            return "";
+    }
+}

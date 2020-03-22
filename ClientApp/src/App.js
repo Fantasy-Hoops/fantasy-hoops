@@ -7,23 +7,17 @@ import Routes from "./app/routes/Routes.jsx";
 import './scss/bootswatch.scss';
 import './css/custom-styles.css';
 import './css/random-letters.css';
-
-function ScrollToTop(props) {
-    useEffect(() => {
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-        window.scrollTo(0, 0);
-    });
-    return props.children;
-}
+import ScrollToTop from "./ScrollToTop";
+import Snackbar from "./Snackbar";
 
 export default () => (
     <ThemeProvider theme={theme}>
-        <ScrollToTop>
-            <Layout>
-                <Routes/>
-            </Layout>
-        </ScrollToTop>
+        <Snackbar>
+            <ScrollToTop>
+                <Layout>
+                    <Routes/>
+                </Layout>
+            </ScrollToTop>
+        </Snackbar>
     </ThemeProvider>
 );

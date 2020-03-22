@@ -28,6 +28,10 @@ body {
     background-color: var(--tertiary-color);
 }
 
+.MuiSnackbarContent-message {
+    font-size: 1.6rem;
+}
+
 .CoronaAlert {
     margin: 5rem auto;
     width: 90vw;

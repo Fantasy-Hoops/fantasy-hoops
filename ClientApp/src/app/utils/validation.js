@@ -28,7 +28,10 @@ export const newTournamentValidation = Yup.object().shape({
   entrants: Yup.number()
       .when('droppedContests', (droppedContests, schema) => {
         return droppedContests > 0
-            ? schema.moreThan(Yup.ref('droppedContests'), "Number of entrants must be higher than dropped contests")
-            : schema.required('Number of entrants is required');
+            ? schema
+                .moreThan(Yup.ref('droppedContests'), "Number of entrants must be higher than dropped contests")
+            : schema
+                .moreThan(1, "Number of entrants must be higher than 1")
+                .required('Number of entrants is required');
       })
 });

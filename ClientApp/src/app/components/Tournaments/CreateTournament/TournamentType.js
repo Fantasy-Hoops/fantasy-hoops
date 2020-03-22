@@ -51,6 +51,7 @@ export default function TournamentType(props) {
     useEffect(() => {
         setContests(initialContests);
         setDroppedContests(initialDroppedContests);
+        toggleScheduledDates(startDates, values.contests);
     }, []);
 
     const change = (name, e) => {
@@ -66,6 +67,7 @@ export default function TournamentType(props) {
         let contestsCount = values.contests;
         if (values.contests > datesLeft.length) {
             setFieldValue('contests', datesLeft.length);
+            setFieldValue('droppedContests', datesLeft.length - 1);
             contestsCount = datesLeft.count;
         }
         setContests(initialContests.slice(0, datesLeft.length));
@@ -76,6 +78,12 @@ export default function TournamentType(props) {
 
     const handleContestsChange = (name, e) => {
         toggleScheduledDates(leftDates, e.target.value);
+        change(name, e);
+    };
+
+    const handleDroppedContestsChange = (name, e) => {
+        const {values} = formProps;
+        toggleScheduledDates(leftDates, values.contests);
         change(name, e);
     };
 
@@ -156,7 +164,7 @@ export default function TournamentType(props) {
                 label="Dropped Contests"
                 values={droppedContests}
                 value={values.droppedContests}
-                onChange={change.bind(null, "droppedContests")}
+                onChange={handleDroppedContestsChange.bind(null, "droppedContests")}
                 error={touched.droppedContests && !_.isEmpty(errors.droppedContests)}
                 helperText={touched.droppedContests ? errors.droppedContests : ''}
                 emptyOption
@@ -184,7 +192,12 @@ export default function TournamentType(props) {
             <TextField
                 className={classes.textField}
                 type="number"
-                inputProps={{min: droppedContests.length + 1, max: "50", step: "1"}}
+                inputProps={{
+                    min: values.droppedContests !== 0
+                        ? values.droppedContests + 1
+                        : 2,
+                    max: "50",
+                    step: "1"}}
                 margin="normal"
                 id="entrants"
                 label="Entrants"

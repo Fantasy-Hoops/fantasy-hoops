@@ -16,6 +16,7 @@ import {Link} from "react-router-dom";
  * @return {null}
  */
 function InjuryPlayerDialog(props) {
+    const classes = useStyles();
     const {open, handleDialogClose, injury} = props;
 
     if (injury == null) {
@@ -31,7 +32,6 @@ function InjuryPlayerDialog(props) {
         || injury.status.toLowerCase().includes('suspended')) {
         status = 'injury-out';
     } else status = 'injury-questionable';
-    const classes = useStyles();
 
     const teamLogo = (
         <Img
