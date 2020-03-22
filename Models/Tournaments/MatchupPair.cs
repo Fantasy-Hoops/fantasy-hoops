@@ -5,7 +5,7 @@ namespace fantasy_hoops.Models.Tournaments
     public class MatchupPair
     {
         [Key]
-        public int TournamentID { get; set; }
+        public string TournamentID { get; set; }
         [Key]
         public string FirstUserID { get; set; }
         [Key]

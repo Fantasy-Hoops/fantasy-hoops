@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200322104543_ChangeTournamentId")]
+    partial class ChangeTournamentId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -710,20 +712,24 @@ namespace fantasy_hoops.Migrations
                     b.Property<DateTime>("ContestStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TournamentID")
+                    b.Property<int>("TournamentID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tournamenttid")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TournamentID");
+                    b.HasIndex("Tournamenttid");
 
                     b.ToTable("Contests");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.Tournaments.MatchupPair", b =>
                 {
-                    b.Property<string>("TournamentID")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("TournamentID")
+                        .HasColumnType("int");
 
                     b.Property<string>("FirstUserID")
                         .HasColumnType("nvarchar(450)");
@@ -743,6 +749,10 @@ namespace fantasy_hoops.Migrations
                     b.Property<double>("SecondUserScore")
                         .HasColumnType("float");
 
+                    b.Property<string>("Tournamenttid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("TournamentID", "FirstUserID", "SecondUserID");
 
                     b.HasIndex("ContestId");
@@ -751,12 +761,14 @@ namespace fantasy_hoops.Migrations
 
                     b.HasIndex("SecondUserID");
 
+                    b.HasIndex("Tournamenttid");
+
                     b.ToTable("TournamentMatchups");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.Tournaments.Tournament", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<string>("tid")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Contests")
@@ -786,7 +798,7 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("TypeID")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("tid");
 
                     b.HasIndex("TypeID");
 
@@ -810,8 +822,8 @@ namespace fantasy_hoops.Migrations
 
             modelBuilder.Entity("fantasy_hoops.Models.Tournaments.TournamentUsers", b =>
                 {
-                    b.Property<string>("TournamentID")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("TournamentID")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserID")
                         .HasColumnType("nvarchar(450)");
@@ -822,10 +834,15 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("Ties")
                         .HasColumnType("int");
 
+                    b.Property<string>("Tournamenttid")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("Wins")
                         .HasColumnType("int");
 
                     b.HasKey("TournamentID", "UserID");
+
+                    b.HasIndex("Tournamenttid");
 
                     b.HasIndex("UserID");
 
@@ -1202,7 +1219,9 @@ namespace fantasy_hoops.Migrations
                 {
                     b.HasOne("fantasy_hoops.Models.Tournaments.Tournament", "Tournament")
                         .WithMany()
-                        .HasForeignKey("TournamentID");
+                        .HasForeignKey("Tournamenttid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.Tournaments.MatchupPair", b =>
@@ -1225,7 +1244,7 @@ namespace fantasy_hoops.Migrations
 
                     b.HasOne("fantasy_hoops.Models.Tournaments.Tournament", "Tournament")
                         .WithMany()
-                        .HasForeignKey("TournamentID")
+                        .HasForeignKey("Tournamenttid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1243,9 +1262,7 @@ namespace fantasy_hoops.Migrations
                 {
                     b.HasOne("fantasy_hoops.Models.Tournaments.Tournament", "Tournament")
                         .WithMany()
-                        .HasForeignKey("TournamentID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Tournamenttid");
 
                     b.HasOne("fantasy_hoops.Models.User", "User")
                         .WithMany()

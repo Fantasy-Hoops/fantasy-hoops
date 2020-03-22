@@ -114,6 +114,7 @@ namespace fantasy_hoops
             services.AddScoped<IScoreService, ScoreService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAchievementsService, AchievementsService>();
+            services.AddScoped<ITournamentsService, TournamentsService>();
 
             // Repositories
             services.AddScoped<IBlogRepository, BlogRepository>();

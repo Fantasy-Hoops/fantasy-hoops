@@ -6,7 +6,7 @@ namespace fantasy_hoops.Models.Tournaments
     public class Tournament
     {
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
         public int TypeID { get; set; }
         public TournamentType Type { get; set; }
         public DateTime StartDate { get;set; }

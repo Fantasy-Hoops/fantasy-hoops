@@ -12,7 +12,7 @@ namespace fantasy_hoops.Models.Tournaments
         public List<MatchupPair> ContestPairs { get; set; }
         
         
-        public int TournamentID { get; set; }
+        public string TournamentID { get; set; }
         public virtual Tournament Tournament { get; set; }
     }
 }

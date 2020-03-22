@@ -16,7 +16,12 @@ import _ from "lodash";
 import TournamentType from "./TournamentType";
 import {Error} from "../../Error";
 import InviteFriends from "./InviteFriends";
-import {getTournamentStartDates, getTournamentTypes, getUserFriends} from "../../../utils/networkFunctions";
+import {
+    createTournament,
+    getTournamentStartDates,
+    getTournamentTypes,
+    getUserFriends
+} from "../../../utils/networkFunctions";
 import {parse} from "../../../utils/auth";
 import moment from "moment";
 import {loadImage} from "../../../utils/loadImage";
@@ -212,11 +217,25 @@ export default function CreateTournament() {
                 onSubmit={(values, actions) => {
                     actions.setSubmitting(true);
                     setSubmitLoader(true);
-                    // forceUpdate();
-                    setTimeout(() => {
-                        enqueueSnackbar('submit', {variant: 'success'});
-                        setSubmitLoader(false);
-                    }, 3000);
+                    createTournament({
+                        tournamentIcon: values.tournamentIcon,
+                        tournamentTitle: values.tournamentTitle,
+                        tournamentDescription: values.tournamentDescription,
+                        startDate: values.startDate,
+                        tournamentType: values.tournamentType,
+                        contests: values.contests,
+                        droppedContests: values.droppedContests,
+                        entrants: values.entrants,
+                        userFriends: values.userFriends.map(user => user.id)
+                    })
+                        .then(response => {
+                            enqueueSnackbar(response.data.message, {variant: 'success'});
+                            setSubmitLoader(false);
+                        })
+                        .catch(error => {
+                            enqueueSnackbar(error.message, {variant: 'error'});
+                            setSubmitLoader(false);
+                        });
                     actions.setSubmitting(false);
                 }}
                 render={(formProps) => {

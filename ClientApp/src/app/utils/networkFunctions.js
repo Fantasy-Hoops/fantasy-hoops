@@ -124,3 +124,4 @@ export const getBestLineups = parameters => axios.get(`${bestLineupsApiUrlBase}$
 // Tournaments
 export const getTournamentTypes = () => axios.get(`${tournamentsApiUrlBase}/types`);
 export const getTournamentStartDates = () => axios.get(`${tournamentsApiUrlBase}/start-dates`);
+export const createTournament = tournament => axios.post(tournamentsApiUrlBase, tournament);

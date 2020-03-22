@@ -7,7 +7,7 @@ namespace fantasy_hoops.Models.Tournaments
         [Key]
         public string UserID { get; set; }
         [Key]
-        public int TournamentID { get; set; }
+        public string TournamentID { get; set; }
         public int Wins { get; set; }
         public int Losses { get; set; }
         public int Ties { get; set; }
