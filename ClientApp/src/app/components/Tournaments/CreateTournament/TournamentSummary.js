@@ -8,11 +8,9 @@ import TableRow from "@material-ui/core/TableRow";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
-import {camelCaseToSentenceCase, getTournamentType} from "../../../utils/helpers";
+import {camelCaseToSentenceCase, getTournamentType, TOURNAMENT_DATE_FORMAT} from "../../../utils/helpers";
 import {Avatar} from "@material-ui/core";
 import moment from "moment";
-
-const DATE_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
 
 export default function TournamentSummary(props) {
     const classes = useStyles();
@@ -26,7 +24,7 @@ export default function TournamentSummary(props) {
                     <Avatar alt={key} src={value} className={classes.small}/>
                 );
             case 'startDate':
-                return moment(value).format(DATE_FORMAT);
+                return moment(value).format(TOURNAMENT_DATE_FORMAT);
             case 'tournamentType':
                 return getTournamentType(value);
             default:

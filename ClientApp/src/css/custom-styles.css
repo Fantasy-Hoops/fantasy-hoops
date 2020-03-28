@@ -44,6 +44,11 @@ body {
     }
 }
 
+.Snackbar {
+    line-height: 2rem !important;
+    white-space: pre-line;
+}
+
 a:hover {
     text-decoration: none;
 }

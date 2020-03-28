@@ -1,5 +1,6 @@
 using System;
 using Castle.Core;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories.Interfaces;
@@ -21,9 +22,9 @@ namespace fantasy_hoops.Services
             Tournament newTournament = FromViewModel(tournamentViewModel);
             
             bool isCreated = _tournamentsRepository.CreateTournament(newTournament);
-            string tournamentId = newTournament.Id;
+            string inviteUrl = generateInviteUrl(newTournament.Id);
             
-            return new Pair<bool, string>(isCreated, tournamentId);
+            return new Pair<bool, string>(isCreated, inviteUrl);
         }
 
         private Tournament FromViewModel(CreateTournamentViewModel tournamentModel)
@@ -31,6 +32,7 @@ namespace fantasy_hoops.Services
             return new Tournament
             {
                 Id = Guid.NewGuid().ToString(),
+                CreatorID = tournamentModel.CreatorId,
                 TypeID = tournamentModel.TournamentType,
                 Type = _tournamentsRepository.GetTournamentTypeById(tournamentModel.TournamentType),
                 StartDate = tournamentModel.StartDate,
@@ -40,8 +42,25 @@ namespace fantasy_hoops.Services
                 Entrants = tournamentModel.Entrants,
                 Contests = tournamentModel.Contests,
                 DroppedContests = tournamentModel.DroppedContests,
-                ImageURL = tournamentModel.TournamentIcon,
+                ImageURL = parseIconPath(tournamentModel.TournamentIcon)
             };
+        }
+
+        private string parseIconPath(string imageUrl)
+        {
+            int nameStartIndex = imageUrl.LastIndexOf("/", StringComparison.Ordinal) + 1;
+            string[] pathParts = imageUrl.Substring(nameStartIndex).Split(".");
+            return string.Join('.', pathParts[0], pathParts[2]);
+        }
+
+        private string generateInviteUrl(string tournamentId)
+        {
+            if (string.IsNullOrEmpty(tournamentId))
+            {
+                return null;
+            }
+
+            return $"https://{CommonFunctions.DOMAIN}/tournaments/invitation/{tournamentId}";
         }
     }
 }

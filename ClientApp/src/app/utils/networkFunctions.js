@@ -122,6 +122,7 @@ export const getUserAchievements = userId => axios.get(`${achievementsApiUrlBase
 export const getBestLineups = parameters => axios.get(`${bestLineupsApiUrlBase}${createParameters(parameters)}`);
 
 // Tournaments
+export const getUserTournaments = userId => axios.get(`${tournamentsApiUrlBase}/user/${userId}`);
 export const getTournamentTypes = () => axios.get(`${tournamentsApiUrlBase}/types`);
 export const getTournamentStartDates = () => axios.get(`${tournamentsApiUrlBase}/start-dates`);
 export const createTournament = tournament => axios.post(tournamentsApiUrlBase, tournament);

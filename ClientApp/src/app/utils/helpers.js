@@ -41,4 +41,6 @@ export const getTournamentType = (value) => {
         default:
             return "";
     }
-}
+};
+
+export const TOURNAMENT_DATE_FORMAT = 'MMMM Do YYYY, h:mm:ss a';

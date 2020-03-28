@@ -15,6 +15,7 @@ namespace fantasy_hoops.Helpers
 {
 	public class CommonFunctions
 	{
+		public const string DOMAIN = "fantasyhoops.org";
 		public static string SEASON_YEAR = GetSeasonYear();
 
 		public static string LineupPositionsOrder = "PG|SG|SF|PF|C";

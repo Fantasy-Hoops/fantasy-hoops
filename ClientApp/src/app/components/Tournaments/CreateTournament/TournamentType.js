@@ -18,8 +18,7 @@ import {useStyles} from "./TournamentTypeStyle";
 import TableCell from "@material-ui/core/TableCell";
 import _ from "lodash";
 import {TextField} from "@material-ui/core";
-
-const DATE_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
+import {TOURNAMENT_DATE_FORMAT} from "../../../utils/helpers";
 
 export default function TournamentType(props) {
     const classes = useStyles();
@@ -90,7 +89,7 @@ export default function TournamentType(props) {
     const toggleScheduledDates = (dates, contestsCount) => {
         const scheduledDates = dates.slice(0, contestsCount).map((date, index) => (
             <TableRow key={index} className={classes.tableRow}>
-                <TableCell>{moment(date.value).format(DATE_FORMAT)}</TableCell>
+                <TableCell>{moment(date.value).format(TOURNAMENT_DATE_FORMAT)}</TableCell>
             </TableRow>
         ));
         if (contestsCount === 1) {

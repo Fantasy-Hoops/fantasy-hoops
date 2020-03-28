@@ -5,6 +5,7 @@ namespace fantasy_hoops.Models.ViewModels
 {
     public class CreateTournamentViewModel
     {
+        public string CreatorId { get; set; }
         public string TournamentIcon { get; set; }
         public string TournamentTitle { get; set; }
         public string TournamentDescription { get; set; }

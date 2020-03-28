@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace fantasy_hoops.Repositories
 {
@@ -16,12 +18,12 @@ namespace fantasy_hoops.Repositories
         {
             _context = new GameContext();
         }
-        
+
         public List<Tournament.TournamentType> GetTournamentTypes()
         {
             return _context.TournamentTypes
-            .Distinct()
-            .ToList();
+                .Distinct()
+                .ToList();
         }
 
         public Tournament.TournamentType GetTournamentTypeById(int id)
@@ -40,6 +42,24 @@ namespace fantasy_hoops.Repositories
                 .ToList();
         }
 
+        public Dictionary<string, List<Tournament>> GetUserTournaments(string userId)
+        {
+            List<Tournament> createdTournaments =
+                _context.Tournaments.Where(tournament => tournament.CreatorID.Equals(userId)).ToList();
+            List<Tournament> joinedTournaments =
+                _context.TournamentUsers
+                    .Include(tournamentUser => tournamentUser.Tournament)
+                    .Where(tournamentUser => tournamentUser.UserID.Equals(userId))
+                    .Select(tournamentUser => tournamentUser.Tournament)
+                    .ToList();
+
+            return new Dictionary<string, List<Tournament>>
+            {
+                {"created", createdTournaments},
+                {"joined", joinedTournaments}
+            };
+        }
+
         public bool CreateTournament(Tournament tournament)
         {
             _context.Tournaments.Add(tournament);
@@ -55,6 +75,11 @@ namespace fantasy_hoops.Repositories
         public bool TournamentExists(string id)
         {
             return _context.Tournaments.Any(tournament => tournament.Id.Equals(id));
+        }
+
+        public bool TournamentNameExists(string name)
+        {
+            return _context.Tournaments.Any(tournament => tournament.Name.ToUpper().Equals(name.ToUpper()));
         }
     }
 }

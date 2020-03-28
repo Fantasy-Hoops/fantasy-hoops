@@ -10,7 +10,7 @@ import {useStyles} from "./CreateTournamentStyle";
 import {newTournamentValidation} from "../../../utils/validation";
 import {Helmet} from "react-helmet";
 import {TournamentsCreate} from "../utils";
-import {Canonicals} from "../../../utils/helpers";
+import {Canonicals, TOURNAMENT_DATE_FORMAT} from "../../../utils/helpers";
 import BasicTournamentInfo from "./BasicTournamentInfo";
 import _ from "lodash";
 import TournamentType from "./TournamentType";
@@ -29,8 +29,7 @@ import defaultPhoto from "../../../../content/images/default.png";
 import FullscreenLoader from "../../FullscreenLoader";
 import TournamentSummary from "./TournamentSummary";
 import {useSnackbar} from "notistack";
-
-const DATE_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
+import CopyToClipboard from "../../Inputs/CopyToClipboard";
 
 const initialValues = {
     tournamentIcon: null,
@@ -49,7 +48,12 @@ function getSteps() {
 }
 
 
+/**
+ * @return {null}
+ */
+
 export default function CreateTournament() {
+    const user = parse();
     const {enqueueSnackbar} = useSnackbar();
     const [tournamentTypes, setTournamentTypes] = useState([]);
     const [startDates, setStartDates] = useState([]);
@@ -60,6 +64,7 @@ export default function CreateTournament() {
     const [datesLoader, setDatesLoader] = useState(false);
     const [friendsLoader, setFriendsLoader] = useState(false);
     const [submitLoader, setSubmitLoader] = useState(false);
+    const [inviteUrl, setInviteUrl] = useState(null);
 
     useEffect(() => {
         async function handleGetTournamentTypes() {
@@ -83,7 +88,7 @@ export default function CreateTournament() {
                 return await loadImage(`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${avatarURL}.png`, defaultPhoto);
             }
 
-            await getUserFriends(parse().id)
+            await getUserFriends(user.id)
                 .then(response => {
                     const friends = response.data.map(async friend => {
                         const avatar = await loadUserImage(friend.avatarURL);
@@ -97,10 +102,10 @@ export default function CreateTournament() {
                         .then(data => {
                             setUserFriends(data);
                         })
-                        .catch(err => enqueueSnackbar(err.message, {variant: 'warning'}));
+                        .catch(err => enqueueSnackbar(err.message, {variant: 'error'}));
 
                 }).catch(error => {
-                    enqueueSnackbar(error.message, {variant: 'warning'});
+                    enqueueSnackbar(error.message, {variant: 'error'});
                 });
             setFriendsLoader(false);
         }
@@ -111,7 +116,7 @@ export default function CreateTournament() {
                 const startDates = response.data.map((date, index) => ({
                     index: index,
                     value: date,
-                    label: moment(date).format(DATE_FORMAT)
+                    label: moment(date).format(TOURNAMENT_DATE_FORMAT)
                 }));
                 const contests = response.data.map((date, index) => ({
                     index: index,
@@ -193,13 +198,31 @@ export default function CreateTournament() {
                 return false;
         }
     }
-    
+
     const showLoader = typesLoader || datesLoader || friendsLoader || submitLoader;
+
 
     if (!process.env.NODE_ENV || process.env.NODE_ENV === 'production') {
         return <Error status={404}/>;
     }
-    
+
+    if (inviteUrl) {
+        return (
+            <>
+                <Helmet>
+                    <title>Create New Tournament | Fantasy Hoops</title>
+                    <meta name="description" content={TournamentsCreate.SUBTITLE}/>
+                    <link rel="canonical" href={Canonicals.TOURNAMENTS}/>
+                </Helmet>
+                <article className="Tournaments__Intro">
+                    <h1 className="Tournaments__Title">{TournamentsCreate.TITLE}</h1>
+                    <h1 className="Tournaments__Subtitle">{TournamentsCreate.CREATED_SUBTITLE}</h1>
+                </article>
+                <CopyToClipboard inputText={inviteUrl} />
+            </>
+        )
+    }
+
     return (
         <>
             <Helmet>
@@ -209,7 +232,6 @@ export default function CreateTournament() {
             </Helmet>
             <article className="Tournaments__Intro">
                 <h1 className="Tournaments__Title">{TournamentsCreate.TITLE}</h1>
-                <h5 className="Tournaments__Subtitle">{TournamentsCreate.SUBTITLE}</h5>
             </article>
             <Formik
                 initialValues={JSON.parse(localStorage.getItem('tournamentValues')) || initialValues}
@@ -218,6 +240,7 @@ export default function CreateTournament() {
                     actions.setSubmitting(true);
                     setSubmitLoader(true);
                     createTournament({
+                        creatorId: user.id,
                         tournamentIcon: values.tournamentIcon,
                         tournamentTitle: values.tournamentTitle,
                         tournamentDescription: values.tournamentDescription,
@@ -230,10 +253,11 @@ export default function CreateTournament() {
                     })
                         .then(response => {
                             enqueueSnackbar(response.data.message, {variant: 'success'});
+                            setInviteUrl(response.data.inviteUrl);
                             setSubmitLoader(false);
                         })
                         .catch(error => {
-                            enqueueSnackbar(error.message, {variant: 'error'});
+                            enqueueSnackbar(`${error.message}\n${error.response.data}`, {variant: 'error'});
                             setSubmitLoader(false);
                         });
                     actions.setSubmitting(false);

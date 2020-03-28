@@ -42,8 +42,8 @@ export default () => (
         <Route exact path={Routes.BLOG} component={Blog}/>
         <Route exact path={Routes.LEADERBOARDS} component={Leaderboards}/>
         <Route exact path={Routes.ACHIEVEMENTS} component={Achievements}/>
-        <Route exact path={Routes.TOURNAMENTS} component={TournamentsPage}/>
-        <Route exact path={Routes.TOURNAMENTS_CREATE} component={CreateTournament}/>
+        <PrivateRoute exact path={Routes.TOURNAMENTS} component={TournamentsPage}/>
+        <PrivateRoute exact path={Routes.TOURNAMENTS_CREATE} component={CreateTournament}/>
         <Route render={() => <Error status={404} message="Page not found"/>}/>
     </Switch>
 );

@@ -3,7 +3,15 @@ import {SnackbarProvider} from "notistack";
 
 export default function Snackbar(props) {
     return (
-        <SnackbarProvider maxSnack={3}>
+        <SnackbarProvider
+            classes={{
+                variantSuccess: 'Snackbar',
+                variantError: 'Snackbar',
+                variantWarning: 'Snackbar',
+                variantInfo: 'Snackbar',
+            }}
+            maxSnack={3}
+        >
             {props.children}
         </SnackbarProvider>
     )
