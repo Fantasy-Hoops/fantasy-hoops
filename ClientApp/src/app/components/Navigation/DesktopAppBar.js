@@ -16,6 +16,7 @@ import defaultPhoto from "../../../content/images/default.png";
 import Img from "react-image";
 
 function DesktopAppBar(props) {
+    const isAuthenticated = isAuth();
     const classes = useStyles();
     const {selectedTab, handleProfileMenuOpen, handleDrawerToggle, menuId} = props;
     const [avatar, setAvatar] = useState(null);
@@ -26,7 +27,7 @@ function DesktopAppBar(props) {
             setAvatar(avatar);
         }
 
-        if(isAuth()) {
+        if(isAuthenticated) {
             loadAvatar();
         }
     }, []);
@@ -44,7 +45,7 @@ function DesktopAppBar(props) {
                 </Link>
             </div>
             <div className={classes.sectionDesktop}>
-                {isAuth() && <Notifications/>}
+                {isAuthenticated && <Notifications/>}
                 <IconButton
                     className={classes.avatar}
                     aria-label="account of current user"
@@ -84,12 +85,13 @@ function DesktopAppBar(props) {
                     textColor="secondary"
                     aria-label="tabs"
                 >
-                    {isAuth() && <Tab className={classes.tab} component={Link} to={Routes.LINEUP} label="Lineup"/>}
+                    {isAuthenticated && <Tab className={classes.tab} component={Link} to={Routes.LINEUP} label="Lineup"/>}
                     <Tab className={classes.tab} component={Link} to={Routes.LEADERBOARDS} label="Leaderboards"/>
+                    {isAuthenticated && <Tab className={classes.tab} component={Link} to={Routes.TOURNAMENTS} label="Tournaments"/>}
                     <Tab className={classes.tab} component={Link} to={Routes.ACHIEVEMENTS} label="Achievements"/>
                     <Tab className={classes.tab} component={Link} to={Routes.INJURIES} label="Injuries"/>
                     <Tab className={classes.tab} component={Link} to={Routes.NEWS} label="News"/>
-                    {isAuth() && <Tab className={classes.tab} component={Link} to={Routes.USER_POOL} label="Users"/>}
+                    {isAuthenticated && <Tab className={classes.tab} component={Link} to={Routes.USER_POOL} label="Users"/>}
                     <Tab className={classes.tab} component={Link} to={Routes.BLOG} label="Blog"/>
                 </Tabs>
             </Toolbar>

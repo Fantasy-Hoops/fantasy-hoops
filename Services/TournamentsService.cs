@@ -22,7 +22,7 @@ namespace fantasy_hoops.Services
             Tournament newTournament = FromViewModel(tournamentViewModel);
             
             bool isCreated = _tournamentsRepository.CreateTournament(newTournament);
-            string inviteUrl = generateInviteUrl(newTournament.Id);
+            string inviteUrl = GenerateInviteUrl(newTournament.Id);
             
             return new Pair<bool, string>(isCreated, inviteUrl);
         }
@@ -36,24 +36,24 @@ namespace fantasy_hoops.Services
                 TypeID = tournamentModel.TournamentType,
                 Type = _tournamentsRepository.GetTournamentTypeById(tournamentModel.TournamentType),
                 StartDate = tournamentModel.StartDate,
-                EndDate = DateTime.Now,
+                EndDate = GetEndDate(),
                 Name = tournamentModel.TournamentTitle,
                 Description = tournamentModel.TournamentDescription,
                 Entrants = tournamentModel.Entrants,
                 Contests = tournamentModel.Contests,
                 DroppedContests = tournamentModel.DroppedContests,
-                ImageURL = parseIconPath(tournamentModel.TournamentIcon)
+                ImageURL = ParseIconPath(tournamentModel.TournamentIcon)
             };
         }
 
-        private string parseIconPath(string imageUrl)
+        private string ParseIconPath(string imageUrl)
         {
             int nameStartIndex = imageUrl.LastIndexOf("/", StringComparison.Ordinal) + 1;
             string[] pathParts = imageUrl.Substring(nameStartIndex).Split(".");
             return string.Join('.', pathParts[0], pathParts[2]);
         }
 
-        private string generateInviteUrl(string tournamentId)
+        private string GenerateInviteUrl(string tournamentId)
         {
             if (string.IsNullOrEmpty(tournamentId))
             {
@@ -61,6 +61,11 @@ namespace fantasy_hoops.Services
             }
 
             return $"https://{CommonFunctions.DOMAIN}/tournaments/invitation/{tournamentId}";
+        }
+
+        private DateTime GetEndDate()
+        {
+            return _tournamentsRepository.GetLastEndDate();
         }
     }
 }

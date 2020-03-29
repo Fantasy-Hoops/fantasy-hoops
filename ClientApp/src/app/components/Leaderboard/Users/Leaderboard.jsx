@@ -6,7 +6,6 @@ import { parse } from '../../../utils/auth';
 import Card from './Card';
 import leaderboardLogo from '../../../../content/icons/1021175-winning/svg/006-winner-5.svg';
 import EmptyJordan from '../../EmptyJordan';
-import { PlayerModal } from '../../PlayerModal/PlayerModal';
 import { getUsersLeaderboard, getUserFriendsOnlyLeaderboard, getPlayerStats } from '../../../utils/networkFunctions';
 import { getWeek } from '../../../utils/date';
 import CustomDatePicker from "../../Inputs/DatePicker/CustomDatePicker";
@@ -14,7 +13,6 @@ import { datePickerStyles } from "./LeaderboardStyle";
 import { DatePickerTypes, makeJSDateObject } from "../../Inputs/DatePicker/utils";
 import endOfWeek from "date-fns/endOfWeek";
 import enLocale from "date-fns/locale/en-GB";
-import { Container } from "@material-ui/core";
 import { Helmet } from "react-helmet";
 import { Canonicals, Meta } from "../../../utils/helpers";
 import PlayerDialog from "../../PlayerModal/PlayerDialog";
@@ -23,14 +21,6 @@ const LEADERBOARD_SUPPORT_START_DATE = '2019-02-24';
 const loggedInUser = parse();
 const LOAD_COUNT = 10;
 const { $ } = window;
-
-const positionImages = {
-    PG: require('../../../../content/images/positions/pg.png'),
-    SG: require('../../../../content/images/positions/sg.png'),
-    SF: require('../../../../content/images/positions/sf.png'),
-    PF: require('../../../../content/images/positions/pf.png'),
-    C: require('../../../../content/images/positions/c.png')
-};
 
 function Leaderboard(props) {
     const minDate = new Date(LEADERBOARD_SUPPORT_START_DATE);
@@ -173,8 +163,8 @@ function Leaderboard(props) {
             setLoader(true);
 
             const users = !friendsOnly
-                ? await getUsersLeaderboard({ type: activeTabURL, date: dateFormat })
-                : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: activeTabURL, date: dateFormat });
+                ? await getUsersLeaderboard({ type: activeTabURL, date: dateFormat, weekNumber })
+                : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: activeTabURL, date: dateFormat, weekNumber });
 
             setShowButton(prevState => ({ ...prevState, daily: users.data.length === LOAD_COUNT }));
             setLeaderboard(prevState => ({ ...prevState, [type]: users.data }));

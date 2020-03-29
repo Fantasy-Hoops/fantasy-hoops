@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
 using fantasy_hoops.Database;
+using fantasy_hoops.Enums;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using FluentScheduler;
@@ -39,11 +42,10 @@ namespace fantasy_hoops.Jobs
                 return;
             }
 
+            Season season = UpdateSeason(scheduledGames);
+
             foreach (JToken game in scheduledGames)
             {
-                DateTime dateUTC = DateTime.Parse(game["startTimeUTC"].ToString());
-                DateTime dateECT = CommonFunctions.UTCToEastern(dateUTC);
-
                 string hTeamReference = game["hTeam"]["teamId"].ToString();
                 string vTeamReference = game["vTeam"]["teamId"].ToString();
                 int hTeamId = _context.Teams
@@ -70,8 +72,9 @@ namespace fantasy_hoops.Jobs
                 Game newGame = new Game
                 {
                     Reference = reference,
-                    Date = dateECT,
-                    IsFinished = int.Parse(game["statusNum"].ToString()) == 3,
+                    Date = GetDateECT(game),
+                    SeasonStage = (SeasonStage)(int)game["seasonStageId"],
+                    Status = (GameStatus)(int)game["statusNum"],
                     isTBD = (bool)game["isStartTimeTBD"],
                     HomeTeamID = hTeamId,
                     AwayTeamID = vTeamId,
@@ -82,6 +85,11 @@ namespace fantasy_hoops.Jobs
                 if (!_context.Games.Any(dbGame => dbGame.Reference.Equals(reference)))
                 {
                     _context.Games.Add(newGame);
+                }
+
+                if (!season.Games.Any(seasonGame => seasonGame.Reference.Equals(newGame.Reference)))
+                {
+                    season.Games.Add(newGame);
                 }
             }
             _context.SaveChanges();
@@ -96,6 +104,55 @@ namespace fantasy_hoops.Jobs
             string apiResponse = CommonFunctions.ResponseToString(webResponse);
             JObject json = JObject.Parse(apiResponse);
             return json;
+        }
+
+        private Season UpdateSeason(JArray scheduledGames)
+        {
+            Season dbSeason = _context.Seasons.FirstOrDefault(season => season.Year == int.Parse(_seasonYear));
+            IEnumerable<DateTime> gamesDates = scheduledGames.AsEnumerable().Select(GetDateECT).ToList();
+            DateTime startDate = gamesDates.Min();
+            DateTime endDate = gamesDates.Max();
+            IEnumerable<SeasonStage> seasonStages = scheduledGames
+                .AsEnumerable()
+                .Select(game => (SeasonStage) (int) game["seasonStageId"])
+                .ToList();
+            int preSeasonGames = seasonStages.Count(stage => stage == SeasonStage.PRE_SEASON);
+            int regularSeasonGames = seasonStages.Count(stage => stage == SeasonStage.REGULAR_SEASON);
+            int allStarBreakGames = seasonStages.Count(stage => stage == SeasonStage.ALL_STAR_BREAK);
+            int playoffGames = seasonStages.Count(stage => stage == SeasonStage.PLAYOFFS);
+            
+            if (dbSeason == null)
+            {
+                dbSeason = new Season
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Year = int.Parse(_seasonYear),
+                    StartDate = startDate,
+                    EndDate = endDate,
+                    PreSeasonGames = preSeasonGames,
+                    RegularSeasonGames = regularSeasonGames,
+                    AllStarBreakGames = allStarBreakGames,
+                    PlayoffGames = playoffGames,
+                    Games = new List<Game>()
+                };
+                _context.Seasons.Add(dbSeason);
+            }
+            else
+            {
+                dbSeason.EndDate = endDate;
+                dbSeason.PreSeasonGames = preSeasonGames;
+                dbSeason.RegularSeasonGames = regularSeasonGames;
+                dbSeason.AllStarBreakGames = allStarBreakGames;
+                dbSeason.PlayoffGames = playoffGames;
+            }
+            
+            return _context.SaveChanges() != 0 ? dbSeason : null;
+        }
+
+        private DateTime GetDateECT(JToken game)
+        {
+            DateTime dateUTC = DateTime.Parse(game["startTimeUTC"].ToString());
+            return CommonFunctions.UTCToEastern(dateUTC);
         }
     }
 }

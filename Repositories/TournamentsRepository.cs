@@ -6,7 +6,6 @@ using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace fantasy_hoops.Repositories
 {
@@ -40,6 +39,13 @@ namespace fantasy_hoops.Repositories
                 .Select(group => group.Min(game => game.Date.Value))
                 .OrderBy(date => date)
                 .ToList();
+        }
+
+        public DateTime GetLastEndDate()
+        {
+            return _context.Games
+                .Where(game => game.Date.HasValue)
+                .Max(tournament => tournament.Date.Value);
         }
 
         public Dictionary<string, List<Tournament>> GetUserTournaments(string userId)

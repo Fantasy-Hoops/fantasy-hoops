@@ -4,15 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using fantasy_hoops.Enums;
 
 namespace fantasy_hoops.Models
 {
-
-    public enum RequestStatus
-    {
-        PENDING, ACCEPTED, DECLINED, CANCELED, NO_REQUEST, PENDING_INCOMING
-    }
-
     public class FriendRequest
     {
         [Key]

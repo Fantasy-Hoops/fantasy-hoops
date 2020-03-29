@@ -34,6 +34,7 @@ namespace fantasy_hoops.Database
         public DbSet<TournamentUsers> TournamentUsers { get; set; }
         public DbSet<Contest> Contests { get; set; }
         public DbSet<MatchupPair> TournamentMatchups { get; set; }
+        public DbSet<Season> Seasons { get; set; }
 
         public GameContext()
         {

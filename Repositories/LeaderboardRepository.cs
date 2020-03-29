@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using fantasy_hoops.Enums;
 using fantasy_hoops.Jobs;
 using fantasy_hoops.Repositories.Interfaces;
 
@@ -53,7 +54,8 @@ namespace fantasy_hoops.Repositories
                 .ToList();
         }
 
-        public List<UserLeaderboardRecordDto> GetUserLeaderboard(int from, int limit, string type, string date, int weekNumber, int year)
+        public List<UserLeaderboardRecordDto> GetUserLeaderboard(int from, int limit, string type, string date,
+            int weekNumber, int year)
         {
             DateTime previousECT = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME);
 
@@ -67,45 +69,49 @@ namespace fantasy_hoops.Repositories
                 case "daily":
                     var dailyStats = _context.Stats.Where(stats => stats.Date.Equals(dateTime.Date));
                     return _context.UserLineups
-                    .Where(lineup => lineup.IsCalculated && lineup.Date.Equals(dateTime.Date))
-                    .OrderByDescending(lineup => lineup.FP)
-                    .Include(lineup => lineup.User)
-                    .Select(lineup => new UserLeaderboardRecordDto
-                    {
-                        UserId = lineup.UserID,
-                        Username = lineup.User.UserName,
-                        AvatarUrl = lineup.User.AvatarURL,
-                        LongDate = lineup.Date.ToString("yyyy-MM-dd"),
-                        ShortDate = lineup.Date.ToString("MMM. dd"),
-                        Date = lineup.Date,
-                        FP = lineup.FP,
-                        Lineup = _context.Players
-                            .Include(player => player.Team)
-                            .Where(player =>
-                                player.PlayerID == lineup.PgID
-                                || player.PlayerID == lineup.SgID
-                                || player.PlayerID == lineup.SfID
-                                || player.PlayerID == lineup.PfID
-                                || player.PlayerID == lineup.CID)
-                            .Select(player => new LineupPlayerDto
-                            {
-                                Player = player,
-                                TeamColor = player.Team.Color,
-                                FP = dailyStats.FirstOrDefault(stats => stats.PlayerID == player.PlayerID).FP,
-                                Price = player.Price
-                            })
-                            .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
-                            .ToList()
-                    })
-                    .Skip(from)
-                    .Take(limit)
-                    .ToList();
+                        .Where(lineup => lineup.IsCalculated && lineup.Date.Equals(dateTime.Date))
+                        .OrderByDescending(lineup => lineup.FP)
+                        .Include(lineup => lineup.User)
+                        .Select(lineup => new UserLeaderboardRecordDto
+                        {
+                            UserId = lineup.UserID,
+                            Username = lineup.User.UserName,
+                            AvatarUrl = lineup.User.AvatarURL,
+                            LongDate = lineup.Date.ToString("yyyy-MM-dd"),
+                            ShortDate = lineup.Date.ToString("MMM. dd"),
+                            Date = lineup.Date,
+                            FP = lineup.FP,
+                            Lineup = _context.Players
+                                .Include(player => player.Team)
+                                .Where(player =>
+                                    player.PlayerID == lineup.PgID
+                                    || player.PlayerID == lineup.SgID
+                                    || player.PlayerID == lineup.SfID
+                                    || player.PlayerID == lineup.PfID
+                                    || player.PlayerID == lineup.CID)
+                                .Select(player => new LineupPlayerDto
+                                {
+                                    Player = player,
+                                    TeamColor = player.Team.Color,
+                                    FP = dailyStats.FirstOrDefault(stats => stats.PlayerID == player.PlayerID).FP,
+                                    Price = player.Price
+                                })
+                                .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
+                                .ToList()
+                        })
+                        .Skip(from)
+                        .Take(limit)
+                        .ToList();
                 case "weekly":
                     int week = weekNumber != -1
                         ? weekNumber
-                        : CommonFunctions.GetIso8601WeekOfYear(DateTime.UtcNow);
+                        : CommonFunctions.GetIso8601WeekOfYear(
+                            _context.UserLineups
+                                .Where(lineup => lineup.IsCalculated)
+                                .Max(lineup => lineup.Date)
+                        );
                     int leaderboardYear = year == -1
-                        ? DateTime.Now.Year
+                        ? CommonFunctions.UTCToEastern(DateTime.UtcNow).Year
                         : year;
                     return _context.UserLineups
                         .Include(lineup => lineup.User)
@@ -125,7 +131,7 @@ namespace fantasy_hoops.Repositories
                         .Skip(from)
                         .Take(limit)
                         .ToList();
-                default:
+                case "monthly":
                     return _context.UserLineups
                         .Include(lineup => lineup.User)
                         .AsEnumerable()
@@ -142,10 +148,13 @@ namespace fantasy_hoops.Repositories
                         .Skip(from)
                         .Take(limit)
                         .ToList();
+                default:
+                    return new List<UserLeaderboardRecordDto>();
             }
         }
 
-        public List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit, string type, string date, int weekNumber, int year)
+        public List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit, string type,
+            string date, int weekNumber, int year)
         {
             DateTime previousECT = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME);
 
@@ -164,9 +173,9 @@ namespace fantasy_hoops.Repositories
                 .Where(f => f.ReceiverID.Equals(loggedInUserId) && f.Status == RequestStatus.ACCEPTED)
                 .Select(u => u.Sender)
                 .Union(_context.FriendRequests
-                        .Include(u => u.Receiver)
-                        .Where(f => f.SenderID.Equals(loggedInUserId) && f.Status == RequestStatus.ACCEPTED)
-                        .Select(u => u.Receiver))
+                    .Include(u => u.Receiver)
+                    .Where(f => f.SenderID.Equals(loggedInUserId) && f.Status == RequestStatus.ACCEPTED)
+                    .Select(u => u.Receiver))
                 .Concat(loggedInUser);
             switch (type)
             {
@@ -174,43 +183,43 @@ namespace fantasy_hoops.Repositories
                     var dailyStats = _context.Stats.Where(stats => stats.Date.Equals(dateTime.Date));
 
                     return friendsOnly
-                    .SelectMany(user => user.UserLineups)
-                    .Include(lineup => lineup.User)
-                    .AsEnumerable()
-                    .Where(lineup => lineup.IsCalculated && lineup.Date.Equals(dateTime.Date))
-                    .OrderByDescending(lineup => lineup.FP)
-                    .Select(lineup => new UserLeaderboardRecordDto
-                    {
-                        UserId = lineup.UserID,
-                        Username = lineup.User.UserName,
-                        AvatarUrl = lineup.User.AvatarURL,
-                        LongDate = lineup.Date.ToString("yyyy-MM-dd"),
-                        ShortDate = lineup.Date.ToString("MMM. dd"),
-                        Date = lineup.Date,
-                        FP = lineup.FP,
-                        Lineup = _context.Players
-                            .Include(player => player.Team)
-                            .Where(player =>
-                                player.PlayerID == lineup.PgID
-                                || player.PlayerID == lineup.SgID
-                                || player.PlayerID == lineup.SfID
-                                || player.PlayerID == lineup.PfID
-                                || player.PlayerID == lineup.CID)
-                            .Select(player => new LineupPlayerDto
-                            {
-                                Player = player,
-                                TeamColor = player.Team.Color,
-                                FP = dailyStats.FirstOrDefault(stats => stats.PlayerID == player.PlayerID).FP,
-                                Price = player.Price
-                            })
-                            .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
-                            .ToList()
-                    })
-                    .Where(x => x.Lineup.Any())
-                    .OrderByDescending(x => x.FP)
-                    .Skip(from)
-                    .Take(limit)
-                    .ToList();
+                        .SelectMany(user => user.UserLineups)
+                        .Include(lineup => lineup.User)
+                        .AsEnumerable()
+                        .Where(lineup => lineup.IsCalculated && lineup.Date.Equals(dateTime.Date))
+                        .OrderByDescending(lineup => lineup.FP)
+                        .Select(lineup => new UserLeaderboardRecordDto
+                        {
+                            UserId = lineup.UserID,
+                            Username = lineup.User.UserName,
+                            AvatarUrl = lineup.User.AvatarURL,
+                            LongDate = lineup.Date.ToString("yyyy-MM-dd"),
+                            ShortDate = lineup.Date.ToString("MMM. dd"),
+                            Date = lineup.Date,
+                            FP = lineup.FP,
+                            Lineup = _context.Players
+                                .Include(player => player.Team)
+                                .Where(player =>
+                                    player.PlayerID == lineup.PgID
+                                    || player.PlayerID == lineup.SgID
+                                    || player.PlayerID == lineup.SfID
+                                    || player.PlayerID == lineup.PfID
+                                    || player.PlayerID == lineup.CID)
+                                .Select(player => new LineupPlayerDto
+                                {
+                                    Player = player,
+                                    TeamColor = player.Team.Color,
+                                    FP = dailyStats.FirstOrDefault(stats => stats.PlayerID == player.PlayerID).FP,
+                                    Price = player.Price
+                                })
+                                .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
+                                .ToList()
+                        })
+                        .Where(x => x.Lineup.Any())
+                        .OrderByDescending(x => x.FP)
+                        .Skip(from)
+                        .Take(limit)
+                        .ToList();
                 case "weekly":
                     int week = weekNumber != -1
                         ? weekNumber
@@ -239,22 +248,22 @@ namespace fantasy_hoops.Repositories
                         .ToList();
                 default:
                     return friendsOnly
-                    .Select(user => new UserLeaderboardRecordDto
-                    {
-                        UserId = user.Id,
-                        Username = user.UserName,
-                        AvatarUrl = user.AvatarURL,
-                        FP = Math.Round(user.UserLineups
-                            .Where(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
-                            .Select(lineup => lineup.FP).Sum(), 1),
-                        GamesPlayed = user.UserLineups
-                            .Count(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
-                    })
-                    .Where(user => user.GamesPlayed > 0)
-                    .OrderByDescending(lineup => lineup.FP)
-                    .Skip(from)
-                    .Take(limit)
-                    .ToList();
+                        .Select(user => new UserLeaderboardRecordDto
+                        {
+                            UserId = user.Id,
+                            Username = user.UserName,
+                            AvatarUrl = user.AvatarURL,
+                            FP = Math.Round(user.UserLineups
+                                .Where(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
+                                .Select(lineup => lineup.FP).Sum(), 1),
+                            GamesPlayed = user.UserLineups
+                                .Count(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
+                        })
+                        .Where(user => user.GamesPlayed > 0)
+                        .OrderByDescending(lineup => lineup.FP)
+                        .Skip(from)
+                        .Take(limit)
+                        .ToList();
             }
         }
 
@@ -268,7 +277,7 @@ namespace fantasy_hoops.Repositories
                 seasonStart = new DateTime(year, 10, 1);
                 seasonEnd = new DateTime(year + 1, 7, 1);
             }
-            
+
             return _context.UserLineups
                 .Where(lineup => lineup.Date >= seasonStart && lineup.Date <= seasonEnd)
                 .OrderByDescending(lineup => lineup.FP)

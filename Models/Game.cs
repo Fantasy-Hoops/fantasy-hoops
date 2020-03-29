@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using fantasy_hoops.Enums;
 
 namespace fantasy_hoops.Models
 {
@@ -12,7 +13,8 @@ namespace fantasy_hoops.Models
         [Key]
         public int Id { get; set; }
         public string Reference { get; set; }
-        public bool IsFinished { get; set; }
+        public SeasonStage SeasonStage { get; set; }
+        public GameStatus Status { get; set; }
         public bool isTBD { get; set; }
         public DateTime? Date { get; set; }
         public int HomeTeamID { get; set; }

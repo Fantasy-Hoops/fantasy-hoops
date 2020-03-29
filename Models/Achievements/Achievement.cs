@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using fantasy_hoops.Enums;
 
 namespace fantasy_hoops.Models.Achievements
 {
@@ -17,10 +18,5 @@ namespace fantasy_hoops.Models.Achievements
         [Required]
         public string Icon { get; set; }
         public int GoalBase { get; set; }
-        
-        public enum AchievementType
-        {
-            SINGLE_LEVEL, MULTI_LEVEL
-        }
     }
 }
