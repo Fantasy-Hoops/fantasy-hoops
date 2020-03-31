@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace fantasy_hoops.Models.Tournaments
@@ -6,8 +7,7 @@ namespace fantasy_hoops.Models.Tournaments
     public class Tournament
     {
         [Key] public string Id { get; set; }
-        public int TypeID { get; set; }
-        public TournamentType Type { get; set; }
+        public int Type { get; set; }
         public string CreatorID { get; set; }
         public User Creator { get; set; }
         public DateTime StartDate { get; set; }
@@ -16,13 +16,49 @@ namespace fantasy_hoops.Models.Tournaments
         public string Description { get; set; }
         public string ImageURL { get; set; }
         public int Entrants { get; set; }
-        [Range(0, Int32.MaxValue)] public int Contests { get; set; }
         [Range(0, 50)] public int DroppedContests { get; set; }
 
-        public class TournamentType
+        public virtual List<Contest> Contests { get; set; }
+
+        public sealed class TournamentType
         {
-            [Key] public int Id { get; set; }
-            public string Name { get; set; }
+            private static readonly Dictionary<int, TournamentType> instance =
+                new Dictionary<int, TournamentType>();
+
+            private readonly int id;
+            private readonly String name;
+
+            public static readonly TournamentType ONE_FOR_ALL = new TournamentType(0, "One For All");
+            public static readonly TournamentType MATCHUPS = new TournamentType(1, "Matchups");
+
+            private TournamentType(int id, String name)
+            {
+                this.id = id;
+                this.name = name;
+                instance[id] = this;
+            }
+
+            public static explicit operator TournamentType(int tournamentType)
+            {
+                if (instance.TryGetValue(tournamentType, out var result))
+                    return result;
+                throw new InvalidCastException();
+            }
+
+            public static List<TournamentType> Values()
+            {
+                return new List<TournamentType> {ONE_FOR_ALL, MATCHUPS};
+            }
+
+            public int GetId()
+            {
+                return id;
+            }
+
+            public override String ToString()
+            {
+                return name;
+            }
         }
     }
 }

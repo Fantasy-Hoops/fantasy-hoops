@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace fantasy_hoops.Models.Tournaments
 {
-    public class TournamentUsers
+    public class TournamentUser
     {
         [Key]
         public string UserID { get; set; }

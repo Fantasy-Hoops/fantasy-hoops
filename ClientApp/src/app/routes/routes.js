@@ -18,5 +18,6 @@ export default {
   LEADERBOARD_BEST_LINEUP: '/leaderboard/best-lineup',
   ACHIEVEMENTS: '/achievements',
   TOURNAMENTS: '/tournaments',
-  TOURNAMENTS_CREATE: '/tournaments/create'
+  TOURNAMENTS_CREATE: '/tournaments/create',
+  TOURNAMENTS_SUMMARY: '/tournaments/summary'
 };

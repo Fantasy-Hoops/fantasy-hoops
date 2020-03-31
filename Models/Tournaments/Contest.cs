@@ -9,10 +9,8 @@ namespace fantasy_hoops.Models.Tournaments
         [Key]
         public int Id { get; set; }
         public DateTime ContestStart { get; set; }
+        public bool IsFinished { get; set; }
+        public User Winner { get; set; }
         public List<MatchupPair> ContestPairs { get; set; }
-        
-        
-        public string TournamentID { get; set; }
-        public virtual Tournament Tournament { get; set; }
     }
 }

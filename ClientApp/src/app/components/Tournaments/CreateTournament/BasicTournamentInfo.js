@@ -47,8 +47,12 @@ export default function BasicTournamentInfo(props) {
                     height: "15rem",
                 }}
             />
-            <div className="BasicTournamentInfo__Icons">
-                {icons}
+            <div className="BasicTournamentInfo__IconsWrapper">
+                <div className="BasicTournamentInfo__Icons__TopFade" />
+                <div className="BasicTournamentInfo__Icons">
+                    {icons}
+                </div>
+                <div className="BasicTournamentInfo__Icons__BottomFade" />
             </div>
             <TextField
                 margin="normal"

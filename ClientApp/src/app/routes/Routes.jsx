@@ -22,6 +22,7 @@ import {Switch, Route} from "react-router-dom";
 import Achievements from "../components/Achievements/AchievementsPage";
 import TournamentsPage from "../components/Tournaments/TournamentsPage";
 import CreateTournament from "../components/Tournaments/CreateTournament/CreateTournament";
+import {TournamentDetails} from "../components/Tournaments/TournamentDetails/TournamentDetails";
 
 export default () => (
     <Switch>
@@ -44,6 +45,7 @@ export default () => (
         <Route exact path={Routes.ACHIEVEMENTS} component={Achievements}/>
         <PrivateRoute exact path={Routes.TOURNAMENTS} component={TournamentsPage}/>
         <PrivateRoute exact path={Routes.TOURNAMENTS_CREATE} component={CreateTournament}/>
+        <PrivateRoute exact path={`${Routes.TOURNAMENTS_SUMMARY}/:id`} component={TournamentDetails}/>
         <Route render={() => <Error status={404} message="Page not found"/>}/>
     </Switch>
 );

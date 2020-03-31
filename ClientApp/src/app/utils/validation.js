@@ -17,8 +17,8 @@ export const newTournamentValidation = Yup.object().shape({
   startDate: Yup.date()
       .required('Tournament start date is required'),
   tournamentType: Yup.number()
-      .min(1, "Wrong type selected")
-      .max(2, "Wrong type selected")
+      .min(0, "Wrong type selected")
+      .max(1, "Wrong type selected")
       .required('Tournament type is required'),
   contests: Yup.number()
       .required('Number of contests is required'),

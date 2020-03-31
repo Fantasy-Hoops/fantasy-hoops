@@ -26,8 +26,10 @@ export class UserPoolContainer extends Component {
     }
 
     async componentDidMount() {
-        const {loadUserPool} = this.props;
-        await loadUserPool();
+        const {loadUserPool, allUsers} = this.props;
+        if (_.isEmpty(allUsers)) {
+            await loadUserPool();
+        }
     }
 
     handleFilterUsers(e) {

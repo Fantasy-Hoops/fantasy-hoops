@@ -12,7 +12,6 @@ namespace fantasy_hoops.Models.Tournaments
         public string SecondUserID { get; set; }
         public double FirstUserScore { get; set; }
         public double SecondUserScore { get; set; }
-        public bool IsFinished { get; set; }
         
         public virtual Tournament Tournament { get; set; }
         public virtual User FirstUser { get; set; }

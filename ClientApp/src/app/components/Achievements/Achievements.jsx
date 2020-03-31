@@ -5,7 +5,6 @@ import AchievementCard from "./AchievementCard";
 import AchievementDialog from "./AchievementDialog";
 
 import './Achievements.css';
-import {isAuth} from "../../utils/auth";
 
 function Achievements(props) {
     const [dialogOpen, setDialogOpen] = useState(false);

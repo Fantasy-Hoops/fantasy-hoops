@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using fantasy_hoops.Jobs;
 
@@ -17,6 +18,7 @@ namespace fantasy_hoops.Helpers
 	{
 		public const string DOMAIN = "fantasyhoops.org";
 		public static string SEASON_YEAR = GetSeasonYear();
+		public static DateTime EctNow = UTCToEastern(DateTime.UtcNow);
 
 		public static string LineupPositionsOrder = "PG|SG|SF|PF|C";
 
@@ -156,6 +158,11 @@ namespace fantasy_hoops.Helpers
 	        int atIndex = email.IndexOf('@');
 	        string username = email.Substring(0, atIndex);
 	        return username;
+        }
+
+        public static string GetUserIdFromClaims(ClaimsPrincipal user)
+        {
+	        return user.Claims.ToList()[0].Value;
         }
     }
 }

@@ -76,7 +76,7 @@ export default function CreateTournament() {
                 }));
                 setTournamentTypes(tournamentTypes);
             }).catch(error => {
-                console.error(error.message);
+                enqueueSnackbar(error.message, {variant: 'error'});
             });
             setTypesLoader(false);
         }
@@ -228,7 +228,7 @@ export default function CreateTournament() {
             <Helmet>
                 <title>Create New Tournament | Fantasy Hoops</title>
                 <meta name="description" content={TournamentsCreate.SUBTITLE}/>
-                <link rel="canonical" href={Canonicals.TOURNAMENTS}/>
+                <link rel="canonical" href={Canonicals.TOURNAMENTS_CREATE}/>
             </Helmet>
             <article className="Tournaments__Intro">
                 <h1 className="Tournaments__Title">{TournamentsCreate.TITLE}</h1>
@@ -254,6 +254,7 @@ export default function CreateTournament() {
                         .then(response => {
                             enqueueSnackbar(response.data.message, {variant: 'success'});
                             setInviteUrl(response.data.inviteUrl);
+                            localStorage.removeItem('tournamentValues');
                             setSubmitLoader(false);
                         })
                         .catch(error => {

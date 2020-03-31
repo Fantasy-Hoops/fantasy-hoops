@@ -10,6 +10,10 @@ export const getLocationSlug = pathname => {
     : parsedSlug;
 };
 
+export const getLastLocationSlug = pathname => {
+    return pathname.substring(pathname.lastIndexOf('/') + 1);
+};
+
 export const getLocationEnumValue = pathname => {
     const slug = getLocationSlug(pathname);
     if (Route[slug] == null) {

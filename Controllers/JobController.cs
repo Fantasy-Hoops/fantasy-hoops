@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using fantasy_hoops.Enums;
 using fantasy_hoops.Jobs;
 using fantasy_hoops.Models;
@@ -77,6 +78,14 @@ namespace fantasy_hoops.Controllers
             Task.Run(() => new ScheduleJob().Execute());
 
             return Ok("League schedule job started.");
+        }
+
+        [HttpGet("start-tournaments")]
+        public IActionResult StartTournaments()
+        {
+            Task.Run(() => new TournamentsJob(new DateTime(2020, 04, 20)).Execute());
+
+            return Ok("Tournaments started.");
         }
     }
 }

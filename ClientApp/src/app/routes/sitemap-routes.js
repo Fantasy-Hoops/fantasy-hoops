@@ -14,5 +14,6 @@ export default (
         <Route path={Routes.USER_POOL}/>
         <Route path={Routes.BLOG}/>
         <Route path={Routes.LEADERBOARDS}/>
+        <Route path={Routes.ACHIEVEMENTS}/>
     </Route>
 );

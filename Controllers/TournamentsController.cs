@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Castle.Core;
+using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
-using Google.Apis.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,7 @@ namespace fantasy_hoops.Controllers
         }
         
         [HttpGet("types")]
-        public List<Tournament.TournamentType> GetTypes()
+        public List<TournamentTypeDto> GetTypes()
         {
             return _tournamentsRepository.GetTournamentTypes();
         }
@@ -37,9 +38,27 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        public Dictionary<string, List<Tournament>> GetUserTournaments([FromRoute] string userId)
+        public Dictionary<string, List<TournamentDto>> GetUserTournaments([FromRoute] string userId)
         {
             return _tournamentsRepository.GetUserTournaments(userId);
+        }
+
+        [HttpGet("{tournamentId}")]
+        [Authorize]
+        public ActionResult<Tournament> GetTournamentById([FromRoute] string tournamentId)
+        {
+            if (!_tournamentsRepository.TournamentExists(tournamentId))
+            {
+                return NotFound($"Tournament with id '{tournamentId}' does not exist.");
+            }
+            
+            string userId = CommonFunctions.GetUserIdFromClaims(User);
+            if (!_tournamentsRepository.IsUserInTournament(userId, tournamentId))
+            {
+                return Unauthorized("Unauthorized attempt to reach the tournament.");
+            }
+
+            return _tournamentsRepository.GetTournamentById(tournamentId);
         }
 
         [HttpPost]

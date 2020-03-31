@@ -120,7 +120,8 @@ export default class LoginPage extends Component {
                 this.setState({
                     showAlert: true,
                     alertType: 'alert-danger',
-                    alertText: err.response.data
+                    alertText: err.response.data,
+                    showLoader: false
                 });
             });
     }

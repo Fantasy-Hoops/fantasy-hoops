@@ -2,6 +2,8 @@ import React from 'react';
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
 
+import './TournamentIcon.css';
+
 export default function TournamentIcon(props) {
     const {handleSetSelectedIcon, iconPath, uniqueKey, customProps} = props;
     return (
