@@ -18,8 +18,8 @@ namespace fantasy_hoops.Models.Tournaments
         public string ImageURL { get; set; }
         public int Entrants { get; set; }
         [Range(0, 50)] public int DroppedContests { get; set; }
-
         public virtual List<Contest> Contests { get; set; }
+        public virtual List<TournamentInvite> Invites { get; set; }
 
         public sealed class TournamentType
         {

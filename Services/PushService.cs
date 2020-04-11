@@ -23,6 +23,15 @@ namespace fantasy_hoops.Services
         private readonly IUserRepository _userRepository;
         private readonly ILineupRepository _lineupRepository;
 
+        public PushService()
+        {
+            var vapidSubject = Environment.GetEnvironmentVariable("VapidSubject");
+            var vapidPublicKey = Environment.GetEnvironmentVariable("VapidPublicKey");
+            var vapidPrivateKey = Environment.GetEnvironmentVariable("VapidPrivateKey");
+            CheckOrGenerateVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
+            _vapidDetails = new VapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
+        }
+
         public PushService(IPushNotificationRepository pushNotificationRepository, IUserRepository userRepository, ILineupRepository lineupRepository)
         {
             _pushNotificationRepository = pushNotificationRepository;

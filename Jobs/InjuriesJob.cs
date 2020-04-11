@@ -114,7 +114,7 @@ namespace fantasy_hoops.Jobs
                 });
                 var inj = new InjuryNotification
                 {
-                    UserID = lineup.UserID,
+                    ReceiverID = lineup.UserID,
                     ReadStatus = false,
                     DateCreated = DateTime.UtcNow,
                     PlayerID = injury.PlayerID,

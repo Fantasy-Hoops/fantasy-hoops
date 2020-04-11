@@ -189,13 +189,13 @@ namespace fantasy_hoops.Repositories
                 .ToList();
             _context.FriendRequests.RemoveRange(friendRequests);
             var notifications = _context.Notifications
-                .Where(notification => notification.UserID.Equals(userToDelete.Id))
+                .Where(notification => notification.ReceiverID.Equals(userToDelete.Id))
                 .ToList();
             _context.Notifications.RemoveRange(notifications);
-            var frNotifications = _context.FriendRequestNotifications
-                .Where(notification => notification.FriendID.Equals(userToDelete.Id))
+            var frNotifications = _context.RequestNotifications
+                .Where(notification => notification.SenderID.Equals(userToDelete.Id))
                 .ToList();
-            _context.FriendRequestNotifications.RemoveRange(frNotifications);
+            _context.RequestNotifications.RemoveRange(frNotifications);
             var lineups = _context.UserLineups
                 .Where(lineup => lineup.UserID.Equals(userToDelete.Id))
                 .ToList();

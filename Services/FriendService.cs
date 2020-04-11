@@ -5,6 +5,7 @@ using fantasy_hoops.Repositories;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using fantasy_hoops.Enums;
+using fantasy_hoops.Models.Notifications;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 
@@ -28,7 +29,7 @@ namespace fantasy_hoops.Services
         public async Task AcceptRequest(FriendRequestViewModel model, FriendRequest request)
         {
             _friendRepository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.ACCEPTED);
-            _notificationRepository.AddFriendRequestNotification(model.SenderID, model.ReceiverID, "Accepted your friend request.");
+            _notificationRepository.AddRequestNotification(RequestNotification.Type.FRIEND, model.SenderID, model.ReceiverID, "Accepted your friend request.");
             User user = await _userManager.FindByIdAsync(model.ReceiverID);
             await _pushService.Send(model.SenderID, new PushNotificationViewModel("Fantasy Hoops Notification",
                 string.Format("User '{0}' accepted your friend request.", user.UserName)));
@@ -62,7 +63,7 @@ namespace fantasy_hoops.Services
             else
                 _friendRepository.UpdateRequest(request, model.SenderID, model.ReceiverID, RequestStatus.PENDING);
 
-            _notificationRepository.AddFriendRequestNotification(model.ReceiverID, model.SenderID, "Sent you a friend request.");
+            _notificationRepository.AddRequestNotification(RequestNotification.Type.FRIEND, model.ReceiverID, model.SenderID, "Sent you a friend request.");
         }
 
     }

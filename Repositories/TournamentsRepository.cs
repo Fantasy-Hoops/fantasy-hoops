@@ -6,6 +6,7 @@ using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.Notifications;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Repositories.Interfaces;
 
@@ -137,7 +138,7 @@ namespace fantasy_hoops.Repositories
             tournamentDetails.CurrentLineup = _lineupRepository.GetUserCurrentLineup(userId);
             ContestDto nextContest = tournamentDetails.Contests
                 .OrderBy(contest => contest.ContestStart)
-                .FirstOrDefault(contest => contest.ContestStart > DateTime.UtcNow);
+                .FirstOrDefault(contest => contest.ContestStart > CommonFunctions.EctNow);
             MatchupPairDto userMatchup = nextContest?.Matchups
                 .FirstOrDefault(contestPair =>
                     contestPair.FirstUser.Id.Equals(userId) || contestPair.SecondUser.Id.Equals(userId));
@@ -257,6 +258,81 @@ namespace fantasy_hoops.Repositories
             return _context.Contests
                 .Where(contest => contest.TournamentId.Equals(tournamentId))
                 .ToList();
+        }
+
+        public List<ContestDto> GetAllCurrentContests()
+        {
+            return _context.Contests
+                .Where(contest => !contest.IsFinished
+                                  && contest.ContestStart < CommonFunctions.EctNow
+                                  && contest.ContestEnd > CommonFunctions.EctNow)
+                .Include(contest => contest.Winner)
+                .Include(contest => contest.ContestPairs)
+                .Select(contest => new ContestDto
+                {
+                    Id = contest.Id,
+                    ContestStart = contest.ContestStart,
+                    ContestEnd = contest.ContestEnd,
+                    IsFinished = contest.IsFinished,
+                    Winner = new UserDto
+                    {
+                        Id = contest.Winner.Id,
+                        UserName = contest.Winner.UserName,
+                        AvatarUrl = contest.Winner.AvatarURL
+                    },
+                    Matchups = contest.ContestPairs.Select(contestPair => new MatchupPairDto
+                    {
+                        FirstUser = new UserDto
+                        {
+                            Id = contestPair.FirstUserID,
+                            UserName = contestPair.FirstUser.UserName,
+                            AvatarUrl = contestPair.FirstUser.AvatarURL
+                        },
+                        FirstUserScore = contestPair.FirstUserScore,
+                        SecondUser = new UserDto
+                        {
+                            Id = contestPair.SecondUserID,
+                            UserName = contestPair.SecondUser.UserName,
+                            AvatarUrl = contestPair.SecondUser.AvatarURL
+                        },
+                        SecondUserScore = contestPair.SecondUserScore
+                    }).ToList()
+                }).ToList();
+        }
+
+        public bool DeleteTournament(string tournamentId)
+        {
+            Tournament tournamentToDelete = _context.Tournaments.Find(tournamentId);
+            if (!DeleteTournamentResources(tournamentToDelete))
+            {
+                return false;
+            }
+
+            _context.Tournaments.Remove(tournamentToDelete);
+            return _context.SaveChanges() != 0;
+        }
+
+        private bool DeleteTournamentResources(Tournament tournamentToDelete)
+        {
+            List<MatchupPair> matchupsToDelete = _context.TournamentMatchups
+                .Where(matchup => tournamentToDelete.Id.Equals(matchup.TournamentID)).ToList();
+            List<Contest> contestsToDelete = _context.Contests
+                .Where(contest => tournamentToDelete.Id.Equals(contest.TournamentId)).ToList();
+            List<TournamentInvite> invitesToDelete = _context.TournamentInvites
+                .Where(invite => tournamentToDelete.Id.Equals(invite.TournamentID)).ToList();
+            List<RequestNotification> requestNotificationsToDelete = _context.RequestNotifications
+                .Where(notification => tournamentToDelete.Id.Equals(notification.TournamentId)).ToList();
+            List<TournamentUser> tournamentUsersToDelete = _context.TournamentUsers
+                .Where(tournamentUser => tournamentToDelete.Id.Equals(tournamentUser.TournamentID)).ToList();
+
+
+            _context.TournamentMatchups.RemoveRange(matchupsToDelete);
+            _context.Contests.RemoveRange(contestsToDelete);
+            _context.TournamentInvites.RemoveRange(invitesToDelete);
+            _context.Notifications.RemoveRange(requestNotificationsToDelete);
+            _context.TournamentUsers.RemoveRange(tournamentUsersToDelete);
+
+            return _context.SaveChanges() != 0;
         }
 
         public List<String> GetTournamentUsersIds(string tournamentId)

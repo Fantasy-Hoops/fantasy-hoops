@@ -2,9 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core;
+using fantasy_hoops.Enums;
 using fantasy_hoops.Helpers;
+using fantasy_hoops.Models;
+using fantasy_hoops.Models.Notifications;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 
@@ -13,10 +17,16 @@ namespace fantasy_hoops.Services
     public class TournamentsService : ITournamentsService
     {
         private readonly ITournamentsRepository _tournamentsRepository;
+        private readonly IPushService _pushService;
+        private readonly INotificationRepository _notificationRepository;
+        private readonly IUserRepository _userRepository;
 
         public TournamentsService(ITournamentsRepository tournamentsRepository)
         {
             _tournamentsRepository = tournamentsRepository;
+            _pushService = new PushService();
+            _notificationRepository = new NotificationRepository();
+            _userRepository = new UserRepository();
         }
 
         public Pair<bool, string> CreateTournament(CreateTournamentViewModel tournamentViewModel)
@@ -24,8 +34,15 @@ namespace fantasy_hoops.Services
             Tournament newTournament = FromViewModel(tournamentViewModel);
 
             bool isCreated = _tournamentsRepository.CreateTournament(newTournament);
+            if (!isCreated)
+            {
+                return new Pair<bool, string>(isCreated, "");
+            }
+
             _tournamentsRepository.AddCreatorToTournament(newTournament);
+
             string inviteUrl = GenerateInviteUrl(newTournament.Id);
+            SendInvitations(newTournament, newTournament.Invites);
 
             return new Pair<bool, string>(isCreated, inviteUrl);
         }
@@ -46,7 +63,8 @@ namespace fantasy_hoops.Services
                 Entrants = tournamentModel.Entrants,
                 DroppedContests = tournamentModel.DroppedContests,
                 ImageURL = ParseIconPath(tournamentModel.TournamentIcon),
-                Contests = GenerateContests(tournamentModel.StartDate, endDate)
+                Contests = GenerateContests(tournamentModel.StartDate, endDate),
+                Invites = GenerateTournamentInvites(tournamentModel.UserFriends)
             };
         }
 
@@ -96,9 +114,27 @@ namespace fantasy_hoops.Services
         {
             int daysToAdd = lastContestStartDate.DayOfWeek == DayOfWeek.Monday
                 ? 7
-                : (int)lastContestStartDate.DayOfWeek;
-            
+                : (int) lastContestStartDate.DayOfWeek;
+
             return lastContestStartDate.AddDays(daysToAdd).Date;
+        }
+
+        private List<TournamentInvite> GenerateTournamentInvites(List<string> invitedUsersIds)
+        {
+            return invitedUsersIds.Select(userId => new TournamentInvite
+            {
+                Status = RequestStatus.PENDING,
+                InvitedUserID = userId
+            }).ToList();
+        }
+
+        private void SendInvitations(Tournament tournament, List<TournamentInvite> invites)
+        {
+            invites.ForEach(invite =>
+            {
+                _notificationRepository
+                    .AddTournamentRequestNotification(tournament, invite.InvitedUserID, tournament.CreatorID);
+            });
         }
     }
 }

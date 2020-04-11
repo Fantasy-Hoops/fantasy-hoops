@@ -10,9 +10,10 @@ import {TournamentsMain} from "../utils";
 import OneForAllDashboard from "./OneForAllDashboard";
 import MatchupsDashboard from "./Matchups/MatchupsDashboard";
 import IconButton from "@material-ui/core/IconButton";
-import EditIcon from '@material-ui/icons/Edit';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 import './TournamentDetails.css';
+import {TournamentSettings} from "./TournamentSettings";
 
 export function TournamentDetails(props) {
     const tournamentId = getLastLocationSlug(props.location.pathname);
@@ -20,6 +21,14 @@ export function TournamentDetails(props) {
     const [tournamentExists, setTournamentExists] = useState(false);
     const [tournament, setTournament] = useState({});
     const [errorResponse, setErrorResponse] = useState({});
+    const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
+
+    const handleSettingsOpen = () => {
+        setIsSettingsOpen(true);
+    };
+    const handleSettingsClose = () => {
+        setIsSettingsOpen(false);
+    };
 
     useEffect(() => {
         async function handleGetTournament() {
@@ -72,8 +81,8 @@ export function TournamentDetails(props) {
                     {' '}
                     {tournament.isCreator
                         ? (
-                            <IconButton>
-                                <EditIcon/>
+                            <IconButton onClick={handleSettingsOpen}>
+                                <SettingsIcon/>
                             </IconButton>
                         )
                         : null}
@@ -81,6 +90,9 @@ export function TournamentDetails(props) {
                 <h5 className="TournamentDetails__Subtitle">{tournament.description}</h5>
             </article>
             {renderDashboard()}
+            {tournament.isCreator
+                && <TournamentSettings tournamentId={tournamentId} tournament={tournament} isSettingsOpen={isSettingsOpen}
+                                       handleSettingsClose={handleSettingsClose}/>}
         </>
     );
 }

@@ -43,8 +43,8 @@ namespace fantasy_hoops.Controllers
             return _tournamentsRepository.GetUserTournaments(userId);
         }
 
-        [HttpGet("{tournamentId}")]
         [Authorize]
+        [HttpGet("{tournamentId}")]
         public ActionResult<Tournament> GetTournamentById([FromRoute] string tournamentId)
         {
             if (!_tournamentsRepository.TournamentExists(tournamentId))
@@ -61,8 +61,8 @@ namespace fantasy_hoops.Controllers
             return _tournamentsRepository.GetTournamentById(tournamentId);
         }
 
-        [HttpGet("{tournamentId}/details")]
         [Authorize]
+        [HttpGet("{tournamentId}/details")]
         public ActionResult<TournamentDetailsDto> GetTournamentDetails([FromRoute] string tournamentId)
         {
             if (!_tournamentsRepository.TournamentExists(tournamentId))
@@ -79,6 +79,7 @@ namespace fantasy_hoops.Controllers
             return _tournamentsRepository.GetTournamentDetails(userId, tournamentId);
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult CreateTournament([FromBody] CreateTournamentViewModel model)
         {
@@ -99,7 +100,7 @@ namespace fantasy_hoops.Controllers
             Pair<bool, string> result = _tournamentsService.CreateTournament(model);
             if (!result.First)
             {
-                return StatusCode(StatusCodes.Status406NotAcceptable, "Unable to handle request. Server error.");
+                return StatusCode(StatusCodes.Status406NotAcceptable, "Unable to handle request.");
             }
             
             return Ok(new
@@ -107,6 +108,24 @@ namespace fantasy_hoops.Controllers
                 message =  "Tournament created",
                 inviteUrl = result.Second
             });
+        }
+
+        [Authorize]
+        [HttpDelete("{tournamentId}")]
+        public IActionResult DeleteTournament([FromRoute] string tournamentId)
+        {
+            if (!_tournamentsRepository.TournamentExists(tournamentId))
+            {
+                return UnprocessableEntity("Tournament doesn't exist.");
+            }
+
+            bool succeeded = _tournamentsRepository.DeleteTournament(tournamentId);
+            if (!succeeded)
+            {
+                StatusCode(StatusCodes.Status406NotAcceptable, "Unable to delete tournament.");
+            }
+
+            return Ok("Tournament deleted successfully");
         }
     }
 }

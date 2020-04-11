@@ -4,9 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
+using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Repositories;
+using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
 using Microsoft.AspNetCore.Identity;
@@ -21,11 +25,13 @@ namespace fantasy_hoops.Jobs
 
         private readonly GameContext _context;
         private readonly IPushService _pushService;
+        private readonly ITournamentsRepository _tournamentsRepository;
 
         public UserScoreJob(IPushService pushService)
         {
             _context = new GameContext();
             _pushService = pushService;
+            _tournamentsRepository = new TournamentsRepository();
         }
 
         private async Task SendPushNotifications()
@@ -85,19 +91,40 @@ namespace fantasy_hoops.Jobs
 
                 var gs = new GameScoreNotification
                 {
-                    UserID = lineup.User.Id,
+                    ReceiverID = lineup.User.Id,
                     ReadStatus = false,
                     DateCreated = DateTime.UtcNow,
                     Score = lineup.FP
                 };
                 _context.GameScoreNotifications.Add(gs);
             }
+            
+            UpdateActiveTournamentsScores(allLineups);
 
             _context.SaveChanges();
             SendPushNotifications().Wait();
 
             Task.Run(() => new BestLineupsJob().Execute());
             Task.Run(() => new AchievementsJob(_pushService, null, null).ExecuteAllAchievements());
+        }
+
+        private void UpdateActiveTournamentsScores(List<UserLineup> allLineups)
+        {
+            List<int> currentContests = _tournamentsRepository.GetAllCurrentContests()
+                .Select(contest => contest.Id)
+                .ToList();
+            IQueryable<MatchupPair> currentMatchups = _context.TournamentMatchups
+                .Where(matchup => currentContests.Contains(matchup.ContestId));
+            foreach (var matchup in currentMatchups)
+            {
+                double? firstUserScore =
+                    allLineups.FirstOrDefault(lineup => lineup.UserID.Equals(matchup.FirstUserID))?.FP;
+                double? secondUserScore =
+                    allLineups.FirstOrDefault(lineup => lineup.UserID.Equals(matchup.SecondUserID))?.FP;
+
+                matchup.FirstUserScore += firstUserScore ?? 0.0;
+                matchup.SecondUserScore += secondUserScore ?? 0.0;
+            }
         }
     }
 }

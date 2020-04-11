@@ -23,7 +23,7 @@ namespace fantasy_hoops.Database
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<GameScoreNotification> GameScoreNotifications { get; set; }
         public DbSet<InjuryNotification> InjuryNotifications { get; set; }
-        public DbSet<FriendRequestNotification> FriendRequestNotifications { get; set; }
+        public DbSet<RequestNotification> RequestNotifications { get; set; }
         public DbSet<PushSubscription> PushSubscriptions { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Achievement> Achievements { get; set; }
@@ -35,6 +35,7 @@ namespace fantasy_hoops.Database
         public DbSet<Contest> Contests { get; set; }
         public DbSet<MatchupPair> TournamentMatchups { get; set; }
         public DbSet<Season> Seasons { get; set; }
+        public DbSet<TournamentInvite> TournamentInvites { get; set; }
 
         public GameContext()
         {

@@ -23,6 +23,7 @@ import Achievements from "../components/Achievements/AchievementsPage";
 import TournamentsPage from "../components/Tournaments/TournamentsPage";
 import CreateTournament from "../components/Tournaments/CreateTournament/CreateTournament";
 import {TournamentDetails} from "../components/Tournaments/TournamentDetails/TournamentDetails";
+import {TournamentInvitation} from "../components/Tournaments/TournamentInvitation";
 
 export default () => (
     <Switch>
@@ -46,6 +47,7 @@ export default () => (
         <PrivateRoute exact path={Routes.TOURNAMENTS} component={TournamentsPage}/>
         <PrivateRoute exact path={Routes.TOURNAMENTS_CREATE} component={CreateTournament}/>
         <PrivateRoute exact path={`${Routes.TOURNAMENTS_SUMMARY}/:id`} component={TournamentDetails}/>
+        <PrivateRoute exact path={`${Routes.TOURNAMENT_INVITATION}/:id`} component={TournamentInvitation}/>
         <Route render={() => <Error status={404} message="Page not found"/>}/>
     </Switch>
 );

@@ -8,11 +8,11 @@ namespace fantasy_hoops.Models
     {
         [Key]
         public int NotificationID { get; set; }
-        public string UserID { get; set; }
+        public string ReceiverID { get; set; }
         public bool ReadStatus { get; set; }
         public DateTime DateCreated { get; set; }
 
         [ForeignKey("UserID")]
-        public virtual User User { get; set; }
+        public virtual User Receiver { get; set; }
     }
 }

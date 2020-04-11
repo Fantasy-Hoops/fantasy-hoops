@@ -29,9 +29,9 @@ namespace fantasy_hoops.Jobs
         {
             // if (_tournamentsRepository.GetUpcomingStartDates().Contains(_runtimeDate))
             // {
-                StartNewTournaments();
+            StartNewTournaments();
             // }
-            
+
             if (_runtimeDate.DayOfWeek == DayOfWeek.Sunday)
             {
                 CalculateContests();
@@ -46,11 +46,12 @@ namespace fantasy_hoops.Jobs
                 if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.MATCHUPS)
                 {
                     StartMatchupsTournament(tournament);
-                } else if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
-                {
-                    _context.Tournaments.Find(tournament.Id).IsActive = true;
-                    _context.SaveChanges();
                 }
+                else if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
+                {
+                    StartOneForAllTournament(tournament);
+                }
+                _context.SaveChanges();
             }
         }
 
@@ -61,13 +62,14 @@ namespace fantasy_hoops.Jobs
         private void StartMatchupsTournament(Tournament tournament)
         {
             List<string> tournamentUsers = _tournamentsRepository.GetTournamentUsersIds(tournament.Id);
-            List<Tuple<int, string, string>> res = new List<Tuple<int, string, string>>();
+            List<Tuple<int, string, string>> matchupsVariations = new List<Tuple<int, string, string>>();
             for (int i = 0; i < tournamentUsers.Count; i++)
             {
                 for (int j = i + 1; j < tournamentUsers.Count; j++)
                 {
-                    res.Add(new Tuple<int, string, string>(j, tournamentUsers[i], tournamentUsers[j]));
-                    res.Add(new Tuple<int, string, string>(tournamentUsers.Count + i, tournamentUsers[j], tournamentUsers[i]));
+                    matchupsVariations.Add(new Tuple<int, string, string>(j, tournamentUsers[i], tournamentUsers[j]));
+                    matchupsVariations.Add(new Tuple<int, string, string>(tournamentUsers.Count + i, tournamentUsers[j],
+                        tournamentUsers[i]));
                 }
             }
 
@@ -76,26 +78,43 @@ namespace fantasy_hoops.Jobs
                 .ToList().Select((value, index) => (value, index)))
             {
                 contest.value.ContestPairs = new List<MatchupPair>();
-                res.Where(record => record.Item1 == contest.index + 1)
+                matchupsVariations.Where(record => record.Item1 == contest.index + 1)
                     .ToList()
                     .ForEach(contestPair =>
                     {
                         MatchupPair dbMatchupPair = _context.TournamentMatchups
-                            .Find(tournament.Id, res[contest.index].Item2, res[contest.index].Item3, contest.value.Id);
+                            .Find(tournament.Id, matchupsVariations[contest.index].Item2,
+                                matchupsVariations[contest.index].Item3, contest.value.Id);
                         if (dbMatchupPair == null)
                         {
                             contest.value.ContestPairs.Add(new MatchupPair
                             {
                                 ContestId = contest.value.Id,
                                 TournamentID = tournament.Id,
-                                FirstUserID = res[contest.index].Item2,
-                                SecondUserID = res[contest.index].Item3
+                                FirstUserID = matchupsVariations[contest.index].Item2,
+                                SecondUserID = matchupsVariations[contest.index].Item3
                             });
                         }
                     });
             }
+
             _context.Tournaments.Find(tournament.Id).IsActive = true;
-            _context.SaveChanges();
+        }
+
+        private void StartOneForAllTournament(Tournament tournament)
+        {
+            List<string> tournamentUsers = _tournamentsRepository.GetTournamentUsersIds(tournament.Id);
+            foreach (var contest in _context.Contests.Where(x => x.TournamentId.Equals(tournament.Id)).ToList())
+            {
+                contest.ContestPairs = tournamentUsers.Select(tournamentUser => new MatchupPair
+                {
+                    TournamentID = tournament.Id,
+                    ContestId = contest.Id,
+                    FirstUserID = tournamentUser,
+                    SecondUserID = tournamentUser
+                }).ToList();
+            }
+            _context.Tournaments.Find(tournament.Id).IsActive = true;
         }
     }
 }

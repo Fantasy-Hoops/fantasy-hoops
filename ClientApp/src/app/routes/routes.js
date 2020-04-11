@@ -19,5 +19,6 @@ export default {
   ACHIEVEMENTS: '/achievements',
   TOURNAMENTS: '/tournaments',
   TOURNAMENTS_CREATE: '/tournaments/create',
-  TOURNAMENTS_SUMMARY: '/tournaments/summary'
+  TOURNAMENTS_SUMMARY: '/tournaments/summary',
+  TOURNAMENT_INVITATION: '/tournaments/invitation'
 };

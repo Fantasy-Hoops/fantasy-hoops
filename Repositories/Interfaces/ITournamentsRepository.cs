@@ -29,5 +29,7 @@ namespace fantasy_hoops.Repositories.Interfaces
         void AddCreatorToTournament(Tournament tournament);
         void AddUserToTournament(string userId, string tournamentId);
         List<Contest> GetTournamentContests(string tournamentId);
+        List<ContestDto> GetAllCurrentContests();
+        bool DeleteTournament(string tournamentId);
     }
 }
