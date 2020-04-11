@@ -5,6 +5,7 @@ using fantasy_hoops.Models.Notifications;
 using fantasy_hoops.Models.Tournaments;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace fantasy_hoops.Database
 {
@@ -69,15 +70,21 @@ namespace fantasy_hoops.Database
                 .HasKey(userAchievement => new {userAchievement.UserID, userAchievement.AchievementID});
 
             builder.Entity<MatchupPair>()
-                .HasKey(matchup => new {matchup.TournamentID, matchup.FirstUserID, matchup.SecondUserID});
+                .HasKey(matchup => new {matchup.TournamentID, matchup.FirstUserID, matchup.SecondUserID, matchup.ContestId});
 
             builder.Entity<TournamentUser>()
                 .HasKey(tournamentUser => new {tournamentUser.TournamentID, tournamentUser.UserID});
+
+            builder.Entity<Tournament>()
+                .HasMany(tournament => tournament.Contests);
+
+            builder.Entity<Contest>()
+                .HasMany(contest => contest.ContestPairs);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(Startup.Configuration["fh-connection-string"]);
+            optionsBuilder.UseSqlServer(Startup.Configuration.GetConnectionString("DefaultConnection"));
         }
     }
 }

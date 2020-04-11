@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function MobileDrawer(props) {
+    const isAuthenticatedUser = isAuth();
     const {selectedTab, handleDrawerClose} = props;
     const classes = useStyles();
     return (
@@ -30,7 +31,7 @@ function MobileDrawer(props) {
             </Link>
             <Divider/>
             <List>
-                {isAuth()
+                {isAuthenticatedUser
                 && <ListItem button component={Link} to={Routes.LINEUP} onClick={() => handleDrawerClose()}
                              selected={selectedTab === Route.lineup}>
                     <ListItemIcon>
@@ -54,6 +55,19 @@ function MobileDrawer(props) {
                     </ListItemIcon>
                     <ListItemText classes={{primary: classes.listItemText}} primary="Leaderboards"/>
                 </ListItem>
+                {isAuthenticatedUser
+                &&
+                <ListItem button component={Link} to={Routes.TOURNAMENTS} onClick={() => handleDrawerClose()}
+                          selected={selectedTab === Route.tournaments}>
+                    <ListItemIcon>
+                        <img
+                            width="40" height="40"
+                            src={require('../../../content/icons/navigation/tournaments.svg')}
+                            alt=""
+                        />
+                    </ListItemIcon>
+                    <ListItemText classes={{primary: classes.listItemText}} primary="Tournaments"/>
+                </ListItem>}
                 <ListItem button component={Link} to={Routes.ACHIEVEMENTS} onClick={() => handleDrawerClose()}
                           selected={selectedTab === Route.achievements}>
                     <ListItemIcon>
@@ -90,7 +104,7 @@ function MobileDrawer(props) {
             </List>
             <Divider/>
             <List>
-                {isAuth()
+                {isAuthenticatedUser
                 && <ListItem button component={Link} to={Routes.USER_POOL} onClick={() => handleDrawerClose()}
                              selected={selectedTab === Route.users}>
                     <ListItemIcon>

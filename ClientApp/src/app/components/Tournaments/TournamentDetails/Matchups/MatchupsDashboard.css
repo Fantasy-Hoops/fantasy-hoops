@@ -1,0 +1,46 @@
+.MatchupsDashboard__ContentContainer {
+    margin: .5rem;
+    background: var(--grey-background);
+    border: solid 1px rgba(0, 0, 0, .1);
+    border-radius: 1rem;
+    position: relative;
+}
+
+.MatchupsDashboard__Tabs {
+    grid-area: tabs;
+}
+
+.MatchupsDashboard__Schedule {
+    grid-area: schedule;
+}
+
+.MatchupsDashboard__Contest {
+    grid-area: contest;
+}
+
+.MatchupsDashboard__Standings {
+    grid-area: standings;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.MatchupsDashboard__Layout {
+    max-height: 100%;
+    display: grid;
+    grid-template-columns: 65% 35%;
+    grid-template-rows: 8rem 50vh;
+    grid-template-areas:
+            "tabs schedule"
+            "contest standings"
+}
+
+.MatchupsDashboard__CurrentLineup {
+    margin: 6rem 0;
+}
+
+.MatchupsDashboard__NextOpponent {
+    text-align: right;
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+}

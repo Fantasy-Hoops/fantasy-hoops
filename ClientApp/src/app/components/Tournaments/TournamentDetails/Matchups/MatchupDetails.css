@@ -1,0 +1,18 @@
+.MatchupDetails {
+    display: flex;
+    flex-direction: row;
+    height: 5rem;
+    line-height: 5rem;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem 0;
+}
+
+.MatchupDetails__Heading {
+    text-align: center;
+    padding: 2rem 0 !important;
+}
+
+.MatchupDetails__Item {
+    margin: 1rem !important;
+}

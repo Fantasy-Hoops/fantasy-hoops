@@ -14,10 +14,12 @@ namespace fantasy_hoops.Repositories
     public class TournamentsRepository : ITournamentsRepository
     {
         private readonly GameContext _context;
+        private readonly LineupRepository _lineupRepository;
 
         public TournamentsRepository()
         {
             _context = new GameContext();
+            _lineupRepository = new LineupRepository();
         }
 
         public List<TournamentTypeDto> GetTournamentTypes()
@@ -60,6 +62,101 @@ namespace fantasy_hoops.Repositories
         {
             return _context.Tournaments
                 .FirstOrDefault(tournament => tournament.Id.Equals(tournamentId));
+        }
+
+        public TournamentDetailsDto GetTournamentDetails(string userId, string tournamentId)
+        {
+            TournamentDetailsDto tournamentDetails = new TournamentDetailsDto();
+
+            Tournament tournament = GetTournamentById(tournamentId);
+            tournamentDetails.IsCreator =
+                _context.Tournaments.Any(t => t.CreatorID.Equals(userId) && t.Id.Equals(tournament.Id));
+            tournamentDetails.Type = tournament.Type;
+            tournamentDetails.Title = tournament.Name;
+            tournamentDetails.Description = tournament.Description;
+            tournamentDetails.Contests = _context.Contests
+                .Where(contest => contest.TournamentId.Equals(tournamentId))
+                .Include(contest => contest.ContestPairs)
+                .Include(contest => contest.Winner)
+                .Select(contest => new ContestDto
+                {
+                    ContestStart = contest.ContestStart,
+                    ContestEnd = contest.ContestEnd,
+                    Winner = contest.Winner != null
+                        ? new UserDto
+                        {
+                            Id = contest.WinnerId,
+                            UserName = contest.Winner.UserName,
+                            AvatarUrl = contest.Winner.AvatarURL
+                        }
+                        : null,
+                    IsFinished = contest.IsFinished,
+                    Matchups = contest.ContestPairs
+                        .Select(pair => new MatchupPairDto
+                        {
+                            FirstUser = new UserDto
+                            {
+                                Id = pair.FirstUserID,
+                                UserName = pair.FirstUser.UserName,
+                                AvatarUrl = pair.FirstUser.AvatarURL
+                            },
+                            FirstUserScore = pair.FirstUserScore,
+                            SecondUser = new UserDto
+                            {
+                                Id = pair.SecondUserID,
+                                UserName = pair.SecondUser.UserName,
+                                AvatarUrl = pair.SecondUser.AvatarURL
+                            },
+                            SecondUserScore = pair.SecondUserScore
+                        }).ToList()
+                })
+                .OrderBy(contest => contest.ContestStart)
+                .ToList();
+            tournamentDetails.Standings = _context.TournamentUsers
+                .Where(tournamentUser => tournamentUser.TournamentID.Equals(tournamentId))
+                .Include(tournamentUser => tournamentUser.User)
+                .Select(tournamentUser => new TournamentUserDto
+                {
+                    Username = tournamentUser.User.UserName,
+                    AvatarURL = tournamentUser.User.AvatarURL,
+                    W = tournamentUser.Wins,
+                    L = tournamentUser.Losses
+                }).ToList()
+                .Select((tournamentUser, index) => new KeyValuePair<int, TournamentUserDto>(index, tournamentUser))
+                .OrderBy(record => record.Value.W - record.Value.L)
+                .Select(record => new TournamentUserDto
+                {
+                    Position = record.Key + 1,
+                    Username = record.Value.Username,
+                    AvatarURL = record.Value.AvatarURL,
+                    W = record.Value.W,
+                    L = record.Value.L
+                })
+                .OrderBy(tournamentUser => tournamentUser.Position)
+                .ToList();
+            tournamentDetails.CurrentLineup = _lineupRepository.GetUserCurrentLineup(userId);
+            ContestDto nextContest = tournamentDetails.Contests
+                .OrderBy(contest => contest.ContestStart)
+                .FirstOrDefault(contest => contest.ContestStart > DateTime.UtcNow);
+            MatchupPairDto userMatchup = nextContest?.Matchups
+                .FirstOrDefault(contestPair =>
+                    contestPair.FirstUser.Id.Equals(userId) || contestPair.SecondUser.Id.Equals(userId));
+
+            if (userMatchup == null)
+            {
+                return tournamentDetails;
+            }
+
+            if (userId.Equals(userMatchup.FirstUser.Id))
+            {
+                tournamentDetails.NextOpponent = userMatchup.SecondUser.UserName;
+            }
+            else if (userId.Equals(userMatchup.SecondUser.Id))
+            {
+                tournamentDetails.NextOpponent = userMatchup.FirstUser.UserName;
+            }
+
+            return tournamentDetails;
         }
 
         public Dictionary<string, List<TournamentDto>> GetUserTournaments(string userId)
@@ -152,6 +249,13 @@ namespace fantasy_hoops.Repositories
         {
             return _context.Tournaments
                 .Where(tournament => tournament.StartDate.Date == startDate.Date)
+                .ToList();
+        }
+
+        public List<Contest> GetTournamentContests(string tournamentId)
+        {
+            return _context.Contests
+                .Where(contest => contest.TournamentId.Equals(tournamentId))
                 .ToList();
         }
 

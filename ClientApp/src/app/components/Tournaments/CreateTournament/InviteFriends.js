@@ -59,6 +59,8 @@ export default function InviteFriends(props) {
     const [right, setRight] = React.useState(values.userFriends);
     const [error, setError] = useState(null);
     
+    const maxFriendsToInvite = values.entrants - 1;
+    
     const leftChecked = intersection(checked, left);
     const rightChecked = intersection(checked, right);
 
@@ -88,16 +90,16 @@ export default function InviteFriends(props) {
     const handleCheckedRight = () => {
         const {values, errors, setFieldValue, setFieldError, validateField} = formProps;
         const rightValues = right.concat(leftChecked);
-        const rightValuesTrimmed = right.concat(leftChecked).slice(0, values.entrants);
+        const rightValuesTrimmed = right.concat(leftChecked).slice(0, maxFriendsToInvite);
 
         setError(null);
-        if (right.length >= values.entrants) {
-            setError(<Alert severity="error">{ERROR_MESSAGE(values.entrants)}</Alert>);
+        if (right.length >= maxFriendsToInvite) {
+            setError(<Alert severity="error">{ERROR_MESSAGE(maxFriendsToInvite)}</Alert>);
             return;
         }
         
         if (rightValues.length !== rightValuesTrimmed.length) {
-            setError(<Alert severity="error">{ERROR_MESSAGE(values.entrants)}</Alert>);
+            setError(<Alert severity="error">{ERROR_MESSAGE(maxFriendsToInvite)}</Alert>);
         }
         
         const notAddedUsers = not(rightValues, rightValuesTrimmed);

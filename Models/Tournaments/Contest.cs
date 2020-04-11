@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace fantasy_hoops.Models.Tournaments
 {
@@ -8,8 +9,12 @@ namespace fantasy_hoops.Models.Tournaments
     {
         [Key]
         public int Id { get; set; }
+        [ForeignKey("TournamentId")]
+        public string TournamentId { get; set; }
         public DateTime ContestStart { get; set; }
+        public DateTime ContestEnd { get; set; }
         public bool IsFinished { get; set; }
+        public string WinnerId { get; set; }
         public User Winner { get; set; }
         public List<MatchupPair> ContestPairs { get; set; }
     }

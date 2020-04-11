@@ -18,3 +18,12 @@
     width: 10rem;
     border-bottom: solid #F1592A;
 }
+
+.TournamentDetails__Subtitle {
+    font-family: 'Helvetica Neue',sans-serif;
+    font-size: 14px;
+    line-height: 24px;
+    margin: 0 0 24px;
+    text-align: justify;
+    text-justify: inter-word;
+}

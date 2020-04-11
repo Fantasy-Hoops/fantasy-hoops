@@ -71,5 +71,14 @@ export const useStyles = makeStyles(({breakpoints, spacing}) => ({
             display: 'flex',
             flexDirection: 'column'
         },
+    },
+    badge : {
+        height: '1.5rem',
+        minHeight: '1.5rem',
+        width: '1.5rem',
+        minWidth: '1.5rem',
+        backgroundColor: 'green',
+        position: 'relative',
+        transform: 'translate(0%)'
     }
 }));

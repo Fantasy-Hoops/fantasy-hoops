@@ -24,7 +24,6 @@ using fantasy_hoops.Auth;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
@@ -86,7 +85,7 @@ namespace fantasy_hoops
                 });
             });
 #endif
-            services.AddDbContext<GameContext>(o => o.UseSqlServer(Configuration["fh-connection-string"]));
+            services.AddDbContext<GameContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             ConfigureAuth(services);
 

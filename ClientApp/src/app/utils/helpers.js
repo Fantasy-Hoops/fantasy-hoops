@@ -1,3 +1,5 @@
+import moment from "moment";
+
 const url = "https://fantasyhoops.org";
 
 export const Meta = {
@@ -35,9 +37,9 @@ export const camelCaseToSentenceCase = (text) => {
 
 export const getTournamentType = (value) => {
     switch (value) {
-        case 1:
+        case 0:
             return 'One For All';
-        case 2:
+        case 1:
             return 'Matchups';
         default:
             return "";
@@ -45,3 +47,26 @@ export const getTournamentType = (value) => {
 };
 
 export const TOURNAMENT_DATE_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
+
+export const ContestState = {
+    FINISHED: -1,
+    ACTIVE: 0,
+    NOT_STARTED: 1
+};
+
+export function getContestState(contest) {
+    const isStarted = moment(contest.contestStart).isBefore();
+    const isFinished = !moment(contest.contestEnd).isAfter();
+    
+    if (isStarted && isFinished) {
+        return ContestState.FINISHED;
+    }
+    
+    if (isStarted && !isFinished) {
+        return ContestState.ACTIVE;
+    }
+    
+    if (!isStarted && !isFinished) {
+        return ContestState.NOT_STARTED;
+    }
+}

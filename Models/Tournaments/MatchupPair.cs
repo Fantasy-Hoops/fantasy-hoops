@@ -10,6 +10,8 @@ namespace fantasy_hoops.Models.Tournaments
         public string FirstUserID { get; set; }
         [Key]
         public string SecondUserID { get; set; }
+        [Key]
+        public int ContestId { get; set; }
         public double FirstUserScore { get; set; }
         public double SecondUserScore { get; set; }
         

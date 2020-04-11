@@ -74,16 +74,31 @@ namespace fantasy_hoops.Services
 
         private List<Contest> GenerateContests(DateTime startDate, DateTime endDate)
         {
-            List<Contest> contests = _tournamentsRepository.GetUpcomingStartDates()
-                .Where(date => date >= startDate && date <= endDate)
-                .Select(date => new Contest
+            List<Contest> contests = new List<Contest>();
+            List<DateTime> contestStartDates = _tournamentsRepository.GetUpcomingStartDates()
+                .Where(date => date >= startDate && date <= endDate).ToList();
+            for (int i = 0; i < contestStartDates.Count; i++)
+            {
+                contests.Add(new Contest
                 {
-                    ContestStart = date,
+                    ContestStart = contestStartDates[i],
+                    ContestEnd = i + 1 < contestStartDates.Count
+                        ? contestStartDates[i + 1]
+                        : GetLastContestEndDate(contestStartDates[i]),
                     ContestPairs = new List<MatchupPair>()
-                })
-                .ToList();
-            
+                });
+            }
+
             return contests;
+        }
+
+        private DateTime GetLastContestEndDate(DateTime lastContestStartDate)
+        {
+            int daysToAdd = lastContestStartDate.DayOfWeek == DayOfWeek.Monday
+                ? 7
+                : (int)lastContestStartDate.DayOfWeek;
+            
+            return lastContestStartDate.AddDays(daysToAdd).Date;
         }
     }
 }

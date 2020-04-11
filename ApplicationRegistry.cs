@@ -1,11 +1,10 @@
-﻿using fantasy_hoops.Database;
+﻿using System;
+using fantasy_hoops.Database;
 using FluentScheduler;
 using System.Linq;
 using System.Threading.Tasks;
 using fantasy_hoops.Jobs;
-using fantasy_hoops.Models;
 using fantasy_hoops.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
 
 namespace fantasy_hoops
 {
@@ -26,6 +25,8 @@ namespace fantasy_hoops
                     .WithName("nextGameJob")
                     .ToRunNow();
             }
+            NextGameJob.NEXT_GAME = new DateTime(2020, 04, 20);
+            NextGameJob.NEXT_GAME_CLIENT = NextGameJob.NEXT_GAME;
 
             Schedule(new InjuriesJob(pushService))
                 .WithName("injuriesJob")

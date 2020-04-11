@@ -10,6 +10,7 @@ import clsx from "clsx";
 import {Link} from "react-router-dom";
 import Routes from "../../routes/routes";
 import {useStyles} from "./TournamentListCardStyle";
+import Badge from "@material-ui/core/Badge";
 
 export default function TournamentListCard(props) {
     const classes = useStyles();
@@ -32,11 +33,18 @@ export default function TournamentListCard(props) {
             </CardContent>
             <CardContent className={clsx(classes.content, classes.tournamentDetails)}>
                 <Typography className={classes.heading} variant="subtitle2" gutterBottom>
-                    {`${moment(tournament.startDate).isBefore()? 'Started' : 'Starts'}
+                    {
+                        moment(tournament.startDate).isBefore() && moment(tournament.endDate).isAfter()
+                            && <><Badge classes={{badge: classes.badge}} badgeContent={""}/> Active</>
+                    }
+                </Typography>
+
+                <Typography className={classes.heading} variant="subtitle2" gutterBottom>
+                    {`${moment(tournament.startDate).isBefore() ? 'Started' : 'Starts'}
                     ${moment(tournament.startDate).format(TOURNAMENT_DATE_FORMAT)}`}
                 </Typography>
                 <Typography className={classes.heading} variant="subtitle2" gutterBottom>
-                    {`${moment(tournament.endDate).isBefore()? 'Ended' : 'Ends'}
+                    {`${moment(tournament.endDate).isBefore() ? 'Ended' : 'Ends'}
                     ${moment(tournament.endDate).format(TOURNAMENT_DATE_FORMAT)}`}
                 </Typography>
             </CardContent>

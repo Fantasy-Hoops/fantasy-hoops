@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Tournaments;
@@ -13,6 +14,7 @@ namespace fantasy_hoops.Repositories.Interfaces
         List<DateTime> GetUpcomingStartDates();
         DateTime GetLastEndDate();
         Tournament GetTournamentById(string tournamentId);
+        TournamentDetailsDto GetTournamentDetails(string userId, string tournamentId);
         Dictionary<string, List<TournamentDto>> GetUserTournaments(string userId);
         bool CreateTournament(Tournament tournament);
         bool TournamentExists(string id);
@@ -26,5 +28,6 @@ namespace fantasy_hoops.Repositories.Interfaces
         List<String> GetTournamentUsersIds(string tournamentId);
         void AddCreatorToTournament(Tournament tournament);
         void AddUserToTournament(string userId, string tournamentId);
+        List<Contest> GetTournamentContests(string tournamentId);
     }
 }

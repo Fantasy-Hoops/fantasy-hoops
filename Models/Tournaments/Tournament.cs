@@ -8,6 +8,7 @@ namespace fantasy_hoops.Models.Tournaments
     {
         [Key] public string Id { get; set; }
         public int Type { get; set; }
+        public bool IsActive { get; set; }
         public string CreatorID { get; set; }
         public User Creator { get; set; }
         public DateTime StartDate { get; set; }

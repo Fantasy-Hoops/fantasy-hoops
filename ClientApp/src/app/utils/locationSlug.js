@@ -28,9 +28,9 @@ export const Route = {
     leaderboards: isLoggedIn ? 1 : 0,
     leaderboard: isLoggedIn ? 1 : 0,
     tournaments: isLoggedIn ? 2 : 1,
-    achievements: isLoggedIn ? 3 : 2,
-    injuries: isLoggedIn ? 4 : 3,
-    news: isLoggedIn ? 5 : 4,
-    users: isLoggedIn ? 6 : 5,
-    blog: isLoggedIn ? 7 : 6
+    achievements: isLoggedIn ? 3 : 1,
+    injuries: isLoggedIn ? 4 : 2,
+    news: isLoggedIn ? 5 : 3,
+    users: isLoggedIn ? 6 : 4,
+    blog: isLoggedIn ? 7 : 4
 };

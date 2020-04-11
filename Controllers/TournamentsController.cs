@@ -61,6 +61,24 @@ namespace fantasy_hoops.Controllers
             return _tournamentsRepository.GetTournamentById(tournamentId);
         }
 
+        [HttpGet("{tournamentId}/details")]
+        [Authorize]
+        public ActionResult<TournamentDetailsDto> GetTournamentDetails([FromRoute] string tournamentId)
+        {
+            if (!_tournamentsRepository.TournamentExists(tournamentId))
+            {
+                return NotFound($"Tournament with id '{tournamentId}' does not exist.");
+            }
+            
+            string userId = CommonFunctions.GetUserIdFromClaims(User);
+            if (!_tournamentsRepository.IsUserInTournament(userId, tournamentId))
+            {
+                return Unauthorized("Unauthorized attempt to reach the tournament.");
+            }
+
+            return _tournamentsRepository.GetTournamentDetails(userId, tournamentId);
+        }
+
         [HttpPost]
         public IActionResult CreateTournament([FromBody] CreateTournamentViewModel model)
         {

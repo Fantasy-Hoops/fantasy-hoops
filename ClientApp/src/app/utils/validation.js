@@ -21,7 +21,12 @@ export const newTournamentValidation = Yup.object().shape({
       .max(1, "Wrong type selected")
       .required('Tournament type is required'),
   contests: Yup.number()
-      .required('Number of contests is required'),
+      .when('entrants', (entrants, schema) => {
+        const acceptedNumber = entrants === 2 ? 3 : 2 * (entrants - 1);
+        return schema
+            .lessThan(acceptedNumber, `Number of contests must be less than ${acceptedNumber}`)
+            .required('Number of contests is required')
+      }),
   droppedContests: Yup.number()
       .lessThan(Yup.ref('contests'), "Dropped contests must be less than number of contests")
       .required('Number of dropped contests is required'),
