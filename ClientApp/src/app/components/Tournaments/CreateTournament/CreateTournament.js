@@ -201,11 +201,6 @@ export default function CreateTournament() {
 
     const showLoader = typesLoader || datesLoader || friendsLoader || submitLoader;
 
-
-    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'production') {
-        return <Error status={404}/>;
-    }
-
     if (inviteUrl) {
         return (
             <>
