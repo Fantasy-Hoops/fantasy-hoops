@@ -15,25 +15,29 @@ import Alert from "@material-ui/lab/Alert";
 
 const ERROR_MESSAGE = friendsCount => `You must choose up to ${friendsCount} friends!`;
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(({breakpoints, spacing, palette}) => ({
     root: {
         margin: 'auto',
+        [breakpoints.down('sm')]: {
+            display: 'flex',
+            flexDirection: 'column',
+        },
     },
     cardHeader: {
-        padding: theme.spacing(1, 2),
+        padding: spacing(1, 2),
     },
     list: {
         width: 200,
         height: 230,
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: palette.background.paper,
         overflow: 'auto',
     },
     button: {
-        margin: theme.spacing(0.5, 0),
+        margin: spacing(0.5, 0),
     },
     avatar: {
-        width: theme.spacing(3),
-        height: theme.spacing(3),
+        width: spacing(3),
+        height: spacing(3),
         marginRight: '1rem',
     }
 }));
