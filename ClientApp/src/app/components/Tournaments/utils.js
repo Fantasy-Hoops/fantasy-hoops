@@ -12,6 +12,7 @@ export const TournamentsCreate = {
 
 export const TournamentsInvitations = {
     TITLE: "TOURNAMENTS INVITATIONS",
+    SINGLE_INVITATION_TITLE: "INVITATION",
     CREATED_SUBTITLE: "Invitation links has been sent to your friends' email addresses. " +
         "Use the link below to invite more friends to join your new created tournament."
 };

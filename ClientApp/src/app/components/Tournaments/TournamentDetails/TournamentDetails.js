@@ -55,9 +55,9 @@ export function TournamentDetails(props) {
     if (!tournamentExists && !_.isEmpty(errorResponse)) {
         return <Error status={errorResponse.status} message={errorResponse.message}/>;
     }
-    
+
     if (!tournament.isCreator && !tournament.acceptedInvite) {
-        return <Error message="You haven't accepted invite to this tournament."/>;
+        return <Error status={404} message="You haven't accepted invite to this tournament."/>;
     }
 
     function renderDashboard() {
@@ -79,17 +79,18 @@ export function TournamentDetails(props) {
                 <link rel="canonical" href={Canonicals.TOURNAMENTS_SUMMARY}/>
             </Helmet>
             <article className="PageIntro">
-                <h1 className="PageTitle">
-                    {tournament.title}
-                    {' '}
+                <div className="TournamentDetails__TitleWrapper">
+                    <h1 className="TournamentDetails__Title PageTitle">
+                        {tournament.title}
+                    </h1>
                     {tournament.isCreator
                         ? (
-                            <IconButton onClick={handleSettingsOpen}>
+                            <IconButton className="TournamentDetails__SettingsButton" onClick={handleSettingsOpen}>
                                 <SettingsIcon/>
                             </IconButton>
                         )
                         : null}
-                </h1>
+                </div>
                 <h5 className="PageSubtitle">{tournament.description}</h5>
             </article>
             {renderDashboard()}

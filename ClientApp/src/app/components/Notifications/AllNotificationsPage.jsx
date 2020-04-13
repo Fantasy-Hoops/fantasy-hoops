@@ -75,7 +75,7 @@ export class AllNotificationsPage extends Component {
                 if (notification.senderID) {
                     const text = <span>{notification.requestMessage}</span>;
                     const link = notification.tournamentId
-                        ? Routes.TOURNAMENT_INVITATIONS
+                        ? `${Routes.TOURNAMENT_INVITATION}/${notification.tournamentId}`
                         : `${Routes.PROFILE}/${notification.friendUsername}`;
                     
                     return (

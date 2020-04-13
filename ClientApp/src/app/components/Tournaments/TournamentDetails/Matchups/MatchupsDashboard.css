@@ -25,13 +25,8 @@
 }
 
 .MatchupsDashboard__Layout {
-    max-height: 100%;
-    display: grid;
-    grid-template-columns: 65% 35%;
-    grid-template-rows: 8rem 50vh;
-    grid-template-areas:
-            "tabs schedule"
-            "contest standings"
+    display: flex;
+    flex-direction: column;
 }
 
 .MatchupsDashboard__CurrentLineup {
@@ -43,4 +38,16 @@
     position: absolute;
     bottom: 1rem;
     right: 1rem;
+}
+
+@media screen and (min-width: 768px) {
+    .MatchupsDashboard__Layout {
+        max-height: 100%;
+        display: grid;
+        grid-template-columns: 65% 35%;
+        grid-template-rows: 8rem 50vh;
+        grid-template-areas:
+                "tabs schedule"
+                "contest standings"
+    }
 }

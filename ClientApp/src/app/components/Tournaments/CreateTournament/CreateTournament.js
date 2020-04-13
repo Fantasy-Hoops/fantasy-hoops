@@ -211,7 +211,7 @@ export default function CreateTournament() {
                 </Helmet>
                 <article className="PageIntro">
                     <h1 className="PageTitle">{TournamentsCreate.TITLE}</h1>
-                    <h1 className="PageSubtitle">{TournamentsCreate.CREATED_SUBTITLE}</h1>
+                    <h5 className="PageSubtitle">{TournamentsCreate.CREATED_SUBTITLE}</h5>
                 </article>
                 <CopyToClipboard inputText={inviteUrl} />
             </>

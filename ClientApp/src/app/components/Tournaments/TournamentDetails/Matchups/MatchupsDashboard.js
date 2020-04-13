@@ -111,8 +111,8 @@ function getCurrentContest(tournament, contest, matchup) {
 
 function getFutureContest(contest) {
     const heading = "Upcoming matchups";
-    const matchups = contest.matchups.map(matchup => (
-        <MatchupDetails matchup={matchup} future/>
+    const matchups = contest.matchups.map((matchup, index) => (
+        <MatchupDetails key={index} matchup={matchup} future/>
     ));
 
     return (

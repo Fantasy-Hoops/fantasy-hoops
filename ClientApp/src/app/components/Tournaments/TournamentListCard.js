@@ -14,9 +14,41 @@ import Badge from "@material-ui/core/Badge";
 
 export default function TournamentListCard(props) {
     const classes = useStyles();
-    const {tournament, isInvitation} = props;
+    const {tournament, isInvitation, clickable} = props;
+    const clickableProps = clickable
+        ? {
+            component: Link,
+            to: `${Routes.TOURNAMENT_INVITATIONS}/${tournament.id}`
+        }
+        : {};
+
+    function getButtons() {
+        if (!isInvitation && !clickable) {
+            return (
+                <Link to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}>
+                    <Button className={classes.button}>View Summary</Button>
+                </Link>
+            );
+        }
+
+        if (isInvitation && !clickable) {
+            return (
+                <>
+                    <Link to="#" /*to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}*/>
+                        <Button className={classes.button}>Accept</Button>
+                    </Link>
+                    <Link to="#" /*to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}*/>
+                        <Button className={classes.button}>Decline</Button>
+                    </Link>
+                </>
+            );
+        }
+        
+        return null;
+    }
+
     return (
-        <Card className={classes.card}>
+        <Card className={classes.card} {...clickableProps}>
             <CardContent className={classes.content}>
                 <Typography className={classes.overline} variant={'overline'}>
                     {tournament.description}
@@ -27,26 +59,9 @@ export default function TournamentListCard(props) {
                 <Typography className={classes.heading} variant="subtitle2" gutterBottom>
                     {tournament.typeName}
                 </Typography>
-                {
-                    isInvitation
-                        ? (
-                            <>
-                                <Link to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}>
-                                    <Button className={classes.button}>Accept</Button>
-                                </Link>
-                                <Link to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}>
-                                    <Button className={classes.button}>Decline</Button>
-                                </Link>
-                            </>
-                        )
-                        : (
-                            <Link to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}>
-                                <Button className={classes.button}>View Summary</Button>
-                            </Link>
-                        )
-                }
+                {getButtons()}
             </CardContent>
-            <CardContent className={clsx(classes.content, classes.tournamentDetails)}>
+            {!clickable && <CardContent className={clsx(classes.content, classes.tournamentDetails)}>
                 <Typography className={classes.heading} variant="subtitle2" gutterBottom>
                     {
                         moment(tournament.startDate).isBefore() && moment(tournament.endDate).isAfter()
@@ -61,7 +76,7 @@ export default function TournamentListCard(props) {
                     {`${moment(tournament.endDate).isBefore() ? 'Ended' : 'Ends'}
                     ${moment(tournament.endDate).format(TOURNAMENT_DATE_FORMAT)}`}
                 </Typography>
-            </CardContent>
+            </CardContent>}
             <Avatar
                 className={classes.avatar}
                 src={require(`../../../content/icons/tournaments/${tournament.imageURL}`)}

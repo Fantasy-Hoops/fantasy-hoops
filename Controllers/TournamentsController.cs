@@ -5,6 +5,7 @@ using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -18,19 +19,21 @@ namespace fantasy_hoops.Controllers
     {
         private readonly ITournamentsService _tournamentsService;
         private readonly ITournamentsRepository _tournamentsRepository;
+        private readonly IFriendRepository _friendRepository = new FriendRepository();
 
-        public TournamentsController(ITournamentsService tournamentsService, ITournamentsRepository tournamentsRepository)
+        public TournamentsController(ITournamentsService tournamentsService,
+            ITournamentsRepository tournamentsRepository)
         {
             _tournamentsService = tournamentsService;
             _tournamentsRepository = tournamentsRepository;
         }
-        
+
         [HttpGet("types")]
         public List<TournamentTypeDto> GetTypes()
         {
             return _tournamentsRepository.GetTournamentTypes();
         }
-        
+
         [HttpGet("start-dates")]
         public List<DateTime> GetStartDates()
         {
@@ -51,10 +54,10 @@ namespace fantasy_hoops.Controllers
             {
                 return NotFound($"Tournament with id '{tournamentId}' does not exist.");
             }
-            
+
             string userId = CommonFunctions.GetUserIdFromClaims(User);
             if (!_tournamentsRepository.IsUserInTournament(userId, tournamentId)
-            && !_tournamentsRepository.IsUserInvited(userId, tournamentId))
+                && !_tournamentsRepository.IsUserInvited(userId, tournamentId))
             {
                 return Unauthorized("Unauthorized attempt to reach the tournament.");
             }
@@ -64,21 +67,32 @@ namespace fantasy_hoops.Controllers
 
         [Authorize]
         [HttpGet("{tournamentId}/details")]
-        public ActionResult<TournamentDetailsDto> GetTournamentDetails([FromRoute] string tournamentId)
+        public ActionResult<TournamentDetailsDto> GetTournamentDetails([FromRoute] string tournamentId, bool checkForFriends)
         {
             if (!_tournamentsRepository.TournamentExists(tournamentId))
             {
                 return NotFound($"Tournament with id '{tournamentId}' does not exist.");
             }
-            
+
             string userId = CommonFunctions.GetUserIdFromClaims(User);
-            if (!_tournamentsRepository.IsUserInTournament(userId, tournamentId)
-                && !_tournamentsRepository.IsUserInvited(userId, tournamentId))
+            bool isUserInTournament = _tournamentsRepository.IsUserInTournament(userId, tournamentId);
+            if (checkForFriends && isUserInTournament)
+            {
+                return StatusCode(StatusCodes.Status302Found, "You already joined this tournament.");
+            }
+            
+            if (!isUserInTournament && !_tournamentsRepository.IsUserInvited(userId, tournamentId))
             {
                 return Unauthorized("Unauthorized attempt to reach the tournament.");
             }
 
-            return _tournamentsRepository.GetTournamentDetails(userId, tournamentId);
+            TournamentDetailsDto tournamentDetails = _tournamentsRepository.GetTournamentDetails(userId, tournamentId);
+            bool friendCheckStatus = !checkForFriends || userId.Equals(tournamentDetails.CreatorId) ||
+                                     _friendRepository.AreUsersFriends(userId, tournamentDetails.CreatorId);
+
+            return friendCheckStatus
+                ? Ok(tournamentDetails)
+                : StatusCode(StatusCodes.Status403Forbidden, "You are not friends with the tournament creator.");
         }
 
         [Authorize]
@@ -89,6 +103,7 @@ namespace fantasy_hoops.Controllers
             {
                 return UnprocessableEntity("Tournament title already exists.");
             }
+
             if (model.StartDate < CommonFunctions.UTCToEastern(DateTime.UtcNow))
             {
                 return UnprocessableEntity("Illegal Date. Date must be in the future.");
@@ -98,16 +113,16 @@ namespace fantasy_hoops.Controllers
             {
                 return UnprocessableEntity("No tournament icon selected.");
             }
-            
+
             Pair<bool, string> result = _tournamentsService.CreateTournament(model);
             if (!result.First)
             {
                 return StatusCode(StatusCodes.Status406NotAcceptable, "Unable to handle request.");
             }
-            
+
             return Ok(new
             {
-                message =  "Tournament created",
+                message = "Tournament created",
                 inviteUrl = result.Second
             });
         }
@@ -129,8 +144,7 @@ namespace fantasy_hoops.Controllers
 
             return Ok("Tournament deleted successfully");
         }
-        
-        
+
 
         [Authorize]
         [HttpGet("invitations")]

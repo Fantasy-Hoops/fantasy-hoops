@@ -74,24 +74,11 @@ export function TournamentSettings(props) {
 
     return (
         <>
-            <Dialog onClose={handleSettingsClose} aria-labelledby="customized-dialog-title" open={isSettingsOpen}>
+            <Dialog onClose={handleSettingsClose} aria-labelledby="customized-dialog-title" open={isSettingsOpen} fullWidth>
                 <DialogTitle id="customized-dialog-title" onClose={handleSettingsClose}>
                     {`${tournament.title} Settings`}
                 </DialogTitle>
                 <DialogContent dividers>
-                    <Typography gutterBottom>
-                        Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                        in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                    </Typography>
-                    <Typography gutterBottom>
-                        Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                        lacus vel augue laoreet rutrum faucibus dolor auctor.
-                    </Typography>
-                    <Typography gutterBottom>
-                        Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                        scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                        auctor fringilla.
-                    </Typography>
                     <Button
                         onClick={handleConfirmOpen}
                         variant="text"
@@ -100,7 +87,6 @@ export function TournamentSettings(props) {
                     >
                         Delete
                     </Button>
-                    
                 </DialogContent>
                 <DialogActions>
                     <Button autoFocus onClick={handleSettingsClose} color="primary">

@@ -69,7 +69,7 @@ export class Notifications extends Component {
                         <span>{notification.requestMessage}</span>
                     );
                     const link = notification.tournamentId
-                        ? Routes.TOURNAMENT_INVITATIONS
+                        ? `${Routes.TOURNAMENT_INVITATIONS}/${notification.tournamentId}`
                         : `${Routes.PROFILE}/${notification.friendUsername}`;
 
                     return (

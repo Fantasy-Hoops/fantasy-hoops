@@ -71,6 +71,8 @@ namespace fantasy_hoops.Repositories
             TournamentDetailsDto tournamentDetails = new TournamentDetailsDto();
 
             Tournament tournament = GetTournamentById(tournamentId);
+            tournamentDetails.Id = tournamentId;
+            tournamentDetails.CreatorId = tournament.CreatorID;
             tournamentDetails.IsCreator =
                 _context.Tournaments.Any(t => t.CreatorID.Equals(userId) && t.Id.Equals(tournament.Id));
             tournamentDetails.Type = tournament.Type;

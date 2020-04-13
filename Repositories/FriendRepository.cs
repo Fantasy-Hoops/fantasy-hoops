@@ -97,5 +97,13 @@ namespace fantasy_hoops.Repositories
             request.Status = status;
             _context.SaveChanges();
         }
+
+        public bool AreUsersFriends(string firstUserId, string secondUserId)
+        {
+            return _context.FriendRequests
+                .Where(request => request.SenderID.Equals(firstUserId) && request.ReceiverID.Equals(secondUserId)
+                                  || request.SenderID.Equals(secondUserId) && request.ReceiverID.Equals(firstUserId))
+                .Any(request => request.Status == RequestStatus.ACCEPTED);
+        }
     }
 }

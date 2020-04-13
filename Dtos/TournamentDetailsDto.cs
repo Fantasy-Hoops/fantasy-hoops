@@ -4,11 +4,13 @@ namespace fantasy_hoops.Dtos
 {
     public class TournamentDetailsDto
     {
+        public string Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public int Type { get; set; }
         public string TypeName { get; set; }
         public string ImageURL { get; set; }
+        public string CreatorId { get; set; }
         public bool IsCreator { get; set; }
         public List<ContestDto> Contests { get; set; }
         public List<TournamentUserDto> Standings { get; set; }

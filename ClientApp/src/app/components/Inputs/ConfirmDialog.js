@@ -42,10 +42,10 @@ export function ConfirmDialog(props) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
-                        Disagree
+                        Cancel
                     </Button>
                     <Button onClick={handleCallbackFunction} color="primary" autoFocus>
-                        Agree
+                        Confirm
                     </Button>
                 </DialogActions>
             </Dialog>

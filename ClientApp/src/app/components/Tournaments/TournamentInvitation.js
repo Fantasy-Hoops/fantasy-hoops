@@ -1,25 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import {getLastLocationSlug} from "../../utils/locationSlug";
-import {getTournamentInvitations} from "../../utils/networkFunctions";
+import {getTournamentDetails} from "../../utils/networkFunctions";
 import _ from 'lodash';
 import TournamentListCard from "./TournamentListCard";
 import FullscreenLoader from "../FullscreenLoader";
 import {Helmet} from "react-helmet";
-import {TournamentsInvitations, TournamentsMain} from "./utils";
+import {TournamentsInvitations} from "./utils";
 import {Canonicals, Meta} from "../../utils/helpers";
-import EmptyJordan from "../EmptyJordan";
+import {Error} from "../Error";
 
-export function TournamentInvitations(props) {
+export function TournamentInvitation(props) {
     const tournamentId = getLastLocationSlug(props.location.pathname);
-    const [tournamentInvitations, setTournamentInvitations] = useState([]);
-    const [invitationExists, setInvitationExists] = useState(false);
+    const [tournament, setTournament] = useState({});
+    const [tournamentExists, setTournamentExists] = useState(true);
     const [errorResponse, setErrorResponse] = useState({});
     const [loader, setLoader] = useState(true);
 
     useEffect(() => {
         async function handleGetTournament() {
-            getTournamentInvitations().then(response => {
-                setTournamentInvitations(response.data);
+            getTournamentDetails(tournamentId, {checkForFriends: true}).then(response => {
+                setTournament(response.data);
                 setLoader(false);
             }).catch(error => {
                 setErrorResponse({
@@ -27,15 +27,15 @@ export function TournamentInvitations(props) {
                     message: error.response.data
                 });
                 setLoader(false);
-                setInvitationExists(false);
+                setTournamentExists(false);
             })
         }
 
         handleGetTournament();
     }, []);
-    
-    if (!loader && _.isEmpty(tournamentInvitations)) {
-        return <EmptyJordan message="You have no tournament invitations."/>;
+
+    if (!tournamentExists && !_.isEmpty(errorResponse)) {
+        return <Error status={errorResponse.status} message={errorResponse.message}/>;
     }
 
     return (
@@ -46,11 +46,10 @@ export function TournamentInvitations(props) {
                 <link rel="canonical" href={Canonicals.TOURNAMENTS_INVITATIONS}/>
             </Helmet>
             <article className="PageIntro">
-                <h1 className="PageTitle">{TournamentsInvitations.TITLE}</h1>
+                <h1 className="PageTitle">{TournamentsInvitations.SINGLE_INVITATION_TITLE}</h1>
+                <h5 className="PageSubtitle">{`User ${0} invited you to join the tournament.`}</h5>
             </article>
-            {tournamentInvitations.map((tournament, index) => (
-                <TournamentListCard key={index} tournament={tournament} isInvitation clickable />
-            ))}
+            {!_.isEmpty(tournament) && <TournamentListCard tournament={tournament} isInvitation />}
             {loader && <FullscreenLoader/>}
         </>
     );

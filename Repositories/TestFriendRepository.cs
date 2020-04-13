@@ -80,5 +80,10 @@ namespace fantasy_hoops.Repositories
             request.Date = DateTime.UtcNow;
             request.Status = status;
         }
+
+        public bool AreUsersFriends(string firstUserId, string secondUserId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

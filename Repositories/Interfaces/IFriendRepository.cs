@@ -19,6 +19,6 @@ namespace fantasy_hoops.Repositories.Interfaces
         FriendRequest GetRequest(String senderID, String receiverID);
         void CreateRequest(String senderID, String receiverID, RequestStatus status);
         void UpdateRequest(FriendRequest request, String senderID, String receiverID, RequestStatus status);
-
+        bool AreUsersFriends(string firstUserId, string secondUserId);
     }
 }

@@ -1,0 +1,15 @@
+.TournamentDetails__TitleWrapper {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.TournamentDetails__SettingsButton {
+    order: 1;
+    justify-content: start !important;
+}
+
+@media screen and (min-width: 768px) {
+    .TournamentDetails__TitleWrapper {
+        flex-direction: row;
+    }
+}
