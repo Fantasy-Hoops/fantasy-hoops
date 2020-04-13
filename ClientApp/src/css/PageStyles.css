@@ -9,6 +9,7 @@
     letter-spacing: -1px;
     line-height: 1;
     text-align: left;
+    text-transform: uppercase;
 }
 
 .PageTitle:after {

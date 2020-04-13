@@ -16,6 +16,10 @@ const useStyles = makeStyles(theme => ({
 export function MatchupDetails(props) {
     const classes = useStyles();
     const {matchup, heading, future} = props;
+    
+    if (!matchup) {
+        return  null;
+    }
 
     return (
         <>
