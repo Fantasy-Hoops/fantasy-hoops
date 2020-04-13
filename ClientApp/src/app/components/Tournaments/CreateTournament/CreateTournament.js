@@ -70,9 +70,9 @@ export default function CreateTournament() {
         async function handleGetTournamentTypes() {
             setTypesLoader(true);
             await getTournamentTypes().then(response => {
-                const tournamentTypes = response.data.map(tournament => ({
-                    value: tournament.id,
-                    label: tournament.title
+                const tournamentTypes = response.data.map(tournamentType => ({
+                    value: tournamentType.id,
+                    label: tournamentType.name
                 }));
                 setTournamentTypes(tournamentTypes);
             }).catch(error => {
