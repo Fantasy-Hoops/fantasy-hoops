@@ -1,37 +1,8 @@
-.Tournaments__Intro {
-    margin-bottom: 2rem;
-}
-
 .Tournaments__TitleWrapper {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap-reverse;
     justify-content: space-between;
-}
-
-.Tournaments__Title {
-    font-family: 'Helvetica Neue', sans-serif;
-    font-size: 4rem;
-    font-weight: 600;
-    letter-spacing: -1px;
-    line-height: 1;
-    text-align: left;
-}
-
-.Tournaments__Title:after {
-    content: "";
-    display: block;
-    width: 10rem;
-    border-bottom: solid #F1592A;
-}
-
-.Tournaments__Subtitle {
-    font-family: 'Helvetica Neue',sans-serif;
-    font-size: 14px;
-    line-height: 24px;
-    margin: 0 0 24px;
-    text-align: justify;
-    text-justify: inter-word;
 }
 
 .TournamentsGroup__Title {

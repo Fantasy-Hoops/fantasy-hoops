@@ -53,7 +53,8 @@ namespace fantasy_hoops.Controllers
             }
             
             string userId = CommonFunctions.GetUserIdFromClaims(User);
-            if (!_tournamentsRepository.IsUserInTournament(userId, tournamentId))
+            if (!_tournamentsRepository.IsUserInTournament(userId, tournamentId)
+            && !_tournamentsRepository.IsUserInvited(userId, tournamentId))
             {
                 return Unauthorized("Unauthorized attempt to reach the tournament.");
             }
@@ -71,7 +72,8 @@ namespace fantasy_hoops.Controllers
             }
             
             string userId = CommonFunctions.GetUserIdFromClaims(User);
-            if (!_tournamentsRepository.IsUserInTournament(userId, tournamentId))
+            if (!_tournamentsRepository.IsUserInTournament(userId, tournamentId)
+                && !_tournamentsRepository.IsUserInvited(userId, tournamentId))
             {
                 return Unauthorized("Unauthorized attempt to reach the tournament.");
             }
@@ -126,6 +128,16 @@ namespace fantasy_hoops.Controllers
             }
 
             return Ok("Tournament deleted successfully");
+        }
+        
+        
+
+        [Authorize]
+        [HttpGet("invitations")]
+        public List<TournamentDto> GetTournamentDetails()
+        {
+            string userId = CommonFunctions.GetUserIdFromClaims(User);
+            return _tournamentsRepository.GetTournamentInvitations(userId);
         }
     }
 }

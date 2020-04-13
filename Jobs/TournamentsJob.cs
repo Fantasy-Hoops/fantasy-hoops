@@ -77,7 +77,7 @@ namespace fantasy_hoops.Jobs
                 .Where(x => x.TournamentId.Equals(tournament.Id))
                 .ToList().Select((value, index) => (value, index)))
             {
-                contest.value.ContestPairs = new List<MatchupPair>();
+                contest.value.Matchups = new List<MatchupPair>();
                 matchupsVariations.Where(record => record.Item1 == contest.index + 1)
                     .ToList()
                     .ForEach(contestPair =>
@@ -87,7 +87,7 @@ namespace fantasy_hoops.Jobs
                                 matchupsVariations[contest.index].Item3, contest.value.Id);
                         if (dbMatchupPair == null)
                         {
-                            contest.value.ContestPairs.Add(new MatchupPair
+                            contest.value.Matchups.Add(new MatchupPair
                             {
                                 ContestId = contest.value.Id,
                                 TournamentID = tournament.Id,
@@ -106,7 +106,7 @@ namespace fantasy_hoops.Jobs
             List<string> tournamentUsers = _tournamentsRepository.GetTournamentUsersIds(tournament.Id);
             foreach (var contest in _context.Contests.Where(x => x.TournamentId.Equals(tournament.Id)).ToList())
             {
-                contest.ContestPairs = tournamentUsers.Select(tournamentUser => new MatchupPair
+                contest.Matchups = tournamentUsers.Select(tournamentUser => new MatchupPair
                 {
                     TournamentID = tournament.Id,
                     ContestId = contest.Id,

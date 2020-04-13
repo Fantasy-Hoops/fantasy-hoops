@@ -12,7 +12,7 @@ namespace fantasy_hoops.Models
         public bool ReadStatus { get; set; }
         public DateTime DateCreated { get; set; }
 
-        [ForeignKey("UserID")]
+        [ForeignKey("ReceiverID")]
         public virtual User Receiver { get; set; }
     }
 }

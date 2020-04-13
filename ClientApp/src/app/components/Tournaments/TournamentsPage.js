@@ -56,9 +56,9 @@ export default function TournamentsPage() {
                 <meta name="description" content={TournamentsMain.SUBTITLE}/>
                 <link rel="canonical" href={Canonicals.TOURNAMENTS}/>
             </Helmet>
-            <article className="Tournaments__Intro">
+            <article className="PageIntro">
                 <div className="Tournaments__TitleWrapper">
-                    <h1 className="Tournaments__Title">{TournamentsMain.TITLE}</h1>
+                    <h1 className="PageTitle">{TournamentsMain.TITLE}</h1>
                     <Link to={Routes.TOURNAMENTS_CREATE}>
                         <Fab className={classes.fab} variant="extended" color="primary">
                             <AddIcon className={classes.extendedIcon} />
@@ -66,7 +66,6 @@ export default function TournamentsPage() {
                         </Fab>
                     </Link>
                 </div>
-                <h5 className="Tournaments__Subtitle">{TournamentsMain.SUBTITLE}</h5>
             </article>
             {!_.isEmpty(userTournaments.created) && (
                 <div className="Tournaments__Created">

@@ -27,7 +27,8 @@ export const Canonicals = {
     ACHIEVEMENTS: `${url}/achievements`,
     TOURNAMENTS: `${url}/tournaments`,
     TOURNAMENTS_CREATE: `${url}/tournaments/create`,
-    TOURNAMENTS_SUMMARY: `${url}/tournaments/summary`
+    TOURNAMENTS_SUMMARY: `${url}/tournaments/summary`,
+    TOURNAMENTS_INVITATIONS: `${url}/tournaments/invitations`,
 };
 
 export const camelCaseToSentenceCase = (text) => {

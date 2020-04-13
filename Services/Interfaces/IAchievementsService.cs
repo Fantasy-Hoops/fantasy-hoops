@@ -6,7 +6,7 @@ namespace fantasy_hoops.Services.Interfaces
 {
     public interface IAchievementsService
     {
-        public Task AssignAchievements(String userName);
+        public bool AssignAchievements(String userName);
         public bool CreateAchievement(Achievement achievement);
     }
 }

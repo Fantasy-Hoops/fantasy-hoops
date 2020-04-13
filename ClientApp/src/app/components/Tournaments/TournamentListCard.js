@@ -14,7 +14,7 @@ import Badge from "@material-ui/core/Badge";
 
 export default function TournamentListCard(props) {
     const classes = useStyles();
-    const {tournament} = props;
+    const {tournament, isInvitation} = props;
     return (
         <Card className={classes.card}>
             <CardContent className={classes.content}>
@@ -22,23 +22,37 @@ export default function TournamentListCard(props) {
                     {tournament.description}
                 </Typography>
                 <Typography className={classes.heading} variant={'h5'} gutterBottom>
-                    {tournament.name}
+                    {tournament.title}
                 </Typography>
                 <Typography className={classes.heading} variant="subtitle2" gutterBottom>
-                    {tournament.type}
+                    {tournament.typeName}
                 </Typography>
-                <Link to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}>
-                    <Button className={classes.button}>View Summary</Button>
-                </Link>
+                {
+                    isInvitation
+                        ? (
+                            <>
+                                <Link to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}>
+                                    <Button className={classes.button}>Accept</Button>
+                                </Link>
+                                <Link to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}>
+                                    <Button className={classes.button}>Decline</Button>
+                                </Link>
+                            </>
+                        )
+                        : (
+                            <Link to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}>
+                                <Button className={classes.button}>View Summary</Button>
+                            </Link>
+                        )
+                }
             </CardContent>
             <CardContent className={clsx(classes.content, classes.tournamentDetails)}>
                 <Typography className={classes.heading} variant="subtitle2" gutterBottom>
                     {
                         moment(tournament.startDate).isBefore() && moment(tournament.endDate).isAfter()
-                            && <><Badge classes={{badge: classes.badge}} badgeContent={""}/> Active</>
+                        && <><Badge classes={{badge: classes.badge}} badgeContent={""}/> Active</>
                     }
                 </Typography>
-
                 <Typography className={classes.heading} variant="subtitle2" gutterBottom>
                     {`${moment(tournament.startDate).isBefore() ? 'Started' : 'Starts'}
                     ${moment(tournament.startDate).format(TOURNAMENT_DATE_FORMAT)}`}

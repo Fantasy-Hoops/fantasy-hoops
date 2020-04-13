@@ -97,6 +97,11 @@ namespace fantasy_hoops.Services
 
         public async Task Send(string userId, PushNotificationViewModel notification)
         {
+            if (!Boolean.Parse(Startup.Configuration["pushNotificationsEnabled"]))
+            {
+                return;
+            }
+            
             foreach (var subscription in GetUserSubscriptions(userId))
             {
                 try

@@ -4,14 +4,12 @@ using System.Threading.Tasks;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 using fantasy_hoops.Helpers;
-using fantasy_hoops.Services;
-using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace fantasy_hoops.Controllers
 {
@@ -50,7 +48,7 @@ namespace fantasy_hoops.Controllers
             if(!emailExists)
             {
                 await _userService.GoogleRegister(User);
-                await _achievementsService.AssignAchievements(CommonFunctions.GetUsernameFromEmail(email));
+                _achievementsService.AssignAchievements(CommonFunctions.GetUsernameFromEmail(email));
             }
 
             bool success = await _userService.GoogleLogin(User);
@@ -97,8 +95,13 @@ namespace fantasy_hoops.Controllers
 
             if (await _userService.Register(model))
             {
-                _achievementsService.AssignAchievements(model.UserName);
-                return Ok("You have registered successfully!");
+                if (!_achievementsService.AssignAchievements(model.UserName))
+                {
+                    return StatusCode(StatusCodes.Status206PartialContent, "User registered, but initial achievements failed to assign.");
+                }
+                
+                return StatusCode(StatusCodes.Status201Created, "You have registered successfully!");
+
             }
             return StatusCode(500, "Registration has failed!");
         }

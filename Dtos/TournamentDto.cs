@@ -7,10 +7,11 @@ namespace fantasy_hoops.Dtos
     public class TournamentDto
     {
         public string Id { get; set; }
-        public string Type { get; set; }
+        public int Type { get; set; }
+        public string TypeName { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string Name { get; set; }
+        public string Title { get; set; }
         public string Description { get; set; }
         public string ImageURL { get; set; }
         public int Entrants { get; set; }

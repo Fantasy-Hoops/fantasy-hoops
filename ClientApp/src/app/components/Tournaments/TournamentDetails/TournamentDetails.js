@@ -32,7 +32,6 @@ export function TournamentDetails(props) {
 
     useEffect(() => {
         async function handleGetTournament() {
-
             getTournamentDetails(tournamentId).then(response => {
                 setTournament(response.data);
                 setLoader(false);
@@ -56,6 +55,10 @@ export function TournamentDetails(props) {
     if (!tournamentExists && !_.isEmpty(errorResponse)) {
         return <Error status={errorResponse.status} message={errorResponse.message}/>;
     }
+    
+    if (!tournament.isCreator && !tournament.acceptedInvite) {
+        return <Error message="You haven't accepted invite to this tournament."/>;
+    }
 
     function renderDashboard() {
         switch (tournament.type) {
@@ -75,8 +78,8 @@ export function TournamentDetails(props) {
                 <meta name="description" content={TournamentsMain.SUBTITLE}/>
                 <link rel="canonical" href={Canonicals.TOURNAMENTS_SUMMARY}/>
             </Helmet>
-            <article className="TournamentDetails__Intro">
-                <h1 className="TournamentDetails__Title">
+            <article className="PageIntro">
+                <h1 className="PageTitle">
                     {tournament.title}
                     {' '}
                     {tournament.isCreator
@@ -87,12 +90,12 @@ export function TournamentDetails(props) {
                         )
                         : null}
                 </h1>
-                <h5 className="TournamentDetails__Subtitle">{tournament.description}</h5>
+                <h5 className="PageSubtitle">{tournament.description}</h5>
             </article>
             {renderDashboard()}
             {tournament.isCreator
-                && <TournamentSettings tournamentId={tournamentId} tournament={tournament} isSettingsOpen={isSettingsOpen}
-                                       handleSettingsClose={handleSettingsClose}/>}
+            && <TournamentSettings tournamentId={tournamentId} tournament={tournament} isSettingsOpen={isSettingsOpen}
+                                   handleSettingsClose={handleSettingsClose}/>}
         </>
     );
 }

@@ -105,9 +105,9 @@ function InjuriesFeedContainer(props) {
                 <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.INJURIES}/>
             </Helmet>
-            <article className="Injuries__Intro">
-                <h1 className="Injuries__Title">{Intro.TITLE}</h1>
-                <h5 className="Injuries__Subtitle">{Intro.SUBTITLE}</h5>
+            <article className="PageIntro">
+                <h1 className="PageTitle">{Intro.TITLE}</h1>
+                <h5 className="PageSubtitle">{Intro.SUBTITLE}</h5>
             </article>
             {googleAd}
             <div className="Injuries__InfoButton">

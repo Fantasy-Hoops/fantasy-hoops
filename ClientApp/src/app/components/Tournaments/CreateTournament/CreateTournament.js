@@ -39,7 +39,7 @@ const initialValues = {
     tournamentType: '',
     contests: '',
     droppedContests: '',
-    entrants: '',
+    entrants: 2,
     userFriends: []
 };
 
@@ -72,7 +72,7 @@ export default function CreateTournament() {
             await getTournamentTypes().then(response => {
                 const tournamentTypes = response.data.map(tournament => ({
                     value: tournament.id,
-                    label: tournament.name
+                    label: tournament.title
                 }));
                 setTournamentTypes(tournamentTypes);
             }).catch(error => {
@@ -214,9 +214,9 @@ export default function CreateTournament() {
                     <meta name="description" content={TournamentsCreate.SUBTITLE}/>
                     <link rel="canonical" href={Canonicals.TOURNAMENTS}/>
                 </Helmet>
-                <article className="Tournaments__Intro">
-                    <h1 className="Tournaments__Title">{TournamentsCreate.TITLE}</h1>
-                    <h1 className="Tournaments__Subtitle">{TournamentsCreate.CREATED_SUBTITLE}</h1>
+                <article className="PageIntro">
+                    <h1 className="PageTitle">{TournamentsCreate.TITLE}</h1>
+                    <h1 className="PageSubtitle">{TournamentsCreate.CREATED_SUBTITLE}</h1>
                 </article>
                 <CopyToClipboard inputText={inviteUrl} />
             </>
@@ -230,8 +230,8 @@ export default function CreateTournament() {
                 <meta name="description" content={TournamentsCreate.SUBTITLE}/>
                 <link rel="canonical" href={Canonicals.TOURNAMENTS_CREATE}/>
             </Helmet>
-            <article className="Tournaments__Intro">
-                <h1 className="Tournaments__Title">{TournamentsCreate.TITLE}</h1>
+            <article className="PageIntro">
+                <h1 className="PageTitle">{TournamentsCreate.TITLE}</h1>
             </article>
             <Formik
                 initialValues={JSON.parse(localStorage.getItem('tournamentValues')) || initialValues}

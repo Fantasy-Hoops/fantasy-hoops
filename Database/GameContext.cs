@@ -80,7 +80,7 @@ namespace fantasy_hoops.Database
                 .HasMany(tournament => tournament.Contests);
 
             builder.Entity<Contest>()
-                .HasMany(contest => contest.ContestPairs);
+                .HasMany(contest => contest.Matchups);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

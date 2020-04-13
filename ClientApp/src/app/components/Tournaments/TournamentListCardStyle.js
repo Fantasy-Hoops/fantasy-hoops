@@ -50,6 +50,7 @@ export const useStyles = makeStyles(({breakpoints, spacing}) => ({
         letterSpacing: 0.5,
     },
     button: {
+        margin: '.5rem 0',
         backgroundColor: 'rgba(255, 255, 255, 0.15)',
         borderRadius: 100,
         paddingLeft: 32,
@@ -62,6 +63,7 @@ export const useStyles = makeStyles(({breakpoints, spacing}) => ({
         },
         [breakpoints.up('sm')]: {
             width: 'auto',
+            marginRight: 10,
         },
     },
     tournamentDetails: {

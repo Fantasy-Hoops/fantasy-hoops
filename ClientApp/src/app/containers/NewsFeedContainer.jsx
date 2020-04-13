@@ -125,10 +125,10 @@ function NewsFeedContainer(props) {
                 <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.NEWS}/>
             </Helmet>
-            <article className="News__Intro">
-                <h1 className="News__Title">{Intro.TITLE}</h1>
-                <h5 className="News__Subtitle">{Intro.SUBTITLE}</h5>
-                <h5 className="News__Subtitle">&copy; {Intro.COPYRIGHT}</h5>
+            <article className="PageIntro">
+                <h1 className="PageTitle">{Intro.TITLE}</h1>
+                <h5 className="PageSubtitle">{Intro.SUBTITLE}</h5>
+                <h5 className="PageSubtitle">&copy; {Intro.COPYRIGHT}</h5>
             </article>
             <Tabs
                 className={classes.tabs}

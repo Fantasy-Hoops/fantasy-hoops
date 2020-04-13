@@ -1,0 +1,28 @@
+.PageIntro {
+    margin-bottom: 2rem;
+}
+
+.PageTitle {
+    font-family: 'Helvetica Neue', sans-serif;
+    font-size: 4rem;
+    font-weight: 600;
+    letter-spacing: -1px;
+    line-height: 1;
+    text-align: left;
+}
+
+.PageTitle:after {
+    content: "";
+    display: block;
+    width: 10rem;
+    border-bottom: solid #F1592A;
+}
+
+.PageSubtitle {
+    font-family: 'Helvetica Neue',sans-serif;
+    font-size: 14px;
+    line-height: 24px;
+    margin: 0 0 24px;
+    text-align: justify;
+    text-justify: inter-word;
+}

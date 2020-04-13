@@ -58,7 +58,7 @@ namespace fantasy_hoops.Services
                 Type = tournamentType.GetId(),
                 StartDate = tournamentModel.StartDate,
                 EndDate = endDate,
-                Name = tournamentModel.TournamentTitle,
+                Title = tournamentModel.TournamentTitle,
                 Description = tournamentModel.TournamentDescription,
                 Entrants = tournamentModel.Entrants,
                 DroppedContests = tournamentModel.DroppedContests,
@@ -103,7 +103,7 @@ namespace fantasy_hoops.Services
                     ContestEnd = i + 1 < contestStartDates.Count
                         ? contestStartDates[i + 1]
                         : GetLastContestEndDate(contestStartDates[i]),
-                    ContestPairs = new List<MatchupPair>()
+                    Matchups = new List<MatchupPair>()
                 });
             }
 

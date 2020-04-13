@@ -69,7 +69,8 @@ export class Registration extends Component {
                 this.setState({
                     showAlert: true,
                     alertType: 'alert-info',
-                    alertText: res.data
+                    alertText: res.data,
+                    showLoader: false,
                 });
                 document.getElementById('submit').remove();
                 document.getElementById('form').remove();

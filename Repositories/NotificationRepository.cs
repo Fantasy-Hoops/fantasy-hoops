@@ -31,12 +31,11 @@ namespace fantasy_hoops.Repositories
                 .Select(notification => new NotificationDto
                 {
                     NotificationID = notification.NotificationID,
-                    UserID = notification.ReceiverID,
+                    ReceiverID = notification.ReceiverID,
                     DateCreated = notification.DateCreated,
                     ReadStatus = notification.ReadStatus,
                     Score = notification.Score
-                })
-                .AsEnumerable()
+                }).ToList()
                 .Union(_context.Notifications
                     .OfType<InjuryNotification>()
                     .Include(notification => notification.Player)
@@ -44,7 +43,7 @@ namespace fantasy_hoops.Repositories
                     .Select(notification => new NotificationDto
                     {
                         NotificationID = notification.NotificationID,
-                        UserID = notification.ReceiverID,
+                        ReceiverID = notification.ReceiverID,
                         DateCreated = notification.DateCreated,
                         ReadStatus = notification.ReadStatus,
                         PlayerID = notification.PlayerID,
@@ -54,23 +53,22 @@ namespace fantasy_hoops.Repositories
                         TeamColor = notification.Player.Team.Color,
                         InjuryStatus = notification.InjuryStatus,
                         InjuryDescription = notification.InjuryDescription
-                    }))
-                .AsEnumerable()
+                    })).ToList()
                 .Union(_context.Notifications
                     .OfType<RequestNotification>()
                     .Include(notification => notification.Sender)
                     .Select(notification => new NotificationDto
                     {
                         NotificationID = notification.NotificationID,
-                        UserID = notification.ReceiverID,
+                        ReceiverID = notification.ReceiverID,
                         DateCreated = notification.DateCreated,
                         ReadStatus = notification.ReadStatus,
-                        FriendID = notification.SenderID,
+                        SenderID = notification.SenderID,
                         RequestMessage = notification.RequestMessage,
                         FriendUsername = notification.Sender.UserName,
-                        FriendAvatarUrl = notification.Sender.AvatarURL
-                    }))
-                .ToList();
+                        FriendAvatarUrl = notification.Sender.AvatarURL,
+                        TournamentId = notification.TournamentId
+                    })).ToList();
         }
 
         public List<NotificationDto> GetNotifications(string userID, int start, int count)
@@ -81,12 +79,11 @@ namespace fantasy_hoops.Repositories
                 .Select(notification => new NotificationDto
                 {
                     NotificationID = notification.NotificationID,
-                    UserID = notification.ReceiverID,
+                    ReceiverID = notification.ReceiverID,
                     DateCreated = notification.DateCreated,
                     ReadStatus = notification.ReadStatus,
                     Score = notification.Score
-                })
-                .AsEnumerable()
+                }).ToList()
                 .Union(_context.Notifications
                     .OfType<InjuryNotification>()
                     .Include(notification => notification.Player)
@@ -94,7 +91,7 @@ namespace fantasy_hoops.Repositories
                     .Select(notification => new NotificationDto
                     {
                         NotificationID = notification.NotificationID,
-                        UserID = notification.ReceiverID,
+                        ReceiverID = notification.ReceiverID,
                         DateCreated = notification.DateCreated,
                         ReadStatus = notification.ReadStatus,
                         PlayerID = notification.PlayerID,
@@ -104,23 +101,23 @@ namespace fantasy_hoops.Repositories
                         TeamColor = notification.Player.Team.Color,
                         InjuryStatus = notification.InjuryStatus,
                         InjuryDescription = notification.InjuryDescription
-                    }))
-                .AsEnumerable()
+                    })).ToList()
                 .Union(_context.Notifications
                     .OfType<RequestNotification>()
                     .Include(notification => notification.Sender)
                     .Select(notification => new NotificationDto
                     {
                         NotificationID = notification.NotificationID,
-                        UserID = notification.ReceiverID,
+                        ReceiverID = notification.ReceiverID,
                         DateCreated = notification.DateCreated,
                         ReadStatus = notification.ReadStatus,
-                        FriendID = notification.SenderID,
+                        SenderID = notification.SenderID,
                         RequestMessage = notification.RequestMessage,
                         FriendUsername = notification.Sender.UserName,
-                        FriendAvatarUrl = notification.Sender.AvatarURL
-                    }))
-                .Where(y => y.UserID.Equals(userID))
+                        FriendAvatarUrl = notification.Sender.AvatarURL,
+                        TournamentId = notification.TournamentId
+                    })).ToList()
+                .Where(y => y.ReceiverID.Equals(userID))
                 .OrderByDescending(y => y.DateCreated)
                 .Skip(start)
                 .Take(count)
@@ -130,7 +127,7 @@ namespace fantasy_hoops.Repositories
         public void AddTournamentRequestNotification(Tournament tournament, string receiverId, string senderId)
         {
             string senderUsername = _context.Users.Find(senderId).UserName;
-            string message = $"User {senderUsername} invited you to join the tournament: {tournament.Name}";
+            string message = $"User {senderUsername} invited you to join the tournament: {tournament.Title}";
             if (AddRequestNotification(RequestNotification.Type.TOURNAMENT, receiverId, senderId, message, tournament.Id))
             {
                 PushNotificationViewModel pushNotification =
@@ -171,7 +168,7 @@ namespace fantasy_hoops.Repositories
         public void ReadNotification(NotificationViewModel model)
         {
             Notification notification = _context.Notifications
-                .FirstOrDefault(x => x.NotificationID == model.NotificationID && x.ReceiverID.Equals(model.UserID));
+                .FirstOrDefault(x => x.NotificationID == model.NotificationID && x.ReceiverID.Equals(model.ReceiverID));
 
             if (notification == null)
             {

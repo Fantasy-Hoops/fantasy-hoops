@@ -129,3 +129,4 @@ export const getTournamentTypes = () => axios.get(`${tournamentsApiUrlBase}/type
 export const getTournamentStartDates = () => axios.get(`${tournamentsApiUrlBase}/start-dates`);
 export const createTournament = tournament => axios.post(tournamentsApiUrlBase, tournament);
 export const deleteTournament = tournamentId => axios.delete(`${tournamentsApiUrlBase}/${tournamentId}`);
+export const getTournamentInvitations = () => axios.get(`${tournamentsApiUrlBase}/invitations`);

@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
+using fantasy_hoops.Dtos;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Repositories.Interfaces;
@@ -22,11 +24,16 @@ namespace fantasy_hoops.Services
             _achievementsRepository = achievementsRepository;
         }
         
-        public async Task AssignAchievements(string userName)
+        public bool AssignAchievements(string userName)
         {
-            User user = await _userManager.FindByNameAsync(userName);
-            _achievementsRepository.GetExistingAchievements().ToList()
-            .ForEach(achievement =>
+            User user = _userManager.FindByNameAsync(userName).Result;
+            if (user == null)
+            {
+                return false;
+            }
+            
+            List<AchievementDto> achievements = _achievementsRepository.GetExistingAchievements();
+            foreach (AchievementDto achievement in achievements)
             {
                 _context.UserAchievements.Add(new UserAchievement
                 {
@@ -35,8 +42,8 @@ namespace fantasy_hoops.Services
                     Level = 1,
                     LevelUpGoal = achievement.GoalBase
                 });
-            });
-            _context.SaveChanges();
+            }
+            return _context.SaveChanges() != 0;
         }
 
         public bool CreateAchievement(Achievement achievement)

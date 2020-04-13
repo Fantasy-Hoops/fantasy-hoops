@@ -169,9 +169,9 @@ function Leaderboards(props) {
                 <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.LEADERBOARDS}/>
             </Helmet>
-            <article className="Leaderboards__Intro">
-                <h1 className="Leaderboards__Title">{Intro.TITLE}</h1>
-                <h5 className="Leaderboards__Subtitle">{Intro.SUBTITLE}</h5>
+            <article className="PageIntro">
+                <h1 className="PageTitle">{Intro.TITLE}</h1>
+                <h5 className="PageSubtitle">{Intro.SUBTITLE}</h5>
             </article>
             {googleAd}
             <section className="Content__Container">

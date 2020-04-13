@@ -7,6 +7,7 @@ import Routes from "./app/routes/Routes.jsx";
 import './scss/bootswatch.scss';
 import './css/custom-styles.css';
 import './css/random-letters.css';
+import './css/PageStyles.css';
 import ScrollToTop from "./ScrollToTop";
 import Snackbar from "./Snackbar";
 

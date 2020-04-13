@@ -21,6 +21,7 @@ namespace fantasy_hoops.Repositories.Interfaces
         bool TournamentExists(Tournament tournament);
         bool TournamentNameExists(string name);
         bool IsUserInTournament(string userId, string tournamentId);
+        bool IsUserInvited(string userId, string tournamentId);
         bool IsUserInTournament(User user, string tournamentId);
         bool IsUserInTournament(string userId, Tournament tournament);
         bool IsUserInTournament(User user, Tournament tournament);
@@ -31,5 +32,6 @@ namespace fantasy_hoops.Repositories.Interfaces
         List<Contest> GetTournamentContests(string tournamentId);
         List<ContestDto> GetAllCurrentContests();
         bool DeleteTournament(string tournamentId);
+        List<TournamentDto> GetTournamentInvitations(string userId);
     }
 }

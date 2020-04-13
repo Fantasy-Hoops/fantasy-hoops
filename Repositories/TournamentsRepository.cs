@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
+using fantasy_hoops.Enums;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Notifications;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Repositories
 {
@@ -73,11 +74,13 @@ namespace fantasy_hoops.Repositories
             tournamentDetails.IsCreator =
                 _context.Tournaments.Any(t => t.CreatorID.Equals(userId) && t.Id.Equals(tournament.Id));
             tournamentDetails.Type = tournament.Type;
-            tournamentDetails.Title = tournament.Name;
+            tournamentDetails.TypeName = ((Tournament.TournamentType) tournament.Type).ToString();
+            tournamentDetails.ImageURL = tournament.ImageURL;
+            tournamentDetails.Title = tournament.Title;
             tournamentDetails.Description = tournament.Description;
             tournamentDetails.Contests = _context.Contests
                 .Where(contest => contest.TournamentId.Equals(tournamentId))
-                .Include(contest => contest.ContestPairs)
+                .Include(contest => contest.Matchups)
                 .Include(contest => contest.Winner)
                 .Select(contest => new ContestDto
                 {
@@ -92,7 +95,7 @@ namespace fantasy_hoops.Repositories
                         }
                         : null,
                     IsFinished = contest.IsFinished,
-                    Matchups = contest.ContestPairs
+                    Matchups = contest.Matchups
                         .Select(pair => new MatchupPairDto
                         {
                             FirstUser = new UserDto
@@ -157,6 +160,9 @@ namespace fantasy_hoops.Repositories
                 tournamentDetails.NextOpponent = userMatchup.FirstUser.UserName;
             }
 
+            tournamentDetails.AcceptedInvite =
+                IsUserInvited(userId, tournamentId) && IsUserInTournament(userId, tournamentId);
+
             return tournamentDetails;
         }
 
@@ -165,14 +171,14 @@ namespace fantasy_hoops.Repositories
             List<TournamentDto> createdTournaments =
                 _context.Tournaments
                     .Where(tournament => tournament.CreatorID.Equals(userId))
-                    .Include(tournament => tournament.Type)
                     .Select(tournament => new TournamentDto
                     {
                         Id = tournament.Id,
-                        Type = ((Tournament.TournamentType) tournament.Type).ToString(),
+                        Type = tournament.Type,
+                        TypeName = ((Tournament.TournamentType) tournament.Type).ToString(),
                         StartDate = tournament.StartDate,
                         EndDate = tournament.EndDate,
-                        Name = tournament.Name,
+                        Title = tournament.Title,
                         Description = tournament.Description,
                         ImageURL = tournament.ImageURL,
                         Entrants = tournament.Entrants,
@@ -186,14 +192,14 @@ namespace fantasy_hoops.Repositories
                     .Where(tournamentUser => tournamentUser.UserID.Equals(userId)
                                              && !tournamentUser.Tournament.CreatorID.Equals(userId))
                     .Select(tournamentUser => tournamentUser.Tournament)
-                    .Include(tournament => tournament.Type)
                     .Select(tournament => new TournamentDto
                     {
                         Id = tournament.Id,
-                        Type = ((Tournament.TournamentType) tournament.Type).ToString(),
+                        Type = tournament.Type,
+                        TypeName = ((Tournament.TournamentType) tournament.Type).ToString(),
                         StartDate = tournament.StartDate,
                         EndDate = tournament.EndDate,
-                        Name = tournament.Name,
+                        Title = tournament.Title,
                         Description = tournament.Description,
                         ImageURL = tournament.ImageURL,
                         Entrants = tournament.Entrants,
@@ -228,7 +234,7 @@ namespace fantasy_hoops.Repositories
 
         public bool TournamentNameExists(string name)
         {
-            return _context.Tournaments.Any(tournament => tournament.Name.ToUpper().Equals(name.ToUpper()));
+            return _context.Tournaments.Any(tournament => tournament.Title.ToUpper().Equals(name.ToUpper()));
         }
 
         public bool IsUserInTournament(User user, string tournamentId)
@@ -267,7 +273,7 @@ namespace fantasy_hoops.Repositories
                                   && contest.ContestStart < CommonFunctions.EctNow
                                   && contest.ContestEnd > CommonFunctions.EctNow)
                 .Include(contest => contest.Winner)
-                .Include(contest => contest.ContestPairs)
+                .Include(contest => contest.Matchups)
                 .Select(contest => new ContestDto
                 {
                     Id = contest.Id,
@@ -280,7 +286,7 @@ namespace fantasy_hoops.Repositories
                         UserName = contest.Winner.UserName,
                         AvatarUrl = contest.Winner.AvatarURL
                     },
-                    Matchups = contest.ContestPairs.Select(contestPair => new MatchupPairDto
+                    Matchups = contest.Matchups.Select(contestPair => new MatchupPairDto
                     {
                         FirstUser = new UserDto
                         {
@@ -310,6 +316,29 @@ namespace fantasy_hoops.Repositories
 
             _context.Tournaments.Remove(tournamentToDelete);
             return _context.SaveChanges() != 0;
+        }
+
+        public List<TournamentDto> GetTournamentInvitations(string userId)
+        {
+            return _context.TournamentInvites
+                .Include(invite => invite.Tournament)
+                .Where(invite => invite.Status == RequestStatus.PENDING && invite.InvitedUserID.Equals(userId))
+                .Select(invite => invite.Tournament)
+                .Select(tournament => new TournamentDto
+                {
+                    Id = tournament.Id,
+                    Type = tournament.Type,
+                    TypeName = ((Tournament.TournamentType) tournament.Type).ToString(),
+                    StartDate = tournament.StartDate,
+                    EndDate = tournament.EndDate,
+                    Title = tournament.Title,
+                    Description = tournament.Description,
+                    ImageURL = tournament.ImageURL,
+                    Entrants = tournament.Entrants,
+                    Contests = tournament.Contests,
+                    DroppedContests = tournament.DroppedContests
+                })
+                .ToList();
         }
 
         private bool DeleteTournamentResources(Tournament tournamentToDelete)
@@ -370,13 +399,19 @@ namespace fantasy_hoops.Repositories
 
         public bool IsUserInTournament(string userId, string tournamentId)
         {
-            bool isInvited = _context.TournamentUsers
+            bool isTournamentPlayer = _context.TournamentUsers
                 .Any(tournamentUser => tournamentUser.TournamentID.Equals(tournamentId)
                                        && tournamentUser.UserID.Equals(userId));
             bool isCreator = _context.Tournaments.Any(tournament => tournament.Id.Equals(tournamentId)
                                                                     && tournament.CreatorID.Equals(userId));
 
-            return isInvited || isCreator;
+            return isTournamentPlayer || isCreator;
+        }
+
+        public bool IsUserInvited(string userId, string tournamentId)
+        {
+            return _context.TournamentInvites.Any(invite =>
+                invite.TournamentID.Equals(tournamentId) && invite.InvitedUserID.Equals(userId));
         }
     }
 }

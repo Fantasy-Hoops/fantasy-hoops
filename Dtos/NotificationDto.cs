@@ -5,7 +5,7 @@ namespace fantasy_hoops.Dtos
     public class NotificationDto
     {
         public int NotificationID { get; set; }
-        public string UserID { get; set; }
+        public string ReceiverID { get; set; }
         public DateTime DateCreated { get; set; }
         public bool ReadStatus { get; set; }
         
@@ -13,10 +13,13 @@ namespace fantasy_hoops.Dtos
         public double? Score { get; set; }
         
         // Friend notification info
-        public string FriendID { get; set; }
+        public string SenderID { get; set; }
         public string RequestMessage { get; set; }
         public string FriendUsername { get; set; }
         public string FriendAvatarUrl { get; set; }
+        
+        // If tournament request
+        public string TournamentId { get; set; }
         
         // Injury notification info
         public int? PlayerID { get; set; }

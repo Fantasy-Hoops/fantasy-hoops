@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using fantasy_hoops.Database;
+using fantasy_hoops.Dtos;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace fantasy_hoops.Controllers
@@ -27,13 +31,14 @@ namespace fantasy_hoops.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(string id, int start = 0, int count = 0)
         {
-            var notifications = _repository.GetNotifications(id, start, count);
+            List<NotificationDto> notifications = _repository.GetNotifications(id, start, count);
 
-            if (notifications == null)
+            if (notifications == null || notifications.Count == 0)
                 return NotFound(String.Format("User with id {0} do not have any notifications!", id));
             return Ok(notifications);
         }
 
+        [Authorize]
         [HttpPost("read")]
         public IActionResult ToggleNotification([FromBody]NotificationViewModel model)
         {

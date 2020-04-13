@@ -7,7 +7,7 @@ import {NotificationCard} from './NotificationCard';
 import defaultPhoto from '../../../content/images/default.png';
 import gameLogo from '../../../content/images/logo.png';
 import {getUserNotifications, readAllNotifications} from '../../utils/networkFunctions';
-import Routes from '../../routes/routes';
+import Routes from "../../routes/routes";
 
 const user = parse();
 
@@ -64,22 +64,23 @@ export class Notifications extends Component {
                         />
                     );
                 }
-                if (notification.friendID) {
+                if (notification.senderID) {
                     const text = (
-                        <span>
-              {notification.requestMessage}
-            </span>
+                        <span>{notification.requestMessage}</span>
                     );
+                    const link = notification.tournamentId
+                        ? Routes.TOURNAMENT_INVITATIONS
+                        : `${Routes.PROFILE}/${notification.friendUsername}`;
 
                     return (
                         <NotificationCard
                             key={shortid()}
                             notification={notification}
-                            title={notification.friendUserName}
+                            title={notification.friendUsername}
                             imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendAvatarURL}.png`, defaultPhoto]}
                             text={text}
                             imageClass="NotificationCard__Image Avatar--round"
-                            link={`/profile/${notification.friendUserName}`}
+                            link={link}
                         />
                     );
                 }
@@ -102,7 +103,7 @@ export class Notifications extends Component {
                         />
                     );
                 }
-                return <div/>;
+                return null;
             });
     }
 
