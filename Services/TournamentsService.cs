@@ -42,7 +42,7 @@ namespace fantasy_hoops.Services
             _tournamentsRepository.AddCreatorToTournament(newTournament);
 
             string inviteUrl = GenerateInviteUrl(newTournament.Id);
-            SendInvitations(newTournament, newTournament.Invites);
+            SendInvitations(newTournament, tournamentViewModel.UserFriends);
 
             return new Pair<bool, string>(isCreated, inviteUrl);
         }
@@ -63,8 +63,7 @@ namespace fantasy_hoops.Services
                 Entrants = tournamentModel.Entrants,
                 DroppedContests = tournamentModel.DroppedContests,
                 ImageURL = ParseIconPath(tournamentModel.TournamentIcon),
-                Contests = GenerateContests(tournamentModel, endDate),
-                Invites = GenerateTournamentInvites(tournamentModel.UserFriends)
+                Contests = GenerateContests(tournamentModel, endDate)
             };
         }
 
@@ -119,21 +118,14 @@ namespace fantasy_hoops.Services
             return lastContestStartDate.AddDays(daysToAdd).Date;
         }
 
-        private List<TournamentInvite> GenerateTournamentInvites(List<string> invitedUsersIds)
+        private void SendInvitations(Tournament tournament, List<string> invitedUsersIds)
         {
-            return invitedUsersIds.Select(userId => new TournamentInvite
-            {
-                Status = RequestStatus.PENDING,
-                InvitedUserID = userId
-            }).ToList();
-        }
-
-        private void SendInvitations(Tournament tournament, List<TournamentInvite> invites)
-        {
-            invites.ForEach(invite =>
+            invitedUsersIds.ForEach(invitedUserId =>
             {
                 _notificationRepository
-                    .AddTournamentRequestNotification(tournament, invite.InvitedUserID, tournament.CreatorID);
+                    .AddTournamentRequestNotification(tournament, invitedUserId, tournament.CreatorID);
+                _tournamentsRepository.ChangeInvitationStatus(tournament.Id, invitedUserId,
+                    RequestStatus.PENDING);
             });
         }
 
