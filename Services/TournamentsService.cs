@@ -50,20 +50,20 @@ namespace fantasy_hoops.Services
         private Tournament FromViewModel(CreateTournamentViewModel tournamentModel)
         {
             Tournament.TournamentType tournamentType = (Tournament.TournamentType) tournamentModel.TournamentType;
-            DateTime endDate = GetEndDate(tournamentModel.Contests);
+            Pair<List<Contest>, DateTime> contestsWithEndDate = GenerateContests(tournamentModel);
             return new Tournament
             {
                 Id = Guid.NewGuid().ToString(),
                 CreatorID = tournamentModel.CreatorId,
                 Type = tournamentType.GetId(),
                 StartDate = tournamentModel.StartDate,
-                EndDate = endDate,
+                EndDate = contestsWithEndDate.Second,
                 Title = tournamentModel.TournamentTitle,
                 Description = tournamentModel.TournamentDescription,
                 Entrants = tournamentModel.Entrants,
                 DroppedContests = tournamentModel.DroppedContests,
                 ImageURL = ParseIconPath(tournamentModel.TournamentIcon),
-                Contests = GenerateContests(tournamentModel, endDate)
+                Contests = contestsWithEndDate.First
             };
         }
 
@@ -84,38 +84,27 @@ namespace fantasy_hoops.Services
             return $"https://{CommonFunctions.DOMAIN}/tournaments/invitations/{tournamentId}";
         }
 
-        private DateTime GetEndDate(int numberOfContests)
-        {
-            return _tournamentsRepository.GetUpcomingStartDates()[numberOfContests - 1];
-        }
-
-        private List<Contest> GenerateContests(CreateTournamentViewModel model, DateTime endDate)
+        private Pair<List<Contest>, DateTime> GenerateContests(CreateTournamentViewModel model)
         {
             List<Contest> contests = new List<Contest>();
             List<DateTime> contestStartDates = _tournamentsRepository.GetUpcomingStartDates()
-                .Where(date => date >= model.StartDate && date <= endDate).ToList();
-            for (int i = 0; i < contestStartDates.Count && contests.Count < model.Contests; i++)
+                .Where(date => date >= model.StartDate).ToList();
+            for (int i = 0; i < contestStartDates.Count; i++)
             {
                 contests.Add(new Contest
                 {
+                    ContestNumber = i + 1,
                     ContestStart = contestStartDates[i],
-                    ContestEnd = i + 1 < contestStartDates.Count
-                        ? contestStartDates[i + 1]
-                        : GetLastContestEndDate(contestStartDates[i]),
+                    ContestEnd = CommonFunctions.LastDayOfWeek(contestStartDates[i]).AddDays(1),
                     Matchups = new List<MatchupPair>()
                 });
             }
+            DateTime endDate = contests
+                .Select(contest => contest.ContestEnd)
+                .OrderByDescending(date => date)
+                .LastOrDefault();
 
-            return contests;
-        }
-
-        private DateTime GetLastContestEndDate(DateTime lastContestStartDate)
-        {
-            int daysToAdd = lastContestStartDate.DayOfWeek == DayOfWeek.Monday
-                ? 7
-                : (int) lastContestStartDate.DayOfWeek;
-
-            return lastContestStartDate.AddDays(daysToAdd).Date;
+            return new Pair<List<Contest>, DateTime>(contests, endDate);
         }
 
         private void SendInvitations(Tournament tournament, List<string> invitedUsersIds)
@@ -140,6 +129,12 @@ namespace fantasy_hoops.Services
         public bool DeclineInvitation(string tournamentId, string userId)
         {
             return _tournamentsRepository.ChangeInvitationStatus(tournamentId, userId, RequestStatus.DECLINED);
+        }
+
+        public User GetTournamentWinner(string tournamentId)
+        {
+            // TODO
+            return null;
         }
     }
 }

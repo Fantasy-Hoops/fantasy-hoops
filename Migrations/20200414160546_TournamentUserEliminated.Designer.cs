@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using fantasy_hoops.Database;
 
 namespace fantasy_hoops.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200414160546_TournamentUserEliminated")]
+    partial class TournamentUserEliminated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -749,9 +751,6 @@ namespace fantasy_hoops.Migrations
                     b.Property<DateTime>("ContestEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ContestNumber")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("ContestStart")
                         .HasColumnType("datetime2");
 
@@ -830,9 +829,6 @@ namespace fantasy_hoops.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsFinished")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -842,14 +838,9 @@ namespace fantasy_hoops.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<string>("WinnerID")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorID");
-
-                    b.HasIndex("WinnerID");
 
                     b.ToTable("Tournaments");
                 });
@@ -1325,10 +1316,6 @@ namespace fantasy_hoops.Migrations
                     b.HasOne("fantasy_hoops.Models.User", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorID");
-
-                    b.HasOne("fantasy_hoops.Models.User", "Winner")
-                        .WithMany()
-                        .HasForeignKey("WinnerID");
                 });
 
             modelBuilder.Entity("fantasy_hoops.Models.Tournaments.TournamentInvite", b =>

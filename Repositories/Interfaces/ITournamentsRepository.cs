@@ -15,7 +15,9 @@ namespace fantasy_hoops.Repositories.Interfaces
         List<DateTime> GetUpcomingStartDates();
         DateTime GetLastEndDate();
         Tournament GetTournamentById(string tournamentId);
+        TournamentDetailsDto GetTournamentDetails(string tournamentId);
         TournamentDetailsDto GetTournamentDetails(string userId, string tournamentId);
+        List<TournamentDetailsDto> GetAllTournamentsDetails();
         Dictionary<string, List<TournamentDto>> GetUserTournaments(string userId);
         bool CreateTournament(Tournament tournament);
         bool TournamentExists(string id);
@@ -34,6 +36,6 @@ namespace fantasy_hoops.Repositories.Interfaces
         List<ContestDto> GetAllCurrentContests();
         bool DeleteTournament(string tournamentId);
         List<TournamentDto> GetTournamentInvitations(string userId);
-        public bool ChangeInvitationStatus(string tournamentId, string userId, RequestStatus status = RequestStatus.NO_REQUEST);
+        bool ChangeInvitationStatus(string tournamentId, string userId, RequestStatus status = RequestStatus.NO_REQUEST);
     }
 }

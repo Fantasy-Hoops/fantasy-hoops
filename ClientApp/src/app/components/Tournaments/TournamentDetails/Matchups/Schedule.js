@@ -90,7 +90,7 @@ export default function Schedule(props) {
             <AppBar className={classes.appBar}>
                 <Toolbar>
                     <IconButton edge="start" color="inherit" onClick={handleScheduleClose} aria-label="close">
-                        <CloseIcon />
+                        <CloseIcon/>
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
                         Schedule
@@ -136,11 +136,6 @@ export default function Schedule(props) {
                     })}
                 </Stepper>
             </DialogContent>
-            <DialogActions>
-                <Button onClick={handleScheduleClose} color="primary">
-                    Close
-                </Button>
-            </DialogActions>
         </Dialog>
     );
 }

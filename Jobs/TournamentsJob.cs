@@ -27,10 +27,10 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
-            // if (_tournamentsRepository.GetUpcomingStartDates().Contains(_runtimeDate))
-            // {
-            StartNewTournaments();
-            // }
+            if (_tournamentsRepository.GetUpcomingStartDates().Contains(_runtimeDate))
+            {
+                StartNewTournaments();
+            }
 
             if (_runtimeDate.DayOfWeek == DayOfWeek.Sunday)
             {
@@ -51,6 +51,7 @@ namespace fantasy_hoops.Jobs
                 {
                     StartOneForAllTournament(tournament);
                 }
+
                 _context.SaveChanges();
             }
         }
@@ -114,6 +115,7 @@ namespace fantasy_hoops.Jobs
                     SecondUserID = tournamentUser
                 }).ToList();
             }
+
             _context.Tournaments.Find(tournament.Id).IsActive = true;
         }
     }

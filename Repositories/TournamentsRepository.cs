@@ -5,7 +5,6 @@ using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Enums;
 using fantasy_hoops.Helpers;
-using fantasy_hoops.Mocks;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Notifications;
 using fantasy_hoops.Models.Tournaments;
@@ -45,7 +44,7 @@ namespace fantasy_hoops.Repositories
         {
             if (bool.Parse(Startup.Configuration["useMock"]))
             {
-                return Tournaments.StartDates;
+                return Mocks.Tournaments.StartDates;
             }
             
             return _context.Games
@@ -63,7 +62,7 @@ namespace fantasy_hoops.Repositories
         {
             if (bool.Parse(Startup.Configuration["useMock"]))
             {
-                return Tournaments.StartDates.Max();
+                return Mocks.Tournaments.StartDates.Max();
             }
                 
             return _context.Games
@@ -77,6 +76,11 @@ namespace fantasy_hoops.Repositories
                 .FirstOrDefault(tournament => tournament.Id.Equals(tournamentId));
         }
 
+        public TournamentDetailsDto GetTournamentDetails(string tournamentId)
+        {
+            return GetTournamentDetails(null, tournamentId);
+        }
+
         public TournamentDetailsDto GetTournamentDetails(string userId, string tournamentId)
         {
             TournamentDetailsDto tournamentDetails = new TournamentDetailsDto();
@@ -87,8 +91,6 @@ namespace fantasy_hoops.Repositories
             tournamentDetails.StartDate = tournament.StartDate;
             tournamentDetails.EndDate = tournament.EndDate;
             tournamentDetails.CreatorId = tournament.CreatorID;
-            tournamentDetails.IsCreator =
-                _context.Tournaments.Any(t => t.CreatorID.Equals(userId) && t.Id.Equals(tournament.Id));
             tournamentDetails.Type = tournament.Type;
             tournamentDetails.TypeName = ((Tournament.TournamentType) tournament.Type).ToString();
             tournamentDetails.ImageURL = tournament.ImageURL;
@@ -100,6 +102,8 @@ namespace fantasy_hoops.Repositories
                 .Include(contest => contest.Winner)
                 .Select(contest => new ContestDto
                 {
+                    TournamentId = tournamentId,
+                    ContestNumber = contest.ContestNumber,
                     ContestStart = contest.ContestStart,
                     ContestEnd = contest.ContestEnd,
                     Winner = contest.Winner != null
@@ -137,6 +141,7 @@ namespace fantasy_hoops.Repositories
                 .Include(tournamentUser => tournamentUser.User)
                 .Select(tournamentUser => new TournamentUserDto
                 {
+                    UserId = tournamentUser.UserID,
                     Username = tournamentUser.User.UserName,
                     AvatarURL = tournamentUser.User.AvatarURL,
                     W = tournamentUser.Wins,
@@ -146,6 +151,7 @@ namespace fantasy_hoops.Repositories
                 .OrderBy(record => record.Value.W - record.Value.L)
                 .Select(record => new TournamentUserDto
                 {
+                    UserId = record.Value.UserId,
                     Position = record.Key + 1,
                     Username = record.Value.Username,
                     AvatarURL = record.Value.AvatarURL,
@@ -154,18 +160,23 @@ namespace fantasy_hoops.Repositories
                 })
                 .OrderBy(tournamentUser => tournamentUser.Position)
                 .ToList();
-            tournamentDetails.CurrentLineup = _lineupRepository.GetUserCurrentLineup(userId);
             ContestDto nextContest = tournamentDetails.Contests
                 .OrderBy(contest => contest.ContestStart)
                 .FirstOrDefault(contest => contest.ContestStart > CommonFunctions.EctNow);
+            
+            if (userId != null)
+            {
+                tournamentDetails.IsCreator =
+                    _context.Tournaments.Any(t => t.CreatorID.Equals(userId) && t.Id.Equals(tournament.Id));
+                tournamentDetails.CurrentLineup = _lineupRepository.GetUserCurrentLineup(userId);
+                tournamentDetails.AcceptedInvite =
+                    IsUserInvited(userId, tournamentId) && IsUserInTournament(userId, tournamentId);
+            }
+            
             MatchupPairDto userMatchup = nextContest?.Matchups
                 .FirstOrDefault(contestPair =>
                     contestPair.FirstUser.Id.Equals(userId) || contestPair.SecondUser.Id.Equals(userId));
-
-            tournamentDetails.AcceptedInvite =
-                IsUserInvited(userId, tournamentId) && IsUserInTournament(userId, tournamentId);
-
-            if (userMatchup != null)
+            if (userMatchup != null && userId != null)
             {
                 if (userId.Equals(userMatchup.FirstUser.Id))
                 {
@@ -178,6 +189,14 @@ namespace fantasy_hoops.Repositories
             }
 
             return tournamentDetails;
+        }
+
+        public List<TournamentDetailsDto> GetAllTournamentsDetails()
+        {
+            return _context.Tournaments
+                .ToList()
+                .Select(tournament => GetTournamentDetails(tournament.CreatorID, tournament.Id))
+                .ToList();
         }
 
         public Dictionary<string, List<TournamentDto>> GetUserTournaments(string userId)
@@ -293,6 +312,8 @@ namespace fantasy_hoops.Repositories
                 .Select(contest => new ContestDto
                 {
                     Id = contest.Id,
+                    TournamentId = contest.TournamentId,
+                    ContestNumber = contest.ContestNumber,
                     ContestStart = contest.ContestStart,
                     ContestEnd = contest.ContestEnd,
                     IsFinished = contest.IsFinished,

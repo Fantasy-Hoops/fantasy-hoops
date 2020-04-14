@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using fantasy_hoops.Database;
+using fantasy_hoops.Models;
 using fantasy_hoops.Repositories.Interfaces;
 
 namespace fantasy_hoops.Repositories
 {
     public class PlayerRepository : IPlayerRepository
     {
-
         private readonly GameContext _context;
 
         public PlayerRepository()
@@ -17,60 +17,79 @@ namespace fantasy_hoops.Repositories
 
         public IQueryable<Object> GetActivePlayers()
         {
-            return _context.Players.Where(x => x.IsPlaying && !x.IsInGLeague)
-                .Select(x => new
+            return _context.Players
+                .Where(player => bool.Parse(Startup.Configuration["useMock"])
+                    ? Mocks.Players.PlayerPool.Contains(player.PlayerID)
+                    : player.IsPlaying && !player.IsInGLeague)
+                .Select(player => new
                 {
-                    playerId = x.PlayerID,
-                    id = x.NbaID,
-                    x.FullName,
-                    x.FirstName,
-                    x.LastName,
-                    x.AbbrName,
+                    playerId = player.PlayerID,
+                    id = player.NbaID,
+                    player.FullName,
+                    player.FirstName,
+                    player.LastName,
+                    player.AbbrName,
                     team = new
                     {
-                        x.Team.TeamID,
-                        x.Team.Abbreviation,
-                        TeamColor = x.Team.Color,
-                        opp = x.Team.NextOppFormatted
+                        player.Team.TeamID,
+                        player.Team.Abbreviation,
+                        TeamColor = player.Team.Color,
+                        opp = player.Team.NextOppFormatted
                     },
-                    x.Price,
-                    x.Position,
-                    x.FPPG,
-                    injuryStatus = x.Injury != null ? x.Injury.Status : "Active"
+                    player.Price,
+                    player.Position,
+                    player.FPPG,
+                    injuryStatus = player.Injury != null ? player.Injury.Status : "Active"
                 })
-                .OrderByDescending(p => p.Price);
+                .OrderByDescending(p => p.Price)
+                .AsQueryable();
+        }
+
+        private bool IsPlayerActive(Player player)
+        {
+            if (player.Team == null)
+            {
+                return false;
+            }
+            
+            if (bool.Parse(Startup.Configuration["useMock"]))
+            {
+                return Mocks.Players.PlayerPool.Contains(player.PlayerID);
+            }
+
+            return player.IsPlaying && !player.IsInGLeague;
         }
 
         public IQueryable<Object> GetPlayer(int id)
         {
-            return _context.Players.Where(x => x.NbaID == id)
-                .Select(x => new
+            return _context.Players.Where(player => player.NbaID == id)
+                .Select(player => new
                 {
-                    x.PlayerID,
-                    x.NbaID,
-                    x.FullName,
-                    x.FirstName,
-                    x.LastName,
-                    x.AbbrName,
-                    x.Number,
-                    x.Position,
-                    x.PTS,
-                    x.REB,
-                    x.AST,
-                    x.STL,
-                    x.BLK,
-                    x.TOV,
-                    x.FPPG,
-                    x.Price,
-                    injuryStatus = x.Injury != null ? x.Injury.Status : "Active",
+                    player.PlayerID,
+                    player.NbaID,
+                    player.FullName,
+                    player.FirstName,
+                    player.LastName,
+                    player.AbbrName,
+                    player.Number,
+                    player.Position,
+                    player.PTS,
+                    player.REB,
+                    player.AST,
+                    player.STL,
+                    player.BLK,
+                    player.TOV,
+                    player.FPPG,
+                    player.Price,
+                    injuryStatus = player.Injury != null ? player.Injury.Status : "Active",
                     Team = new
                     {
-                        x.TeamID,
-                        x.Team.NbaID,
-                        x.Team.Abbreviation,
-                        x.Team.City,
-                        x.Team.Name,
-                        x.Team.Color
+                        player.TeamID,
+                        player.Team.NbaID,
+                        player.Team.Abbreviation,
+                        player.Team.City,
+                        player.Team.Name,
+                        player.Team.Color
                     },
                 });
         }

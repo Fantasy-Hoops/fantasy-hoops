@@ -27,6 +27,7 @@ namespace fantasy_hoops
             }
             NextGameJob.NEXT_GAME = new DateTime(2020, 04, 20);
             NextGameJob.NEXT_GAME_CLIENT = NextGameJob.NEXT_GAME;
+            PlayersJob.PLAYER_POOL_DATE = NextGameJob.NEXT_GAME;
 
             Schedule(new InjuriesJob(pushService))
                 .WithName("injuriesJob")

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
@@ -11,10 +11,9 @@ using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
+using fantasy_hoops.Services;
 using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Jobs
 {
@@ -26,12 +25,14 @@ namespace fantasy_hoops.Jobs
         private readonly GameContext _context;
         private readonly IPushService _pushService;
         private readonly ITournamentsRepository _tournamentsRepository;
+        private readonly ITournamentsService _tournamentsService;
 
         public UserScoreJob(IPushService pushService)
         {
             _context = new GameContext();
             _pushService = pushService;
             _tournamentsRepository = new TournamentsRepository();
+            _tournamentsService = new TournamentsService(_tournamentsRepository);
         }
 
         private async Task SendPushNotifications()
@@ -98,7 +99,7 @@ namespace fantasy_hoops.Jobs
                 };
                 _context.GameScoreNotifications.Add(gs);
             }
-            
+
             UpdateActiveTournamentsScores(allLineups);
 
             _context.SaveChanges();
@@ -108,23 +109,75 @@ namespace fantasy_hoops.Jobs
             Task.Run(() => new AchievementsJob(_pushService, null, null).ExecuteAllAchievements());
         }
 
-        private void UpdateActiveTournamentsScores(List<UserLineup> allLineups)
+        public void UpdateActiveTournamentsScores(List<UserLineup> allLineups)
         {
-            List<int> currentContests = _tournamentsRepository.GetAllCurrentContests()
-                .Select(contest => contest.Id)
-                .ToList();
-            IQueryable<MatchupPair> currentMatchups = _context.TournamentMatchups
-                .Where(matchup => currentContests.Contains(matchup.ContestId));
-            foreach (var matchup in currentMatchups)
+            List<ContestDto> currentContests = _tournamentsRepository.GetAllCurrentContests();
+            foreach (var contest in currentContests)
             {
-                double? firstUserScore =
-                    allLineups.FirstOrDefault(lineup => lineup.UserID.Equals(matchup.FirstUserID))?.FP;
-                double? secondUserScore =
-                    allLineups.FirstOrDefault(lineup => lineup.UserID.Equals(matchup.SecondUserID))?.FP;
+                TournamentDetailsDto tournamentDetails =
+                    _tournamentsRepository.GetTournamentDetails(contest.TournamentId);
+                Tournament dbTournament = _context.Tournaments.Find(contest.TournamentId);
 
-                matchup.FirstUserScore += firstUserScore ?? 0.0;
-                matchup.SecondUserScore += secondUserScore ?? 0.0;
+                bool isContestFinished = contest.ContestEnd.DayOfWeek == DateTime.UtcNow.DayOfWeek;
+                bool isTournamentFinished = contest.ContestEnd.Date == dbTournament.EndDate.Date;
+
+                foreach (var matchup in contest.Matchups)
+                {
+                    double? firstUserScore =
+                        allLineups.FirstOrDefault(lineup => lineup.UserID.Equals(matchup.FirstUser.Id))?.FP;
+                    double? secondUserScore =
+                        allLineups.FirstOrDefault(lineup => lineup.UserID.Equals(matchup.SecondUser.Id))?.FP;
+
+                    MatchupPair matchupPair = _context.TournamentMatchups
+                        .Find(dbTournament.Id, matchup.FirstUser.Id, matchup.SecondUser.Id);
+                    if (matchupPair == null)
+                    {
+                        continue;
+                    }
+
+                    matchupPair.FirstUserScore += firstUserScore ?? 0.0;
+                    matchupPair.SecondUserScore += secondUserScore ?? 0.0;
+                }
+
+                if ((Tournament.TournamentType) dbTournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
+                {
+                    if (isContestFinished)
+                    {
+                        int tournamentContestCount = tournamentDetails.Contests.Count;
+                        int tournamentDroppedContests = dbTournament.DroppedContests;
+                        int currentContestNumber = contest.ContestNumber;
+                        int firstDroppedContest = tournamentContestCount - tournamentDroppedContests + 1;
+
+                        if (currentContestNumber >= firstDroppedContest)
+                        {
+                            List<TournamentUserDto> eliminatedUsers = tournamentDetails.Standings
+                                .OrderBy(user => user.W - user.L)
+                                .Take(tournamentContestCount - currentContestNumber)
+                                .ToList();
+
+                            eliminatedUsers.ForEach(user =>
+                            {
+                                _context.TournamentUsers.Find(user.UserId, dbTournament.Id).IsEliminated =
+                                    true;
+                            });
+                        }
+                    }
+                }
+
+                if (isContestFinished)
+                {
+                    _context.Contests.Find(contest.Id).IsFinished = true;
+                }
+
+                if (isTournamentFinished)
+                {
+                    dbTournament.IsActive = false;
+                    dbTournament.IsFinished = true;
+                    dbTournament.Winner = _tournamentsService.GetTournamentWinner(dbTournament.Id);
+                }
             }
+
+            _context.SaveChanges();
         }
     }
 }

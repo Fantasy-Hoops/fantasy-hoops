@@ -11,6 +11,7 @@ namespace fantasy_hoops.Models.Tournaments
         public int Id { get; set; }
         [ForeignKey("TournamentId")]
         public string TournamentId { get; set; }
+        public int ContestNumber { get; set; }
         public DateTime ContestStart { get; set; }
         public DateTime ContestEnd { get; set; }
         public bool IsFinished { get; set; }

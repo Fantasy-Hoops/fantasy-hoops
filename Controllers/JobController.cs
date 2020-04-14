@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using fantasy_hoops.Enums;
 using fantasy_hoops.Jobs;
@@ -86,6 +87,14 @@ namespace fantasy_hoops.Controllers
             Task.Run(() => new TournamentsJob(new DateTime(2020, 04, 20)).Execute());
 
             return Ok("Tournaments started.");
+        }
+
+        [HttpGet("calculate-tournaments")]
+        public IActionResult CalculateTournaments()
+        {
+            Task.Run(() => new UserScoreJob(null).UpdateActiveTournamentsScores(new List<UserLineup>()));
+            
+            return Ok("Calculating tournaments");
         }
     }
 }
