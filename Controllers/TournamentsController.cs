@@ -80,19 +80,24 @@ namespace fantasy_hoops.Controllers
             {
                 return StatusCode(StatusCodes.Status302Found, "You already joined this tournament.");
             }
+
+            TournamentDetailsDto tournamentDetails = _tournamentsRepository.GetTournamentDetails(userId, tournamentId);
+            if (checkForFriends)
+            {
+                bool friendCheckStatus = userId.Equals(tournamentDetails.CreatorId) ||
+                                         _friendRepository.AreUsersFriends(userId, tournamentDetails.CreatorId);
+
+                return friendCheckStatus
+                    ? Ok(tournamentDetails)
+                    : StatusCode(StatusCodes.Status403Forbidden, "You are not friends with the tournament creator."); 
+            }
             
             if (!isUserInTournament && !_tournamentsRepository.IsUserInvited(userId, tournamentId))
             {
                 return Unauthorized("Unauthorized attempt to reach the tournament.");
             }
 
-            TournamentDetailsDto tournamentDetails = _tournamentsRepository.GetTournamentDetails(userId, tournamentId);
-            bool friendCheckStatus = !checkForFriends || userId.Equals(tournamentDetails.CreatorId) ||
-                                     _friendRepository.AreUsersFriends(userId, tournamentDetails.CreatorId);
-
-            return friendCheckStatus
-                ? Ok(tournamentDetails)
-                : StatusCode(StatusCodes.Status403Forbidden, "You are not friends with the tournament creator.");
+            return Ok(tournamentDetails);
         }
 
         [Authorize]
@@ -152,6 +157,24 @@ namespace fantasy_hoops.Controllers
         {
             string userId = CommonFunctions.GetUserIdFromClaims(User);
             return _tournamentsRepository.GetTournamentInvitations(userId);
+        }
+
+        [Authorize]
+        [HttpPost("invitations/accept")]
+        public IActionResult AcceptInvitation([FromBody] TournamentIdViewModel model)
+        {
+            string userId = CommonFunctions.GetUserIdFromClaims(User);
+            _tournamentsService.AcceptInvitation(model.TournamentId, userId);
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost("invitations/decline")]
+        public IActionResult DeclineInvitation([FromBody] TournamentIdViewModel model)
+        {
+            string userId = CommonFunctions.GetUserIdFromClaims(User);
+            _tournamentsService.DeclineInvitation(model.TournamentId, userId);
+            return Ok();
         }
     }
 }

@@ -61,7 +61,7 @@ export default function Standings(props) {
                                     align={column.align}
                                     style={{minWidth: column.minWidth}}
                                 >
-                                    <span className={classes.cellValue}>{column.label}</span>
+                                    <span>{column.label}</span>
                                 </TableCell>
                             ))}
                         </TableRow>
@@ -73,7 +73,7 @@ export default function Standings(props) {
                                     {columns.map((column, index) => {
                                         const value = row[column.id];
                                         return (
-                                            <TableCell key={column.id} align={column.align}>
+                                            <TableCell className={classes.cell} key={column.id} align={column.align}>
                                                 <span className={classes.flexRow}>
                                                 {
                                                     index === 1 &&
@@ -85,9 +85,8 @@ export default function Standings(props) {
                                                     </Avatar>
                                                 }
                                                     {column.format && typeof value === 'number'
-                                                        ? <span
-                                                            className={classes.cellValue}>{column.format(value)}</span>
-                                                        : <span className={classes.cellValue}>{value}</span>}
+                                                        ? <span>{column.format(value)}</span>
+                                                        : <span className={index === 1 ? classes.cellValue : ''}>{value}</span>}
                                                 </span>
                                             </TableCell>
                                         );

@@ -14,7 +14,7 @@ import Badge from "@material-ui/core/Badge";
 
 export default function TournamentListCard(props) {
     const classes = useStyles();
-    const {tournament, isInvitation, clickable} = props;
+    const {tournament, isInvitation, clickable, handleAcceptInvitation, handleDeclineInvitation} = props;
     const clickableProps = clickable
         ? {
             component: Link,
@@ -34,16 +34,12 @@ export default function TournamentListCard(props) {
         if (isInvitation && !clickable) {
             return (
                 <>
-                    <Link to="#" /*to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}*/>
-                        <Button className={classes.button}>Accept</Button>
-                    </Link>
-                    <Link to="#" /*to={`${Routes.TOURNAMENTS_SUMMARY}/${tournament.id}`}*/>
-                        <Button className={classes.button}>Decline</Button>
-                    </Link>
+                    <Button className={classes.button} onClick={handleAcceptInvitation}>Accept</Button>
+                    <Button className={classes.button} onClick={handleDeclineInvitation}>Decline</Button>
                 </>
             );
         }
-        
+
         return null;
     }
 
@@ -64,7 +60,7 @@ export default function TournamentListCard(props) {
             {!clickable && <CardContent className={clsx(classes.content, classes.tournamentDetails)}>
                 <Typography className={classes.heading} variant="subtitle2" gutterBottom>
                     {
-                        moment(tournament.startDate).isBefore() && moment(tournament.endDate).isAfter()
+                        tournament.isActive
                         && <><Badge classes={{badge: classes.badge}} badgeContent={""}/> Active</>
                     }
                 </Typography>

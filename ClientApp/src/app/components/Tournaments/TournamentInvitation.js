@@ -1,6 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {getLastLocationSlug} from "../../utils/locationSlug";
-import {getTournamentDetails} from "../../utils/networkFunctions";
+import {
+    acceptTournamentInvitation,
+    declineTournamentInvitation,
+    getTournamentDetails
+} from "../../utils/networkFunctions";
 import _ from 'lodash';
 import TournamentListCard from "./TournamentListCard";
 import FullscreenLoader from "../FullscreenLoader";
@@ -8,6 +12,8 @@ import {Helmet} from "react-helmet";
 import {TournamentsInvitations} from "./utils";
 import {Canonicals, Meta} from "../../utils/helpers";
 import {Error} from "../Error";
+import {useSnackbar} from "notistack";
+import Routes from "../../routes/routes";
 
 export function TournamentInvitation(props) {
     const tournamentId = getLastLocationSlug(props.location.pathname);
@@ -15,6 +21,7 @@ export function TournamentInvitation(props) {
     const [tournamentExists, setTournamentExists] = useState(true);
     const [errorResponse, setErrorResponse] = useState({});
     const [loader, setLoader] = useState(true);
+    const {enqueueSnackbar} = useSnackbar();
 
     useEffect(() => {
         async function handleGetTournament() {
@@ -33,6 +40,28 @@ export function TournamentInvitation(props) {
 
         handleGetTournament();
     }, []);
+    
+    function handleAcceptInvitation() {
+        setLoader(true);
+        acceptTournamentInvitation({tournamentId})
+            .then(response => {
+                window.location.replace(Routes.TOURNAMENTS);
+            }).catch(error => {
+                enqueueSnackbar(error.message, {variant: "error"});
+                setLoader(false);
+        });
+    }
+    
+    function handleDeclineInvitation() {
+        setLoader(true);
+        declineTournamentInvitation({tournamentId})
+            .then(response => {
+                setLoader(false)
+            }).catch(error => {
+            enqueueSnackbar(error.message, {variant: "error"});
+            setLoader(false);
+        });
+    }
 
     if (!tournamentExists && !_.isEmpty(errorResponse)) {
         return <Error status={errorResponse.status} message={errorResponse.message}/>;
@@ -49,7 +78,14 @@ export function TournamentInvitation(props) {
                 <h1 className="PageTitle">{TournamentsInvitations.SINGLE_INVITATION_TITLE}</h1>
                 <h5 className="PageSubtitle">{`User ${0} invited you to join the tournament.`}</h5>
             </article>
-            {!_.isEmpty(tournament) && <TournamentListCard tournament={tournament} isInvitation />}
+            {!_.isEmpty(tournament) && (
+                <TournamentListCard
+                    tournament={tournament}
+                    handleAcceptInvitation={handleAcceptInvitation}
+                    handleDeclineInvitation={handleDeclineInvitation}
+                    isInvitation
+                />
+            )}
             {loader && <FullscreenLoader/>}
         </>
     );

@@ -19,6 +19,7 @@ import {Link} from "react-router-dom";
 import {MatchupDetails} from "./MatchupDetails";
 
 import './MatchupsDashboard.css';
+import Routes from "../../../../routes/routes";
 
 const user = parse();
 
@@ -53,6 +54,19 @@ function a11yProps(index) {
 }
 
 function parseContest(tournament, contest) {
+    if (!tournament.isActive) {
+        return (
+            <>
+                <Typography variant="h4" className="MatchupDetails__Heading">
+                    Tournament hasn't started yet
+                </Typography>
+                <Typography variant="subtitle1" className="MatchupDetails__Heading">
+                    Contest starts {moment(contest.contestStart).format(TOURNAMENT_DATE_FORMAT)}
+                </Typography>
+            </>
+        );
+    }
+
     const matchup = contest.matchups.filter(matchup => matchup.firstUser.id === user.id || matchup.secondUser.id === user.id)[0];
     switch (getContestState(contest)) {
         case ContestState.FINISHED:
@@ -98,7 +112,14 @@ function getCurrentContest(tournament, contest, matchup) {
                         />
                     </div>
                 )
-                : null}
+                : (
+                    <div className="MatchupsDashboard__CurrentLineup">
+                        <p>You haven't selected your lineup yet!</p>
+                        <Link to={Routes.LINEUP}>
+                            <Button color="primary" variant="contained">Select lineup</Button>
+                        </Link>
+                    </div>
+                )}
             <div className="MatchupsDashboard__NextOpponent">
                 <Typography variant="subtitle2">
                     Next Opponnent: <Link
@@ -131,7 +152,7 @@ export default function MatchupsDashboard(props) {
     const initialTab = tournament.contests
         .map((contest) => moment(contest.contestStart).isBefore() && moment(contest.contestEnd).isAfter())
         .indexOf(true);
-    const [value, setValue] = React.useState(initialTab);
+    const [value, setValue] = React.useState(initialTab > -1 ? initialTab : 0);
     const [scheduleOpen, setScheduleOpen] = useState(false);
 
     const handleChange = (event, newValue) => {
@@ -169,7 +190,7 @@ export default function MatchupsDashboard(props) {
                 </div>
                 <div className="MatchupsDashboard__ContentContainer MatchupsDashboard__Schedule">
                     <Button className={classes.scheduleButton} variant="contained" color="primary" fullWidth
-                            onClick={handleScheduleOpen}>
+                            onClick={handleScheduleOpen} disabled={!tournament.isActive}>
                         Schedule
                     </Button>
                 </div>
@@ -191,8 +212,8 @@ export default function MatchupsDashboard(props) {
                     <Standings standings={tournament.standings}/>
                 </div>
             </div>
-            <Schedule contests={tournament.contests} handleScheduleOpen={handleScheduleOpen}
-                      handleScheduleClose={handleScheduleClose} open={scheduleOpen}/>
+            {tournament.isActive && <Schedule contests={tournament.contests} handleScheduleOpen={handleScheduleOpen}
+                      handleScheduleClose={handleScheduleClose} open={scheduleOpen}/>}
         </>
     );
 }

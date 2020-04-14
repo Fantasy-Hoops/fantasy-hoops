@@ -5,6 +5,7 @@ using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Enums;
 using fantasy_hoops.Helpers;
+using fantasy_hoops.Mocks;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Notifications;
 using fantasy_hoops.Models.Tournaments;
@@ -42,6 +43,11 @@ namespace fantasy_hoops.Repositories
 
         public List<DateTime> GetUpcomingStartDates()
         {
+            if (bool.Parse(Startup.Configuration["useMock"]))
+            {
+                return Tournaments.StartDates;
+            }
+            
             return _context.Games
                 .AsEnumerable()
                 .Where(game => game.Date.HasValue && game.Date.Value.DayOfWeek != DayOfWeek.Sunday)
@@ -55,6 +61,11 @@ namespace fantasy_hoops.Repositories
 
         public DateTime GetLastEndDate()
         {
+            if (bool.Parse(Startup.Configuration["useMock"]))
+            {
+                return Tournaments.StartDates.Max();
+            }
+                
             return _context.Games
                 .Where(game => game.Date.HasValue)
                 .Max(tournament => tournament.Date.Value);
@@ -72,6 +83,9 @@ namespace fantasy_hoops.Repositories
 
             Tournament tournament = GetTournamentById(tournamentId);
             tournamentDetails.Id = tournamentId;
+            tournamentDetails.IsActive = tournament.IsActive;
+            tournamentDetails.StartDate = tournament.StartDate;
+            tournamentDetails.EndDate = tournament.EndDate;
             tournamentDetails.CreatorId = tournament.CreatorID;
             tournamentDetails.IsCreator =
                 _context.Tournaments.Any(t => t.CreatorID.Equals(userId) && t.Id.Equals(tournament.Id));
@@ -148,22 +162,20 @@ namespace fantasy_hoops.Repositories
                 .FirstOrDefault(contestPair =>
                     contestPair.FirstUser.Id.Equals(userId) || contestPair.SecondUser.Id.Equals(userId));
 
-            if (userMatchup == null)
-            {
-                return tournamentDetails;
-            }
-
-            if (userId.Equals(userMatchup.FirstUser.Id))
-            {
-                tournamentDetails.NextOpponent = userMatchup.SecondUser.UserName;
-            }
-            else if (userId.Equals(userMatchup.SecondUser.Id))
-            {
-                tournamentDetails.NextOpponent = userMatchup.FirstUser.UserName;
-            }
-
             tournamentDetails.AcceptedInvite =
                 IsUserInvited(userId, tournamentId) && IsUserInTournament(userId, tournamentId);
+
+            if (userMatchup != null)
+            {
+                if (userId.Equals(userMatchup.FirstUser.Id))
+                {
+                    tournamentDetails.NextOpponent = userMatchup.SecondUser.UserName;
+                }
+                else if (userId.Equals(userMatchup.SecondUser.Id))
+                {
+                    tournamentDetails.NextOpponent = userMatchup.FirstUser.UserName;
+                }
+            }
 
             return tournamentDetails;
         }
@@ -176,6 +188,7 @@ namespace fantasy_hoops.Repositories
                     .Select(tournament => new TournamentDto
                     {
                         Id = tournament.Id,
+                        IsActive = tournament.IsActive,
                         Type = tournament.Type,
                         TypeName = ((Tournament.TournamentType) tournament.Type).ToString(),
                         StartDate = tournament.StartDate,
@@ -197,6 +210,7 @@ namespace fantasy_hoops.Repositories
                     .Select(tournament => new TournamentDto
                     {
                         Id = tournament.Id,
+                        IsActive = tournament.IsActive,
                         Type = tournament.Type,
                         TypeName = ((Tournament.TournamentType) tournament.Type).ToString(),
                         StartDate = tournament.StartDate,
@@ -329,6 +343,7 @@ namespace fantasy_hoops.Repositories
                 .Select(tournament => new TournamentDto
                 {
                     Id = tournament.Id,
+                    IsActive = tournament.IsActive,
                     Type = tournament.Type,
                     TypeName = ((Tournament.TournamentType) tournament.Type).ToString(),
                     StartDate = tournament.StartDate,
@@ -341,6 +356,26 @@ namespace fantasy_hoops.Repositories
                     DroppedContests = tournament.DroppedContests
                 })
                 .ToList();
+        }
+
+        public bool ChangeInvitationStatus(string tournamentId, string userId, RequestStatus status = RequestStatus.NO_REQUEST)
+        {
+            TournamentInvite invitation = _context.TournamentInvites
+                .FirstOrDefault(invite =>
+                    invite.TournamentID.Equals(tournamentId) && invite.InvitedUserID.Equals(userId));
+            if (invitation == null)
+            {
+                _context.TournamentInvites.Add(new TournamentInvite
+                {
+                    InvitedUserID = userId,
+                    TournamentID = tournamentId,
+                    Status = status
+                });
+                return _context.SaveChanges() != 0;
+            }
+
+            invitation.Status = status;
+            return _context.SaveChanges() != 0;
         }
 
         private bool DeleteTournamentResources(Tournament tournamentToDelete)
@@ -389,14 +424,14 @@ namespace fantasy_hoops.Repositories
             }
         }
 
-        public void AddUserToTournament(string userId, string tournamentId)
+        public bool AddUserToTournament(string userId, string tournamentId)
         {
             _context.TournamentUsers.Add(new TournamentUser
             {
                 UserID = userId,
                 TournamentID = tournamentId
             });
-            _context.SaveChanges();
+            return _context.SaveChanges() != 0;
         }
 
         public bool IsUserInTournament(string userId, string tournamentId)

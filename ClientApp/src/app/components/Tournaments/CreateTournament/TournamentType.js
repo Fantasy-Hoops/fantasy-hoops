@@ -102,7 +102,7 @@ export default function TournamentType(props) {
     return (
         <>
             <p>
-                {"Select tournament type, start date, number of contests, number of dropped contests and maximum" +
+                {"Select tournament type, start date, number of contests, number of dropped contests and maximum " +
                 "number of entrants (if applicable)."}
             </p>
             <MaterialSelect
@@ -167,7 +167,7 @@ export default function TournamentType(props) {
                 error={touched.droppedContests && !_.isEmpty(errors.droppedContests)}
                 helperText={touched.droppedContests ? errors.droppedContests : ''}
                 emptyOption
-                disabled={droppedContests.length === 0 || values.contests === 1}
+                disabled={droppedContests.length === 0 || values.contests === 1 || values.tournamentType === 1}
                 required
             />
             <ClickAwayListener onClickAway={handleDroppedTooltipClose}>

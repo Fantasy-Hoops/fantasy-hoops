@@ -24,9 +24,14 @@ export const useStyles = makeStyles(theme => ({
     },
     flexRow: {
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
     cellValue: {
-        margin: '0 1rem'
+        marginLeft: '1rem',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+    },
+    cell: {
+        maxWidth: '16rem'
     }
 }));

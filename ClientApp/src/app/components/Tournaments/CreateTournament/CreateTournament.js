@@ -38,7 +38,7 @@ const initialValues = {
     startDate: '',
     tournamentType: '',
     contests: '',
-    droppedContests: '',
+    droppedContests: 0,
     entrants: 2,
     userFriends: []
 };
@@ -229,7 +229,7 @@ export default function CreateTournament() {
                 <h1 className="PageTitle">{TournamentsCreate.TITLE}</h1>
             </article>
             <Formik
-                initialValues={JSON.parse(localStorage.getItem('tournamentValues')) || initialValues}
+                initialValues={initialValues}
                 validationSchema={newTournamentValidation}
                 onSubmit={(values, actions) => {
                     actions.setSubmitting(true);

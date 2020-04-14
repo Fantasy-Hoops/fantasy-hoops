@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace fantasy_hoops.Dtos
@@ -5,9 +6,12 @@ namespace fantasy_hoops.Dtos
     public class TournamentDetailsDto
     {
         public string Id { get; set; }
+        public bool IsActive { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public int Type { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public string TypeName { get; set; }
         public string ImageURL { get; set; }
         public string CreatorId { get; set; }

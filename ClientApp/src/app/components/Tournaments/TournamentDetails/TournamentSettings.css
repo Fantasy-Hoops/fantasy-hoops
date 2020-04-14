@@ -1,3 +1,7 @@
 .TournamentSettings_DeleteButton {
     color: #c91d12;
 }
+
+.TournamentSettings__Divider {
+    margin: 2rem 0 !important;
+}

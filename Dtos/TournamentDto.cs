@@ -7,6 +7,7 @@ namespace fantasy_hoops.Dtos
     public class TournamentDto
     {
         public string Id { get; set; }
+        public bool IsActive { get; set; }
         public int Type { get; set; }
         public string TypeName { get; set; }
         public DateTime StartDate { get; set; }

@@ -9,7 +9,7 @@ import FullscreenLoader from "../FullscreenLoader";
 import {useSnackbar} from "notistack";
 
 export function ConfirmDialog(props) {
-    const {open, handleClose, title, description, callbackFunction} = props;
+    const {open, handleClose, title, description, callbackFunction, locationChange} = props;
     const [loader, setLoader] = useState(false);
     const {enqueueSnackbar} = useSnackbar();
     
@@ -18,7 +18,8 @@ export function ConfirmDialog(props) {
         handleClose();
         callbackFunction().then(response => {
             enqueueSnackbar(response.data, {variant: 'success'});
-            setLoader(false);
+            locationChange && window.location.replace(locationChange);
+            !locationChange && setLoader(false);
         }).catch(error => {
             enqueueSnackbar(error.message, {variant: 'error'});
             setLoader(false);

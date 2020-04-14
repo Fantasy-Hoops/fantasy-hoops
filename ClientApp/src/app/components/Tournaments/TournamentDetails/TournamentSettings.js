@@ -14,6 +14,12 @@ import './TournamentSettings.css';
 import {InputLabel} from "@material-ui/core";
 import {ConfirmDialog} from "../../Inputs/ConfirmDialog";
 import {deleteTournament} from "../../../utils/networkFunctions";
+import FormLabel from "@material-ui/core/FormLabel";
+import TextField from "@material-ui/core/TextField";
+import Divider from "@material-ui/core/Divider";
+import CopyToClipboard from "../../Inputs/CopyToClipboard";
+import Routes from "../../../routes/routes";
+import {useHistory} from "react-router";
 
 const styles = (theme) => ({
     root: {
@@ -66,19 +72,29 @@ export function TournamentSettings(props) {
     const handleConfirmClose = () => {
         setConfirmOpen(false);
     };
-    
+
     const handleDeleteTournament = () => {
         handleSettingsClose();
         return deleteTournament(tournamentId);
-    }
+    };
 
     return (
         <>
-            <Dialog onClose={handleSettingsClose} aria-labelledby="customized-dialog-title" open={isSettingsOpen} fullWidth>
+            <Dialog onClose={handleSettingsClose} aria-labelledby="customized-dialog-title" open={isSettingsOpen}
+                    fullWidth>
                 <DialogTitle id="customized-dialog-title" onClose={handleSettingsClose}>
                     {`${tournament.title} Settings`}
                 </DialogTitle>
-                <DialogContent dividers>
+                <DialogContent className="TournamentSettings__Content" dividers>
+                    {!tournament.isActive && (
+                        <>
+                            <FormLabel component="legend">Invitation link</FormLabel>
+                            <CopyToClipboard
+                                inputText={`https://fantasyhoops.org/tournaments/invitations/${tournamentId}`}/>
+                        </>
+                    )}
+                    <Divider className="TournamentSettings__Divider"/>
+                    <FormLabel component="legend">Delete tournament</FormLabel>
                     <Button
                         onClick={handleConfirmOpen}
                         variant="text"
@@ -100,7 +116,9 @@ export function TournamentSettings(props) {
                 title="Are you sure want to delete this tournament?"
                 description="By deleting this tournament you will lose all you progress including your upcoming 
                 achievements, matchups' scores, tournament standings and history"
-                callbackFunction={handleDeleteTournament} />
+                callbackFunction={handleDeleteTournament}
+                locationChange={Routes.TOURNAMENTS}
+            />
         </>
     );
 }
