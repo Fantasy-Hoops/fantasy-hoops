@@ -1,0 +1,35 @@
+.OneForAllDashboard__Layout {
+    display: flex;
+    flex-direction: column;
+}
+
+.OneForAllDashboard__Tabs {
+    grid-area: tabs;
+}
+
+.OneForAllDashboard__Contest {
+    grid-area: contest;
+    background: red;
+}
+
+.OneForAllDashboard__Standings {
+    grid-area: standings;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.OneForAllDashboard__ContentContainer {
+    margin: .5rem;
+}
+
+@media screen and (min-width: 768px) {
+    .OneForAllDashboard__Layout {
+        max-height: 100%;
+        display: grid;
+        grid-template-columns: 65% 35%;
+        grid-template-rows: 8rem 50vh;
+        grid-template-areas:
+                "tabs standings"
+                "contest standings"
+    }
+}

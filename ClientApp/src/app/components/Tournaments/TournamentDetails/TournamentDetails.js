@@ -7,7 +7,7 @@ import _ from 'lodash';
 import {Helmet} from "react-helmet";
 import {Canonicals} from "../../../utils/helpers";
 import {TournamentsMain} from "../utils";
-import OneForAllDashboard from "./OneForAllDashboard";
+import OneForAllDashboard from "./OneForAll/OneForAllDashboard";
 import MatchupsDashboard from "./Matchups/MatchupsDashboard";
 import IconButton from "@material-ui/core/IconButton";
 import SettingsIcon from '@material-ui/icons/Settings';

@@ -1,8 +1,5 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import {useStyles} from "./MatchupsDashboardStyle";
@@ -20,6 +17,7 @@ import {MatchupDetails} from "./MatchupDetails";
 
 import './MatchupsDashboard.css';
 import Routes from "../../../../routes/routes";
+import {ContestsTabs} from "../ContestsTabs";
 
 const user = parse();
 
@@ -45,13 +43,6 @@ TabPanel.propTypes = {
     index: PropTypes.any.isRequired,
     value: PropTypes.any.isRequired,
 };
-
-function a11yProps(index) {
-    return {
-        id: `scrollable-force-tab-${index}`,
-        'aria-controls': `scrollable-force-tabpanel-${index}`,
-    };
-}
 
 function parseContest(tournament, contest) {
     if (!tournament.isActive) {
@@ -171,22 +162,7 @@ export default function MatchupsDashboard(props) {
         <>
             <div className="MatchupsDashboard__Layout">
                 <div className="MatchupsDashboard__ContentContainer MatchupsDashboard__Tabs">
-                    <AppBar className={classes.appBar} position="static" color="default">
-                        <Tabs
-                            value={value}
-                            onChange={handleChange}
-                            variant="scrollable"
-                            scrollButtons="on"
-                            indicatorColor="primary"
-                            textColor="primary"
-                            aria-label="scrollable force tabs example"
-                        >
-                            {tournament.contests.map((contest, index) => (
-                                <Tab key={index} label={moment(contest.contestStart).format('MM/DD/YYYY')}
-                                     icon={<div>{`Contest #${index + 1}`}</div>} {...a11yProps(index)} />
-                            ))}
-                        </Tabs>
-                    </AppBar>
+                    <ContestsTabs tournament={tournament} handleChange={handleChange} value={value}/>
                 </div>
                 <div className="MatchupsDashboard__ContentContainer MatchupsDashboard__Schedule">
                     <Button className={classes.scheduleButton} variant="contained" color="primary" fullWidth
