@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using fantasy_hoops.Database;
+using fantasy_hoops.Models;
 using fantasy_hoops.Repositories.Interfaces;
 
 namespace fantasy_hoops.Repositories
@@ -16,8 +18,15 @@ namespace fantasy_hoops.Repositories
 
         public IQueryable<Object> GetInjuries()
         {
-            return _context.Injuries
-                .Where(injury => injury.Date > DateTime.UtcNow.AddDays(-3))
+            var injuries = _context.Injuries
+                .Where(injury => injury.Date > DateTime.UtcNow.AddDays(-3));
+            injuries = injuries.Count() > 10
+                ? injuries
+                : _context.Injuries
+                    .OrderByDescending(injury => injury.Date)
+                    .Take(30);
+            
+            return injuries
                 .Select(x => new {
                     x.InjuryID,
                     date = x.Date,
