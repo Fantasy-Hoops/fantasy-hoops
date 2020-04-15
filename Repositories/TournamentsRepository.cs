@@ -86,11 +86,19 @@ namespace fantasy_hoops.Repositories
             TournamentDetailsDto tournamentDetails = new TournamentDetailsDto();
 
             Tournament tournament = GetTournamentById(tournamentId);
+            UserDto tournamentCreator = _context.Users
+                .Where(user => user.Id.Equals(tournament.CreatorID))
+                .Select(user => new UserDto
+                {
+                    UserId = user.Id,
+                    Username = user.UserName,
+                    AvatarUrl = user.AvatarURL
+                }).FirstOrDefault();
             tournamentDetails.Id = tournamentId;
-            tournamentDetails.IsActive = tournament.IsActive;
+            tournamentDetails.Status = tournament.Status;
             tournamentDetails.StartDate = tournament.StartDate;
             tournamentDetails.EndDate = tournament.EndDate;
-            tournamentDetails.CreatorId = tournament.CreatorID;
+            tournamentDetails.Creator = tournamentCreator;
             tournamentDetails.Type = tournament.Type;
             tournamentDetails.TypeName = ((Tournament.TournamentType) tournament.Type).ToString();
             tournamentDetails.ImageURL = tournament.ImageURL;
@@ -217,7 +225,7 @@ namespace fantasy_hoops.Repositories
                     .Select(tournament => new TournamentDto
                     {
                         Id = tournament.Id,
-                        IsActive = tournament.IsActive,
+                        Status = tournament.Status,
                         Type = tournament.Type,
                         TypeName = ((Tournament.TournamentType) tournament.Type).ToString(),
                         StartDate = tournament.StartDate,
@@ -239,7 +247,7 @@ namespace fantasy_hoops.Repositories
                     .Select(tournament => new TournamentDto
                     {
                         Id = tournament.Id,
-                        IsActive = tournament.IsActive,
+                        Status = tournament.Status,
                         Type = tournament.Type,
                         TypeName = ((Tournament.TournamentType) tournament.Type).ToString(),
                         StartDate = tournament.StartDate,
@@ -374,7 +382,7 @@ namespace fantasy_hoops.Repositories
                 .Select(tournament => new TournamentDto
                 {
                     Id = tournament.Id,
-                    IsActive = tournament.IsActive,
+                    Status = tournament.Status,
                     Type = tournament.Type,
                     TypeName = ((Tournament.TournamentType) tournament.Type).ToString(),
                     StartDate = tournament.StartDate,
@@ -495,6 +503,14 @@ namespace fantasy_hoops.Repositories
 
         public bool AddUserToTournament(string userId, string tournamentId)
         {
+            Tournament tournament = _context.Tournaments.Find(tournamentId);
+            int tournamentUsersCount =
+                _context.TournamentUsers.Count(tournamentUser => tournamentUser.TournamentID.Equals(tournamentId));
+            if (tournament.Entrants == tournamentUsersCount)
+            {
+                return false;
+            }
+            
             _context.TournamentUsers.Add(new TournamentUser
             {
                 UserID = userId,

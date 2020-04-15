@@ -84,7 +84,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet("start-tournaments")]
         public IActionResult StartTournaments()
         {
-            Task.Run(() => new TournamentsJob(new DateTime(2020, 04, 20)).Execute());
+            Task.Run(() => new TournamentsJob(Mocks.Tournaments.MockedStartDate).Execute());
 
             return Ok("Tournaments started.");
         }

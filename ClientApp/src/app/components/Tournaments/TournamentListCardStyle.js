@@ -79,8 +79,15 @@ export const useStyles = makeStyles(({breakpoints, spacing}) => ({
         minHeight: '1.5rem',
         width: '1.5rem',
         minWidth: '1.5rem',
-        backgroundColor: 'green',
         position: 'relative',
         transform: 'translate(0%)'
+    },
+    badgeActive : {
+        backgroundColor: 'green',
+        borderRadius: 50
+    },
+    badgeCancelled : {
+        backgroundColor: 'red',
+        borderRadius: 50
     }
 }));

@@ -6,9 +6,12 @@ using System.Net.Mail;
 using Castle.Core;
 using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
+using fantasy_hoops.Enums;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
+using fantasy_hoops.Services;
+using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
 
 namespace fantasy_hoops.Jobs
@@ -16,14 +19,15 @@ namespace fantasy_hoops.Jobs
     public class TournamentsJob : IJob
     {
         private readonly DateTime _runtimeDate;
-        private readonly ITournamentsRepository _tournamentsRepository;
         private readonly GameContext _context;
+        private readonly ITournamentsRepository _tournamentsRepository;
+        private readonly ITournamentsService _tournamentsService;
 
         public TournamentsJob(DateTime runtimeDate = new DateTime())
         {
             _runtimeDate = runtimeDate;
-            _tournamentsRepository = new TournamentsRepository();
             _context = new GameContext();
+            _tournamentsService = new TournamentsService(_tournamentsRepository);
         }
 
         public void Execute()
@@ -46,6 +50,14 @@ namespace fantasy_hoops.Jobs
             {
                 if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.MATCHUPS)
                 {
+                    int tournamentUsersCount = _context.TournamentUsers.Count(tournamentUser =>
+                        tournamentUser.TournamentID.Equals(tournament.Id));
+                    if (tournamentUsersCount % 2 != 0)
+                    {
+                        _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.CANCELLED;
+                        _tournamentsService.SendCancelledTournamentNotifications(tournament);
+                        continue;
+                    }
                     StartMatchupsTournament(tournament);
                 }
                 else if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
@@ -100,7 +112,7 @@ namespace fantasy_hoops.Jobs
                     });
             }
 
-            _context.Tournaments.Find(tournament.Id).IsActive = true;
+            _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.ACTIVE;
         }
 
         private void StartOneForAllTournament(Tournament tournament)
@@ -117,7 +129,7 @@ namespace fantasy_hoops.Jobs
                 }).ToList();
             }
 
-            _context.Tournaments.Find(tournament.Id).IsActive = true;
+            _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.ACTIVE;
         }
     }
 }

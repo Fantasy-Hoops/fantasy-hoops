@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
+using fantasy_hoops.Enums;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Tournaments;
@@ -162,8 +163,7 @@ namespace fantasy_hoops.Jobs
 
                 if (isTournamentFinished)
                 {
-                    dbTournament.IsActive = false;
-                    dbTournament.IsFinished = true;
+                    dbTournament.Status = TournamentStatus.FINISHED;
                     dbTournament.Winner = _tournamentsService.GetTournamentWinner(dbTournament.Id);
                 }
 

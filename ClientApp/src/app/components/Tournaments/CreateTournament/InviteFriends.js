@@ -169,7 +169,7 @@ export default function InviteFriends(props) {
     return (
         <>
             <p>
-                {'Choose your friends from the list below to send invitations to their emails or finish the creation ' +
+                {'Choose your friends from the list below to send them invitations or finish the creation ' +
                 'of the tournament to get a generated invitation link'}
             </p>
             {error}

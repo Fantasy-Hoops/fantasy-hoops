@@ -5,12 +5,13 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import {Avatar} from "@material-ui/core";
 import moment from "moment";
-import {TOURNAMENT_DATE_FORMAT} from "../../utils/helpers";
+import {TOURNAMENT_DATE_FORMAT, TournamentStatus} from "../../utils/helpers";
 import clsx from "clsx";
 import {Link} from "react-router-dom";
 import Routes from "../../routes/routes";
 import {useStyles} from "./TournamentListCardStyle";
 import Badge from "@material-ui/core/Badge";
+
 
 export default function TournamentListCard(props) {
     const classes = useStyles();
@@ -42,6 +43,18 @@ export default function TournamentListCard(props) {
 
         return null;
     }
+    
+    function getTournamentCardBadge(tournament) {
+        switch (tournament.status) {
+            case TournamentStatus.ACTIVE:
+                return <><Badge classes={{root: classes.badgeActive, badge: classes.badge}} badgeContent={""}/> Active</>;
+            case TournamentStatus.CANCELLED:
+                return <><Badge classes={{root: classes.badgeCancelled, badge: classes.badge}} badgeContent={""}/> Cancelled</>;
+            default:
+                return null;
+
+        }
+    }
 
     return (
         <Card className={classes.card} {...clickableProps}>
@@ -59,10 +72,7 @@ export default function TournamentListCard(props) {
             </CardContent>
             {!clickable && <CardContent className={clsx(classes.content, classes.tournamentDetails)}>
                 <Typography className={classes.heading} variant="subtitle2" gutterBottom>
-                    {
-                        tournament.isActive
-                        && <><Badge classes={{badge: classes.badge}} badgeContent={""}/> Active</>
-                    }
+                    {getTournamentCardBadge(tournament)}
                 </Typography>
                 <Typography className={classes.heading} variant="subtitle2" gutterBottom>
                     {`${moment(tournament.startDate).isBefore() ? 'Started' : 'Starts'}

@@ -20,6 +20,7 @@ import Divider from "@material-ui/core/Divider";
 import CopyToClipboard from "../../Inputs/CopyToClipboard";
 import Routes from "../../../routes/routes";
 import {useHistory} from "react-router";
+import {TournamentStatus} from "../../../utils/helpers";
 
 const styles = (theme) => ({
     root: {
@@ -86,14 +87,14 @@ export function TournamentSettings(props) {
                     {`${tournament.title} Settings`}
                 </DialogTitle>
                 <DialogContent className="TournamentSettings__Content" dividers>
-                    {!tournament.isActive && (
+                    {tournament.status === TournamentStatus.CREATED && (
                         <>
                             <FormLabel component="legend">Invitation link</FormLabel>
                             <CopyToClipboard
                                 inputText={`https://fantasyhoops.org/tournaments/invitations/${tournamentId}`}/>
+                            <Divider className="TournamentSettings__Divider"/>
                         </>
                     )}
-                    <Divider className="TournamentSettings__Divider"/>
                     <FormLabel component="legend">Delete tournament</FormLabel>
                     <Button
                         onClick={handleConfirmOpen}

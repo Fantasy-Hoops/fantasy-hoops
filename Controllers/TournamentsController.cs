@@ -40,6 +40,7 @@ namespace fantasy_hoops.Controllers
             return _tournamentsRepository.GetUpcomingStartDates();
         }
 
+        [Authorize]
         [HttpGet("user/{userId}")]
         public Dictionary<string, List<TournamentDto>> GetUserTournaments([FromRoute] string userId)
         {
@@ -84,8 +85,8 @@ namespace fantasy_hoops.Controllers
             TournamentDetailsDto tournamentDetails = _tournamentsRepository.GetTournamentDetails(userId, tournamentId);
             if (checkForFriends)
             {
-                bool friendCheckStatus = userId.Equals(tournamentDetails.CreatorId) ||
-                                         _friendRepository.AreUsersFriends(userId, tournamentDetails.CreatorId);
+                bool friendCheckStatus = userId.Equals(tournamentDetails.Creator.UserId) ||
+                                         _friendRepository.AreUsersFriends(userId, tournamentDetails.Creator.UserId);
 
                 return friendCheckStatus
                     ? Ok(tournamentDetails)
@@ -164,8 +165,11 @@ namespace fantasy_hoops.Controllers
         public IActionResult AcceptInvitation([FromBody] TournamentIdViewModel model)
         {
             string userId = CommonFunctions.GetUserIdFromClaims(User);
-            _tournamentsService.AcceptInvitation(model.TournamentId, userId);
-            return Ok();
+            if (!_tournamentsService.AcceptInvitation(model.TournamentId, userId))
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "Tournament is full");
+            }
+            return Ok("Successfully joined the tournament.");
         }
 
         [Authorize]
@@ -173,8 +177,12 @@ namespace fantasy_hoops.Controllers
         public IActionResult DeclineInvitation([FromBody] TournamentIdViewModel model)
         {
             string userId = CommonFunctions.GetUserIdFromClaims(User);
-            _tournamentsService.DeclineInvitation(model.TournamentId, userId);
-            return Ok();
+            if (!_tournamentsService.DeclineInvitation(model.TournamentId, userId))
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "Unable to decline invitation");
+            }
+
+            return Ok("Invitation declined.");
         }
     }
 }

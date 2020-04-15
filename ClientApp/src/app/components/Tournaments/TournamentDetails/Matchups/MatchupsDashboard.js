@@ -7,7 +7,7 @@ import UserScore from "../../../Profile/UserScore";
 import Standings from "../Standings";
 import moment from "moment";
 import Schedule from "./Schedule";
-import {ContestState, getContestState, TOURNAMENT_DATE_FORMAT} from "../../../../utils/helpers";
+import {ContestState, getContestState, TOURNAMENT_DATE_FORMAT, TournamentStatus} from "../../../../utils/helpers";
 import {parse} from "../../../../utils/auth";
 import shortid from "shortid";
 import {Link} from "react-router-dom";
@@ -22,7 +22,7 @@ import {TabPanel} from "../TabPanel";
 const user = parse();
 
 function parseContest(tournament, contest) {
-    if (!tournament.isActive) {
+    if (tournament.status !== TournamentStatus.ACTIVE) {
         return <TournamentNotStarted contest={contest} />
     }
 
@@ -134,7 +134,7 @@ export default function MatchupsDashboard(props) {
                 </div>
                 <div className="MatchupsDashboard__ContentContainer MatchupsDashboard__Schedule">
                     <Button className={classes.scheduleButton} variant="contained" color="primary" fullWidth
-                            onClick={handleScheduleOpen} disabled={!tournament.isActive}>
+                            onClick={handleScheduleOpen} disabled={tournament.status !== TournamentStatus.ACTIVE}>
                         Schedule
                     </Button>
                 </div>
@@ -156,7 +156,7 @@ export default function MatchupsDashboard(props) {
                     <Standings tournament={tournament}/>
                 </div>
             </div>
-            {tournament.isActive && <Schedule contests={tournament.contests} handleScheduleOpen={handleScheduleOpen}
+            {tournament.status === TournamentStatus.ACTIVE && <Schedule contests={tournament.contests} handleScheduleOpen={handleScheduleOpen}
                       handleScheduleClose={handleScheduleClose} open={scheduleOpen}/>}
         </>
     );

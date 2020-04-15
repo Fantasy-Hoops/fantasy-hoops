@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using fantasy_hoops.Enums;
 using fantasy_hoops.Models.Tournaments;
 
 namespace fantasy_hoops.Dtos
@@ -7,7 +8,7 @@ namespace fantasy_hoops.Dtos
     public class TournamentDto
     {
         public string Id { get; set; }
-        public bool IsActive { get; set; }
+        public TournamentStatus Status { get; set; }
         public int Type { get; set; }
         public string TypeName { get; set; }
         public DateTime StartDate { get; set; }

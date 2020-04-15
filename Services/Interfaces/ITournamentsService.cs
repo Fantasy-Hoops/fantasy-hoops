@@ -16,5 +16,6 @@ namespace fantasy_hoops.Services.Interfaces
         User GetContestWinner(TournamentDetailsDto tournamentDetails, ContestDto contest);
         User EliminateUser(Tournament dbTournament, TournamentDetailsDto tournamentDetails, ContestDto contest);
         void UpdateStandings(TournamentDetailsDto tournamentDetails, ContestDto contest);
+        void SendCancelledTournamentNotifications(Tournament tournament);
     }
 }

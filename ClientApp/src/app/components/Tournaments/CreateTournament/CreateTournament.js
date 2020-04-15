@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -14,7 +14,6 @@ import {Canonicals, TOURNAMENT_DATE_FORMAT} from "../../../utils/helpers";
 import BasicTournamentInfo from "./BasicTournamentInfo";
 import _ from "lodash";
 import TournamentType from "./TournamentType";
-import {Error} from "../../Error";
 import InviteFriends from "./InviteFriends";
 import {
     createTournament,
@@ -46,7 +45,6 @@ const initialValues = {
 function getSteps() {
     return ['Create basic tournament info', 'Customize tournament type', 'Invite friends'];
 }
-
 
 /**
  * @return {null}
@@ -213,7 +211,7 @@ export default function CreateTournament() {
                     <h1 className="PageTitle">{TournamentsCreate.TITLE}</h1>
                     <h5 className="PageSubtitle">{TournamentsCreate.CREATED_SUBTITLE}</h5>
                 </article>
-                <CopyToClipboard inputText={inviteUrl} />
+                <CopyToClipboard inputText={inviteUrl}/>
             </>
         )
     }

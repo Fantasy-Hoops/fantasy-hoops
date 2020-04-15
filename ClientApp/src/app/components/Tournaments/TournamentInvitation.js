@@ -76,7 +76,7 @@ export function TournamentInvitation(props) {
             </Helmet>
             <article className="PageIntro">
                 <h1 className="PageTitle">{TournamentsInvitations.SINGLE_INVITATION_TITLE}</h1>
-                <h5 className="PageSubtitle">{`User ${0} invited you to join the tournament.`}</h5>
+                <h5 className="PageSubtitle">{`User ${tournament.creator ? tournament.creator.username : ''} invited you to join the tournament.`}</h5>
             </article>
             {!_.isEmpty(tournament) && (
                 <TournamentListCard

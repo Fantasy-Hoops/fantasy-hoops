@@ -49,6 +49,13 @@ export const getTournamentType = (value) => {
 
 export const TOURNAMENT_DATE_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
 
+export const TournamentStatus = {
+    CREATED: 0,
+    ACTIVE: 1,
+    FINISHED: 2,
+    CANCELLED: 3
+};
+
 export const ContestState = {
     FINISHED: -1,
     ACTIVE: 0,

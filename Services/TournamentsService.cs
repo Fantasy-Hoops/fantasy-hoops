@@ -21,6 +21,7 @@ namespace fantasy_hoops.Services
         private readonly INotificationRepository _notificationRepository;
         private readonly ILeaderboardRepository _leaderboardRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IPushService _pushService;
 
         public TournamentsService(ITournamentsRepository tournamentsRepository)
         {
@@ -28,6 +29,7 @@ namespace fantasy_hoops.Services
             _notificationRepository = new NotificationRepository();
             _leaderboardRepository = new LeaderboardRepository();
             _userRepository = new UserRepository();
+            _pushService = new PushService();
         }
 
         public Pair<bool, string> CreateTournament(CreateTournamentViewModel tournamentViewModel)
@@ -123,10 +125,15 @@ namespace fantasy_hoops.Services
         public bool AcceptInvitation(string tournamentId, string userId)
         {
             bool userAdded = _tournamentsRepository.AddUserToTournament(userId, tournamentId);
+            if (!userAdded)
+            {
+                return false;
+            }
+
             bool statusChanged =
                 _tournamentsRepository.ChangeInvitationStatus(tournamentId, userId, RequestStatus.ACCEPTED);
 
-            return userAdded && statusChanged;
+            return statusChanged;
         }
 
         public bool DeclineInvitation(string tournamentId, string userId)
@@ -227,6 +234,17 @@ namespace fantasy_hoops.Services
                             secondTournamentUser.Wins + 1, firstTournamentUser.Losses, firstTournamentUser.Points);
                     }
                 }
+            }
+        }
+
+        public void SendCancelledTournamentNotifications(Tournament tournament)
+        {
+            List<string> tournamentUsersIds = _tournamentsRepository.GetTournamentUsersIds(tournament.Id);
+            foreach (var userId in tournamentUsersIds)
+            {
+                PushNotificationViewModel notification = new PushNotificationViewModel("Fantasy Hoops Notification",
+                    $"Tournament {tournament.Title} was cancelled!");
+                _pushService.Send(userId, notification);
             }
         }
     }

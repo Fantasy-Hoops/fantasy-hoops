@@ -8,7 +8,7 @@ import Standings from "../Standings";
 import Typography from "@material-ui/core/Typography";
 import {useStyles} from "./OneForAllDashboardStyle";
 import {TournamentNotStarted} from "../TournamentNotStarted";
-import {ContestState, getContestState, TOURNAMENT_DATE_FORMAT} from "../../../../utils/helpers";
+import {ContestState, getContestState, TOURNAMENT_DATE_FORMAT, TournamentStatus} from "../../../../utils/helpers";
 import {parse} from "../../../../utils/auth";
 import {TabPanel} from "../TabPanel";
 import {Card as UserScoreCard} from "../../../Leaderboard/Users/Card";
@@ -61,7 +61,7 @@ function parseContestHeading(contest) {
 }
 
 function parseContest(tournament, contest) {
-    if (!tournament.isActive && !tournament.isFinished) {
+    if (tournament.status === TournamentStatus.CREATED) {
         return <TournamentNotStarted contest={contest}/>
     }
 
@@ -80,7 +80,6 @@ function parseContest(tournament, contest) {
 function getPastContest(contest) {
     return (
         <>
-
         </>
     );
 }
@@ -125,7 +124,7 @@ export default function OneForAllDashboard(props) {
         .indexOf(true);
     const [value, setValue] = React.useState(initialTab > -1 ? initialTab : 0);
     const [leaderboardOpen, setLeaderboardOpen] = useState(false);
-    const [leaderboardContest, setLeaderboardContest] = useState(tournament.contests[initialTab]);
+    const [leaderboardContest, setLeaderboardContest] = useState(tournament.contests[value]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -141,7 +140,7 @@ export default function OneForAllDashboard(props) {
     };
 
     function getContestInfo(tournament, contest) {
-        if (!tournament.isActive && !tournament.isFinished) {
+        if (tournament.status === TournamentStatus.CREATED) {
             return null;
         }
 
