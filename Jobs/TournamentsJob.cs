@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Mail;
 using Castle.Core;
 using fantasy_hoops.Database;
+using fantasy_hoops.Dtos;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
@@ -18,7 +19,7 @@ namespace fantasy_hoops.Jobs
         private readonly ITournamentsRepository _tournamentsRepository;
         private readonly GameContext _context;
 
-        public TournamentsJob(DateTime runtimeDate)
+        public TournamentsJob(DateTime runtimeDate = new DateTime())
         {
             _runtimeDate = runtimeDate;
             _tournamentsRepository = new TournamentsRepository();

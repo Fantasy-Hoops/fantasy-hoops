@@ -58,7 +58,7 @@ function parseContest(tournament, contest) {
         );
     }
 
-    const matchup = contest.matchups.filter(matchup => matchup.firstUser.id === user.id || matchup.secondUser.id === user.id)[0];
+    const matchup = contest.matchups.filter(matchup => matchup.firstUser.userId === user.id || matchup.secondUser.userId === user.id)[0];
     switch (getContestState(contest)) {
         case ContestState.FINISHED:
             return getPastContest(contest, matchup);
@@ -73,8 +73,8 @@ function parseContest(tournament, contest) {
 
 function getPastContest(contest, matchup) {
     const winner = matchup.firstUserScore > matchup.secondUserScore
-        ? matchup.firstUser.userName
-        : matchup.secondUser.userName;
+        ? matchup.firstUser.username
+        : matchup.secondUser.username;
     const heading = `Winner: ${winner}`;
     return (
         <>

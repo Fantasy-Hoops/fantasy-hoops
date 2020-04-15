@@ -38,7 +38,7 @@ export default function Standings(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const {standings} = props;
-    const rows = standings.map(user => createData(user.position, user.username, user.avatarURL, user.w, user.l));
+    const rows = standings.map(user => createData(user.position, user.username, user.avatarUrl, user.w, user.l));
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);

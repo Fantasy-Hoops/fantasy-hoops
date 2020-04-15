@@ -168,7 +168,7 @@ namespace fantasy_hoops.Controllers
                 && !Regex.IsMatch(model.NewPassword, @"^.{8,20}$"))
                 return StatusCode(422, "Password must contain 8-20 characters.");
 
-            User user = _userRepository.GetUser(model.Id);
+            User user = _userRepository.GetUserById(model.Id);
             if (user == null)
                 return NotFound("User has not been found!");
 

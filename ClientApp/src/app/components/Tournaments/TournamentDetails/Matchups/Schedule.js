@@ -108,7 +108,7 @@ export default function Schedule(props) {
                                 <StepLabel>
                                     {moment(contest.contestEnd).isBefore()
                                         ? contest.winner
-                                            ? `Winner: ${contest.winner.userName}`
+                                            ? `Winner: ${contest.winner.username}`
                                             : 'Finished'
                                         : moment(contest.contestStart).format(TOURNAMENT_DATE_FORMAT)}
                                 </StepLabel>
@@ -119,12 +119,12 @@ export default function Schedule(props) {
                                                 {contest.matchups.map((matchup, index) => (
                                                     <StyledTableRow key={index}>
                                                         <StyledTableCell align="center">
-                                                            {matchup.firstUser.userName}
+                                                            {matchup.firstUser.username}
                                                         </StyledTableCell>
                                                         <StyledTableCell
                                                             align="center">{getContestState(contest) !== ContestState.NOT_STARTED ? `${matchup.firstUserScore} - ${matchup.secondUserScore}` : 'vs.'}</StyledTableCell>
                                                         <StyledTableCell
-                                                            align="center">{matchup.secondUser.userName}</StyledTableCell>
+                                                            align="center">{matchup.secondUser.username}</StyledTableCell>
                                                     </StyledTableRow>
                                                 ))}
                                             </TableBody>

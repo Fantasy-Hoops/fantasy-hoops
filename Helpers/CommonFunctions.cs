@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using fantasy_hoops.Enums;
 using fantasy_hoops.Jobs;
 
 namespace fantasy_hoops.Helpers
@@ -93,26 +94,26 @@ namespace fantasy_hoops.Helpers
 		}
 
 		// Leaderboards and weekly scores
-		public static DateTime GetDate(string type)
+		public static DateTime GetLeaderboardDate(LeaderboardType type)
 		{
 			DateTime easternDate = UTCToEastern(DateTime.UtcNow);
 			int dayOfWeek = (int)UTCToEastern(DateTime.UtcNow).DayOfWeek;
 			int dayOfMonth = UTCToEastern(DateTime.UtcNow).Day;
-
-			if (type.Equals("weekly"))
+			int dayOffset;
+			
+			switch (type)
 			{
-				int dayOffset = dayOfWeek == 1
+				case LeaderboardType.WEEKLY:
+					dayOffset = dayOfWeek == 1
 						? 7
 						: dayOfWeek == 0 ? 6 : dayOfWeek - 1;
-
-				return easternDate.AddDays(-dayOffset).Date;
+					return easternDate.AddDays(-dayOffset).Date;
+				case LeaderboardType.MONTHLY:
+					dayOffset = dayOfMonth == 1 ? DaysInMonth() : dayOfMonth - 1;
+					return easternDate.AddDays(-dayOffset).Date;
+				default:
+					return UTCToEastern(NextGameJob.PREVIOUS_GAME).Date;
 			}
-			if (type.Equals("monthly"))
-			{
-				int dayOffset = dayOfMonth == 1 ? DaysInMonth() : dayOfMonth - 1;
-				return easternDate.AddDays(-dayOffset).Date;
-			}
-			return UTCToEastern(NextGameJob.PREVIOUS_GAME).Date;
 		}
 
 		public static string GetSeasonYear()
@@ -177,6 +178,21 @@ namespace fantasy_hoops.Helpers
         {
 	        DateTime lastDayOfWeekDate = FirstDayOfWeek(date).AddDays(6);
 	        return lastDayOfWeekDate;
+        }
+
+        public static LeaderboardType ParseLeaderboardType(string type)
+        {
+	        switch (type)
+	        {
+		        case "daily":
+			        return LeaderboardType.DAILY;
+		        case "weekly":
+			        return LeaderboardType.WEEKLY;
+		        case "monthly":
+			        return LeaderboardType.MONTHLY;
+		        default:
+			        return LeaderboardType.WEEKLY;
+	        }
         }
     }
 }

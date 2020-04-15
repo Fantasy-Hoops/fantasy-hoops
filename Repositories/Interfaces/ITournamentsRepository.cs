@@ -30,6 +30,7 @@ namespace fantasy_hoops.Repositories.Interfaces
         bool IsUserInTournament(User user, Tournament tournament);
         List<Tournament> GetTournamentsForStartDate(DateTime startDate);
         List<String> GetTournamentUsersIds(string tournamentId);
+        TournamentUser GetTournamentUser(string tournamentId, string userId);
         void AddCreatorToTournament(Tournament tournament);
         bool AddUserToTournament(string userId, string tournamentId);
         List<Contest> GetTournamentContests(string tournamentId);
@@ -37,5 +38,8 @@ namespace fantasy_hoops.Repositories.Interfaces
         bool DeleteTournament(string tournamentId);
         List<TournamentDto> GetTournamentInvitations(string userId);
         bool ChangeInvitationStatus(string tournamentId, string userId, RequestStatus status = RequestStatus.NO_REQUEST);
+        User SetTournamentUserEliminated(TournamentUserDto tournamentUser);
+        Contest GetContestById(int contestId);
+        void UpdateTournamentUserStats(TournamentUser tournamentUser, int wins, int losses, int points);
     }
 }

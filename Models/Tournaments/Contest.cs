@@ -17,6 +17,8 @@ namespace fantasy_hoops.Models.Tournaments
         public bool IsFinished { get; set; }
         public string WinnerId { get; set; }
         public User Winner { get; set; }
+        public string DroppedUserId { get; set; }
+        public User DroppedUser { get; set; }
         public List<MatchupPair> Matchups { get; set; }
     }
 }

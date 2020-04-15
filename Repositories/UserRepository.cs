@@ -16,7 +16,7 @@ namespace fantasy_hoops.Repositories
         private const string DEFAULT_TEAM_ABV = "SEA";
         private const string DEFAULT_COLOR = "#2C3E50";
         
-        private readonly DateTime _date = CommonFunctions.GetDate("weekly");
+        private readonly DateTime _date = CommonFunctions.GetLeaderboardDate(LeaderboardType.WEEKLY);
         private readonly GameContext _context;
 
         public UserRepository()
@@ -54,10 +54,9 @@ namespace fantasy_hoops.Repositories
                 .First();
         }
 
-        public User GetUser(string id)
+        public User GetUserById(string id)
         {
-            return _context.Users
-                .FirstOrDefault(x => x.Id.Equals(id));
+            return _context.Users.Find(id);
         }
 
         public User GetUserByName(string username)

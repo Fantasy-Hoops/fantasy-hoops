@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core;
+using fantasy_hoops.Dtos;
 using fantasy_hoops.Enums;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
@@ -17,15 +18,15 @@ namespace fantasy_hoops.Services
     public class TournamentsService : ITournamentsService
     {
         private readonly ITournamentsRepository _tournamentsRepository;
-        private readonly IPushService _pushService;
         private readonly INotificationRepository _notificationRepository;
+        private readonly ILeaderboardRepository _leaderboardRepository;
         private readonly IUserRepository _userRepository;
 
         public TournamentsService(ITournamentsRepository tournamentsRepository)
         {
             _tournamentsRepository = tournamentsRepository;
-            _pushService = new PushService();
             _notificationRepository = new NotificationRepository();
+            _leaderboardRepository = new LeaderboardRepository();
             _userRepository = new UserRepository();
         }
 
@@ -89,7 +90,7 @@ namespace fantasy_hoops.Services
             List<Contest> contests = new List<Contest>();
             List<DateTime> contestStartDates = _tournamentsRepository.GetUpcomingStartDates()
                 .Where(date => date >= model.StartDate).ToList();
-            for (int i = 0; i < contestStartDates.Count; i++)
+            for (int i = 0; i < contestStartDates.Count && i < model.Contests; i++)
             {
                 contests.Add(new Contest
                 {
@@ -99,6 +100,7 @@ namespace fantasy_hoops.Services
                     Matchups = new List<MatchupPair>()
                 });
             }
+
             DateTime endDate = contests
                 .Select(contest => contest.ContestEnd)
                 .OrderByDescending(date => date)
@@ -121,7 +123,8 @@ namespace fantasy_hoops.Services
         public bool AcceptInvitation(string tournamentId, string userId)
         {
             bool userAdded = _tournamentsRepository.AddUserToTournament(userId, tournamentId);
-            bool statusChanged = _tournamentsRepository.ChangeInvitationStatus(tournamentId, userId, RequestStatus.ACCEPTED);
+            bool statusChanged =
+                _tournamentsRepository.ChangeInvitationStatus(tournamentId, userId, RequestStatus.ACCEPTED);
 
             return userAdded && statusChanged;
         }
@@ -135,6 +138,96 @@ namespace fantasy_hoops.Services
         {
             // TODO
             return null;
+        }
+
+        public User GetContestWinner(TournamentDetailsDto tournamentDetails, ContestDto contest)
+        {
+            UserLeaderboardRecordDto contestWinner = _leaderboardRepository.GetUserLeaderboard(0,
+                    Int32.MaxValue, LeaderboardType.WEEKLY, null,
+                    CommonFunctions.GetIso8601WeekOfYear(contest.ContestStart),
+                    contest.ContestStart.Year)
+                .Where(user => tournamentDetails.Standings
+                    .Select(tournamentUser => tournamentUser.UserId)
+                    .Contains(user.UserId)
+                )
+                .OrderByDescending(user => user.FP)
+                .FirstOrDefault();
+
+            if (contestWinner == null)
+            {
+                return null;
+            }
+
+            return _userRepository.GetUserById(contestWinner.UserId);
+        }
+
+        public User EliminateUser(Tournament dbTournament, TournamentDetailsDto tournamentDetails, ContestDto contest)
+        {
+            if (dbTournament.DroppedContests == 0)
+            {
+                return null;
+            }
+
+            int tournamentContestCount = tournamentDetails.Contests.Count;
+            int tournamentDroppedContests = dbTournament.DroppedContests;
+            int currentContestNumber = contest.ContestNumber;
+            int firstDroppedContest = tournamentContestCount - tournamentDroppedContests + 1;
+
+            List<TournamentUserDto> tournamentStandings = tournamentDetails.Standings
+                .OrderBy(user => user.Points)
+                .ToList();
+            if (currentContestNumber >= firstDroppedContest)
+            {
+                int droppedUserIndex = currentContestNumber - firstDroppedContest;
+                TournamentUserDto eliminatedUser = tournamentStandings[droppedUserIndex];
+                return _tournamentsRepository.SetTournamentUserEliminated(eliminatedUser);
+            }
+
+            return null;
+        }
+
+        public void UpdateStandings(TournamentDetailsDto tournamentDetails, ContestDto contest)
+        {
+            List<MatchupPairDto> orderedContestUsers = contest.Matchups
+                .OrderByDescending(matchup => matchup.FirstUserScore)
+                .ToList();
+
+            if ((Tournament.TournamentType) tournamentDetails.Type == Tournament.TournamentType.ONE_FOR_ALL)
+            {
+                for (int i = orderedContestUsers.Count - 1; i >= 0; i--)
+                {
+                    TournamentUser tournamentUser = _tournamentsRepository
+                        .GetTournamentUser(tournamentDetails.Id, orderedContestUsers[i].FirstUser.UserId);
+                    _tournamentsRepository.UpdateTournamentUserStats(tournamentUser, tournamentUser.Wins,
+                        tournamentUser.Losses, tournamentUser.Points + i);
+                }
+            }
+
+            if ((Tournament.TournamentType) tournamentDetails.Type == Tournament.TournamentType.MATCHUPS)
+            {
+                foreach (var matchup in orderedContestUsers)
+                {
+                    TournamentUser firstTournamentUser = _tournamentsRepository
+                        .GetTournamentUser(tournamentDetails.Id, matchup.FirstUser.UserId);
+                    TournamentUser secondTournamentUser = _tournamentsRepository
+                        .GetTournamentUser(tournamentDetails.Id, matchup.SecondUser.UserId);
+
+                    if (matchup.FirstUserScore > matchup.SecondUserScore)
+                    {
+                        _tournamentsRepository.UpdateTournamentUserStats(firstTournamentUser,
+                            firstTournamentUser.Wins + 1, firstTournamentUser.Losses, firstTournamentUser.Points);
+                        _tournamentsRepository.UpdateTournamentUserStats(secondTournamentUser,
+                            secondTournamentUser.Wins, firstTournamentUser.Losses + 1, firstTournamentUser.Points);
+                    }
+                    else
+                    {
+                        _tournamentsRepository.UpdateTournamentUserStats(firstTournamentUser, firstTournamentUser.Wins,
+                            firstTournamentUser.Losses + 1, firstTournamentUser.Points);
+                        _tournamentsRepository.UpdateTournamentUserStats(secondTournamentUser,
+                            secondTournamentUser.Wins + 1, firstTournamentUser.Losses, firstTournamentUser.Points);
+                    }
+                }
+            }
         }
     }
 }

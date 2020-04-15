@@ -100,9 +100,9 @@ namespace fantasy_hoops.Jobs
                 _context.GameScoreNotifications.Add(gs);
             }
 
-            UpdateActiveTournamentsScores(allLineups);
-
             _context.SaveChanges();
+
+            UpdateActiveTournamentsScores(allLineups);
             SendPushNotifications().Wait();
 
             Task.Run(() => new BestLineupsJob().Execute());
@@ -124,12 +124,12 @@ namespace fantasy_hoops.Jobs
                 foreach (var matchup in contest.Matchups)
                 {
                     double? firstUserScore =
-                        allLineups.FirstOrDefault(lineup => lineup.UserID.Equals(matchup.FirstUser.Id))?.FP;
+                        allLineups.FirstOrDefault(lineup => lineup.UserID.Equals(matchup.FirstUser.UserId))?.FP;
                     double? secondUserScore =
-                        allLineups.FirstOrDefault(lineup => lineup.UserID.Equals(matchup.SecondUser.Id))?.FP;
+                        allLineups.FirstOrDefault(lineup => lineup.UserID.Equals(matchup.SecondUser.UserId))?.FP;
 
                     MatchupPair matchupPair = _context.TournamentMatchups
-                        .Find(dbTournament.Id, matchup.FirstUser.Id, matchup.SecondUser.Id);
+                        .Find(dbTournament.Id, matchup.FirstUser.UserId, matchup.SecondUser.UserId);
                     if (matchupPair == null)
                     {
                         continue;
@@ -137,36 +137,27 @@ namespace fantasy_hoops.Jobs
 
                     matchupPair.FirstUserScore += firstUserScore ?? 0.0;
                     matchupPair.SecondUserScore += secondUserScore ?? 0.0;
+                    _context.SaveChanges();
                 }
 
-                if ((Tournament.TournamentType) dbTournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
-                {
-                    if (isContestFinished)
-                    {
-                        int tournamentContestCount = tournamentDetails.Contests.Count;
-                        int tournamentDroppedContests = dbTournament.DroppedContests;
-                        int currentContestNumber = contest.ContestNumber;
-                        int firstDroppedContest = tournamentContestCount - tournamentDroppedContests + 1;
-
-                        if (currentContestNumber >= firstDroppedContest)
-                        {
-                            List<TournamentUserDto> eliminatedUsers = tournamentDetails.Standings
-                                .OrderBy(user => user.W - user.L)
-                                .Take(tournamentContestCount - currentContestNumber)
-                                .ToList();
-
-                            eliminatedUsers.ForEach(user =>
-                            {
-                                _context.TournamentUsers.Find(user.UserId, dbTournament.Id).IsEliminated =
-                                    true;
-                            });
-                        }
-                    }
-                }
 
                 if (isContestFinished)
                 {
-                    _context.Contests.Find(contest.Id).IsFinished = true;
+                    Contest dbContest = _context.Contests.Find(contest.Id);
+                    if (dbContest == null)
+                    {
+                        continue;
+                    }
+                    
+                    _tournamentsService.UpdateStandings(tournamentDetails, contest);
+                    if ((Tournament.TournamentType) dbTournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
+                    {
+                        dbContest.DroppedUserId =
+                            _tournamentsService.EliminateUser(dbTournament, tournamentDetails, contest)?.Id;
+                    }
+
+                    dbContest.Winner = _tournamentsService.GetContestWinner(tournamentDetails, contest);
+                    dbContest.IsFinished = true;
                 }
 
                 if (isTournamentFinished)
@@ -175,9 +166,9 @@ namespace fantasy_hoops.Jobs
                     dbTournament.IsFinished = true;
                     dbTournament.Winner = _tournamentsService.GetTournamentWinner(dbTournament.Id);
                 }
-            }
 
-            _context.SaveChanges();
+                _context.SaveChanges();
+            }
         }
     }
 }

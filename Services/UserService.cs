@@ -73,7 +73,7 @@ namespace fantasy_hoops.Services
 
         public async Task<string> RequestTokenById(string id)
         {
-            string userName = _userRepository.GetUser(id).UserName;
+            string userName = _userRepository.GetUserById(id).UserName;
             return await RequestToken(userName);
         }
 

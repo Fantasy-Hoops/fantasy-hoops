@@ -23,10 +23,10 @@ namespace fantasy_hoops.Repositories
             _context = new GameContext();
         }
 
-        public List<PlayerLeaderboardRecordDto> GetPlayerLeaderboard(int from, int limit, string type)
+        public List<PlayerLeaderboardRecordDto> GetPlayerLeaderboard(int from, int limit, LeaderboardType type)
         {
-            DateTime date = CommonFunctions.GetDate(type);
-            if (type.Equals("daily"))
+            DateTime date = CommonFunctions.GetLeaderboardDate(type);
+            if (type == LeaderboardType.DAILY)
             {
                 date = _context.Stats.Max(stats => stats.Date);
             }
@@ -54,7 +54,7 @@ namespace fantasy_hoops.Repositories
                 .ToList();
         }
 
-        public List<UserLeaderboardRecordDto> GetUserLeaderboard(int from, int limit, string type, string date,
+        public List<UserLeaderboardRecordDto> GetUserLeaderboard(int from, int limit, LeaderboardType type, string date,
             int weekNumber, int year)
         {
             DateTime previousECT = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME);
@@ -66,7 +66,7 @@ namespace fantasy_hoops.Repositories
                 : DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
             switch (type)
             {
-                case "daily":
+                case LeaderboardType.DAILY:
                     var dailyStats = _context.Stats.Where(stats => stats.Date.Equals(dateTime.Date));
                     return _context.UserLineups
                         .Where(lineup => lineup.IsCalculated && lineup.Date.Equals(dateTime.Date))
@@ -102,7 +102,7 @@ namespace fantasy_hoops.Repositories
                         .Skip(from)
                         .Take(limit)
                         .ToList();
-                case "weekly":
+                case LeaderboardType.WEEKLY:
                     int week = weekNumber != -1
                         ? weekNumber
                         : CommonFunctions.GetIso8601WeekOfYear(
@@ -131,11 +131,11 @@ namespace fantasy_hoops.Repositories
                         .Skip(from)
                         .Take(limit)
                         .ToList();
-                case "monthly":
+                case LeaderboardType.MONTHLY:
                     return _context.UserLineups
                         .Include(lineup => lineup.User)
                         .AsEnumerable()
-                        .Where(lineup => lineup.IsCalculated && lineup.Date >= CommonFunctions.GetDate(type))
+                        .Where(lineup => lineup.IsCalculated && lineup.Date >= CommonFunctions.GetLeaderboardDate(type))
                         .GroupBy(lineup => lineup.UserID)
                         .Select(lineup => new UserLeaderboardRecordDto
                         {
@@ -153,7 +153,7 @@ namespace fantasy_hoops.Repositories
             }
         }
 
-        public List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit, string type,
+        public List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit, LeaderboardType type,
             string date, int weekNumber, int year)
         {
             DateTime previousECT = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME);
@@ -179,7 +179,7 @@ namespace fantasy_hoops.Repositories
                 .Concat(loggedInUser);
             switch (type)
             {
-                case "daily":
+                case LeaderboardType.DAILY:
                     var dailyStats = _context.Stats.Where(stats => stats.Date.Equals(dateTime.Date));
 
                     return friendsOnly
@@ -220,7 +220,7 @@ namespace fantasy_hoops.Repositories
                         .Skip(from)
                         .Take(limit)
                         .ToList();
-                case "weekly":
+                case LeaderboardType.WEEKLY:
                     int week = weekNumber != -1
                         ? weekNumber
                         : CommonFunctions.GetIso8601WeekOfYear(CommonFunctions.UTCToEastern(DateTime.UtcNow));
@@ -254,10 +254,10 @@ namespace fantasy_hoops.Repositories
                             Username = user.UserName,
                             AvatarUrl = user.AvatarURL,
                             FP = Math.Round(user.UserLineups
-                                .Where(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
+                                .Where(lineup => lineup.Date >= CommonFunctions.GetLeaderboardDate(type) && lineup.IsCalculated)
                                 .Select(lineup => lineup.FP).Sum(), 1),
                             GamesPlayed = user.UserLineups
-                                .Count(lineup => lineup.Date >= CommonFunctions.GetDate(type) && lineup.IsCalculated)
+                                .Count(lineup => lineup.Date >= CommonFunctions.GetLeaderboardDate(type) && lineup.IsCalculated)
                         })
                         .Where(user => user.GamesPlayed > 0)
                         .OrderByDescending(lineup => lineup.FP)

@@ -11,7 +11,7 @@ namespace fantasy_hoops.Dtos
         public string TournamentId { get; set; }
         public DateTime ContestStart { get; set; }
         public DateTime ContestEnd { get; set; }
-        public UserDto Winner { get; set; }
+        public TournamentUserDto Winner { get; set; }
         public bool IsFinished { get; set; }
         public List<MatchupPairDto> Matchups { get; set; }
     }

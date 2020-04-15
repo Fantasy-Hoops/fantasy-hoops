@@ -46,7 +46,7 @@ namespace fantasy_hoops.Repositories
             {
                 return Mocks.Tournaments.StartDates;
             }
-            
+
             return _context.Games
                 .AsEnumerable()
                 .Where(game => game.Date.HasValue && game.Date.Value.DayOfWeek != DayOfWeek.Sunday)
@@ -64,7 +64,7 @@ namespace fantasy_hoops.Repositories
             {
                 return Mocks.Tournaments.StartDates.Max();
             }
-                
+
             return _context.Games
                 .Where(game => game.Date.HasValue)
                 .Max(tournament => tournament.Date.Value);
@@ -107,28 +107,29 @@ namespace fantasy_hoops.Repositories
                     ContestStart = contest.ContestStart,
                     ContestEnd = contest.ContestEnd,
                     Winner = contest.Winner != null
-                        ? new UserDto
+                        ? new TournamentUserDto
                         {
-                            Id = contest.WinnerId,
-                            UserName = contest.Winner.UserName,
-                            AvatarUrl = contest.Winner.AvatarURL
+                            UserId = contest.WinnerId,
+                            Username = contest.Winner.UserName,
+                            AvatarUrl = contest.Winner.AvatarURL,
+                            TournamentId = contest.TournamentId,
                         }
                         : null,
                     IsFinished = contest.IsFinished,
                     Matchups = contest.Matchups
                         .Select(pair => new MatchupPairDto
                         {
-                            FirstUser = new UserDto
+                            FirstUser = new TournamentUserDto
                             {
-                                Id = pair.FirstUserID,
-                                UserName = pair.FirstUser.UserName,
-                                AvatarUrl = pair.FirstUser.AvatarURL
+                                UserId = pair.FirstUserID,
+                                Username = pair.FirstUser.UserName,
+                                AvatarUrl = pair.FirstUser.AvatarURL,
                             },
                             FirstUserScore = pair.FirstUserScore,
-                            SecondUser = new UserDto
+                            SecondUser = new TournamentUserDto
                             {
-                                Id = pair.SecondUserID,
-                                UserName = pair.SecondUser.UserName,
+                                UserId = pair.SecondUserID,
+                                Username = pair.SecondUser.UserName,
                                 AvatarUrl = pair.SecondUser.AvatarURL
                             },
                             SecondUserScore = pair.SecondUserScore
@@ -141,29 +142,35 @@ namespace fantasy_hoops.Repositories
                 .Include(tournamentUser => tournamentUser.User)
                 .Select(tournamentUser => new TournamentUserDto
                 {
+                    TournamentId = tournamentUser.TournamentID,
                     UserId = tournamentUser.UserID,
                     Username = tournamentUser.User.UserName,
-                    AvatarURL = tournamentUser.User.AvatarURL,
+                    AvatarUrl = tournamentUser.User.AvatarURL,
                     W = tournamentUser.Wins,
-                    L = tournamentUser.Losses
+                    L = tournamentUser.Losses,
+                    Points = tournamentUser.Points
                 }).ToList()
                 .Select((tournamentUser, index) => new KeyValuePair<int, TournamentUserDto>(index, tournamentUser))
-                .OrderBy(record => record.Value.W - record.Value.L)
+                .OrderBy(record => (Tournament.TournamentType)tournament.Type == Tournament.TournamentType.MATCHUPS
+                    ? record.Value.W - record.Value.L
+                    : record.Value.Points)
                 .Select(record => new TournamentUserDto
                 {
+                    TournamentId = record.Value.TournamentId,
                     UserId = record.Value.UserId,
                     Position = record.Key + 1,
                     Username = record.Value.Username,
-                    AvatarURL = record.Value.AvatarURL,
+                    AvatarUrl = record.Value.AvatarUrl,
                     W = record.Value.W,
-                    L = record.Value.L
+                    L = record.Value.L,
+                    Points = record.Value.Points
                 })
                 .OrderBy(tournamentUser => tournamentUser.Position)
                 .ToList();
             ContestDto nextContest = tournamentDetails.Contests
                 .OrderBy(contest => contest.ContestStart)
                 .FirstOrDefault(contest => contest.ContestStart > CommonFunctions.EctNow);
-            
+
             if (userId != null)
             {
                 tournamentDetails.IsCreator =
@@ -172,19 +179,19 @@ namespace fantasy_hoops.Repositories
                 tournamentDetails.AcceptedInvite =
                     IsUserInvited(userId, tournamentId) && IsUserInTournament(userId, tournamentId);
             }
-            
+
             MatchupPairDto userMatchup = nextContest?.Matchups
                 .FirstOrDefault(contestPair =>
-                    contestPair.FirstUser.Id.Equals(userId) || contestPair.SecondUser.Id.Equals(userId));
+                    contestPair.FirstUser.UserId.Equals(userId) || contestPair.SecondUser.UserId.Equals(userId));
             if (userMatchup != null && userId != null)
             {
-                if (userId.Equals(userMatchup.FirstUser.Id))
+                if (userId.Equals(userMatchup.FirstUser.UserId))
                 {
-                    tournamentDetails.NextOpponent = userMatchup.SecondUser.UserName;
+                    tournamentDetails.NextOpponent = userMatchup.SecondUser.Username;
                 }
-                else if (userId.Equals(userMatchup.SecondUser.Id))
+                else if (userId.Equals(userMatchup.SecondUser.UserId))
                 {
-                    tournamentDetails.NextOpponent = userMatchup.FirstUser.UserName;
+                    tournamentDetails.NextOpponent = userMatchup.FirstUser.Username;
                 }
             }
 
@@ -307,8 +314,8 @@ namespace fantasy_hoops.Repositories
                 .Where(contest => !contest.IsFinished
                                   && contest.ContestStart < CommonFunctions.EctNow
                                   && contest.ContestEnd > CommonFunctions.EctNow)
-                .Include(contest => contest.Winner)
                 .Include(contest => contest.Matchups)
+                .Include(contest => contest.Winner)
                 .Select(contest => new ContestDto
                 {
                     Id = contest.Id,
@@ -317,25 +324,25 @@ namespace fantasy_hoops.Repositories
                     ContestStart = contest.ContestStart,
                     ContestEnd = contest.ContestEnd,
                     IsFinished = contest.IsFinished,
-                    Winner = new UserDto
+                    Winner = new TournamentUserDto
                     {
-                        Id = contest.Winner.Id,
-                        UserName = contest.Winner.UserName,
+                        UserId = contest.WinnerId,
+                        Username = contest.Winner.UserName,
                         AvatarUrl = contest.Winner.AvatarURL
                     },
                     Matchups = contest.Matchups.Select(contestPair => new MatchupPairDto
                     {
-                        FirstUser = new UserDto
+                        FirstUser = new TournamentUserDto
                         {
-                            Id = contestPair.FirstUserID,
-                            UserName = contestPair.FirstUser.UserName,
+                            UserId = contestPair.FirstUserID,
+                            Username = contestPair.FirstUser.UserName,
                             AvatarUrl = contestPair.FirstUser.AvatarURL
                         },
                         FirstUserScore = contestPair.FirstUserScore,
-                        SecondUser = new UserDto
+                        SecondUser = new TournamentUserDto
                         {
-                            Id = contestPair.SecondUserID,
-                            UserName = contestPair.SecondUser.UserName,
+                            UserId = contestPair.SecondUserID,
+                            Username = contestPair.SecondUser.UserName,
                             AvatarUrl = contestPair.SecondUser.AvatarURL
                         },
                         SecondUserScore = contestPair.SecondUserScore
@@ -379,7 +386,8 @@ namespace fantasy_hoops.Repositories
                 .ToList();
         }
 
-        public bool ChangeInvitationStatus(string tournamentId, string userId, RequestStatus status = RequestStatus.NO_REQUEST)
+        public bool ChangeInvitationStatus(string tournamentId, string userId,
+            RequestStatus status = RequestStatus.NO_REQUEST)
         {
             TournamentInvite invitation = _context.TournamentInvites
                 .FirstOrDefault(invite =>
@@ -397,6 +405,38 @@ namespace fantasy_hoops.Repositories
 
             invitation.Status = status;
             return _context.SaveChanges() != 0;
+        }
+
+        public User SetTournamentUserEliminated(TournamentUserDto tournamentUser)
+        {
+            TournamentUser dbTournamentUser = GetTournamentUser(tournamentUser.TournamentId, tournamentUser.UserId);
+            if (dbTournamentUser == null)
+            {
+                return null;
+            }
+            
+            dbTournamentUser.IsEliminated = true;
+            _context.SaveChanges();
+            return _context.Users.Find(dbTournamentUser.UserID);
+        }
+
+        public Contest GetContestById(int contestId)
+        {
+            return _context.Contests.Find(contestId);
+        }
+
+        public void UpdateTournamentUserStats(TournamentUser tournamentUser, int wins, int losses, int points)
+        {
+            if (tournamentUser == null)
+            {
+                return;
+            }
+
+            tournamentUser.Wins = wins;
+            tournamentUser.Losses = losses;
+            tournamentUser.Points = points;
+
+            _context.SaveChanges();
         }
 
         private bool DeleteTournamentResources(Tournament tournamentToDelete)
@@ -429,6 +469,11 @@ namespace fantasy_hoops.Repositories
                 .Where(tournamentUser => tournamentUser.TournamentID.Equals(tournamentId))
                 .Select(tournamentUser => tournamentUser.UserID)
                 .ToList();
+        }
+
+        public TournamentUser GetTournamentUser(string tournamentId, string userId)
+        {
+            return _context.TournamentUsers.Find(tournamentId, userId);
         }
 
         public void AddCreatorToTournament(Tournament tournament)
