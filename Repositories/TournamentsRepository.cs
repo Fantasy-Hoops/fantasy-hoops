@@ -133,7 +133,9 @@ namespace fantasy_hoops.Repositories
                                 AvatarUrl = pair.SecondUser.AvatarURL
                             },
                             SecondUserScore = pair.SecondUserScore
-                        }).ToList()
+                        })
+                        .OrderByDescending(matchup => matchup.FirstUserScore)
+                        .ToList()
                 })
                 .OrderBy(contest => contest.ContestStart)
                 .ToList();
@@ -149,11 +151,12 @@ namespace fantasy_hoops.Repositories
                     W = tournamentUser.Wins,
                     L = tournamentUser.Losses,
                     Points = tournamentUser.Points
-                }).ToList()
+                }).OrderByDescending(tournamentUser => (Tournament.TournamentType)tournament.Type == Tournament.TournamentType.MATCHUPS
+                    ? tournamentUser.W -tournamentUser.L
+                    : tournamentUser.Points)
+                .ToList()
                 .Select((tournamentUser, index) => new KeyValuePair<int, TournamentUserDto>(index, tournamentUser))
-                .OrderBy(record => (Tournament.TournamentType)tournament.Type == Tournament.TournamentType.MATCHUPS
-                    ? record.Value.W - record.Value.L
-                    : record.Value.Points)
+                
                 .Select(record => new TournamentUserDto
                 {
                     TournamentId = record.Value.TournamentId,

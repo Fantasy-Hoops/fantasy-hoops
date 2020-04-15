@@ -12,7 +12,19 @@ import {useStyles} from "./StandingsStyle";
 
 import defaultPhoto from '../../../../content/images/default.png';
 
-const columns = [
+const oneForAllColumns = [
+    {id: 'pos', label: '#', minWidth: 10},
+    {id: 'username', label: 'User', minWidth: 100},
+    {
+        id: 'points',
+        label: 'Points',
+        maxWidth: 50,
+        format: (value) => value.toLocaleString(),
+        align: 'right'
+    }
+];
+
+const matchupsColumns = [
     {id: 'pos', label: '#', minWidth: 10},
     {id: 'username', label: 'User', minWidth: 100},
     {
@@ -20,25 +32,28 @@ const columns = [
         label: 'W',
         minWidth: 50,
         format: (value) => value.toLocaleString(),
+        align: 'right'
     },
     {
         id: 'l',
         label: 'L',
         minWidth: 50,
         format: (value) => value.toLocaleString(),
-    },
+        align: 'right'
+    }
 ];
 
-function createData(pos, username, avatarUrl, w, l) {
-    return {pos, username, avatarUrl, w, l};
+function createData(pos, username, avatarUrl, w, l, points) {
+    return {pos, username, avatarUrl, w, l, points};
 }
 
 export default function Standings(props) {
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-    const {standings} = props;
-    const rows = standings.map(user => createData(user.position, user.username, user.avatarUrl, user.w, user.l));
+    const {tournament} = props;
+    const standings = tournament.standings;
+    const rows = standings.map(user => createData(user.position, user.username, user.avatarUrl, user.w, user.l, user.points));
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -49,6 +64,9 @@ export default function Standings(props) {
         setPage(0);
     };
 
+    const columns = tournament.type === 0
+        ? oneForAllColumns
+        : matchupsColumns;
     return (
         <Paper className={classes.root}>
             <TableContainer className={classes.container}>
@@ -72,22 +90,30 @@ export default function Standings(props) {
                                 <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                                     {columns.map((column, index) => {
                                         const value = row[column.id];
+                                        const columnValue = column.format && typeof value === 'number'
+                                            ? <span>{column.format(value)}</span>
+                                            : <span
+                                                className={index === 1 ? classes.cellValue : ''}>{value}</span>;
+                                        const avatarUrl = `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${row['avatarUrl']}.png`;
                                         return (
                                             <TableCell className={classes.cell} key={column.id} align={column.align}>
-                                                <span className={classes.flexRow}>
                                                 {
-                                                    index === 1 &&
-                                                    <Avatar
-                                                        className={classes.avatar}
-                                                        src={`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${row['avatarUrl']}.png`}
-                                                    >
-                                                        <img className={classes.avatar} alt="" src={defaultPhoto}/>
-                                                    </Avatar>
+                                                    index === 1
+                                                        ? (
+                                                            <span className={classes.flexRow}>
+                                                                <Avatar
+                                                                    className={classes.avatar}
+                                                                    alt=""
+                                                                    src={avatarUrl}
+                                                                >
+                                                                    <img className={classes.avatar} alt=""
+                                                                         src={defaultPhoto}/>
+                                                                </Avatar>
+                                                                {columnValue} 
+                                                            </span>
+                                                        )
+                                                        : columnValue
                                                 }
-                                                    {column.format && typeof value === 'number'
-                                                        ? <span>{column.format(value)}</span>
-                                                        : <span className={index === 1 ? classes.cellValue : ''}>{value}</span>}
-                                                </span>
                                             </TableCell>
                                         );
                                     })}

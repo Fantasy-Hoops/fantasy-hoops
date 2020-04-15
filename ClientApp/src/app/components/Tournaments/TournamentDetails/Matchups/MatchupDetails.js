@@ -29,7 +29,7 @@ export function MatchupDetails(props) {
             <div className="MatchupDetails">
                 <Typography className="MatchupDetails__Item"
                             variant="subtitle2">
-                    {matchup.firstUser.userName}
+                    {matchup.firstUser.username}
                 </Typography>
                 <Avatar
                     className={classes.avatar}
@@ -51,7 +51,7 @@ export function MatchupDetails(props) {
                 </Avatar>
                 <Typography className="MatchupDetails__Item"
                             variant="subtitle2">
-                    {matchup.secondUser.userName}
+                    {matchup.secondUser.username}
                 </Typography>
             </div>
         </>

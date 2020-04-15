@@ -1,7 +1,5 @@
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
 import {useStyles} from "./MatchupsDashboardStyle";
 import Paper from "@material-ui/core/Paper";
 import {Button} from "@material-ui/core";
@@ -18,44 +16,14 @@ import {MatchupDetails} from "./MatchupDetails";
 import './MatchupsDashboard.css';
 import Routes from "../../../../routes/routes";
 import {ContestsTabs} from "../ContestsTabs";
+import {TournamentNotStarted} from "../TournamentNotStarted";
+import {TabPanel} from "../TabPanel";
 
 const user = parse();
 
-function TabPanel(props) {
-    const {children, value, index, ...other} = props;
-
-    return (
-        <Typography
-            component="div"
-            role="tabpanel"
-            hidden={value !== index}
-            id={`scrollable-force-tabpanel-${index}`}
-            aria-labelledby={`scrollable-force-tab-${index}`}
-            {...other}
-        >
-            {value === index && <Box p={3}>{children}</Box>}
-        </Typography>
-    );
-}
-
-TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired,
-};
-
 function parseContest(tournament, contest) {
     if (!tournament.isActive) {
-        return (
-            <>
-                <Typography variant="h4" className="MatchupDetails__Heading">
-                    Tournament hasn't started yet
-                </Typography>
-                <Typography variant="subtitle1" className="MatchupDetails__Heading">
-                    Contest starts {moment(contest.contestStart).format(TOURNAMENT_DATE_FORMAT)}
-                </Typography>
-            </>
-        );
+        return <TournamentNotStarted contest={contest} />
     }
 
     const matchup = contest.matchups.filter(matchup => matchup.firstUser.userId === user.id || matchup.secondUser.userId === user.id)[0];
@@ -185,7 +153,7 @@ export default function MatchupsDashboard(props) {
                             Standings
                         </Typography>
                     </Paper>
-                    <Standings standings={tournament.standings}/>
+                    <Standings tournament={tournament}/>
                 </div>
             </div>
             {tournament.isActive && <Schedule contests={tournament.contests} handleScheduleOpen={handleScheduleOpen}

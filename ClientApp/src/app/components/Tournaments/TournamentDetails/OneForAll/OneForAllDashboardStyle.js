@@ -12,5 +12,5 @@ export const useStyles = makeStyles(theme => ({
     },
     standingsLineHeight: {
         lineHeight: '6rem'
-    },
+    }
 }));
