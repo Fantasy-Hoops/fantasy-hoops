@@ -71,10 +71,7 @@ namespace fantasy_hoops
                 };
             });
 
-            DotEnv.Config(true, ".env");
 #if DEBUG
-            DotEnv.Config(false, ".env.development");
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
