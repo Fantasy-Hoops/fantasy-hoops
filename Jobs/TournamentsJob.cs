@@ -107,9 +107,8 @@ namespace fantasy_hoops.Jobs
                             SecondUserID = usersPair.Item2
                         });
                     }
-
-                    i = i + 1 >= matchupsPermutations.Length ? 0 : i + 1;
                 }
+                i = i + 1 >= matchupsPermutations.Length ? 0 : i + 1;
             }
 
             _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.ACTIVE;

@@ -4,6 +4,7 @@
     border: solid 1px rgba(0, 0, 0, .1);
     border-radius: 1rem;
     position: relative;
+    overflow: auto;
 }
 
 .MatchupsDashboard__Tabs {
@@ -16,6 +17,7 @@
 
 .MatchupsDashboard__Contest {
     grid-area: contest;
+    max-height: 60vh;
 }
 
 .MatchupsDashboard__Standings {
@@ -46,7 +48,7 @@
         max-height: 100%;
         display: grid;
         grid-template-columns: 65% 35%;
-        grid-template-rows: 8rem 50vh;
+        grid-template-rows: 9rem 50vh;
         grid-template-areas:
                 "tabs schedule"
                 "contest standings"

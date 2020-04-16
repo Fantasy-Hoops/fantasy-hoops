@@ -22,7 +22,7 @@ function Header(props) {
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const isMenuOpen = Boolean(anchorEl);
-    const [selectedTab, setSelectedTab] = React.useState(0);
+    const [selectedTab, setSelectedTab] = React.useState(false);
 
     React.useEffect(() => {
         const {pathname} = window.location;

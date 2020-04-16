@@ -1,13 +1,3 @@
-.MatchupDetails {
-    display: flex;
-    flex-direction: row;
-    height: 5rem;
-    line-height: 5rem;
-    justify-content: center;
-    align-items: center;
-    margin: 2rem 0;
-}
-
 .MatchupDetails__Heading {
     text-align: center;
     padding: 2rem 0 !important;
@@ -15,4 +5,63 @@
 
 .MatchupDetails__Item {
     margin: 1rem !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.MatchupDetails__Layout {
+    max-height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: "firstUser status secondUser";
+}
+
+.MatchupDetails__FirstUser {
+    grid-area: firstUser;
+}
+
+.MatchupDetails__SecondUser {
+    grid-area: secondUser;
+}
+
+.MatchupDetails__Status {
+    grid-area: status;
+    margin: 1rem !important;
+    width: 100%;
+    position: relative;
+}
+
+.MatchupDetails__UsersSeparator {
+    display: inline-flex;
+    margin: 0 1rem;
+}
+
+@media screen and (max-width: 568px) {
+    .MatchupDetails__UsersSeparator {
+        display: none;
+    }
+
+    .MatchupDetails__FirstUserScore {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .MatchupDetails__SecondUserScore {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+    
+    .MatchupDetails__Status {
+        background-image: linear-gradient(
+                to bottom right,
+                transparent 49%,
+                black,
+                transparent 51%
+        );
+    }
 }

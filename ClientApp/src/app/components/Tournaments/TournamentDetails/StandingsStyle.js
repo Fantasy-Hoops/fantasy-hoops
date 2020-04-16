@@ -6,7 +6,7 @@ export const useStyles = makeStyles(theme => ({
         height: 'calc(100% - 7rem)'
     },
     container: {
-        height: 'calc(100% - 8rem)',
+        height: 'calc(100% - 7rem)',
     },
     pagination: {
         display: 'flex',

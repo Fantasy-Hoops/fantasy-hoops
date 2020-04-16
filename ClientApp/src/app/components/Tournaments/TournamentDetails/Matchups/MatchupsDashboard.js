@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import _ from 'lodash';
 import Typography from '@material-ui/core/Typography';
 import {useStyles} from "./MatchupsDashboardStyle";
 import Paper from "@material-ui/core/Paper";
@@ -23,7 +24,7 @@ const user = parse();
 
 function parseContest(tournament, contest) {
     if (tournament.status !== TournamentStatus.ACTIVE) {
-        return <TournamentNotStarted contest={contest} />
+        return <TournamentNotStarted contest={contest}/>
     }
 
     const matchup = contest.matchups.filter(matchup => matchup.firstUser.userId === user.id || matchup.secondUser.userId === user.id)[0];
@@ -40,6 +41,10 @@ function parseContest(tournament, contest) {
 }
 
 function getPastContest(contest, matchup) {
+    if (_.isEmpty(matchup)) {
+        return null;
+    }
+    
     const winner = matchup.firstUserScore > matchup.secondUserScore
         ? matchup.firstUser.username
         : matchup.secondUser.username;
@@ -81,7 +86,7 @@ function getCurrentContest(tournament, contest, matchup) {
                 )}
             <div className="MatchupsDashboard__NextOpponent">
                 <Typography variant="subtitle2">
-                    Next Opponnent: <Link
+                    Next Opponent: <Link
                     to={`/profile/${tournament.nextOpponent}`}>{tournament.nextOpponent}</Link>
                 </Typography>
             </div>
@@ -92,7 +97,7 @@ function getCurrentContest(tournament, contest, matchup) {
 function getFutureContest(contest) {
     const heading = "Upcoming matchups";
     const matchups = contest.matchups.map((matchup, index) => (
-        <MatchupDetails key={index} matchup={matchup} future/>
+        <MatchupDetails key={index} matchup={matchup} future divider={contest.matchups.length - 1 !== index}/>
     ));
 
     return (
@@ -156,7 +161,8 @@ export default function MatchupsDashboard(props) {
                     <Standings tournament={tournament}/>
                 </div>
             </div>
-            {tournament.status === TournamentStatus.ACTIVE && <Schedule contests={tournament.contests} handleScheduleOpen={handleScheduleOpen}
+            {tournament.status === TournamentStatus.ACTIVE &&
+            <Schedule contests={tournament.contests} handleScheduleOpen={handleScheduleOpen}
                       handleScheduleClose={handleScheduleClose} open={scheduleOpen}/>}
         </>
     );
