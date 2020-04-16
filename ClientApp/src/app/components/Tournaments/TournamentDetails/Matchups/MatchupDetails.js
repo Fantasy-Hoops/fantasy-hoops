@@ -1,6 +1,6 @@
 import React from 'react';
 import Typography from "@material-ui/core/Typography";
-import {Avatar, Table, TableCell, TableRow} from "@material-ui/core";
+import {Avatar} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 
 import defaultPhoto from "../../../../../content/images/default.png";
@@ -50,7 +50,7 @@ export function MatchupDetails(props) {
                         {matchup.firstUser.username}
                     </Typography>
                 </div>
-                <div className="MatchupDetails__Item MatchupDetails__Status">
+                <div className={`MatchupDetails__Item MatchupDetails__Status ${!future && 'MatchupDetails__DiagonalSeparator'}`}>
                     <Typography className={classes.userStatus} variant="h5">
                         {!future
                             ? <>
