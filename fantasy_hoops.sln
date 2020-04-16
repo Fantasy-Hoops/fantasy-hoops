@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29324.140
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fantasy_hoops", "fantasy_hoops.csproj", "{45F2954D-449C-4645-8923-344CA09E929A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fantasy_hoops.Tests", "fantasy_hoops.Tests\fantasy_hoops.Tests.csproj", "{B1C04368-3173-44B6-A067-DE87A8DBECEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fantasy_hoops", "fantasy_hoops\fantasy_hoops.csproj", "{CBE85A4B-6987-4920-8A65-0FD0CFC9C12B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +13,21 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{45F2954D-449C-4645-8923-344CA09E929A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45F2954D-449C-4645-8923-344CA09E929A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45F2954D-449C-4645-8923-344CA09E929A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45F2954D-449C-4645-8923-344CA09E929A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1C04368-3173-44B6-A067-DE87A8DBECEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1C04368-3173-44B6-A067-DE87A8DBECEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1C04368-3173-44B6-A067-DE87A8DBECEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1C04368-3173-44B6-A067-DE87A8DBECEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBE85A4B-6987-4920-8A65-0FD0CFC9C12B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBE85A4B-6987-4920-8A65-0FD0CFC9C12B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBE85A4B-6987-4920-8A65-0FD0CFC9C12B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBE85A4B-6987-4920-8A65-0FD0CFC9C12B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {640A29FF-0B77-40DB-B0FA-B53BC0AF72FF}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal
