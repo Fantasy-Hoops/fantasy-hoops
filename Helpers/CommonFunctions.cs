@@ -168,8 +168,7 @@ namespace fantasy_hoops.Helpers
         
         public static DateTime FirstDayOfWeek(DateTime date)
         {
-	        DayOfWeek firstDayOfWeek = CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
-	        int offset =  -1 * (7 + (date.DayOfWeek - firstDayOfWeek) % 7);
+	        int offset =  -1 * (7 + (date.DayOfWeek - DayOfWeek.Monday) % 7);
 	        DateTime firstDayOfWeekDate = date.AddDays(offset);
 	        return firstDayOfWeekDate;
         }

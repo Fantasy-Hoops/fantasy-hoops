@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using fantasy_hoops.Enums;
 
 namespace fantasy_hoops.Models.Tournaments
@@ -9,18 +10,28 @@ namespace fantasy_hoops.Models.Tournaments
     {
         [Key] public string Id { get; set; }
         public int Type { get; set; }
-        public TournamentStatus Status { get; set; }
-        public string CreatorID { get; set; }
+        [Required, Range(0, 1)] public TournamentStatus Status { get; set; }
+        [Required] public string CreatorID { get; set; }
         public User Creator { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        [Required] public DateTime StartDate { get; set; }
+        [Required] public DateTime EndDate { get; set; }
+
+        [Required(ErrorMessage = "Tournament title is required"),
+         StringLength(maximumLength: 20, MinimumLength = 5,
+            ErrorMessage = "Tournament title length must be between 5-20 characters long")]
         public string Title { get; set; }
+
+        [Required(ErrorMessage = "Tournament description is required"),
+         StringLength(maximumLength: 50, MinimumLength = 5,
+            ErrorMessage = "Tournament title length must be between 5-20 characters long")]
         public string Description { get; set; }
-        public string ImageURL { get; set; }
-        public int Entrants { get; set; }
-        [Range(0, 50)] public int DroppedContests { get; set; }
-        public virtual List<Contest> Contests { get; set; }
-        public virtual List<TournamentInvite> Invites { get; set; }
+
+        [Required] public string ImageURL { get; set; }
+        
+        [Range(0, 50)] public int Entrants { get; set; }
+        public int DroppedContests { get; set; }
+        public List<Contest> Contests { get; set; }
+        public List<TournamentInvite> Invites { get; set; }
         public string WinnerID { get; set; }
         public virtual User Winner { get; set; }
 

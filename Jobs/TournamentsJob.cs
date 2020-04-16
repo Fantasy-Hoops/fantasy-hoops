@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -27,19 +28,17 @@ namespace fantasy_hoops.Jobs
         {
             _runtimeDate = runtimeDate;
             _context = new GameContext();
+            _tournamentsRepository = new TournamentsRepository();
             _tournamentsService = new TournamentsService(_tournamentsRepository);
         }
 
         public void Execute()
         {
-            if (_tournamentsRepository.GetUpcomingStartDates().Contains(_runtimeDate))
+            List<DateTime> upcomingStartDates =
+                _tournamentsRepository.GetUpcomingStartDates().Select(date => date.Date).ToList();
+            if (upcomingStartDates.Contains(_runtimeDate.Date))
             {
                 StartNewTournaments();
-            }
-
-            if (_runtimeDate.DayOfWeek == DayOfWeek.Sunday)
-            {
-                CalculateContests();
             }
         }
 
@@ -48,16 +47,27 @@ namespace fantasy_hoops.Jobs
             List<Tournament> tournamentsToStart = _tournamentsRepository.GetTournamentsForStartDate(_runtimeDate);
             foreach (Tournament tournament in tournamentsToStart)
             {
+                if (tournament.Status != TournamentStatus.CREATED)
+                {
+                    continue;
+                }
+
+                int joinedUsersCount = _tournamentsRepository.GetTournamentUsersIds(tournament.Id).Count;
+                if (tournament.DroppedContests >= joinedUsersCount)
+                {
+                    tournament.DroppedContests = joinedUsersCount - 1;
+                    _context.SaveChanges();
+                }
+
                 if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.MATCHUPS)
                 {
-                    int tournamentUsersCount = _context.TournamentUsers.Count(tournamentUser =>
-                        tournamentUser.TournamentID.Equals(tournament.Id));
-                    if (tournamentUsersCount % 2 != 0)
+                    if (joinedUsersCount % 2 != 0)
                     {
-                        _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.CANCELLED;
+                        tournament.Status = TournamentStatus.CANCELLED;
                         _tournamentsService.SendCancelledTournamentNotifications(tournament);
                         continue;
                     }
+
                     StartMatchupsTournament(tournament);
                 }
                 else if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
@@ -69,47 +79,37 @@ namespace fantasy_hoops.Jobs
             }
         }
 
-        private void CalculateContests()
-        {
-        }
-
         private void StartMatchupsTournament(Tournament tournament)
         {
             List<string> tournamentUsers = _tournamentsRepository.GetTournamentUsersIds(tournament.Id);
-            List<Tuple<int, string, string>> matchupsVariations = new List<Tuple<int, string, string>>();
-            for (int i = 0; i < tournamentUsers.Count; i++)
-            {
-                for (int j = i + 1; j < tournamentUsers.Count; j++)
-                {
-                    matchupsVariations.Add(new Tuple<int, string, string>(j, tournamentUsers[i], tournamentUsers[j]));
-                    matchupsVariations.Add(new Tuple<int, string, string>(tournamentUsers.Count + i, tournamentUsers[j],
-                        tournamentUsers[i]));
-                }
-            }
+            List<Tuple<string, string>>[] matchupsPermutations =
+                _tournamentsService.GetMatchupsPermutations(tournamentUsers);
 
-            foreach (var contest in _context.Contests
+            var tournamentContests = _context.Contests
                 .Where(x => x.TournamentId.Equals(tournament.Id))
-                .ToList().Select((value, index) => (value, index)))
+                .OrderBy(contest => contest.ContestStart)
+                .ToList();
+            int i = 0;
+            foreach (var contest in tournamentContests)
             {
-                contest.value.Matchups = new List<MatchupPair>();
-                matchupsVariations.Where(record => record.Item1 == contest.index + 1)
-                    .ToList()
-                    .ForEach(contestPair =>
+                contest.Matchups = new List<MatchupPair>();
+                foreach (Tuple<string, string> usersPair in matchupsPermutations[i])
+                {
+                    MatchupPair dbMatchupPair = _context.TournamentMatchups
+                        .Find(tournament.Id, usersPair.Item1, usersPair.Item2, contest.Id);
+                    if (dbMatchupPair == null)
                     {
-                        MatchupPair dbMatchupPair = _context.TournamentMatchups
-                            .Find(tournament.Id, matchupsVariations[contest.index].Item2,
-                                matchupsVariations[contest.index].Item3, contest.value.Id);
-                        if (dbMatchupPair == null)
+                        contest.Matchups.Add(new MatchupPair
                         {
-                            contest.value.Matchups.Add(new MatchupPair
-                            {
-                                ContestId = contest.value.Id,
-                                TournamentID = tournament.Id,
-                                FirstUserID = matchupsVariations[contest.index].Item2,
-                                SecondUserID = matchupsVariations[contest.index].Item3
-                            });
-                        }
-                    });
+                            ContestId = contest.Id,
+                            TournamentID = tournament.Id,
+                            FirstUserID = usersPair.Item1,
+                            SecondUserID = usersPair.Item2
+                        });
+                    }
+
+                    i = i + 1 >= matchupsPermutations.Length ? 0 : i + 1;
+                }
             }
 
             _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.ACTIVE;

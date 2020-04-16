@@ -141,10 +141,17 @@ namespace fantasy_hoops.Services
             return _tournamentsRepository.ChangeInvitationStatus(tournamentId, userId, RequestStatus.DECLINED);
         }
 
-        public User GetTournamentWinner(string tournamentId)
+        public User GetTournamentWinner(TournamentDetailsDto tournamentDetails)
         {
             // TODO
-            return null;
+            // return null;
+            TournamentUserDto tournamentWinner = tournamentDetails.Standings
+                .OrderByDescending(user =>
+                    (Tournament.TournamentType) tournamentDetails.Type == Tournament.TournamentType.MATCHUPS
+                        ? user.W - user.L
+                        : user.Points)
+                .FirstOrDefault();
+            return _userRepository.GetUserById(tournamentWinner?.UserId);
         }
 
         public User GetContestWinner(TournamentDetailsDto tournamentDetails, ContestDto contest)
@@ -246,6 +253,38 @@ namespace fantasy_hoops.Services
                     $"Tournament {tournament.Title} was cancelled!");
                 _pushService.Send(userId, notification);
             }
+        }
+
+        public List<Tuple<string, string>>[] GetMatchupsPermutations(List<string> userIds)
+        {
+            int tournamentUsersCount = userIds.Count;
+            int permutationsCount = tournamentUsersCount * (tournamentUsersCount - 1);
+            int distinctContestsCount = permutationsCount / (tournamentUsersCount / 2);
+            List<Tuple<string, string>>[] variations = new List<Tuple<string, string>>[distinctContestsCount];
+
+            for (int i = 0; i < tournamentUsersCount - 1; i++)
+            {
+                int swappedPairIndex = tournamentUsersCount + i - 1;
+                variations[i] = new List<Tuple<string, string>>();
+                variations[swappedPairIndex] = new List<Tuple<string, string>>();
+                
+                string firstUser = userIds[0];
+                string secondUser = userIds[tournamentUsersCount - 1 - i];
+                variations[i].Add(new Tuple<string, string>(firstUser, secondUser));
+                variations[swappedPairIndex].Add(new Tuple<string, string>(secondUser, firstUser));
+                
+                for (int j = 1; j < tournamentUsersCount / 2; j++)
+                {
+                    firstUser =
+                        userIds[1 + (tournamentUsersCount - i + j - 2) % (tournamentUsersCount - 1)];
+                    secondUser =
+                        userIds[1 + (2 * tournamentUsersCount - i - j - 3) % (tournamentUsersCount - 1)];
+                    variations[i].Add(new Tuple<string, string>(firstUser, secondUser));
+                    variations[swappedPairIndex].Add(new Tuple<string, string>(secondUser, firstUser));
+                }
+            }
+
+            return variations;
         }
     }
 }

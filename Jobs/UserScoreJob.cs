@@ -164,7 +164,7 @@ namespace fantasy_hoops.Jobs
                 if (isTournamentFinished)
                 {
                     dbTournament.Status = TournamentStatus.FINISHED;
-                    dbTournament.Winner = _tournamentsService.GetTournamentWinner(dbTournament.Id);
+                    dbTournament.Winner = _tournamentsService.GetTournamentWinner(tournamentDetails);
                 }
 
                 _context.SaveChanges();

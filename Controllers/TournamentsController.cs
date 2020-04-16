@@ -109,10 +109,15 @@ namespace fantasy_hoops.Controllers
             {
                 return UnprocessableEntity("Tournament title already exists.");
             }
-
+            
             if (model.StartDate < CommonFunctions.UTCToEastern(DateTime.UtcNow))
             {
                 return UnprocessableEntity("Illegal Date. Date must be in the future.");
+            }
+
+            if (model.Entrants <= model.DroppedContests)
+            {
+                return UnprocessableEntity("Number of dropped contests must be less than number of entrants.");
             }
 
             if (string.IsNullOrEmpty(model.TournamentIcon))

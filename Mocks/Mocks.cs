@@ -18,7 +18,7 @@ namespace fantasy_hoops
                 new DateTime(2021, 04, 02, 19, 0, 0)
             };
 
-            public static readonly DateTime MockedStartDate = new DateTime(2021, 02, 04, 19, 0, 0);
+            public static readonly DateTime MockedStartDate = new DateTime(2021, 04, 02, 19, 0, 0);
         }
 
         public static class Players
