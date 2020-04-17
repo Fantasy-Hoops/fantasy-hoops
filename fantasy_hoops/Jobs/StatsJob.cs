@@ -171,7 +171,7 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
-            string gameDate = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).ToString("yyyyMMdd");
+            string gameDate = CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).ToString("yyyyMMdd");
             JArray games = CommonFunctions.GetGames(gameDate);
             int countOfActivatedGames = 0;
             bool isAnyGameStarted = false;
@@ -253,7 +253,7 @@ namespace fantasy_hoops.Jobs
                 
                 JobManager.AddJob(new StatsJob(_scoreService, _pushService),
                     s => s.WithName("statsSeed")
-                        .ToRunOnceAt(NextGameJob.NEXT_GAME.AddMinutes(5)));
+                        .ToRunOnceAt(RuntimeUtils.NEXT_GAME.AddMinutes(5)));
             }
         }
     }

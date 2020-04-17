@@ -14,11 +14,7 @@ namespace fantasy_hoops.Jobs
 {
     public class NextGameJob : IJob
     {
-        public static DateTime NEXT_GAME = DateTime.UtcNow;
-        public static DateTime NEXT_GAME_CLIENT = DateTime.UtcNow;
-        public static DateTime NEXT_LAST_GAME = DateTime.UtcNow;
-        public static DateTime PREVIOUS_GAME = DateTime.UtcNow;
-        public static DateTime PREVIOUS_LAST_GAME = DateTime.UtcNow;
+        
 
         private const int GAME_OFFSET = 10;
         private static int offset;
@@ -38,7 +34,7 @@ namespace fantasy_hoops.Jobs
 
         private void SetClientTime()
         {
-            NEXT_GAME_CLIENT = NEXT_GAME;
+            RuntimeUtils.NEXT_GAME_CLIENT = RuntimeUtils.NEXT_GAME;
         }
 
         private async Task SetPlayersNotPlaying()
@@ -62,8 +58,8 @@ namespace fantasy_hoops.Jobs
         {
             if (offset >= GAME_OFFSET)
             {
-                NEXT_GAME = new DateTime();
-                NEXT_LAST_GAME = new DateTime();
+                RuntimeUtils.NEXT_GAME = new DateTime();
+                RuntimeUtils.NEXT_LAST_GAME = new DateTime();
                 return;
             }
 
@@ -74,8 +70,8 @@ namespace fantasy_hoops.Jobs
                 if (timeUtc > DateTime.UtcNow)
                 {
                     offset = 0;
-                    NEXT_GAME = timeUtc;
-                    NEXT_LAST_GAME = DateTime.Parse((string) games[games.Count - 1]["startTimeUTC"]);
+                    RuntimeUtils.NEXT_GAME = timeUtc;
+                    RuntimeUtils.NEXT_LAST_GAME = DateTime.Parse((string) games[games.Count - 1]["startTimeUTC"]);
                 }
                 else
                 {
@@ -102,8 +98,8 @@ namespace fantasy_hoops.Jobs
                 DateTime timeUtc = DateTime.Parse((string) games[0]["startTimeUTC"]);
                 if (timeUtc < DateTime.UtcNow)
                 {
-                    PREVIOUS_GAME = timeUtc;
-                    PREVIOUS_LAST_GAME = DateTime.Parse((string) games[games.Count - 1]["startTimeUTC"]);
+                    RuntimeUtils.PREVIOUS_GAME = timeUtc;
+                    RuntimeUtils.PREVIOUS_LAST_GAME = DateTime.Parse((string) games[games.Count - 1]["startTimeUTC"]);
                 }
                 else
                 {
@@ -131,41 +127,41 @@ namespace fantasy_hoops.Jobs
             if (offset < GAME_OFFSET)
             {
                 JobManager.AddJob(new NextGameJob(_scoreService, _pushService),
-                    s => s.WithName(NEXT_GAME.ToLongDateString())
-                        .ToRunOnceAt(NEXT_GAME));
+                    s => s.WithName(RuntimeUtils.NEXT_GAME.ToLongDateString())
+                        .ToRunOnceAt(RuntimeUtils.NEXT_GAME));
                 
-                JobManager.AddJob(new TournamentsJob(PREVIOUS_GAME),
+                JobManager.AddJob(new TournamentsJob(RuntimeUtils.PREVIOUS_GAME),
                     s => s.WithName("TournamentsJob").ToRunNow());
 
                 // All actions run only in production
                 if (bool.Parse(Startup.Configuration["IsProduction"] ?? "false"))
                 {
                     // Nudge Notifications don't run if game starts in <5 hours
-                    if (NEXT_GAME.Subtract(DateTime.UtcNow).TotalMinutes > 295)
+                    if (RuntimeUtils.NEXT_GAME.Subtract(DateTime.UtcNow).TotalMinutes > 295)
                         JobManager.AddJob(() => _pushService.SendNudgeNotifications(),
                             s => s.WithName("nudgeNotifications")
-                                .ToRunOnceAt(NEXT_GAME.AddHours(-5)));
+                                .ToRunOnceAt(RuntimeUtils.NEXT_GAME.AddHours(-5)));
 
                     // Once per 2 days
-                    if (CommonFunctions.UTCToEastern(NEXT_GAME).Day % 2 != 0)
+                    if (CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Day % 2 != 0)
                         JobManager.AddJob(new RostersJob(_pushService),
                             s => s.WithName("rostersJob")
-                                .ToRunOnceAt(NEXT_GAME.AddMinutes(-5)));
+                                .ToRunOnceAt(RuntimeUtils.NEXT_GAME.AddMinutes(-5)));
 
                     // 10 hours after previous last game if project ran before that time
                     // 10 hours after next last game if project ran after that time
-                    DateTime previewsRuntime = PREVIOUS_LAST_GAME.AddHours(10);
+                    DateTime previewsRuntime = RuntimeUtils.PREVIOUS_LAST_GAME.AddHours(10);
                     if (DateTime.UtcNow > previewsRuntime)
-                        previewsRuntime = NEXT_LAST_GAME.AddHours(10);
+                        previewsRuntime = RuntimeUtils.NEXT_LAST_GAME.AddHours(10);
                     JobManager.AddJob(new NewsJob(NewsType.PREVIEW),
                         s => s.WithName("previews")
                             .ToRunOnceAt(previewsRuntime));
 
                     // 5 hours after previous last game if project ran before that time
                     // 5 hours after next last game if project ran after that time
-                    DateTime recapsRuntime = PREVIOUS_LAST_GAME.AddHours(5);
+                    DateTime recapsRuntime = RuntimeUtils.PREVIOUS_LAST_GAME.AddHours(5);
                     if (DateTime.UtcNow > recapsRuntime)
-                        recapsRuntime = NEXT_LAST_GAME.AddHours(5);
+                        recapsRuntime = RuntimeUtils.NEXT_LAST_GAME.AddHours(5);
                     JobManager.AddJob(new NewsJob(NewsType.RECAP),
                         s => s.WithName("recaps")
                             .ToRunOnceAt(recapsRuntime));
@@ -176,8 +172,8 @@ namespace fantasy_hoops.Jobs
                 }
                 else
                 {
-                    NEXT_GAME_CLIENT = NEXT_GAME;
-                    PlayersJob.PLAYER_POOL_DATE = NEXT_GAME;
+                    RuntimeUtils.NEXT_GAME_CLIENT = RuntimeUtils.NEXT_GAME;
+                    RuntimeUtils.PLAYER_POOL_DATE = RuntimeUtils.NEXT_GAME;
                 }
             }
             else

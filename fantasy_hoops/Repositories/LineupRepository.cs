@@ -24,7 +24,7 @@ namespace fantasy_hoops.Repositories
         public UserLineup GetLineup(string id)
         {
             return _context.UserLineups
-             .FirstOrDefault(lineup => lineup.UserID.Equals(id) && lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).Date));
+             .FirstOrDefault(lineup => lineup.UserID.Equals(id) && lineup.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date));
         }
 
         public void AddLineup(SubmitLineupViewModel model)
@@ -32,7 +32,7 @@ namespace fantasy_hoops.Repositories
             _context.UserLineups.Add(
                     new UserLineup
                     {
-                        Date = CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).Date,
+                        Date = CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date,
                         UserID = model.UserID,
                         PgID = model.PgID,
                         SgID = model.SgID,
@@ -47,7 +47,7 @@ namespace fantasy_hoops.Repositories
         {
             var userLineup = _context.UserLineups
                 .FirstOrDefault(lineup => lineup.UserID.Equals(model.UserID)
-                                        && lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).Date));
+                                        && lineup.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date));
             if (userLineup == null)
             {
                 return;
@@ -97,7 +97,7 @@ namespace fantasy_hoops.Repositories
         {
             return _context.UserLineups
                     .Any(x => x.UserID.Equals(userID)
-                              && x.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).Date));
+                              && x.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date));
         }
 
         private bool IsPlayerPriceIncorrect(int playerID, int price)
@@ -108,7 +108,7 @@ namespace fantasy_hoops.Repositories
         public List<string> GetUserSelectedIds()
         {
             return _context.UserLineups
-                .Where(lineup => lineup.Date.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).Date))
+                .Where(lineup => lineup.Date.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date))
                 .Select(lineup => lineup.UserID)
                 .ToList();
         }
@@ -124,8 +124,8 @@ namespace fantasy_hoops.Repositories
         public UserLeaderboardRecordDto GetUserCurrentLineup(string userId)
         {
             return _context.UserLineups
-                    .Where(lineup => lineup.UserID.Equals(userId) && (lineup.Date.Date == CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).Date
-                        || lineup.Date.Date == CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date)
+                    .Where(lineup => lineup.UserID.Equals(userId) && (lineup.Date.Date == CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date
+                        || lineup.Date.Date == CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date)
                     && !lineup.IsCalculated)
                     .Select(lineup => new UserLeaderboardRecordDto
                     {
@@ -153,7 +153,7 @@ namespace fantasy_hoops.Repositories
                             })
                             .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
                             .ToList(),
-                        IsLive = lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date)
+                        IsLive = lineup.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date)
                                  && !lineup.IsCalculated
                     })
                     .FirstOrDefault();

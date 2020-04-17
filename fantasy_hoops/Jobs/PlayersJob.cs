@@ -17,9 +17,6 @@ namespace fantasy_hoops.Jobs
         private readonly IScoreService _scoreService;
         private readonly bool _updatePrice;
 
-        public static DateTime PLAYER_POOL_DATE = DateTime.UtcNow;
-		public static int PRICE_FLOOR = 10;
-
         public PlayersJob(IScoreService scoreService, bool updatePrice)
         {
             _context = new GameContext();
@@ -52,7 +49,7 @@ namespace fantasy_hoops.Jobs
                     player.Injury = _context.Injuries.Where(inj => inj.InjuryID == player.InjuryID).FirstOrDefault();
                 }
 
-                if ((player.Injury.Date.HasValue && player.Injury.Date.Value.AddDays(5) < NextGameJob.NEXT_GAME)
+                if ((player.Injury.Date.HasValue && player.Injury.Date.Value.AddDays(5) < RuntimeUtils.NEXT_GAME)
                     && (player.Injury.Status.ToLower().Contains("out")
                     || player.Injury.Status.ToLower().Contains("injured")))
                 {
@@ -65,7 +62,7 @@ namespace fantasy_hoops.Jobs
 
 		private string GetDate()
 		{
-			return CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).ToString("yyyyMMdd");
+			return CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).ToString("yyyyMMdd");
 		}
 
 		private double FPPG(Player p)
@@ -76,9 +73,9 @@ namespace fantasy_hoops.Jobs
         private int Price(Player p)
 		{
 			int price = _scoreService.GetPrice(p);
-			if (price < PRICE_FLOOR)
+			if (price < CommonFunctions.PRICE_FLOOR)
 			{
-				return PRICE_FLOOR;
+				return CommonFunctions.PRICE_FLOOR;
 			}
 			
 			return price;
@@ -114,7 +111,7 @@ namespace fantasy_hoops.Jobs
                     JObject p = GetPlayer(player.NbaID);
                     if (p == null)
                     {
-                        player.Price = PRICE_FLOOR;
+                        player.Price = CommonFunctions.PRICE_FLOOR;
                         continue;
                     }
                     int gamesPlayed = 0;
@@ -134,15 +131,15 @@ namespace fantasy_hoops.Jobs
                     player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
                     if (_updatePrice)
                     {
-	                    player.Price = gamesPlayed <= 0 ? PRICE_FLOOR : Price(player);
+	                    player.Price = gamesPlayed <= 0 ? CommonFunctions.PRICE_FLOOR : Price(player);
                     }
                     player.IsPlaying = IsPlaying(player);
                 }
             }
             _context.SaveChanges();
 
-            NextGameJob.NEXT_GAME_CLIENT = NextGameJob.NEXT_GAME;
-            PLAYER_POOL_DATE = NextGameJob.NEXT_GAME;
+            RuntimeUtils.NEXT_GAME_CLIENT = RuntimeUtils.NEXT_GAME;
+            RuntimeUtils.PLAYER_POOL_DATE = RuntimeUtils.NEXT_GAME;
         }
     }
 }

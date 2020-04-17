@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using fantasy_hoops.Dtos;
 using fantasy_hoops.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -15,6 +16,7 @@ namespace fantasy_hoops.Repositories.Interfaces
         User GetUserByEmail(string email);
         IQueryable<Object> GetFriends(string id);
         IQueryable<Object> GetUserPool();
+        List<UserDto> GetAllUsers();
         bool UserExists(string username);
         bool EmailExists(string email);
         IQueryable<Object> GetTeam(string id);

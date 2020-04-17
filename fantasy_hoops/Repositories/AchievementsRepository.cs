@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
+using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Repositories.Interfaces;
 
@@ -111,6 +112,19 @@ namespace fantasy_hoops.Repositories
             _context.Achievements.Add(achievement);
             int entitiesWritten = _context.SaveChanges();
             return entitiesWritten > 0;
+        }
+        
+        public bool UserAchievementExists(User user, Achievement achievement)
+        {
+            return _context.UserAchievements.Any(ua => ua.UserID == user.Id
+                                                       && ua.Achievement.Title.Equals(achievement.Title)
+                                                       && ua.Achievement.Type == achievement.Type);
+        }
+
+        public bool AddUserAchievement(UserAchievement userAchievement)
+        {
+            _context.UserAchievements.Add(userAchievement);
+            return _context.SaveChanges() != 0;
         }
     }
 }

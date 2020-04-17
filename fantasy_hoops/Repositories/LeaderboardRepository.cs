@@ -56,10 +56,10 @@ namespace fantasy_hoops.Repositories
         public List<UserLeaderboardRecordDto> GetUserLeaderboard(int from, int limit, LeaderboardType type, string date,
             int weekNumber, int year)
         {
-            DateTime previousECT = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME);
+            DateTime previousECT = CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME);
 
             DateTime dateTime = date.Length == 0
-                ? DateTime.UtcNow < NextGameJob.PREVIOUS_LAST_GAME
+                ? DateTime.UtcNow < RuntimeUtils.PREVIOUS_LAST_GAME
                     ? previousECT.AddDays(-1)
                     : previousECT
                 : DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
@@ -155,10 +155,10 @@ namespace fantasy_hoops.Repositories
         public List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit, LeaderboardType type,
             string date, int weekNumber, int year)
         {
-            DateTime previousECT = CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME);
+            DateTime previousECT = CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME);
 
             DateTime dateTime = date.Length == 0
-                ? DateTime.UtcNow < NextGameJob.PREVIOUS_LAST_GAME
+                ? DateTime.UtcNow < RuntimeUtils.PREVIOUS_LAST_GAME
                     ? previousECT.AddDays(-1)
                     : previousECT
                 : DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
@@ -347,7 +347,7 @@ namespace fantasy_hoops.Repositories
         public List<PlayerLeaderboardRecordDto> GetMostSelectedPlayers(int from, int limit)
         {
             var userLineups = _context.UserLineups
-                .Where(lineup => lineup.Date < NextGameJob.PREVIOUS_GAME);
+                .Where(lineup => lineup.Date < RuntimeUtils.PREVIOUS_GAME);
             var pg = userLineups
                 .Select(lineup => new PlayerDto
                 {

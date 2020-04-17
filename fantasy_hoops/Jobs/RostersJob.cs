@@ -279,7 +279,7 @@ namespace fantasy_hoops.Jobs
                                 Position = (string)player["primary_position"],
                                 NbaID = (int)player["reference"],
                                 Number = player["jersey_number"].ToString(),
-                                Price = PlayersJob.PRICE_FLOOR,
+                                Price = CommonFunctions.PRICE_FLOOR,
                                 FPPG = 0.0,
                                 PTS = 0.0,
                                 REB = 0.0,

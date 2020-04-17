@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fantasy_hoops.Dtos;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Jobs;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
@@ -42,7 +43,7 @@ namespace fantasy_hoops.Controllers
                 return StatusCode(422, "Lineup price exceeds the budget! Lineup was not submitted.");
             if (!_lineupRepository.ArePricesCorrect(model))
                 return StatusCode(422, "Wrong player prices! Lineup was not submitted.");
-            if (!PlayersJob.PLAYER_POOL_DATE.Equals(NextGameJob.NEXT_GAME))
+            if (!RuntimeUtils.PLAYER_POOL_DATE.Equals(RuntimeUtils.NEXT_GAME))
                 return StatusCode(500, "Player pool not updated! Try again in a moment.");
             if (_lineupRepository.AreNotPlayingPlayers(model))
                 return StatusCode(422, "Player pool is outdated! Refresh the page.");
@@ -57,9 +58,9 @@ namespace fantasy_hoops.Controllers
         {
             return Ok(new
             {
-                nextGame = NextGameJob.NEXT_GAME_CLIENT,
+                nextGame = RuntimeUtils.NEXT_GAME_CLIENT,
                 serverTime = DateTime.Now,
-                playerPoolDate = PlayersJob.PLAYER_POOL_DATE
+                playerPoolDate = RuntimeUtils.PLAYER_POOL_DATE
             });
         }
 

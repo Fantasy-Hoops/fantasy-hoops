@@ -8,17 +8,18 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using fantasy_hoops.Enums;
-using fantasy_hoops.Jobs;
 
 namespace fantasy_hoops.Helpers
 {
 	public class CommonFunctions
 	{
 		public const string DOMAIN = "fantasyhoops.org";
+		
 		public static string SEASON_YEAR = GetSeasonYear();
 		public static DateTime EctNow = UTCToEastern(DateTime.UtcNow);
-
+		
 		public static string LineupPositionsOrder = "PG|SG|SF|PF|C";
+		public static int PRICE_FLOOR = 10;
 
 		public static DateTime UTCToEastern(DateTime UTC)
 		{
@@ -109,7 +110,7 @@ namespace fantasy_hoops.Helpers
 					dayOffset = dayOfMonth == 1 ? DaysInMonth() : dayOfMonth - 1;
 					return easternDate.AddDays(-dayOffset).Date;
 				default:
-					return UTCToEastern(NextGameJob.PREVIOUS_GAME).Date;
+					return UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date;
 			}
 		}
 

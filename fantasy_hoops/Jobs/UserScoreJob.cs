@@ -54,12 +54,12 @@ namespace fantasy_hoops.Jobs
         public void Execute()
         {
             var todayStats = _context.Stats
-                .Where(stats => stats.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date))
+                .Where(stats => stats.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date))
                 .Select(stats => new {stats.PlayerID, stats.FP});
 
             var allLineups = _context.UserLineups
                 .Include(lineup => lineup.User)
-                .Where(lineup => lineup.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.PREVIOUS_GAME).Date) &&
+                .Where(lineup => lineup.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date) &&
                                  !lineup.IsCalculated)
                 .Include(lineup => lineup.User)
                 .ToList();

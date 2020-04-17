@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using fantasy_hoops.Database;
+using fantasy_hoops.Dtos;
 using fantasy_hoops.Enums;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
@@ -15,7 +16,7 @@ namespace fantasy_hoops.Repositories
     {
         private const string DEFAULT_TEAM_ABV = "SEA";
         private const string DEFAULT_COLOR = "#2C3E50";
-        
+
         private readonly DateTime _date = CommonFunctions.GetLeaderboardDate(LeaderboardType.WEEKLY);
         private readonly GameContext _context;
 
@@ -96,29 +97,29 @@ namespace fantasy_hoops.Repositories
         public IQueryable<Object> GetFriends(string id)
         {
             var friends = _context.FriendRequests
-               .Where(x => x.ReceiverID.Equals(id) && x.Status.Equals(RequestStatus.ACCEPTED))
-               .Select(x => new
-               {
-                   id = x.SenderID,
-                   x.Sender.UserName,
-                   Color = _context.Teams
-                       .Where(t => t.TeamID == x.Sender.FavoriteTeamId)
-                       .Select(t => t.Color)
-                       .FirstOrDefault(),
-                   x.Sender.AvatarURL
-               })
-               .Union(_context.FriendRequests
-               .Where(x => x.SenderID.Equals(id) && x.Status.Equals(RequestStatus.ACCEPTED))
-               .Select(x => new
-               {
-                   id = x.ReceiverID,
-                   x.Receiver.UserName,
-                   Color = _context.Teams
-                     .Where(t => t.TeamID == x.Receiver.FavoriteTeamId)
-                     .Select(t => t.Color)
-                     .FirstOrDefault(),
-                   x.Receiver.AvatarURL
-               }));
+                .Where(x => x.ReceiverID.Equals(id) && x.Status.Equals(RequestStatus.ACCEPTED))
+                .Select(x => new
+                {
+                    id = x.SenderID,
+                    x.Sender.UserName,
+                    Color = _context.Teams
+                        .Where(t => t.TeamID == x.Sender.FavoriteTeamId)
+                        .Select(t => t.Color)
+                        .FirstOrDefault(),
+                    x.Sender.AvatarURL
+                })
+                .Union(_context.FriendRequests
+                    .Where(x => x.SenderID.Equals(id) && x.Status.Equals(RequestStatus.ACCEPTED))
+                    .Select(x => new
+                    {
+                        id = x.ReceiverID,
+                        x.Receiver.UserName,
+                        Color = _context.Teams
+                            .Where(t => t.TeamID == x.Receiver.FavoriteTeamId)
+                            .Select(t => t.Color)
+                            .FirstOrDefault(),
+                        x.Receiver.AvatarURL
+                    }));
 
             return friends;
         }
@@ -148,6 +149,18 @@ namespace fantasy_hoops.Repositories
                 })
                 .OrderBy(user => user.UserName);
         }
+
+        public List<UserDto> GetAllUsers()
+        {
+            return _context.Users
+                .Select(user => new UserDto
+                {
+                    UserId = user.Id,
+                    Username = user.UserName,
+                    AvatarUrl = user.AvatarURL
+                }).ToList();
+        }
+
 
         public bool UserExists(string username)
         {
@@ -184,7 +197,8 @@ namespace fantasy_hoops.Repositories
         public void DeleteUserResources(User userToDelete)
         {
             var friendRequests = _context.FriendRequests
-                .Where(request => request.ReceiverID.Equals(userToDelete.Id) || request.SenderID.Equals(userToDelete.Id))
+                .Where(request =>
+                    request.ReceiverID.Equals(userToDelete.Id) || request.SenderID.Equals(userToDelete.Id))
                 .ToList();
             _context.FriendRequests.RemoveRange(friendRequests);
             var notifications = _context.Notifications

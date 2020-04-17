@@ -97,7 +97,7 @@ namespace fantasy_hoops.Jobs
         private void UpdateNotifications(Injury injury, string statusBefore, string statusAfter)
         {
             foreach (var lineup in _context.UserLineups
-                .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(NextGameJob.NEXT_GAME).Date)
+                .Where(x => x.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date)
                             && (x.PgID == injury.PlayerID
                                 || x.SgID == injury.PlayerID
                                 || x.SfID == injury.PlayerID

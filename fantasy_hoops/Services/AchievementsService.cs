@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
@@ -12,13 +10,11 @@ namespace fantasy_hoops.Services
 {
     public class AchievementsService : IAchievementsService
     {
-        private readonly GameContext _context;
         private readonly UserManager<User> _userManager;
         private readonly IAchievementsRepository _achievementsRepository;
 
         public AchievementsService(UserManager<User> userManager, IAchievementsRepository achievementsRepository)
         {
-            _context = new GameContext();
             _userManager = userManager;
             _achievementsRepository = achievementsRepository;
         }
@@ -34,15 +30,21 @@ namespace fantasy_hoops.Services
             List<AchievementDto> achievements = _achievementsRepository.GetExistingAchievements();
             foreach (AchievementDto achievement in achievements)
             {
-                _context.UserAchievements.Add(new UserAchievement
+                UserAchievement userAchievement = new UserAchievement
                 {
                     AchievementID = achievement.Id,
                     UserID = user.Id,
                     Level = 1,
                     LevelUpGoal = achievement.GoalBase
-                });
+                };
+                
+                if (!_achievementsRepository.AddUserAchievement(userAchievement))
+                {
+                    return false;
+                }
             }
-            return _context.SaveChanges() != 0;
+
+            return true;
         }
 
         public bool CreateAchievement(Achievement achievement)
@@ -55,7 +57,7 @@ namespace fantasy_hoops.Services
             var users = _userManager.Users;
             foreach (var user in users)
             {
-                if (UserAchievementExists(user, achievement))
+                if (_achievementsRepository.UserAchievementExists(user, achievement))
                 {
                     continue;
                 }
@@ -67,17 +69,9 @@ namespace fantasy_hoops.Services
                     Level = 1,
                     LevelUpGoal = achievement.GoalBase
                 };
-                _context.UserAchievements.Add(userAchievement);
+                _achievementsRepository.AddUserAchievement(userAchievement);
             }
-            int entitiesWritten = _context.SaveChanges();
-            return entitiesWritten == users.Count();
-        }
-
-        private bool UserAchievementExists(User user, Achievement achievement)
-        {
-            return _context.UserAchievements.Any(ua => ua.UserID == user.Id
-                                                       && ua.Achievement.Title.Equals(achievement.Title)
-                                                       && ua.Achievement.Type == achievement.Type);
+            return true;
         }
     }
 }

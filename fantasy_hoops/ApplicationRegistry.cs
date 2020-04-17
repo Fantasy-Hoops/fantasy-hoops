@@ -3,6 +3,7 @@ using fantasy_hoops.Database;
 using FluentScheduler;
 using System.Linq;
 using System.Threading.Tasks;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Jobs;
 using fantasy_hoops.Services.Interfaces;
 
@@ -25,9 +26,9 @@ namespace fantasy_hoops
                     .WithName("nextGameJob")
                     .ToRunNow();
             }
-            NextGameJob.NEXT_GAME = new DateTime(2020, 04, 20);
-            NextGameJob.NEXT_GAME_CLIENT = NextGameJob.NEXT_GAME;
-            PlayersJob.PLAYER_POOL_DATE = NextGameJob.NEXT_GAME;
+            RuntimeUtils.NEXT_GAME = new DateTime(2020, 04, 20);
+            RuntimeUtils.NEXT_GAME_CLIENT = RuntimeUtils.NEXT_GAME;
+            RuntimeUtils.PLAYER_POOL_DATE = RuntimeUtils.NEXT_GAME;
 
             Schedule(new InjuriesJob(pushService))
                 .WithName("injuriesJob")
