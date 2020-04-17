@@ -1,5 +1,4 @@
 using fantasy_hoops.Enums;
-using fantasy_hoops.Models.Achievements;
 
 namespace fantasy_hoops.Dtos
 {

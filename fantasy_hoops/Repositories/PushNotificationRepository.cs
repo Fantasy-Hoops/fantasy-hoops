@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Models;
 using fantasy_hoops.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Repositories
 {

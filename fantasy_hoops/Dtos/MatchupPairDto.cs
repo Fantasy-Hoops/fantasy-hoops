@@ -1,5 +1,3 @@
-using fantasy_hoops.Models;
-
 namespace fantasy_hoops.Dtos
 {
     public class MatchupPairDto

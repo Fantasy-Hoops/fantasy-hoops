@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Models.Notifications;

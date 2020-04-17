@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
-using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.ViewModels;
-using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -32,16 +32,17 @@ namespace fantasy_hoops.Repositories
 
         public Team GetTeam(int nbaID)
         {
-            return _context.Teams
-                .Where(x => x.NbaID == nbaID)
-                .FirstOrDefault();
+            return _context.Teams.FirstOrDefault(x => x.NbaID == nbaID);
         }
 
         public Team GetTeamById(int id)
         {
-            return _context.Teams
-                .Where(x => x.TeamID == id)
-                .FirstOrDefault();
+            return _context.Teams.FirstOrDefault(x => x.TeamID == id);
+        }
+
+        public Team GetUnknownTeam()
+        {
+            return _context.Teams.FirstOrDefault(t => t.NbaID == 0);
         }
     }
 }

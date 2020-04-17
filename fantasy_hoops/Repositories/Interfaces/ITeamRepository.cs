@@ -10,6 +10,6 @@ namespace fantasy_hoops.Repositories.Interfaces
         IQueryable<Object> GetTeams();
         Team GetTeam(int nbaID);
         Team GetTeamById(int id);
-
+        Team GetUnknownTeam();
     }
 }

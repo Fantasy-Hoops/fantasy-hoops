@@ -5,7 +5,6 @@ using fantasy_hoops.Dtos;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Models.ViewModels;
-using fantasy_hoops.Repositories.Interfaces;
 
 namespace fantasy_hoops.Services.Interfaces
 {

@@ -6,7 +6,8 @@ namespace fantasy_hoops.Services
 {
     public class LineupService : ILineupService
     {
-
+        public static readonly int MAX_PRICE = 300;
+        
         private readonly ILineupRepository _lineupRepository;
 
         public LineupService(ILineupRepository lineupRepository)

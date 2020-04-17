@@ -1,7 +1,5 @@
-﻿using fantasy_hoops.Database;
-using fantasy_hoops.Models;
+﻿using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
-using fantasy_hoops.Repositories;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using fantasy_hoops.Enums;

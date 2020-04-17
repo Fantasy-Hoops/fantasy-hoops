@@ -5,7 +5,6 @@ using System.Linq;
 using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
-using fantasy_hoops.Jobs;
 using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Repositories.Interfaces

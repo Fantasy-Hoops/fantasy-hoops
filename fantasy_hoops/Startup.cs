@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
-using dotenv.net;
 using Microsoft.AspNetCore.Http;
 using fantasy_hoops.Services;
 using System.Threading.Tasks;

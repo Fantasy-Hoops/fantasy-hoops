@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using fantasy_hoops.Dtos;
-using fantasy_hoops.Models;
 
 namespace fantasy_hoops.Repositories.Interfaces
 {

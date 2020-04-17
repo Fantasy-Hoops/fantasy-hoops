@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Models.ViewModels;
-using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
-using FluentScheduler;
 using Newtonsoft.Json;
 using WebPush;
 using PushSubscription = fantasy_hoops.Models.PushSubscription;

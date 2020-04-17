@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using fantasy_hoops.Controllers;
 using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
-using fantasy_hoops.Models.ViewModels;
-using fantasy_hoops.Services.Interfaces;
+using fantasy_hoops.Services;
 using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -43,7 +40,7 @@ namespace fantasy_hoops.Jobs
 
                 int lineupPrice = currentLineup.Sum(player => player.Price);
                 
-                if (lineupPrice > LineupController.MAX_PRICE)
+                if (lineupPrice > LineupService.MAX_PRICE)
                 {
                     continue;
                 }

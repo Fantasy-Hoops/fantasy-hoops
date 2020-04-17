@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using fantasy_hoops.Enums;
-using fantasy_hoops.Models;
 
 namespace fantasy_hoops.Dtos
 {

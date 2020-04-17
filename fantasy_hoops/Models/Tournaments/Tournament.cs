@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using fantasy_hoops.Enums;
 
 namespace fantasy_hoops.Models.Tournaments

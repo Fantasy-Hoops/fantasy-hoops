@@ -1,6 +1,4 @@
-﻿using fantasy_hoops.Database;
-using fantasy_hoops.Models.ViewModels;
-using fantasy_hoops.Repositories;
+﻿using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +16,6 @@ namespace fantasy_hoops.Controllers
     public class LineupController : Controller
     {
 
-        public static readonly int MAX_PRICE = 300;
 
         private readonly ILineupService _lineupService;
         private readonly ILineupRepository _lineupRepository;
@@ -41,7 +38,7 @@ namespace fantasy_hoops.Controllers
         {
             string userId = User.Claims.ToList()[0].Value;
             model.UserID = userId;
-            if (_lineupRepository.GetLineupPrice(model) > MAX_PRICE)
+            if (_lineupRepository.GetLineupPrice(model) > LineupService.MAX_PRICE)
                 return StatusCode(422, "Lineup price exceeds the budget! Lineup was not submitted.");
             if (!_lineupRepository.ArePricesCorrect(model))
                 return StatusCode(422, "Wrong player prices! Lineup was not submitted.");

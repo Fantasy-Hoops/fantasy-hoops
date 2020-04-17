@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
+using fantasy_hoops.Repositories;
+using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
 using Newtonsoft.Json.Linq;
@@ -17,12 +19,14 @@ namespace fantasy_hoops.Jobs
         private readonly GameContext _context;
         private readonly IScoreService _scoreService;
         private readonly IPushService _pushService;
+        private readonly ITeamRepository _teamRepository;
 
         public StatsJob(IScoreService scoreService, IPushService pushService)
         {
             _context = new GameContext();
             _scoreService = scoreService;
             _pushService = pushService;
+            _teamRepository = new TeamRepository();
         }
 
         private JObject GetBoxscore(string url)
@@ -135,10 +139,10 @@ namespace fantasy_hoops.Jobs
         {
             Team homeTeam = _context.Teams.FirstOrDefault(team => team.NbaID == homeTeamId);
             if (homeTeam == null)
-                homeTeam = CommonFunctions.GetUnknownTeam(_context);
+                homeTeam = _teamRepository.GetUnknownTeam();
             Team awayTeam = _context.Teams.FirstOrDefault(team => team.NbaID == awayTeamId);
             if (awayTeam == null)
-                awayTeam = CommonFunctions.GetUnknownTeam(_context);
+                awayTeam = _teamRepository.GetUnknownTeam();
 
             Game gameObj = _context.Games.FirstOrDefault(game => game.Date.Equals(date)
                                                                  && game.HomeTeam.Equals(homeTeam)

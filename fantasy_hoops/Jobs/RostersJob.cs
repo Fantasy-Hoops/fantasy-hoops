@@ -7,6 +7,8 @@ using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Repositories;
+using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
 using Newtonsoft.Json.Linq;
@@ -17,11 +19,13 @@ namespace fantasy_hoops.Jobs
     {
         private readonly GameContext _context;
         private readonly IPushService _pushService;
+        private readonly ITeamRepository _teamRepository;
 
         public RostersJob(IPushService pushService)
         {
             _context = new GameContext();
             _pushService = pushService;
+            _teamRepository = new TeamRepository();
         }
 
         private List<JToken> GetTeams()
@@ -209,7 +213,7 @@ namespace fantasy_hoops.Jobs
                 dbTeams.Add(teamObj);
 
             Roster:
-                Team unknownTeam = CommonFunctions.GetUnknownTeam(_context);
+                Team unknownTeam = _teamRepository.GetUnknownTeam();
                 Team dbTeam = dbTeams.FirstOrDefault(t => t.NbaID == teamNbaId);
                 List<JToken> roster = GetRoster((string)team["id"]);
                 System.Threading.Thread.Sleep(1000);

@@ -1,6 +1,4 @@
-﻿using fantasy_hoops.Database;
-using fantasy_hoops.Repositories;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
