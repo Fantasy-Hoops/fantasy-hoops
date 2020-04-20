@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace fantasy_hoops.Models
+namespace fantasy_hoops.Models.PushNotifications
 {
     public class PushSubscription
     {

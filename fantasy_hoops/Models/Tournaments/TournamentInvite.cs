@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using fantasy_hoops.Enums;
+using fantasy_hoops.Models.Enums;
 
 namespace fantasy_hoops.Models.Tournaments
 {

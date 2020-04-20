@@ -2,6 +2,7 @@
 using System.Linq;
 using fantasy_hoops.Database;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.PushNotifications;
 using fantasy_hoops.Repositories.Interfaces;
 
 namespace fantasy_hoops.Repositories

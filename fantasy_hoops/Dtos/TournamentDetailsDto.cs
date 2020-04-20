@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using fantasy_hoops.Enums;
+using fantasy_hoops.Models.Enums;
 
 namespace fantasy_hoops.Dtos
 {
@@ -20,7 +20,6 @@ namespace fantasy_hoops.Dtos
         public List<ContestDto> Contests { get; set; }
         public List<TournamentUserDto> Standings { get; set; }
         public UserLeaderboardRecordDto CurrentLineup { get; set; }
-        public string NextOpponent { get; set; }
         public bool AcceptedInvite { get; set; }
     }
 }

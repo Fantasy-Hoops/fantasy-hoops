@@ -125,7 +125,6 @@ namespace fantasy_hoops
             services.AddScoped<IStatsRepository, StatsRepository>();
             services.AddScoped<ITeamRepository, TeamRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IBestLineupsRepository, BestLineupsRepository>();
             services.AddScoped<IAchievementsRepository, AchievementsRepository>();
             services.AddScoped<ITournamentsRepository, TournamentsRepository>();
         }

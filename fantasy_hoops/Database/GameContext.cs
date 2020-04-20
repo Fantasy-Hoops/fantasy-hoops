@@ -1,6 +1,7 @@
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Models.Notifications;
+using fantasy_hoops.Models.PushNotifications;
 using fantasy_hoops.Models.Tournaments;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

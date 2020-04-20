@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using fantasy_hoops.Dtos;
-using fantasy_hoops.Enums;
+using fantasy_hoops.Models.Enums;
 
 namespace fantasy_hoops.Repositories.Interfaces
 {

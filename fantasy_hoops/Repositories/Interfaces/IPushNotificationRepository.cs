@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.PushNotifications;
 
 namespace fantasy_hoops.Repositories.Interfaces
 {

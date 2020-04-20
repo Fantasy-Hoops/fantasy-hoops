@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using fantasy_hoops.Models.PushNotifications;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 using Newtonsoft.Json;
 using WebPush;
-using PushSubscription = fantasy_hoops.Models.PushSubscription;
+using PushSubscription = fantasy_hoops.Models.PushNotifications.PushSubscription;
 
 namespace fantasy_hoops.Services
 {
     public class PushService : IPushService
     {
         private readonly WebPushClient _client;
-        public static VapidDetails _vapidDetails;
+        private readonly VapidDetails _vapidDetails;
         private readonly IPushNotificationRepository _pushNotificationRepository;
         private readonly IUserRepository _userRepository;
         private readonly ILineupRepository _lineupRepository;
@@ -88,7 +89,7 @@ namespace fantasy_hoops.Services
         public async Task SendToAllUsers(PushNotificationViewModel notification)
         {
             foreach (var user in _userRepository.GetAllUsers())
-                Send(user.UserId, notification).Wait();
+                await Send(user.UserId, notification);
         }
 
         public async Task Send(string userId, PushNotificationViewModel notification)
@@ -109,10 +110,6 @@ namespace fantasy_hoops.Services
                     if (e.Message == "Subscription no longer valid")
                     {
                         _pushNotificationRepository.RemoveSubscription(subscription);
-                    }
-                    else
-                    {
-                        // Track exception with eg. AppInsights
                     }
                 }
             }
@@ -137,7 +134,7 @@ namespace fantasy_hoops.Services
         {
             PushNotificationViewModel notification =
                     new PushNotificationViewModel("Fantasy Hoops Reminder",
-                        string.Format("Game is starting in less than 5 hours! Don't forget to set up your lineup!"))
+                        "Game is starting in less than 5 hours! Don't forget to set up your lineup!")
                     {
                         Actions = new List<NotificationAction> { new NotificationAction("lineup", "🏆 Lineup") }
                     };

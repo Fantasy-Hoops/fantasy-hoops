@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using fantasy_hoops.Dtos;
-using fantasy_hoops.Enums;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Models.Tournaments;
 
 namespace fantasy_hoops.Repositories.Interfaces

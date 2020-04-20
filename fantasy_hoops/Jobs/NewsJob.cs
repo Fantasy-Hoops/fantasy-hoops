@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using System.Net;
 using fantasy_hoops.Database;
-using fantasy_hoops.Enums;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.Enums;
 using FluentScheduler;
 using Newtonsoft.Json.Linq;
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using fantasy_hoops.Database;
-using fantasy_hoops.Enums;
+using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;

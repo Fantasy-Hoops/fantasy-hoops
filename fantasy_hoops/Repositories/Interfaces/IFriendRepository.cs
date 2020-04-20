@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using fantasy_hoops.Enums;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.Enums;
 
 namespace fantasy_hoops.Repositories.Interfaces
 {

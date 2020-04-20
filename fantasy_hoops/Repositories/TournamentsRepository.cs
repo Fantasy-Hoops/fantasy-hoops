@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using fantasy_hoops.Database;
 using fantasy_hoops.Dtos;
-using fantasy_hoops.Enums;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Models.Notifications;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Repositories.Interfaces;
@@ -189,21 +189,6 @@ namespace fantasy_hoops.Repositories
                 tournamentDetails.CurrentLineup = _lineupRepository.GetUserCurrentLineup(userId);
                 tournamentDetails.AcceptedInvite =
                     IsUserInvited(userId, tournamentId) && IsUserInTournament(userId, tournamentId);
-            }
-
-            MatchupPairDto userMatchup = nextContest?.Matchups
-                .FirstOrDefault(contestPair =>
-                    contestPair.FirstUser.UserId.Equals(userId) || contestPair.SecondUser.UserId.Equals(userId));
-            if (userMatchup != null && userId != null)
-            {
-                if (userId.Equals(userMatchup.FirstUser.UserId))
-                {
-                    tournamentDetails.NextOpponent = userMatchup.SecondUser.Username;
-                }
-                else if (userId.Equals(userMatchup.SecondUser.UserId))
-                {
-                    tournamentDetails.NextOpponent = userMatchup.FirstUser.Username;
-                }
             }
 
             return tournamentDetails;

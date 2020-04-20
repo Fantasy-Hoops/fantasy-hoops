@@ -20,7 +20,7 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Object> Get()
+        public IEnumerable<Object> GetPosts()
         {
             return _repository.GetPosts();
         }

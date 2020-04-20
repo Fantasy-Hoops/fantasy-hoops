@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using fantasy_hoops.Dtos;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace fantasy_hoops.Controllers
@@ -19,19 +21,26 @@ namespace fantasy_hoops.Controllers
             _repository = repository;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetAllNotifications()
         {
             return Ok(_repository.GetAllNotifications());
         }
 
+        [Authorize]
         [HttpGet("{id}")]
-        public IActionResult Get(string id, int start = 0, int count = 0)
+        public IActionResult GetUserNotifications(string id, int start = 0, int count = 0)
         {
+            if (!id.Equals(CommonFunctions.GetUserIdFromClaims(User)))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "Unauthorized access to resource.");
+            }
+            
             List<NotificationDto> notifications = _repository.GetNotifications(id, start, count);
 
             if (notifications == null || notifications.Count == 0)
-                return NotFound(String.Format("User with id {0} do not have any notifications!", id));
+                return NotFound($"User with id {id} do not have any notifications!");
             return Ok(notifications);
         }
 
@@ -39,13 +48,24 @@ namespace fantasy_hoops.Controllers
         [HttpPost("read")]
         public IActionResult ToggleNotification([FromBody]NotificationViewModel model)
         {
+            if (!model.ReceiverID.Equals(CommonFunctions.GetUserIdFromClaims(User)))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "Unauthorized access to resource.");
+            }
+            
             _repository.ReadNotification(model);
             return Ok();
         }
 
+        [Authorize]
         [HttpPost("readall/{id}")]
-        public IActionResult ReadAll(string id)
+        public IActionResult ReadAllNotifications(string id)
         {
+            if (!id.Equals(CommonFunctions.GetUserIdFromClaims(User)))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "Unauthorized access to resource.");
+            }
+            
             _repository.ReadAllNotifications(id);
             return Ok();
         }

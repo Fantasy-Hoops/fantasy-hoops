@@ -20,5 +20,6 @@ namespace fantasy_hoops.Repositories.Interfaces
         List<User> UsersNotSelected();
         UserLeaderboardRecordDto GetUserCurrentLineup(string userId);
         List<UserLeaderboardRecordDto> GetRecentLineups(string userId, int start, int count);
+        List<BestLineupDto> GetBestLineups(string date, int from, int limit);
     }
 }

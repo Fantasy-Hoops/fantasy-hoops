@@ -33,7 +33,7 @@ namespace fantasy_hoops.Controllers
         }
         
         [HttpGet("user/{userId}")]
-        public List<UserAchievementDto> GetUserAchievements(String userId)
+        public List<UserAchievementDto> GetUserAchievement(String userId)
         {
             return _achievementsRepository.GetUserAchievements(userId);
         }

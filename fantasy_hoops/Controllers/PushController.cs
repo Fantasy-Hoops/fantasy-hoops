@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.PushNotifications;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -61,8 +62,6 @@ namespace fantasy_hoops.Controllers
         [HttpPost("send/all")]
         public async Task<IActionResult> SendAll([FromBody] PushNotificationViewModel notification, [FromQuery] int? delay)
         {
-            // if (!_env.IsDevelopment()) return Forbid();
-
             if (delay != null) Thread.Sleep((int)delay);
 
             await _pushService.SendToAllUsers(notification);
@@ -73,33 +72,11 @@ namespace fantasy_hoops.Controllers
         [HttpPost("send/{userId}")]
         public async Task<IActionResult> Send([FromRoute] string userId, [FromBody] PushNotificationViewModel notification, [FromQuery] int? delay)
         {
-            // if (!_env.IsDevelopment()) return Forbid();
-
             if (delay != null) Thread.Sleep((int)delay);
 
             await _pushService.Send(userId, notification);
 
             return Ok("Notification sent");
         }
-    }
-
-    public class PushSubscriptionViewModel
-    {
-        public Subscription Subscription { get; set; }
-        public string DeviceId { get; set; }
-    }
-
-    public class Subscription
-    {
-        public string Endpoint { get; set; }
-        public double? ExpirationTime { get; set; }
-        public Keys Keys { get; set; }
-        public WebPush.PushSubscription ToWebPushSubscription() => new WebPush.PushSubscription(Endpoint, Keys.P256Dh, Keys.Auth);
-    }
-
-    public class Keys
-    {
-        public string P256Dh { get; set; }
-        public string Auth { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using fantasy_hoops.Enums;
 using fantasy_hoops.Jobs;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
 using Microsoft.AspNetCore.Http;

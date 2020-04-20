@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using fantasy_hoops.Enums;
+using fantasy_hoops.Models.Enums;
 
 namespace fantasy_hoops.Helpers
 {

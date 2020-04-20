@@ -18,13 +18,13 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Object> Get()
+        public IEnumerable<Object> GetActivePlayers()
         {
             return _repository.GetActivePlayers().ToList();
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult GetPlayer(int id)
         {
             var player = _repository.GetPlayer(id)
                 .FirstOrDefault();

@@ -84,12 +84,6 @@ function getCurrentContest(tournament, contest, matchup) {
                         </Link>
                     </div>
                 )}
-            <div className="MatchupsDashboard__NextOpponent">
-                <Typography variant="subtitle2">
-                    Next Opponent: <Link
-                    to={`/profile/${tournament.nextOpponent}`}>{tournament.nextOpponent}</Link>
-                </Typography>
-            </div>
         </>
     );
 }

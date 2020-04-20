@@ -7,17 +7,15 @@ using System.Collections.Generic;
 using System.Linq;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
-using fantasy_hoops.Jobs;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace fantasy_hoops.Controllers
 {
     [Route("api/[controller]")]
     public class LineupController : Controller
     {
-
-
         private readonly ILineupService _lineupService;
         private readonly ILineupRepository _lineupRepository;
 
@@ -27,9 +25,16 @@ namespace fantasy_hoops.Controllers
             _lineupRepository = lineupRepository;
         }
 
+        [Authorize]
         [HttpGet("{id}")]
-        public IActionResult Get(String id)
+        public IActionResult GetUserLineups(String id)
         {
+            String userId = CommonFunctions.GetUserIdFromClaims(User);
+            if (!userId.Equals(id))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "Unauthorized access to the resource.");
+            }
+            
             return Ok(_lineupRepository.GetLineup(id));
         }
 
@@ -74,14 +79,20 @@ namespace fantasy_hoops.Controllers
 
         [Authorize]
         [HttpGet("recent/{userId}")]
-        public List<UserLeaderboardRecordDto> GetRecentLineups([FromRoute] string userId, [FromQuery] int start = 0, [FromQuery] int count = 5)
+        public ActionResult<List<UserLeaderboardRecordDto>> GetRecentLineups([FromRoute] string userId, [FromQuery] int start = 0, [FromQuery] int count = 5)
         {
-            if (userId == null)
+            if (!userId.Equals(CommonFunctions.GetUserIdFromClaims(User)))
             {
-                userId = User.Claims.ToList()[0].Value;
+                return StatusCode(StatusCodes.Status403Forbidden, "Unauthorized access to resource.");
             }
             
             return _lineupRepository.GetRecentLineups(userId, start, count);
+        }
+        
+        [HttpGet("bestLineups")]
+        public List<BestLineupDto> GetBestLineups(string date, int from = 0, int limit = 10)
+        {
+            return _lineupRepository.GetBestLineups(date, from, limit);
         }
     }
 }

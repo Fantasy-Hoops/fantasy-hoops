@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
+using fantasy_hoops.Models.PushNotifications;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;

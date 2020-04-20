@@ -7,6 +7,7 @@ using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Notifications;
+using fantasy_hoops.Models.PushNotifications;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;

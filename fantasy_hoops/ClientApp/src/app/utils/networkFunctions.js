@@ -14,7 +14,6 @@ const notificationsApiUrlBase = `${apiUrlBase}/notification`;
 const pushNotificationsApiUrlBase = `${apiUrlBase}/push`;
 const blogApiUrlBase = `${apiUrlBase}/blog`;
 const achievementsApiUrlBase = `${apiUrlBase}/achievements`;
-const bestLineupsApiUrlBase = `${apiUrlBase}/bestLineups`;
 const tournamentsApiUrlBase = `${apiUrlBase}/tournaments`;
 
 const createParameters = (parameters) => {
@@ -92,6 +91,7 @@ export const getUserLineup = userId => axios.get(`${lineupApiUrlBase}/${userId}`
 export const submitLineup = lineup => axios.post(`${lineupApiUrlBase}/submit`, lineup);
 export const getCurrentLineup = () => axios.get(`${lineupApiUrlBase}/current`);
 export const getRecentLineups = (userId, parameters) => axios.get(`${lineupApiUrlBase}/recent/${userId}${createParameters(parameters)}`);
+export const getBestLineups = parameters => axios.get(`${lineupApiUrlBase}/bestLineups/${createParameters(parameters)}`);
 
 // Notifications requests
 export const getUserNotifications = (userId, parameters) => axios.get(`${notificationsApiUrlBase}/${userId}${createParameters(parameters)}`);
@@ -117,9 +117,6 @@ export const googleLogin = tokenId => axios.create({
 // Achievements
 export const getExistingAchievements = () => axios.get(achievementsApiUrlBase);
 export const getUserAchievements = userId => axios.get(`${achievementsApiUrlBase}/user/${userId}`);
-
-// BestLineups
-export const getBestLineups = parameters => axios.get(`${bestLineupsApiUrlBase}${createParameters(parameters)}`);
 
 // Tournaments
 export const getUserTournaments = userId => axios.get(`${tournamentsApiUrlBase}/user/${userId}`);

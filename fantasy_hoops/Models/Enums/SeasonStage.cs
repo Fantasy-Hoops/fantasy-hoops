@@ -1,4 +1,4 @@
-namespace fantasy_hoops.Enums
+namespace fantasy_hoops.Models.Enums
 {
     public enum SeasonStage
     {

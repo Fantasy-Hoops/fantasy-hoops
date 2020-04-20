@@ -28,7 +28,7 @@ namespace fantasy_hoops.Controllers
         {
             var player = _statsRepository.GetStats(id, start, count).FirstOrDefault();
             if (player == null)
-                return NotFound(String.Format("Player with id {0} has not been found!", id));
+                return NotFound($"Player with id {id} has not been found!");
             return Ok(player);
         }
     }

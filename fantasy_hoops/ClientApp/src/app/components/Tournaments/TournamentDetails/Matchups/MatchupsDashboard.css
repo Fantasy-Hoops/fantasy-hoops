@@ -36,13 +36,6 @@
     margin: 6rem 0;
 }
 
-.MatchupsDashboard__NextOpponent {
-    text-align: right;
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-}
-
 @media screen and (min-width: 768px) {
     .MatchupsDashboard__Layout {
         max-height: 100%;

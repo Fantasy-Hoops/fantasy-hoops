@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using fantasy_hoops.Enums;
+using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Repositories.Interfaces;
 
 namespace fantasy_hoops.Controllers
@@ -19,7 +19,7 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet("player")]
-        public IEnumerable<Object> GetPlayerLeaderboard(int from = 0, int limit = 30, string type = "weekly")
+        public IEnumerable<Object> t(int from = 0, int limit = 30, string type = "weekly")
         {
             LeaderboardType leaderboardType = CommonFunctions.ParseLeaderboardType(type);
             return _repository.GetPlayerLeaderboard(from, limit, leaderboardType).ToList();

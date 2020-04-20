@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using fantasy_hoops.Enums;
+using fantasy_hoops.Models.Enums;
 
 namespace fantasy_hoops.Models
 {

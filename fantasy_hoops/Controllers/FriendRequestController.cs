@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using fantasy_hoops.Enums;
+using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;

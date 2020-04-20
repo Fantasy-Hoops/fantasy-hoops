@@ -2,7 +2,7 @@
 using fantasy_hoops.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
-using fantasy_hoops.Enums;
+using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Models.Notifications;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;

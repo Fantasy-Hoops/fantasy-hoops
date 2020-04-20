@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using fantasy_hoops.Models.PushNotifications;
 
 namespace fantasy_hoops.Models.ViewModels
 {
@@ -56,27 +57,5 @@ namespace fantasy_hoops.Models.ViewModels
         public object Data { get; set; }
     }
 
-    /// <summary>
-    ///     <see href="https://notifications.spec.whatwg.org/#dictdef-notificationaction">Notification API Standard</see>
-    /// </summary>
-    public class NotificationAction
-    {
-        public NotificationAction(string action, string title)
-        {
-            Action = action;
-            Title = title;
-        }
-
-        [JsonProperty("action")]
-        public string Action { get; set; }
-
-        [JsonProperty("title")]
-        public string Title { get; set; }
-    }
-
-    public class NotificationTag
-    {
-        public const string Notify = "demo_testmessage";
-        public const string Trivia = "demo_trivia";
-    }
+    
 }
