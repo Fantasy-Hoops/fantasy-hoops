@@ -81,11 +81,6 @@ namespace fantasy_hoops.Controllers
         [HttpGet("recent/{userId}")]
         public ActionResult<List<UserLeaderboardRecordDto>> GetRecentLineups([FromRoute] string userId, [FromQuery] int start = 0, [FromQuery] int count = 5)
         {
-            if (!userId.Equals(CommonFunctions.Instance.GetUserIdFromClaims(User)))
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, "Unauthorized access to resource.");
-            }
-            
             return _lineupRepository.GetRecentLineups(userId, start, count);
         }
         

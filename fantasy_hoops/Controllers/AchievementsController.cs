@@ -40,12 +40,6 @@ namespace fantasy_hoops.Controllers
         [HttpGet("user/{userId}")]
         public ActionResult<List<UserAchievementDto>> GetUserAchievement(String userId)
         {
-            string userIdFromClaims = CommonFunctions.Instance.GetUserIdFromClaims(User);
-            if (!userIdFromClaims.Equals(userId))
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
-            }
-            
             return _achievementsRepository.GetUserAchievements(userId);
         }
 

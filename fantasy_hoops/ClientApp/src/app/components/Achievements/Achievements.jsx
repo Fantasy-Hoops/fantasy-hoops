@@ -62,7 +62,7 @@ function Achievements(props) {
             }
         )
     }
-
+    
     return (
         <div className="tab-pane" id="achievements">
             <div className="Achievements">

@@ -976,13 +976,6 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
     margin-bottom: 2rem;
 }
 
-.PlayerPool {
-    display: grid;
-    grid-gap: 1%;
-    grid-template-columns: repeat(4, 1fr);
-    list-style-type: none;
-}
-
 .PlayerCard {
     position: relative;
     max-width: 16rem;

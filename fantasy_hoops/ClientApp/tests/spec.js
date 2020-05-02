@@ -1,5 +1,5 @@
 const EC = protractor.ExpectedConditions;
-const domain = false
+const domain = true
     ? 'https://fantasyhoops.org'
     : 'https://localhost:44389';
 
@@ -122,7 +122,7 @@ describe('FantasyHoops lineup page tests', () => {
         browser.wait(EC.presenceOf(playerSelectBtn), 10000);
         await playerSelectBtn.click();
         
-        const selectedPlayerCard = element(by.css('.PlayerCard.card .PlayerCard__player-attributes'));
+        const selectedPlayerCard = element.all(by.css('.PlayerCard.card .PlayerCard__player-attributes')).first();
         expect (selectedPlayerCard.isDisplayed()).toBe(true);
     });
     
@@ -162,8 +162,8 @@ describe('FantasyHoops leaderboards page tests', () => {
         
         const title = element(by.css('#Leaderboards__activeUsers h2'));
         const subtitle = element(by.css('#Leaderboards__activeUsers p'));
-        const usersLeaderboardCards = element.all(by.css('.UserLeaderboardCard'));
-        const href = element(by.css('#Leaderboards__activeUsers a'));
+        const usersLeaderboardCards = element.all(by.css('#Leaderboards__activeUsers .UserLeaderboardCard'));
+        const href = element.all(by.css('#Leaderboards__activeUsers a')).first();
         const link = href.getAttribute('href');
         
         expect(title.isDisplayed()).toBe(true);
@@ -193,7 +193,7 @@ describe('FantasyHoops leaderboards page tests', () => {
         expect(bestLineups.isDisplayed()).toBe(true);
 
         const title = element(by.css('#Leaderboards__bestLineups h2'));
-        const subtitle = element(by.css('#Leaderboards__bestLineups p'));
+        const subtitle = element.all(by.css('#Leaderboards__bestLineups p')).first();
         const userScoreCards = element.all(by.css('#Leaderboards__bestLineups .UserScoreCard'));
         browser.wait(EC.presenceOf(userScoreCards.first()), 10000);
         // const href = element(by.css('#Leaderboards__bestLineups a'));
@@ -358,7 +358,7 @@ describe('FantasyHoops news page tests', () => {
     });
 
     it('should have H5 subtitle', () => {
-        const h5Subtitle = element(by.css('h5'));
+        const h5Subtitle = element.all(by.css('h5')).first();
         expect(h5Subtitle.isDisplayed()).toBe(true);
     });
     
