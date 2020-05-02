@@ -8,7 +8,6 @@ import {Friends} from './Friends/Friends';
 import {Error} from '../Error';
 import {getUserData, getUserDataByName} from '../../utils/networkFunctions';
 import Achievements from "../Achievements/Achievements";
-import {Container} from "@material-ui/core";
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../../utils/helpers";
 
@@ -43,10 +42,6 @@ export class UserProfile extends Component {
         friendsTab.classList.remove('active');
         const profileTab = document.getElementById('profile');
         profileTab.classList.add('active');
-    }
-
-    componentWillUnmount() {
-        this._isMounted = false;
     }
 
     async loadUser(props) {

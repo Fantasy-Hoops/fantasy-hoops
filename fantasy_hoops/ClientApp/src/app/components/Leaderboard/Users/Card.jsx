@@ -29,10 +29,6 @@ export class Card extends PureComponent {
     }
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
   getPlayers() {
     return _.map(
       this.props.user.lineup,

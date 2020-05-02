@@ -27,6 +27,8 @@ namespace fantasy_hoops.Helpers
 
 			internal static readonly CommonFunctions instance = new CommonFunctions();
 		}
+
+		private int? seasonYear;
 		
 		public string DOMAIN = "fantasyhoops.org";
 		
@@ -126,6 +128,16 @@ namespace fantasy_hoops.Helpers
 				default:
 					return UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date;
 			}
+		}
+
+		public int GetSeasonYearInt()
+		{
+			if (!seasonYear.HasValue)
+			{
+				seasonYear = int.Parse(GetSeasonYear());
+			}
+
+			return seasonYear.Value;
 		}
 
 		public string GetSeasonYear()

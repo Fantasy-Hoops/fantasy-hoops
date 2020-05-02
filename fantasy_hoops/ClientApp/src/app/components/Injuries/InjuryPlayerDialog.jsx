@@ -9,8 +9,6 @@ import './InjuryPlayerDialog.css';
 import {useStyles} from "./InjuryPlayerDialogStyles";
 import {Container} from "@material-ui/core";
 import defaultLogo from "../../../content/images/defaultLogo.png";
-import Box from "@material-ui/core/Box";
-import {Link} from "react-router-dom";
 
 /**
  * @return {null}

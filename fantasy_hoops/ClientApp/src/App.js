@@ -15,12 +15,15 @@ import {getUpdatedToken} from "./app/utils/networkFunctions";
 export default () => {
     const [isTokenUpdated, setIsTokenUpdated] = useState(false);
     useEffect(() => {
+        if (!localStorage.getItem('accessToken')) {
+            return;
+        }
         getUpdatedToken()
             .then(response => {
                 localStorage.setItem('accessToken', response.data);
             }).catch(console.error);
     }, []);
-    
+
     return (
         <ThemeProvider theme={theme}>
             <Snackbar>

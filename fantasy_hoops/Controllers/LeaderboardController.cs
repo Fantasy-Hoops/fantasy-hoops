@@ -19,7 +19,7 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpGet("player")]
-        public IEnumerable<Object> t(int from = 0, int limit = 30, string type = "weekly")
+        public IEnumerable<Object> GetPlayerLeaderboard(int from = 0, int limit = 30, string type = "weekly")
         {
             LeaderboardType leaderboardType = CommonFunctions.Instance.ParseLeaderboardType(type);
             return _leaderboardRepository.GetPlayerLeaderboard(from, limit, leaderboardType).ToList();

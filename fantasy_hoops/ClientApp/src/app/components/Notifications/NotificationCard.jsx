@@ -37,10 +37,6 @@ export class NotificationCard extends Component {
         }
     }
 
-    componentWillUnmount() {
-        this._isMounted = false;
-    }
-
     async readNotification() {
         const {notification} = this.props;
 
