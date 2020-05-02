@@ -43,6 +43,7 @@ function InjuryPlayerDialog(props) {
     );
     return (
         <Dialog
+            id="InjuryPlayerDialog"
             onClose={handleDialogClose}
             aria-labelledby="injury-player-dialog"
             open={open}

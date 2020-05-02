@@ -271,7 +271,7 @@ export class Lineup extends Component {
                         {this.state.lineup.c}
                     </div>
                     <p
-                        className="text-center m-2"
+                        className="Lineup__moneyRemaining text-center m-2"
                         style={{color: remaining < 0 ? 'red' : 'black'}}
                     >
                         Remaining

@@ -4,7 +4,6 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import Slide from "@material-ui/core/Slide";
 
 import './InjuriesInfoDialog.css';
 
@@ -13,6 +12,7 @@ function InjuriesInfoDialog(props) {
 
     return (
         <Dialog
+            className="InjuriesInfoDialog"
             onClose={handleClose}
             aria-labelledby="injuries-info-dialog"
             open={open}

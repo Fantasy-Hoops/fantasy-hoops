@@ -65,7 +65,7 @@ function InfoDialog(props) {
                 * FP - Fantasy Points
             </DialogContent>
             <DialogActions>
-                <Button onClick={onDialogClose} color="primary">
+                <Button className="Lineup__infoDialogClose" onClick={onDialogClose} color="primary">
                     Close
                 </Button>
             </DialogActions>

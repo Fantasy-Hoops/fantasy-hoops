@@ -13,5 +13,10 @@ exports.config = {
                 displayStacktrace: true
             }
         }));
+    },
+    capabilities: {
+        browserName : 'chrome',
+        marionette : true,
+        acceptInsecureCerts : true
     }
 };

@@ -143,7 +143,7 @@ export default class LoginPage extends Component {
                 </Helmet>
                 <div className="container pb-3  vertical-center" style={{maxWidth: '420px'}}>
                     <br/>
-                    <h2>Login</h2>
+                    <h1>Login</h1>
                     <hr/>
                     <Alert type={alertType} text={alertText} show={showAlert}/>
                     <form onSubmit={this.handleSubmit} id="form">

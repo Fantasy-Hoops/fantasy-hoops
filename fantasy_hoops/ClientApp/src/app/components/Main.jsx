@@ -126,6 +126,7 @@ function Main() {
                 {/*  <i className="far fa-bookmark" />*/}
                 {/*  {' Save'}*/}
                 {/*</button>*/}
+                <h1 style={{visibility: 'hidden'}}>Fantasy Hoops</h1>
                 <div className="Main__Logo--placeholder">
                     <img
                         className="Main__Logo"

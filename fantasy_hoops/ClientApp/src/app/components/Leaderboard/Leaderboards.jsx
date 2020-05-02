@@ -174,7 +174,7 @@ function Leaderboards(props) {
                 <h5 className="PageSubtitle">{Intro.SUBTITLE}</h5>
             </article>
             {googleAd}
-            <section className="Content__Container">
+            <section id="Leaderboards__activeUsers" className="Content__Container">
                 <article className="Content--left">
                     <h2 className="Content__Title">{Intro.USERS_TITLE}</h2>
                     <p className="Content__Subtitle">{Intro.USERS_SUBTITLE}</p>
@@ -196,7 +196,7 @@ function Leaderboards(props) {
                         </CustomLoader>}
                 </article>
             </section>
-            <section className="Content__Container Content__Container--reverse">
+            <section id="Leaderboards__NBAPlayers" className="Content__Container Content__Container--reverse">
                 <article className="Content--left">
                     {topPlayers
                         ? topPlayersCards
@@ -219,7 +219,7 @@ function Leaderboards(props) {
                     </Link>
                 </article>
             </section>
-            <section className="Content__Container">
+            <section id="Leaderboards__bestLineups" className="Content__Container">
                 <article className="Content--left">
                     <h2 className="Content__Title">{Intro.BEST_LINEUPS_TITLE}</h2>
                     <p className="Content__Subtitle">{Intro.BEST_LINEUPS_SUBTITLE}</p>
@@ -241,7 +241,7 @@ function Leaderboards(props) {
                         </CustomLoader>}
                 </article>
             </section>
-            <section className="Content__Container Content__Container--reverse">
+            <section id="Leaderboards__seasonPerformers" className="Content__Container Content__Container--reverse">
                 <article className="Content--left">
                     {topSeasonLineups
                         ? seasonLineupsCards
@@ -263,7 +263,7 @@ function Leaderboards(props) {
                     </Link>
                 </article>
             </section>
-            <section className="Content__Container">
+            <section id="Leaderboards__NBAPlayersSelections" className="Content__Container">
                 <article className="Content--left">
                     <h2 className="Content__Title">{Intro.SELECTED_TITLE}</h2>
                     <p className="Content__Subtitle">{Intro.SELECTED_SUBTITLE}</p>

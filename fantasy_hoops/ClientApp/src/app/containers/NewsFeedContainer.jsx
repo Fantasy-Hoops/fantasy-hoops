@@ -64,7 +64,7 @@ function TabPanel(props) {
             component="div"
             role="tabpanel"
             hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
+            id={`news-tabpanel-${index}`}
             aria-labelledby={`simple-tab-${index}`}
             {...other}
         >
@@ -131,6 +131,7 @@ function NewsFeedContainer(props) {
                 <h5 className="PageSubtitle">&copy; {Intro.COPYRIGHT}</h5>
             </article>
             <Tabs
+                id="NewsFeed__tabs"
                 className={classes.tabs}
                 value={value}
                 indicatorColor="primary"
