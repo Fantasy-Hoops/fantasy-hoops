@@ -91,21 +91,29 @@ namespace fantasy_hoops.Repositories
         public bool AddPost(SubmitPostViewModel model)
         {
             _context.Posts.Add(
-                    new Post
-                    {
-                        Title = model.Title,
-                        Body = model.Body,
-                        AuthorID = model.AuthorID,
-                        CreatedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow),
-                        ModifiedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow),
-                        Status = model.Status
-                    });
+                new Post
+                {
+                    Title = model.Title,
+                    Body = model.Body,
+                    AuthorID = model.AuthorID,
+                    CreatedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow),
+                    ModifiedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow),
+                    Status = model.Status
+                });
             return _context.SaveChanges() != 0;
         }
 
         public bool UpdatePost(SubmitPostViewModel model)
         {
-            throw new NotImplementedException();
+            Post editablePost = _context.Posts.Find(model.Id);
+            if (editablePost.Title.Equals(model.Title) && editablePost.Body.Equals(model.Body))
+            {
+                return true;
+            }
+            editablePost.Title = model.Title;
+            editablePost.Body = model.Body;
+            editablePost.ModifiedAt = CommonFunctions.EctNow;
+            return _context.SaveChanges() != 0;
         }
 
         public bool PostExists(int id)
@@ -120,7 +128,7 @@ namespace fantasy_hoops.Repositories
             {
                 return false;
             }
-            
+
             _context.Posts.Remove(postToDelete);
             return _context.SaveChanges() != 0;
         }

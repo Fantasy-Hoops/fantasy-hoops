@@ -1,5 +1,5 @@
 import Blog from '../constants/blog';
-import {getPosts, submitPost, deletePost, getPendingPosts, approvePost} from '../utils/networkFunctions';
+import {getPosts, submitPost, deletePost, getPendingPosts, approvePost, editPost} from '../utils/networkFunctions';
 
 export const loadPosts = () => async (dispatch) => {
     await getPosts().then((res) => {
@@ -13,6 +13,22 @@ export const loadPosts = () => async (dispatch) => {
 export const savePost = post => async (dispatch) => {
     const response = await submitPost(post);
     dispatch({type: Blog.SUBMIT_POST});
+    if (response.status === 200) {
+        setTimeout(() => getPosts().then((res) => {
+            dispatch({
+                type: Blog.LOAD_POSTS,
+                posts: res.data
+            });
+        }), 1000);
+        return {isSuccess: true, data: response};
+    } else {
+        return {isSuccess: false, data: response};
+    }
+};
+
+export const updatePost = post => async (dispatch) => {
+    const response = await editPost(post);
+    dispatch({type: Blog.UPDATE_POST});
     if (response.status === 200) {
         setTimeout(() => getPosts().then((res) => {
             dispatch({

@@ -107,6 +107,7 @@ export const getPushPublicKey = () => axios.get(`${pushNotificationsApiUrlBase}/
 
 // Blog requests
 export const submitPost = post => axios.post(blogApiUrlBase, post);
+export const editPost = post => axios.put(blogApiUrlBase, post);
 export const getPosts = () => axios.get(blogApiUrlBase);
 export const deletePost = id => axios.delete(`${blogApiUrlBase}?id=${id}`);
 export const getPendingPosts = () => axios.get(`${blogApiUrlBase}/pending`);

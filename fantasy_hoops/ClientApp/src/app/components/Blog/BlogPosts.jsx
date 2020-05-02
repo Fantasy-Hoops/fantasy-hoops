@@ -17,7 +17,7 @@ class BlogPosts extends PureComponent {
     }
 
     render() {
-        const {posts, blogLoader, user} = this.props;
+        const {posts, blogLoader, user, handleEdit} = this.props;
         const postCards = _.map(posts,
             post => (
                 <PostCard
@@ -25,6 +25,7 @@ class BlogPosts extends PureComponent {
                     post={post}
                     user={user}
                     handleRemove={this.handleRemove}
+                    handleEdit={handleEdit}
                 />
             ));
         if (blogLoader) {

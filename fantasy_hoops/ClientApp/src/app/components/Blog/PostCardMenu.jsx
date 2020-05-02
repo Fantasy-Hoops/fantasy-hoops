@@ -19,6 +19,11 @@ function PostCardMenu(props) {
         const {post, handleRemove} = props;
         handleRemove(post);
     }
+    
+    function handleEdit() {
+        const {post, handleEdit} = props;
+        handleEdit(post);
+    }
 
     return (
         <div className="PostCard__Menu">
@@ -32,7 +37,7 @@ function PostCardMenu(props) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                <MenuItem onClick={handleClose}><i className="fas fa-edit"/>Edit</MenuItem>
+                <MenuItem onClick={handleEdit}><i className="fas fa-edit"/>Edit</MenuItem>
                 <MenuItem onClick={handleRemove}><i className="fas fa-trash-alt text-danger"/>Remove</MenuItem>
             </Menu>
         </div>

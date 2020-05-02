@@ -113,7 +113,7 @@ export function AdminPanel(props) {
                 <JobsPanel/>
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
-                <BlogPostsPanel pendingPosts={props.pendingPosts} approvePost={props.approveBlogPost}
+                <BlogPostsPanel pendingPosts={props.pendingPosts} approveBlogPost={props.approveBlogPost}
                                 removePost={props.removePost}/>
             </TabPanel>
         </div>

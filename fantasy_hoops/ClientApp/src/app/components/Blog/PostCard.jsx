@@ -7,17 +7,17 @@ import defaultPhoto from '../../../content/images/default.png';
 import PostCardMenu from './PostCardMenu';
 
 import './PostCard.css';
+import {isAdmin} from "../../utils/auth";
 
 
 function PostCard(props) {
-    const {user, post} = props;
+    const {user, post, handleEdit} = props;
     
     function handleRemove(post) {
         const {handleRemove} = props;
         handleRemove(post);
     }
     
-    const canEdit = user => user && user.isAdmin || post.author.userId === user.id;
     return (
         <article className="PostCard">
             <h2 className="PostCard__Title">
@@ -38,7 +38,7 @@ function PostCard(props) {
                                  alt="Loader"/>}
                 />
                 <span className="PostCard__AuthorName">{post.author.username}</span>
-                {canEdit(user) ? <PostCardMenu handleRemove={handleRemove} {...props} /> : null}
+                {isAdmin() ? <PostCardMenu handleRemove={handleRemove} handleEdit={handleEdit} {...props} /> : null}
             </div>
             <div
                 className="PostCard__Body"

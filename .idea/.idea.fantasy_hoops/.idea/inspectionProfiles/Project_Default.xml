@@ -2,7 +2,7 @@
   <profile version="1.0">
     <option name="myName" value="Project Default" />
     <inspection_tool class="RequiredAttributes" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="myAdditionalRequiredHtmlAttributes" value="children" />
+      <option name="myAdditionalRequiredHtmlAttributes" value="children,onSubmit" />
     </inspection_tool>
   </profile>
 </component>

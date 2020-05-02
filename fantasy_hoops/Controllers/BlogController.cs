@@ -74,13 +74,14 @@ namespace fantasy_hoops.Controllers
             return Ok("Deleted successfully.");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public IActionResult EditPost([FromBody]SubmitPostViewModel model)
         {
             if (!_blogRepository.PostExists(model.Id))
                 return StatusCode(StatusCodes.Status404NotFound, "Post not found.");
 
-            if (_blogRepository.UpdatePost(model))
+            if (!_blogRepository.UpdatePost(model))
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity, "Failed updating post.");
             }

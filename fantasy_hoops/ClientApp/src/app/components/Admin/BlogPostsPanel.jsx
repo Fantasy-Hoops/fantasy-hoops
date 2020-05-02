@@ -53,13 +53,15 @@ export function BlogPostsPanel(props) {
 
     const handleApprovePost = (postId) => {
         setLoader(true);
-        const {approvePost} = props;
-        const response = approvePost(postId);
-        if (response.status === 200) {
-            enqueueSnackbar(response.data, {variant: 'success'});
-        } else {
-            enqueueSnackbar(response.data, {variant: 'error'});
-        }
+        const {approveBlogPost} = props;
+        approveBlogPost(postId)
+            .then(response => {
+                if (response.status === 200) {
+                    enqueueSnackbar(response.data, {variant: 'success'});
+                } else {
+                    enqueueSnackbar(response.data, {variant: 'error'});
+                }
+            });
         setLoader(false);
     };
 
