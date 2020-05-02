@@ -19,5 +19,7 @@ namespace fantasy_hoops.Services.Interfaces
         void UpdateStandings(TournamentDetailsDto tournamentDetails, ContestDto contest);
         void SendCancelledTournamentNotifications(Tournament tournament);
         List<Tuple<string, string>>[] GetMatchupsPermutations(List<string> userIds);
+        Tournament FromViewModel(CreateTournamentViewModel tournamentModel);
+        Pair<List<Contest>, DateTime> GenerateContests(CreateTournamentViewModel model);
     }
 }

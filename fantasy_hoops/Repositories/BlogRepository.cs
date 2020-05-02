@@ -3,7 +3,10 @@ using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using fantasy_hoops.Dtos;
+using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Repositories.Interfaces;
 
 namespace fantasy_hoops.Repositories
@@ -17,27 +20,75 @@ namespace fantasy_hoops.Repositories
             _context = new GameContext();
         }
 
-        public IQueryable<Object> GetPosts()
+        public List<BlogPostDto> GetApprovedPosts()
         {
             return _context.Posts
-                .Select(post => new
+                .Where(post => post.Status == PostStatus.APPROVED)
+                .Select(post => new BlogPostDto
                 {
-                    id = post.PostID,
-                    post.Title,
-                    post.Body,
-                    Author = new
+                    Id = post.PostID,
+                    Title = post.Title,
+                    Body = post.Body,
+                    Author = new UserDto
                     {
-                        post.Author.UserName,
-                        post.Author.Id,
-                        post.Author.AvatarURL
+                        UserId = post.Author.Id,
+                        AvatarUrl = post.Author.AvatarURL,
+                        Username = post.Author.UserName
                     },
-                    post.CreatedAt,
-                    post.ModifiedAt
+                    CreatedAt = post.CreatedAt,
+                    ModifiedAt = post.ModifiedAt
                 })
-                .OrderByDescending(post => post.CreatedAt);
+                .OrderByDescending(post => post.CreatedAt)
+                .ToList();
         }
 
-        public void AddPost(SubmitPostViewModel model)
+        public List<BlogPostDto> GetUnapprovedPosts()
+        {
+            return _context.Posts
+                .Where(post => post.Status != PostStatus.APPROVED)
+                .Select(post => new BlogPostDto
+                {
+                    Id = post.PostID,
+                    Title = post.Title,
+                    Body = post.Body,
+                    Author = new UserDto
+                    {
+                        UserId = post.Author.Id,
+                        AvatarUrl = post.Author.AvatarURL,
+                        Username = post.Author.UserName
+                    },
+                    CreatedAt = post.CreatedAt,
+                    ModifiedAt = post.ModifiedAt
+                })
+                .OrderByDescending(post => post.CreatedAt)
+                .ToList();
+        }
+
+        public BlogPostDto GetPostById(int postId)
+        {
+            Post post = _context.Posts.Find(postId);
+            if (post == null)
+            {
+                return null;
+            }
+
+            return new BlogPostDto
+            {
+                Id = post.PostID,
+                Title = post.Title,
+                Body = post.Body,
+                Author = new UserDto
+                {
+                    UserId = post.Author.Id,
+                    AvatarUrl = post.Author.AvatarURL,
+                    Username = post.Author.UserName
+                },
+                CreatedAt = post.CreatedAt,
+                ModifiedAt = post.ModifiedAt
+            };
+        }
+
+        public bool AddPost(SubmitPostViewModel model)
         {
             _context.Posts.Add(
                     new Post
@@ -46,9 +97,15 @@ namespace fantasy_hoops.Repositories
                         Body = model.Body,
                         AuthorID = model.AuthorID,
                         CreatedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow),
-                        ModifiedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow)
+                        ModifiedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow),
+                        Status = model.Status
                     });
-            _context.SaveChanges();
+            return _context.SaveChanges() != 0;
+        }
+
+        public bool UpdatePost(SubmitPostViewModel model)
+        {
+            throw new NotImplementedException();
         }
 
         public bool PostExists(int id)
@@ -56,13 +113,34 @@ namespace fantasy_hoops.Repositories
             return _context.Posts.Any(post => post.PostID == id);
         }
 
-        public void DeletePost(int id)
+        public bool DeletePost(int id)
         {
-            Post postToDelete = _context.Posts
-                .Where(post => post.PostID == id)
-                .FirstOrDefault();
+            Post postToDelete = _context.Posts.Find(id);
+            if (postToDelete == null)
+            {
+                return false;
+            }
+            
             _context.Posts.Remove(postToDelete);
-            _context.SaveChanges();
+            return _context.SaveChanges() != 0;
+        }
+
+        public bool ChangePostStatus(int postId, PostStatus status)
+        {
+            Post post = _context.Posts.Find(postId);
+            if (post == null)
+            {
+                return false;
+            }
+
+            if (post.Status == status)
+            {
+                return true;
+            }
+
+            post.Status = PostStatus.APPROVED;
+            post.ModifiedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow);
+            return _context.SaveChanges() != 0;
         }
     }
 }

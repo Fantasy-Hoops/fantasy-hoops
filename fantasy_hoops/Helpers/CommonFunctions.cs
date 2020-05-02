@@ -11,15 +11,29 @@ using fantasy_hoops.Models.Enums;
 
 namespace fantasy_hoops.Helpers
 {
-	public class CommonFunctions
+	public sealed class CommonFunctions
 	{
-		public const string DOMAIN = "fantasyhoops.org";
+		private CommonFunctions() {}
 		
-		public static string SEASON_YEAR = GetSeasonYear();
+		public static CommonFunctions Instance => Nested.instance;
+
+		private class Nested
+		{
+			// Explicit static constructor to tell C# compiler
+			// not to mark type as beforefieldinit
+			static Nested()
+			{
+			}
+
+			internal static readonly CommonFunctions instance = new CommonFunctions();
+		}
+		
+		public string DOMAIN = "fantasyhoops.org";
+		
 		public static DateTime EctNow = UTCToEastern(DateTime.UtcNow);
 		
-		public static string LineupPositionsOrder = "PG|SG|SF|PF|C";
-		public static int PRICE_FLOOR = 10;
+		public string LineupPositionsOrder = "PG|SG|SF|PF|C";
+		public int PRICE_FLOOR = 10;
 
 		public static DateTime UTCToEastern(DateTime UTC)
 		{
@@ -27,14 +41,14 @@ namespace fantasy_hoops.Helpers
 			return TimeZoneInfo.ConvertTimeFromUtc(UTC, eastern);
 		}
 
-		public static DateTime EasternToUTC(DateTime eastern)
+		public  DateTime EasternToUTC(DateTime eastern)
 		{
 			TimeZoneInfo.ConvertTimeBySystemTimeZoneId(eastern, TimeZoneInfo.Local.Id);
 			TimeZoneInfo easternZone = TimeZoneInfo.FindSystemTimeZoneById(Startup.Configuration["TimeZone"]);
 			return TimeZoneInfo.ConvertTimeToUtc(eastern, easternZone);
 		}
 
-		public static HttpWebResponse GetResponse(string url)
+		public  HttpWebResponse GetResponse(string url)
 		{
 			try
 			{
@@ -52,7 +66,7 @@ namespace fantasy_hoops.Helpers
 			}
 		}
 
-		public static string ResponseToString(HttpWebResponse response)
+		public  string ResponseToString(HttpWebResponse response)
 		{
 			string resp = "";
 			using (StreamReader sr = new StreamReader(response.GetResponseStream()))
@@ -62,7 +76,7 @@ namespace fantasy_hoops.Helpers
 			return resp;
 		}
 
-		public static JArray GetGames(string date)
+		public  JArray GetGames(string date)
 		{
 			string url = "http://data.nba.net/10s/prod/v1/" + date + "/scoreboard.json";
 			HttpWebResponse webResponse = GetResponse(url);
@@ -73,7 +87,7 @@ namespace fantasy_hoops.Helpers
 			return (JArray)json["games"];
 		}
 
-		public static int GetNextGame(int playerId)
+		public  int GetNextGame(int playerId)
 		{
 			string url = "http://data.nba.net/v2015/json/mobile_teams/nba/" + GetSeasonYear() + "/players/playercard_" + playerId + "_02.json";
 			HttpWebResponse webResponse = GetResponse(url);
@@ -84,7 +98,7 @@ namespace fantasy_hoops.Helpers
 			return (int)json["pl"]["ng"]["otid"];
 		}
 
-		public static int DaysInMonth()
+		public  int DaysInMonth()
 		{
 			int year = UTCToEastern(DateTime.UtcNow).Year;
 			int month = UTCToEastern(DateTime.UtcNow).Month;
@@ -92,7 +106,7 @@ namespace fantasy_hoops.Helpers
 		}
 
 		// Leaderboards and weekly scores
-		public static DateTime GetLeaderboardDate(LeaderboardType type)
+		public  DateTime GetLeaderboardDate(LeaderboardType type)
 		{
 			DateTime easternDate = UTCToEastern(DateTime.UtcNow);
 			int dayOfWeek = (int)UTCToEastern(DateTime.UtcNow).DayOfWeek;
@@ -114,7 +128,7 @@ namespace fantasy_hoops.Helpers
 			}
 		}
 
-		public static string GetSeasonYear()
+		public string GetSeasonYear()
 		{
 			string url = "http://data.nba.net/10s/prod/v1/today.json";
 			HttpWebResponse webResponse = GetResponse(url);
@@ -125,7 +139,7 @@ namespace fantasy_hoops.Helpers
 			return (string)json["seasonScheduleYear"];
 		}
 
-		public static int GetIso8601WeekOfYear(DateTime time)
+		public int GetIso8601WeekOfYear(DateTime time)
 		{
 			// Seriously cheat.  If its Monday, Tuesday or Wednesday, then it'll 
 			// be the same week# as whatever Thursday, Friday or Saturday are,
@@ -140,39 +154,45 @@ namespace fantasy_hoops.Helpers
 			return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
 		}
         
-        public static async Task<string> GetImageAsBase64Url(string url)
+        public async Task<string> GetImageAsBase64Url(string url)
         {
 	        using var client = new HttpClient();
 	        var bytes = await client.GetByteArrayAsync(url);
 	        return "image/jpeg;base64,     " + Convert.ToBase64String(bytes);
         }
         
-        public static string GetUsernameFromEmail(string email)
+        public string GetUsernameFromEmail(string email)
         {
 	        int atIndex = email.IndexOf('@');
 	        string username = email.Substring(0, atIndex);
 	        return username;
         }
 
-        public static string GetUserIdFromClaims(ClaimsPrincipal user)
+        public  string GetUserIdFromClaims(ClaimsPrincipal user)
         {
 	        return user.Claims.ToList()[0].Value;
         }
         
-        public static DateTime FirstDayOfWeek(DateTime date)
+        public  DateTime FirstDayOfWeek(DateTime date)
         {
-	        int offset =  -1 * (7 + (date.DayOfWeek - DayOfWeek.Monday) % 7);
-	        DateTime firstDayOfWeekDate = date.AddDays(offset);
-	        return firstDayOfWeekDate;
+	        switch (date.DayOfWeek)
+	        {
+		        case DayOfWeek.Monday:
+			        return date;
+		        case DayOfWeek.Sunday:
+			        return date.AddDays(-6);
+		        default:
+			        return date.AddDays(-(int)date.DayOfWeek + 1);
+	        }
         }
 
-        public static DateTime LastDayOfWeek(DateTime date)
+        public  DateTime LastDayOfWeek(DateTime date)
         {
 	        DateTime lastDayOfWeekDate = FirstDayOfWeek(date).AddDays(6);
 	        return lastDayOfWeekDate;
         }
 
-        public static LeaderboardType ParseLeaderboardType(string type)
+        public  LeaderboardType ParseLeaderboardType(string type)
         {
 	        switch (type)
 	        {

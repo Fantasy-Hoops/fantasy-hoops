@@ -75,7 +75,7 @@ namespace fantasy_hoops.Jobs
                     FP = lineup.Sum(l => l.FP),
                     TotalPrice = lineup.Sum(players => players.Price)
                 })
-                .ToList().ForEach(async lineup =>
+                .ToList().ForEach(lineup =>
                 {
                     bool bestLineupExists = _context.BestLineups
                         .Any(x => Math.Round(x.TotalFP, 1).Equals(Math.Round(lineup.FP, 1))
@@ -83,7 +83,7 @@ namespace fantasy_hoops.Jobs
                                              && x.Date.Equals(_date));
                     if (!bestLineupExists)
                     {
-                        await _context.BestLineups.AddAsync(new BestLineup
+                        _context.BestLineups.Add(new BestLineup
                         {
                             Date = _date,
                             Lineup = lineup.Players.ToList(),

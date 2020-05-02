@@ -12,7 +12,6 @@ namespace fantasy_hoops.Repositories.Interfaces
         List<TournamentTypeDto> GetTournamentTypes();
         Tournament.TournamentType GetTournamentTypeById(int id);
         List<DateTime> GetUpcomingStartDates();
-        DateTime GetLastEndDate();
         Tournament GetTournamentById(string tournamentId);
         TournamentDetailsDto GetTournamentDetails(string tournamentId);
         TournamentDetailsDto GetTournamentDetails(string userId, string tournamentId);
@@ -20,25 +19,19 @@ namespace fantasy_hoops.Repositories.Interfaces
         Dictionary<string, List<TournamentDto>> GetUserTournaments(string userId);
         bool CreateTournament(Tournament tournament);
         bool TournamentExists(string id);
-        bool TournamentExists(Tournament tournament);
         bool TournamentNameExists(string name);
         bool IsUserInTournament(string userId, string tournamentId);
         bool IsUserInvited(string userId, string tournamentId);
-        bool IsUserInTournament(User user, string tournamentId);
-        bool IsUserInTournament(string userId, Tournament tournament);
-        bool IsUserInTournament(User user, Tournament tournament);
         List<Tournament> GetTournamentsForStartDate(DateTime startDate);
         List<String> GetTournamentUsersIds(string tournamentId);
         TournamentUser GetTournamentUser(string tournamentId, string userId);
         void AddCreatorToTournament(Tournament tournament);
         bool AddUserToTournament(string userId, string tournamentId);
-        List<Contest> GetTournamentContests(string tournamentId);
         List<ContestDto> GetAllCurrentContests();
         bool DeleteTournament(string tournamentId);
         List<TournamentDto> GetTournamentInvitations(string userId);
         bool ChangeInvitationStatus(string tournamentId, string userId, RequestStatus status = RequestStatus.NO_REQUEST);
         User SetTournamentUserEliminated(TournamentUserDto tournamentUser);
-        Contest GetContestById(int contestId);
         void UpdateTournamentUserStats(TournamentUser tournamentUser, int wins, int losses, int points);
     }
 }

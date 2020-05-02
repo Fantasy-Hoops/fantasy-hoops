@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using fantasy_hoops.Jobs;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Enums;
+using fantasy_hoops.Repositories;
+using fantasy_hoops.Services;
 using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
 using Microsoft.AspNetCore.Http;
@@ -49,11 +51,15 @@ namespace fantasy_hoops.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
-            return Ok(new
-            {
-                Previews = previewStarted ? "Started." : "Failed.",
-                Recaps = recapStarted ? "Started." : "Failed."
-            });
+            return Ok("News job started.");
+        }
+
+        [HttpGet("players")]
+        public IActionResult StartPlayersJob()
+        {
+            Task.Run(() => new PlayersJob(new ScoreService(new ScoreRepository()), false).Execute());
+
+            return Ok("Players job started.");
         }
 
         [HttpGet("best-lineup")]
@@ -67,7 +73,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet("achievements")]
         public IActionResult StartAchievements()
         {
-            Task.Run(() => new AchievementsJob(_pushService,null, null).ExecuteAllAchievements());
+            Task.Run(() => new AchievementsJob(_pushService).Execute());
 
             return Ok("Achievements job started.");
         }

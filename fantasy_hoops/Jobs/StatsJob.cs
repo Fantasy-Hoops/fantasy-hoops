@@ -31,8 +31,8 @@ namespace fantasy_hoops.Jobs
 
         private JObject GetBoxscore(string url)
         {
-            HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
-            string apiResponse = CommonFunctions.ResponseToString(webResponse);
+            HttpWebResponse webResponse = CommonFunctions.Instance.GetResponse(url);
+            string apiResponse = CommonFunctions.Instance.ResponseToString(webResponse);
             JObject json = JObject.Parse(apiResponse);
             return json;
         }
@@ -172,7 +172,7 @@ namespace fantasy_hoops.Jobs
         public void Execute()
         {
             string gameDate = CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).ToString("yyyyMMdd");
-            JArray games = CommonFunctions.GetGames(gameDate);
+            JArray games = CommonFunctions.Instance.GetGames(gameDate);
             int countOfActivatedGames = 0;
             bool isAnyGameStarted = false;
             foreach (var game in games)

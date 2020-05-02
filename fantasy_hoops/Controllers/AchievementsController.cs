@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using fantasy_hoops.Dtos;
+using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace fantasy_hoops.Controllers
@@ -26,18 +29,27 @@ namespace fantasy_hoops.Controllers
             return _achievementsRepository.GetExistingAchievements();
         }
         
+        [Authorize(Roles = "Admin")]
         [HttpGet("user")]
         public Dictionary<String, List<UserAchievementDto>> GetAllUserAchievements()
         {
             return _achievementsRepository.GetAllUserAchievements();
         }
         
+        [Authorize]
         [HttpGet("user/{userId}")]
-        public List<UserAchievementDto> GetUserAchievement(String userId)
+        public ActionResult<List<UserAchievementDto>> GetUserAchievement(String userId)
         {
+            string userIdFromClaims = CommonFunctions.Instance.GetUserIdFromClaims(User);
+            if (!userIdFromClaims.Equals(userId))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+            }
+            
             return _achievementsRepository.GetUserAchievements(userId);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult CreateAchievement([FromBody] Achievement achievement)
         {

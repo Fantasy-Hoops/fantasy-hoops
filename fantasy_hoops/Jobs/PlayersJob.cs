@@ -26,11 +26,11 @@ namespace fantasy_hoops.Jobs
 
 		private JObject GetPlayer(int id)
 		{
-			string url = "http://data.nba.net/v2015/json/mobile_teams/nba/" + CommonFunctions.SEASON_YEAR + "/players/playercard_" + id + "_02.json";
-			HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
+			string url = "http://data.nba.net/v2015/json/mobile_teams/nba/" + CommonFunctions.Instance.GetSeasonYear() + "/players/playercard_" + id + "_02.json";
+			HttpWebResponse webResponse = CommonFunctions.Instance.GetResponse(url);
 			if (webResponse == null)
 				return null;
-			string apiResponse = CommonFunctions.ResponseToString(webResponse);
+			string apiResponse = CommonFunctions.Instance.ResponseToString(webResponse);
 			JObject json = JObject.Parse(apiResponse);
 			return json;
 		}
@@ -73,9 +73,9 @@ namespace fantasy_hoops.Jobs
         private int Price(Player p)
 		{
 			int price = _scoreService.GetPrice(p);
-			if (price < CommonFunctions.PRICE_FLOOR)
+			if (price < CommonFunctions.Instance.PRICE_FLOOR)
 			{
-				return CommonFunctions.PRICE_FLOOR;
+				return CommonFunctions.Instance.PRICE_FLOOR;
 			}
 			
 			return price;
@@ -99,7 +99,7 @@ namespace fantasy_hoops.Jobs
         {
             _context.Players.ForEachAsync(p => p.IsPlaying = false).Wait();
             string date = GetDate();
-            JArray games = CommonFunctions.GetGames(date);
+            JArray games = CommonFunctions.Instance.GetGames(date);
             foreach (var game in games)
             {
                 SetNextOpponent(game);
@@ -111,7 +111,7 @@ namespace fantasy_hoops.Jobs
                     JObject p = GetPlayer(player.NbaID);
                     if (p == null)
                     {
-                        player.Price = CommonFunctions.PRICE_FLOOR;
+                        player.Price = CommonFunctions.Instance.PRICE_FLOOR;
                         continue;
                     }
                     int gamesPlayed = 0;
@@ -131,7 +131,7 @@ namespace fantasy_hoops.Jobs
                     player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
                     if (_updatePrice)
                     {
-	                    player.Price = gamesPlayed <= 0 ? CommonFunctions.PRICE_FLOOR : Price(player);
+	                    player.Price = gamesPlayed <= 0 ? CommonFunctions.Instance.PRICE_FLOOR : Price(player);
                     }
                     player.IsPlaying = IsPlaying(player);
                 }

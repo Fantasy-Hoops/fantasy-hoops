@@ -540,6 +540,9 @@ namespace fantasy_hoops.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -550,7 +553,7 @@ namespace fantasy_hoops.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("fantasy_hoops.Models.PushSubscription", b =>
+            modelBuilder.Entity("fantasy_hoops.Models.PushNotifications.PushSubscription", b =>
                 {
                     b.Property<string>("P256Dh")
                         .HasColumnType("nvarchar(450)");
@@ -815,10 +818,13 @@ namespace fantasy_hoops.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CreatorID")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
 
                     b.Property<int>("DroppedContests")
                         .HasColumnType("int");
@@ -830,6 +836,7 @@ namespace fantasy_hoops.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImageURL")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
@@ -839,7 +846,9 @@ namespace fantasy_hoops.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -1257,7 +1266,7 @@ namespace fantasy_hoops.Migrations
                         .HasForeignKey("AuthorID");
                 });
 
-            modelBuilder.Entity("fantasy_hoops.Models.PushSubscription", b =>
+            modelBuilder.Entity("fantasy_hoops.Models.PushNotifications.PushSubscription", b =>
                 {
                     b.HasOne("fantasy_hoops.Models.User", "User")
                         .WithMany()
@@ -1330,7 +1339,9 @@ namespace fantasy_hoops.Migrations
                 {
                     b.HasOne("fantasy_hoops.Models.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorID");
+                        .HasForeignKey("CreatorID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("fantasy_hoops.Models.User", "Winner")
                         .WithMany()

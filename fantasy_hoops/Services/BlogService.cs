@@ -1,4 +1,5 @@
-﻿using fantasy_hoops.Models.ViewModels;
+﻿using fantasy_hoops.Models.Enums;
+using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 
@@ -12,14 +13,11 @@ namespace fantasy_hoops.Services
         {
             _blogRepository = blogRepository;
         }
-        public void SubmitPost(SubmitPostViewModel model)
-        {
-            _blogRepository.AddPost(model);
-        }
 
-        public void DeletePost(int id)
+
+        public bool ApprovePost(int postId)
         {
-            _blogRepository.DeletePost(id);
+            return _blogRepository.ChangePostStatus(postId, PostStatus.APPROVED);
         }
     }
 }

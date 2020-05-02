@@ -17,8 +17,7 @@ function PostCard(props) {
         handleRemove(post);
     }
     
-    const canEdit = user => user && user.isAdmin;
-    
+    const canEdit = user => user && user.isAdmin || post.author.userId === user.id;
     return (
         <article className="PostCard">
             <h2 className="PostCard__Title">
@@ -32,13 +31,13 @@ function PostCard(props) {
                     className="PostCard__AuthorImage Avatar--round"
                     alt=""
                     src={[
-                        `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${post.author.avatarURL}.png`,
+                        `${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${post.author.avatarUrl}.png`,
                         defaultPhoto
                     ]}
                     loader={<img height="50px" src={require('../../../content/images/imageLoader.gif')}
                                  alt="Loader"/>}
                 />
-                <span className="PostCard__AuthorName">{post.author.userName}</span>
+                <span className="PostCard__AuthorName">{post.author.username}</span>
                 {canEdit(user) ? <PostCardMenu handleRemove={handleRemove} {...props} /> : null}
             </div>
             <div
@@ -54,8 +53,8 @@ PostCard.propTypes = {
         title: PropTypes.string.isRequired,
         body: PropTypes.string.isRequired,
         author: PropTypes.shape({
-            userName: PropTypes.string.isRequired,
-            id: PropTypes.string.isRequired
+            username: PropTypes.string.isRequired,
+            userId: PropTypes.string.isRequired
         }).isRequired
     }).isRequired
 };

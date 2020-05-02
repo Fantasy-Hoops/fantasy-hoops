@@ -20,5 +20,6 @@ export default {
   TOURNAMENTS: '/tournaments',
   TOURNAMENTS_CREATE: '/tournaments/create',
   TOURNAMENTS_SUMMARY: '/tournaments/summary',
-  TOURNAMENT_INVITATIONS: '/tournaments/invitations'
+  TOURNAMENT_INVITATIONS: '/tournaments/invitations',
+  ADMIN: '/admin'
 };

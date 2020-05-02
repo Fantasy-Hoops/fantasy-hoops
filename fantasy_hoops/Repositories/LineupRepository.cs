@@ -152,7 +152,7 @@ namespace fantasy_hoops.Repositories
                                 .Select(stats => stats.FP).FirstOrDefault(),
                                 Price = player.Price
                             })
-                            .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
+                            .OrderBy(p => CommonFunctions.Instance.LineupPositionsOrder.IndexOf(p.Player.Position))
                             .ToList(),
                         IsLive = lineup.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date)
                                  && !lineup.IsCalculated
@@ -191,7 +191,7 @@ namespace fantasy_hoops.Repositories
                                 .Select(stats => stats.FP).FirstOrDefault(),
                             Price = player.Price
                         })
-                        .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
+                        .OrderBy(p => CommonFunctions.Instance.LineupPositionsOrder.IndexOf(p.Player.Position))
                         .ToList()
                 })
                 .ToList();
@@ -225,7 +225,7 @@ namespace fantasy_hoops.Repositories
                             FP = l.FP,
                             Price = l.Price
                         })
-                        .OrderBy(p => CommonFunctions.LineupPositionsOrder.IndexOf(p.Player.Position))
+                        .OrderBy(p => CommonFunctions.Instance.LineupPositionsOrder.IndexOf(p.Player.Position))
                         .ToList(),
                     FP = lineup.TotalFP,
                     Price = lineup.LineupPrice

@@ -16,7 +16,7 @@ namespace fantasy_hoops.Jobs
     public class ScheduleJob : IJob
     {
         private readonly GameContext _context;
-        private string _seasonYear = CommonFunctions.SEASON_YEAR;
+        private string _seasonYear = CommonFunctions.Instance.GetSeasonYear();
 
         public ScheduleJob(string seasonYear = "")
         {
@@ -98,10 +98,10 @@ namespace fantasy_hoops.Jobs
         private JObject GetLeagueSchedule(string year)
         {
             string url = $"http://data.nba.net/10s/prod/v1/{year}/schedule.json";
-            HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
+            HttpWebResponse webResponse = CommonFunctions.Instance.GetResponse(url);
             if (webResponse == null)
                 return null;
-            string apiResponse = CommonFunctions.ResponseToString(webResponse);
+            string apiResponse = CommonFunctions.Instance.ResponseToString(webResponse);
             JObject json = JObject.Parse(apiResponse);
             return json;
         }

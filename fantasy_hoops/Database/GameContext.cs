@@ -1,3 +1,4 @@
+using Castle.Core.Internal;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Models.Notifications;
@@ -85,7 +86,11 @@ namespace fantasy_hoops.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(Startup.Configuration.GetConnectionString("DefaultConnection"));
+            string connectionString = Startup.Configuration.GetConnectionString("DefaultConnection");
+            if (!connectionString.IsNullOrEmpty())
+            {
+                optionsBuilder.UseSqlServer(connectionString);
+            }
         }
     }
 }

@@ -1,9 +1,9 @@
 import * as Yup from 'yup';
 
 export const blogValidation = Yup.object().shape({
-    title: Yup.string()
+    postTitle: Yup.string()
         .required('Title is required'),
-    body: Yup.string()
+    postBody: Yup.string()
         .required('Body is required')
 });
 

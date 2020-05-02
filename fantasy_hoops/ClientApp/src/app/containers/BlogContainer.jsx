@@ -1,13 +1,14 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {parse, isAuth} from '../utils/auth';
+import {parse, isAuth, isCreator} from '../utils/auth';
 import * as actionCreators from '../actions/blog';
 import BlogForm from '../components/Blog/BlogForm';
 import BlogPosts from '../components/Blog/BlogPosts';
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../utils/helpers";
+import {ConfirmDialog} from "../components/Inputs/ConfirmDialog";
 
 const mapStateToProps = state => ({
     posts: state.blogContainerReducer.posts,
@@ -19,56 +20,65 @@ const mapDispatchToProps = dispatch => bindActionCreators(actionCreators, dispat
 const Intro = {
     TITLE: "",
     SUBTITLE: ""
-}
+};
 
-export class BlogContainer extends Component {
-    constructor(props) {
-        super(props);
-        this.user = parse();
-        this.handleRemove = this.handleRemove.bind(this);
+const user = parse();
+
+export function BlogContainer(props) {
+    const [confirmOpen, setConfirmOpen] = React.useState(false);
+    const [confirmDialogPost, setConfirmDialogPost] = React.useState({});
+
+    useEffect(() => {
+        const {loadPosts} = props;
+        loadPosts();
+    }, []);
+
+    const handleConfirmOpen = post => {
+        setConfirmOpen(true);
+        setConfirmDialogPost(post);
+    };
+
+    const handleConfirmClose = () => {
+        setConfirmOpen(false);
+    };
+
+    function handleRemove(post) {
+        const {removePost} = props;
+        return removePost(post.id);
     }
 
-    async componentDidMount() {
-        const {loadPosts} = this.props;
-        await loadPosts();
+    let blogForm = null;
+    if (isAuth()) {
+        blogForm = isCreator() && <BlogForm {...props} />;
     }
-
-    handleRemove(post) {
-        const response = window.confirm(`Are you sure want to delete '${post.title}' post?`);
-        if (response === true) {
-            const {removePost} = this.props;
-            removePost(post.id);
-        }
-    }
-
-    render() {
-        let blogForm = null;
-        if (isAuth()) {
-            blogForm = (this.user.username === 'Naidze' || this.user.username === 'bennek') &&
-                <BlogForm {...this.props} />;
-        }
-        return (
-            <>
-                <Helmet>
-                    <title>Blog | Fantasy Hoops</title>
-                    <meta property="title" content="Blog | Fantasy Hoops"/>
-                    <meta property="og:title" content="Blog | Fantasy Hoops"/>
-                    <meta name="description" content={Meta.DESCRIPTION}/>
-                    <meta property="og:description" content={Meta.DESCRIPTION}/>
-                    <meta name="robots" content="index,follow"/>
-                    <link rel="canonical" href={Canonicals.BLOG}/>
-                </Helmet>
-                <div className="container">
-                    <div className="row pt-5">
-                        <div className="col-12 col-lg-9 mx-auto">
-                            {blogForm}
-                            <BlogPosts user={this.user} {...this.props} handleRemove={this.handleRemove}/>
-                        </div>
+    return (
+        <>
+            <Helmet>
+                <title>Blog | Fantasy Hoops</title>
+                <meta property="title" content="Blog | Fantasy Hoops"/>
+                <meta property="og:title" content="Blog | Fantasy Hoops"/>
+                <meta name="description" content={Meta.DESCRIPTION}/>
+                <meta property="og:description" content={Meta.DESCRIPTION}/>
+                <meta name="robots" content="index,follow"/>
+                <link rel="canonical" href={Canonicals.BLOG}/>
+            </Helmet>
+            <div className="container">
+                <div className="row pt-5">
+                    <div className="col-12 col-lg-9 mx-auto">
+                        {blogForm}
+                        <BlogPosts user={user} {...props} handleRemove={handleConfirmOpen}/>
                     </div>
                 </div>
-            </>
-        );
-    }
+            </div>
+            <ConfirmDialog
+                open={confirmOpen}
+                handleClose={handleConfirmClose}
+                title="Are you sure want to delete selected blog post?"
+                description="The blog post will be deleted permanently"
+                callbackFunction={() => handleRemove(confirmDialogPost)}
+            />
+        </>
+    );
 }
 
 BlogContainer.propTypes = {

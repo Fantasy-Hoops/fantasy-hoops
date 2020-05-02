@@ -14,9 +14,9 @@ namespace fantasy_hoops.Repositories
     {
         private readonly GameContext _context;
 
-        public AchievementsRepository()
+        public AchievementsRepository(GameContext context = null)
         {
-            _context = new GameContext();
+            _context = context ?? new GameContext();
         }
         
         public List<AchievementDto> GetExistingAchievements()
@@ -114,9 +114,15 @@ namespace fantasy_hoops.Repositories
             return entitiesWritten > 0;
         }
         
+
         public bool UserAchievementExists(User user, Achievement achievement)
         {
-            return _context.UserAchievements.Any(ua => ua.UserID == user.Id
+            return UserAchievementExists(user.Id, achievement);
+        }
+
+        public bool UserAchievementExists(string userId, Achievement achievement)
+        {
+            return _context.UserAchievements.Any(ua => ua.UserID == userId
                                                        && ua.Achievement.Title.Equals(achievement.Title)
                                                        && ua.Achievement.Type == achievement.Type);
         }

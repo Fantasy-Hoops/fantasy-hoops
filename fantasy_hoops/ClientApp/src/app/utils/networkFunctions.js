@@ -15,6 +15,7 @@ const pushNotificationsApiUrlBase = `${apiUrlBase}/push`;
 const blogApiUrlBase = `${apiUrlBase}/blog`;
 const achievementsApiUrlBase = `${apiUrlBase}/achievements`;
 const tournamentsApiUrlBase = `${apiUrlBase}/tournaments`;
+const jobsApiUrlBase = `${apiUrlBase}/job`;
 
 const createParameters = (parameters) => {
   if (parameters === undefined) return '';
@@ -49,6 +50,8 @@ export const getUsers = () => axios.get(userApiUrlBase);
 export const getUserData = (userId, parameters) => axios.get(`${userApiUrlBase}/${userId}${createParameters(parameters)}`);
 export const getUserDataByName = (userName, parameters) => axios.get(`${userApiUrlBase}/name/${userName}${createParameters(parameters)}`);
 export const getUserFriends = userId => axios.get(`${userApiUrlBase}/friends/${userId}`);
+export const updateUserRoles = userRoles => axios.put(`${userApiUrlBase}/roles`, userRoles);
+export const getUpdatedToken = () => axios.get(`${userApiUrlBase}/token`);
 
 // Friend requests
 export const getUserFriendRequests = userId => axios.get(`${friendRequestApiUrlBase}/requests/${userId}`);
@@ -106,6 +109,8 @@ export const getPushPublicKey = () => axios.get(`${pushNotificationsApiUrlBase}/
 export const submitPost = post => axios.post(blogApiUrlBase, post);
 export const getPosts = () => axios.get(blogApiUrlBase);
 export const deletePost = id => axios.delete(`${blogApiUrlBase}?id=${id}`);
+export const getPendingPosts = () => axios.get(`${blogApiUrlBase}/pending`);
+export const approvePost = id => axios.put(`${blogApiUrlBase}/approve/${id}`);
 
 // Google auth
 export const googleLogin = tokenId => axios.create({
@@ -129,3 +134,6 @@ export const deleteTournament = tournamentId => axios.delete(`${tournamentsApiUr
 export const getTournamentInvitations = () => axios.get(`${tournamentsApiUrlBase}/invitations`);
 export const acceptTournamentInvitation = tournamentId => axios.post(`${tournamentsApiUrlBase}/invitations/accept`, tournamentId);
 export const declineTournamentInvitation = tournamentId => axios.post(`${tournamentsApiUrlBase}/invitations/decline`, tournamentId);
+
+// Jobs
+export const triggerJob = endpoint => axios.get(`${jobsApiUrlBase}/${endpoint}`);

@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using fantasy_hoops.Models;
+using fantasy_hoops.Models.Achievements;
+using fantasy_hoops.Models.Enums;
 
 namespace fantasy_hoops
 {
@@ -37,6 +40,81 @@ namespace fantasy_hoops
                 1605, 1387, 1905, 1684, 1692, 1794, 1516, 1602, 1502, 1597, 1535, 1904, 1906, 1957, 1228, 1234, 1553,
                 1482, 1558, 1554, 1551, 1557, 1349, 1552, 1887, 1690, 1472
             };
+            
+            public static readonly List<Player> MockedPlayers = new List<Player>
+            {
+                new Player
+                {
+                    PlayerID = 123
+                },
+                new Player
+                {
+                    PlayerID = 456
+                }
+            };
+        }
+
+        public static class Users
+        {
+            public static readonly List<User> MockedUsers = new List<User>
+            {
+                new User
+                {
+                    Id = "xxx",
+                    UserName = "xUser",
+                    Email = "xxx@test.com"
+                },
+                new User
+                {
+                    Id = "yyy",
+                    UserName = "yUser",
+                    Email = "yyy@test.com"
+                }
+            };
+        }
+        
+        public static class Achievements
+        {
+            public static readonly List<Achievement> MockedAchievements = new List<Achievement>
+            {
+                new Achievement
+                {
+                    Id = 123,
+                    Type = AchievementType.SINGLE_LEVEL,
+                    Title = "Achievement 1"
+                },
+                new Achievement
+                {
+                    Id = 456,
+                    Type = AchievementType.MULTI_LEVEL,
+                    Title = "Achievement 2"
+                }
+            };
+            
+            public static readonly List<UserAchievement> MockedUserAchievements = new List<UserAchievement>
+            {
+                new UserAchievement
+                {
+                    Progress = 100,
+                    Level = 1,
+                    LevelUpGoal = 100,
+                    UserID = Users.MockedUsers[0].Id,
+                    User = Users.MockedUsers[0],
+                    AchievementID = MockedAchievements[0].Id,
+                    Achievement = MockedAchievements[0]
+                },
+                new UserAchievement
+                {
+                    Progress = 200,
+                    Level = 2,
+                    LevelUpGoal = 100,
+                    UserID = Users.MockedUsers[1].Id,
+                    User = Users.MockedUsers[1],
+                    AchievementID = MockedAchievements[1].Id,
+                    Achievement = MockedAchievements[1]
+                }
+            };
+            
         }
     }
 }

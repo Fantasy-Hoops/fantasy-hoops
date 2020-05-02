@@ -13,7 +13,7 @@ import {useStyles} from "./HeaderStyle";
 import MobileDrawer from "./MobileDrawer";
 import DesktopAppBar from "./DesktopAppBar";
 import {logout} from "../../utils/networkFunctions";
-import {isAuth} from "../../utils/auth";
+import {isAuth, isAdmin} from "../../utils/auth";
 
 function Header(props) {
     const {container} = props;
@@ -64,7 +64,8 @@ function Header(props) {
             {isAuth()
                 ? [
                     <MenuItem key="profile" onClick={handleMenuClose} component={Link} to={Routes.PROFILE}>Profile</MenuItem>,
-                    <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
+                    <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>,
+                    isAdmin() && <MenuItem key="admin" onClick={handleMenuClose} component={Link} to={Routes.ADMIN}>Admin panel</MenuItem>
                 ]
                 : [
                     <MenuItem key="login" onClick={handleMenuClose} component={Link} to={Routes.LOGIN}>Login</MenuItem>,

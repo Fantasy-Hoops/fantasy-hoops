@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace fantasy_hoops.Jobs
         private readonly GameContext _context;
         private readonly IPushService _pushService;
 
-        private static readonly Stack<InjuryPushNotificationViewModel> LineupsAffected =
+        private readonly Stack<InjuryPushNotificationViewModel> _lineupsAffected =
             new Stack<InjuryPushNotificationViewModel>();
 
         public InjuriesJob(IPushService pushService)
@@ -32,8 +33,8 @@ namespace fantasy_hoops.Jobs
         private static JArray GetInjuries()
         {
             HttpWebResponse webResponse =
-                CommonFunctions.GetResponse("https://www.fantasylabs.com/api/players/news/2/");
-            string myResponse = CommonFunctions.ResponseToString(webResponse);
+                CommonFunctions.Instance.GetResponse("https://www.fantasylabs.com/api/players/news/2/");
+            string myResponse = CommonFunctions.Instance.ResponseToString(webResponse);
             JArray injuries = JArray.Parse(myResponse);
             return injuries;
         }
@@ -105,7 +106,7 @@ namespace fantasy_hoops.Jobs
                                 || x.PfID == injury.PlayerID
                                 || x.CID == injury.PlayerID)))
             {
-                LineupsAffected.Push(new InjuryPushNotificationViewModel
+                _lineupsAffected.Push(new InjuryPushNotificationViewModel
                 {
                     UserID = lineup.UserID,
                     StatusBefore = statusBefore,
@@ -132,9 +133,9 @@ namespace fantasy_hoops.Jobs
 
         private async Task SendPushNotifications()
         {
-            while (LineupsAffected.Count > 0)
+            while (_lineupsAffected.Count > 0)
             {
-                var lineup = LineupsAffected.Pop();
+                var lineup = _lineupsAffected.Pop();
                 PushNotificationViewModel notification =
                     new PushNotificationViewModel(lineup.FullName,
                         $"Status changed from {lineup.StatusBefore} to {lineup.StatusAfter}!")
@@ -149,7 +150,7 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
-            int seasonYear = int.Parse(CommonFunctions.SEASON_YEAR);
+            int seasonYear = int.Parse(CommonFunctions.Instance.GetSeasonYear());
             IEnumerable<JToken> injuries = GetInjuries()
                 .Where(inj => inj.Value<string>("ModifiedDate") == null
                               || DateTime.Parse(inj.Value<string>("ModifiedDate")) >=

@@ -25,19 +25,23 @@ namespace fantasy_hoops.Services
         private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserService(IConfiguration configuration, IPushService pushService, IUserRepository userRepository, UserManager<User> userManager, SignInManager<User> signInManager)
+        public UserService(IConfiguration configuration, IPushService pushService, IUserRepository userRepository,
+            UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager)
         {
             Configuration = configuration;
             _pushService = pushService;
             _userRepository = userRepository;
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         public async Task<bool> Login(LoginViewModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, true, lockoutOnFailure: false);
+            var result =
+                await _signInManager.PasswordSignInAsync(model.UserName, model.Password, true, lockoutOnFailure: false);
             return result.Succeeded;
         }
 
@@ -87,13 +91,13 @@ namespace fantasy_hoops.Services
                 new Claim("id", user.Id),
                 new Claim("username", user.UserName),
                 new Claim("email", user.Email),
-                new Claim("description", user.Description ??""),
+                new Claim("description", user.Description ?? ""),
                 new Claim("team", user.FavoriteTeam != null ? user.FavoriteTeam.Name : ""),
                 new Claim("isAdmin", isAdmin.ToString(), ClaimValueTypes.Boolean),
                 new Claim("avatarURL", user.AvatarURL ?? "null"),
                 new Claim("isSocialAccount", user.IsSocialAccount.ToString(), ClaimValueTypes.Boolean)
             };
-            //add roles
+
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -128,6 +132,7 @@ namespace fantasy_hoops.Services
 
                 await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
             }
+
             return true;
         }
 
@@ -157,6 +162,7 @@ namespace fantasy_hoops.Services
             {
                 return false;
             }
+
             return true;
         }
 
@@ -177,7 +183,8 @@ namespace fantasy_hoops.Services
                     try
                     {
                         File.Delete(filePath);
-                        File.Copy(@"./ClientApp/build/content/images/avatars/default.png", @"./ClientApp/build/content/images/avatars/" + model.Id + ".png");
+                        File.Copy(@"./ClientApp/build/content/images/avatars/default.png",
+                            @"./ClientApp/build/content/images/avatars/" + model.Id + ".png");
                         user.AvatarURL = null;
                         _userManager.UpdateAsync(user).Wait();
                     }
@@ -187,13 +194,14 @@ namespace fantasy_hoops.Services
                     }
                 }
             }
+
             return true;
         }
 
         public async Task<bool> GoogleRegister(ClaimsPrincipal user)
         {
             string email = GetEmail(user);
-            string username = CommonFunctions.GetUsernameFromEmail(email);
+            string username = CommonFunctions.Instance.GetUsernameFromEmail(email);
             Claim imageURL = user.Claims.FirstOrDefault(c => c.Type == "picture");
             var newUser = new User
             {
@@ -206,14 +214,15 @@ namespace fantasy_hoops.Services
 
             if (result.Succeeded)
             {
-                if(imageURL != null)
+                if (imageURL != null)
                 {
                     await UploadAvatar(new AvatarViewModel
                     {
                         Id = newUser.Id,
-                        Avatar = await CommonFunctions.GetImageAsBase64Url(imageURL.Value)
+                        Avatar = await CommonFunctions.Instance.GetImageAsBase64Url(imageURL.Value)
                     });
                 }
+
                 await SendRegisterNotification(username);
             }
 
@@ -224,7 +233,7 @@ namespace fantasy_hoops.Services
         {
             string email = GetEmail(user);
             User dbUser = await _userManager.FindByEmailAsync(email);
-            if(!dbUser.IsSocialAccount)
+            if (!dbUser.IsSocialAccount)
             {
                 dbUser.IsSocialAccount = true;
                 IdentityResult result = await _userManager.UpdateAsync(dbUser);
@@ -244,11 +253,12 @@ namespace fantasy_hoops.Services
         private async Task SendRegisterNotification(string username)
         {
             PushNotificationViewModel notification =
-                    new PushNotificationViewModel("Fantasy Hoops Admin Notification", string.Format("New user '{0}' just registerd in the system.", username))
-                    {
-                        Actions = new List<NotificationAction> { new NotificationAction("new_user", "👤 Profile") },
-                        Data = new { userName = username }
-                    };
+                new PushNotificationViewModel("Fantasy Hoops Admin Notification",
+                    string.Format("New user '{0}' just registerd in the system.", username))
+                {
+                    Actions = new List<NotificationAction> {new NotificationAction("new_user", "👤 Profile")},
+                    Data = new {userName = username}
+                };
             await _pushService.SendAdminNotification(notification);
         }
 
@@ -257,14 +267,64 @@ namespace fantasy_hoops.Services
             List<Claim> claims = user.Claims.ToList();
             string username = claims[1].Value;
             User userToDelete = await _userManager.FindByNameAsync(username);
-            if(userToDelete != null)
+            if (userToDelete != null)
             {
-
-                ClearAvatar(new AvatarViewModel() { Id = user.Claims.ToList()[0].Value });
+                ClearAvatar(new AvatarViewModel() {Id = user.Claims.ToList()[0].Value});
             }
+
             _userRepository.DeleteUserResources(userToDelete);
             IdentityResult result = await _userManager.DeleteAsync(userToDelete);
             return result.Succeeded;
+        }
+
+        public async Task<bool> UpdateUserRoles(List<UpdateUserRolesViewModel> userRoles)
+        {
+            bool success = true;
+            foreach (var userRole in userRoles)
+            {
+                User user = await _userManager.FindByIdAsync(userRole.UserId);
+                if (userRole.UserRoles.Admin.HasValue)
+                {
+                    if (userRole.UserRoles.Admin.Value)
+                    {
+                        var result = await _userManager.AddToRoleAsync(user, "Admin");
+                        if (!result.Succeeded)
+                        {
+                            success = false;
+                        }
+                    }
+                    else
+                    {
+                        var result = await _userManager.RemoveFromRoleAsync(user, "Admin");
+                        if (!result.Succeeded)
+                        {
+                            success = false;
+                        }
+                    }
+                }
+
+                if (userRole.UserRoles.Creator.HasValue)
+                {
+                    if (userRole.UserRoles.Creator.Value)
+                    {
+                        var result = await _userManager.AddToRoleAsync(user, "Creator");
+                        if (!result.Succeeded)
+                        {
+                            success = false;
+                        }
+                    }
+                    else
+                    {
+                        var result = await _userManager.RemoveFromRoleAsync(user, "Creator");
+                        if (!result.Succeeded)
+                        {
+                            success = false;
+                        }
+                    }
+                }
+            }
+
+            return success;
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 using fantasy_hoops.Database;
 using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Models.Tournaments;
@@ -24,7 +25,7 @@ namespace fantasy_hoops.Jobs
             _runtimeDate = runtimeDate;
             _context = new GameContext();
             _tournamentsRepository = new TournamentsRepository();
-            _tournamentsService = new TournamentsService(_tournamentsRepository);
+            _tournamentsService = new TournamentsService(_tournamentsRepository, new NotificationRepository(), new LeaderboardRepository(), new UserRepository(), new PushService());
         }
 
         public void Execute()
@@ -79,6 +80,12 @@ namespace fantasy_hoops.Jobs
             List<string> tournamentUsers = _tournamentsRepository.GetTournamentUsersIds(tournament.Id);
             List<Tuple<string, string>>[] matchupsPermutations =
                 _tournamentsService.GetMatchupsPermutations(tournamentUsers);
+
+            if (matchupsPermutations.IsNullOrEmpty())
+            {
+                _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.CANCELLED;
+                return;
+            }
 
             var tournamentContests = _context.Contests
                 .Where(x => x.TournamentId.Equals(tournament.Id))

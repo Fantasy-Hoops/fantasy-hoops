@@ -16,7 +16,7 @@ namespace fantasy_hoops.Repositories
     public class TournamentsRepository : ITournamentsRepository
     {
         private readonly GameContext _context;
-        private readonly LineupRepository _lineupRepository;
+        private readonly ILineupRepository _lineupRepository;
 
         public TournamentsRepository()
         {
@@ -51,7 +51,7 @@ namespace fantasy_hoops.Repositories
                 .AsEnumerable()
                 .Where(game => game.Date.HasValue && game.Date.Value.DayOfWeek != DayOfWeek.Sunday)
                 .ToList()
-                .GroupBy(game => CommonFunctions.GetIso8601WeekOfYear(game.Date.Value))
+                .GroupBy(game => CommonFunctions.Instance.GetIso8601WeekOfYear(game.Date.Value))
                 .Select(group => group.Min(game => game.Date.Value))
                 .Where(date => date > CommonFunctions.EctNow)
                 .OrderBy(date => date)
@@ -256,7 +256,7 @@ namespace fantasy_hoops.Repositories
         public bool CreateTournament(Tournament tournament)
         {
             _context.Tournaments.Add(tournament);
-            ;
+            
             return _context.SaveChanges() > 0;
         }
 

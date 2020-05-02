@@ -31,7 +31,7 @@ namespace fantasy_hoops.Jobs
         private List<JToken> GetTeams()
         {
             HttpWebResponse webResponse = null;
-            string teamsUrl = "http://api.sportradar.us/nba/trial/v7/en/seasons/" + CommonFunctions.SEASON_YEAR
+            string teamsUrl = "http://api.sportradar.us/nba/trial/v7/en/seasons/" + CommonFunctions.Instance.GetSeasonYear()
                 + "/REG/rankings.json?api_key=" + Startup.Configuration["Sportradar:ApiKey"];
             try
             {
@@ -57,7 +57,7 @@ namespace fantasy_hoops.Jobs
                     new PushNotificationViewModel("Fantasy Hoops Admin Notification", "Sportradar API calls left: " + callsLeft);
                 _pushService.SendAdminNotification(notification);
             }
-            string responseString = CommonFunctions.ResponseToString(webResponse);
+            string responseString = CommonFunctions.Instance.ResponseToString(webResponse);
             List<JToken> teams = new List<JToken>();
             JObject json = JObject.Parse(responseString);
             json["conferences"].ToList().ForEach(conf =>
@@ -73,10 +73,10 @@ namespace fantasy_hoops.Jobs
         private List<JToken> GetRoster(string teamId)
         {
             string rosterUrl = "http://api.sportradar.us/nba/trial/v7/en/teams/" + teamId + "/profile.json?api_key=" + Startup.Configuration["Sportradar:ApiKey"];
-            HttpWebResponse webResponse = CommonFunctions.GetResponse(rosterUrl);
+            HttpWebResponse webResponse = CommonFunctions.Instance.GetResponse(rosterUrl);
             if (webResponse == null)
                 return new List<JToken>();
-            string responseString = CommonFunctions.ResponseToString(webResponse);
+            string responseString = CommonFunctions.Instance.ResponseToString(webResponse);
 
             JObject json = JObject.Parse(responseString);
             return json["players"].ToList();
@@ -279,7 +279,7 @@ namespace fantasy_hoops.Jobs
                                 Position = (string)player["primary_position"],
                                 NbaID = (int)player["reference"],
                                 Number = player["jersey_number"].ToString(),
-                                Price = CommonFunctions.PRICE_FLOOR,
+                                Price = CommonFunctions.Instance.PRICE_FLOOR,
                                 FPPG = 0.0,
                                 PTS = 0.0,
                                 REB = 0.0,

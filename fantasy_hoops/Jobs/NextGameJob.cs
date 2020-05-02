@@ -14,8 +14,6 @@ namespace fantasy_hoops.Jobs
 {
     public class NextGameJob : IJob
     {
-        
-
         private const int GAME_OFFSET = 10;
         private static int offset;
 
@@ -46,10 +44,10 @@ namespace fantasy_hoops.Jobs
         private string GetDate()
         {
             string url = "http://data.nba.net/10s/prod/v1/today.json";
-            HttpWebResponse webResponse = CommonFunctions.GetResponse(url);
+            HttpWebResponse webResponse = CommonFunctions.Instance.GetResponse(url);
             if (webResponse == null)
                 return null;
-            string apiResponse = CommonFunctions.ResponseToString(webResponse);
+            string apiResponse = CommonFunctions.Instance.ResponseToString(webResponse);
             JObject json = JObject.Parse(apiResponse);
             return (string) json["links"]["currentDate"];
         }
@@ -63,7 +61,7 @@ namespace fantasy_hoops.Jobs
                 return;
             }
 
-            JArray games = CommonFunctions.GetGames(gameDate);
+            JArray games = CommonFunctions.Instance.GetGames(gameDate);
             if (games.Count > 0)
             {
                 DateTime timeUtc = DateTime.Parse((string) games[0]["startTimeUTC"]);
@@ -92,7 +90,7 @@ namespace fantasy_hoops.Jobs
 
         private void SetLastGame(string gameDate)
         {
-            JArray games = CommonFunctions.GetGames(gameDate);
+            JArray games = CommonFunctions.Instance.GetGames(gameDate);
             if (games.Count > 0)
             {
                 DateTime timeUtc = DateTime.Parse((string) games[0]["startTimeUTC"]);

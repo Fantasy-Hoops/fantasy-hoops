@@ -16,13 +16,6 @@ export default function BasicTournamentInfo(props) {
     const { values, errors, touched, handleChange, setFieldTouched, setFieldValue } = formProps;
     
     function handleSetSelectedIcon(selectedIcon, selectedIndex) {
-        // icons.forEach((icon, index) => {
-        //     if (index === selectedIndex) {
-        //         icon.props.customProps.selected = true;
-        //     } else {
-        //         icon.props.customProps.selected = false;
-        //     }
-        // });
         setFieldValue('tournamentIcon', selectedIcon, true);
     }
     

@@ -2,26 +2,27 @@ using System.Collections.Generic;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
+using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
 
 namespace fantasy_hoops.Services
 {
     public class AchievementsService : IAchievementsService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly IUserRepository _userRepository;
         private readonly IAchievementsRepository _achievementsRepository;
 
-        public AchievementsService(UserManager<User> userManager, IAchievementsRepository achievementsRepository)
+        public AchievementsService(IAchievementsRepository achievementsRepository)
         {
-            _userManager = userManager;
             _achievementsRepository = achievementsRepository;
+            _userRepository = new UserRepository();
         }
         
         public bool AssignAchievements(string userName)
         {
-            User user = _userManager.FindByNameAsync(userName).Result;
+            
+            User user = _userRepository.GetUserByName(userName);
             if (user == null)
             {
                 return false;
@@ -54,10 +55,10 @@ namespace fantasy_hoops.Services
                 return false;
             }
 
-            var users = _userManager.Users;
+            var users = _userRepository.GetAllUsers();
             foreach (var user in users)
             {
-                if (_achievementsRepository.UserAchievementExists(user, achievement))
+                if (_achievementsRepository.UserAchievementExists(user.UserId, achievement))
                 {
                     continue;
                 }
@@ -65,7 +66,7 @@ namespace fantasy_hoops.Services
                 UserAchievement userAchievement = new UserAchievement
                 {
                     AchievementID = achievement.Id,
-                    UserID = user.Id,
+                    UserID = user.UserId,
                     Level = 1,
                     LevelUpGoal = achievement.GoalBase
                 };

@@ -56,7 +56,7 @@ namespace fantasy_hoops.Controllers
                 return NotFound($"Tournament with id '{tournamentId}' does not exist.");
             }
 
-            string userId = CommonFunctions.GetUserIdFromClaims(User);
+            string userId = CommonFunctions.Instance.GetUserIdFromClaims(User);
             if (!_tournamentsRepository.IsUserInTournament(userId, tournamentId)
                 && !_tournamentsRepository.IsUserInvited(userId, tournamentId))
             {
@@ -75,7 +75,7 @@ namespace fantasy_hoops.Controllers
                 return NotFound($"Tournament with id '{tournamentId}' does not exist.");
             }
 
-            string userId = CommonFunctions.GetUserIdFromClaims(User);
+            string userId = CommonFunctions.Instance.GetUserIdFromClaims(User);
             bool isUserInTournament = _tournamentsRepository.IsUserInTournament(userId, tournamentId);
             if (checkForFriends && isUserInTournament)
             {
@@ -142,9 +142,16 @@ namespace fantasy_hoops.Controllers
         [HttpDelete("{tournamentId}")]
         public IActionResult DeleteTournament([FromRoute] string tournamentId)
         {
-            if (!_tournamentsRepository.TournamentExists(tournamentId))
+            Tournament tournament = _tournamentsRepository.GetTournamentById(tournamentId);
+            if (tournament == null)
             {
                 return UnprocessableEntity("Tournament doesn't exist.");
+            }
+
+            string userIdFromClaims = CommonFunctions.Instance.GetUserIdFromClaims(User);
+            if (!tournament.CreatorID.Equals(userIdFromClaims))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
             }
 
             bool succeeded = _tournamentsRepository.DeleteTournament(tournamentId);
@@ -161,7 +168,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet("invitations")]
         public List<TournamentDto> GetTournamentDetails()
         {
-            string userId = CommonFunctions.GetUserIdFromClaims(User);
+            string userId = CommonFunctions.Instance.GetUserIdFromClaims(User);
             return _tournamentsRepository.GetTournamentInvitations(userId);
         }
 
@@ -169,7 +176,7 @@ namespace fantasy_hoops.Controllers
         [HttpPost("invitations/accept")]
         public IActionResult AcceptInvitation([FromBody] TournamentIdViewModel model)
         {
-            string userId = CommonFunctions.GetUserIdFromClaims(User);
+            string userId = CommonFunctions.Instance.GetUserIdFromClaims(User);
             if (!_tournamentsService.AcceptInvitation(model.TournamentId, userId))
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity, "Tournament is full");
@@ -181,7 +188,7 @@ namespace fantasy_hoops.Controllers
         [HttpPost("invitations/decline")]
         public IActionResult DeclineInvitation([FromBody] TournamentIdViewModel model)
         {
-            string userId = CommonFunctions.GetUserIdFromClaims(User);
+            string userId = CommonFunctions.Instance.GetUserIdFromClaims(User);
             if (!_tournamentsService.DeclineInvitation(model.TournamentId, userId))
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity, "Unable to decline invitation");

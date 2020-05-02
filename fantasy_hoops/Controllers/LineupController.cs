@@ -29,7 +29,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet("{id}")]
         public IActionResult GetUserLineups(String id)
         {
-            String userId = CommonFunctions.GetUserIdFromClaims(User);
+            String userId = CommonFunctions.Instance.GetUserIdFromClaims(User);
             if (!userId.Equals(id))
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "Unauthorized access to the resource.");
@@ -45,13 +45,13 @@ namespace fantasy_hoops.Controllers
             string userId = User.Claims.ToList()[0].Value;
             model.UserID = userId;
             if (_lineupRepository.GetLineupPrice(model) > LineupService.MAX_PRICE)
-                return StatusCode(422, "Lineup price exceeds the budget! Lineup was not submitted.");
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "Lineup price exceeds the budget! Lineup was not submitted.");
             if (!_lineupRepository.ArePricesCorrect(model))
-                return StatusCode(422, "Wrong player prices! Lineup was not submitted.");
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "Wrong player prices! Lineup was not submitted.");
             if (!RuntimeUtils.PLAYER_POOL_DATE.Equals(RuntimeUtils.NEXT_GAME))
-                return StatusCode(500, "Player pool not updated! Try again in a moment.");
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "Player pool not updated! Try again in a moment.");
             if (_lineupRepository.AreNotPlayingPlayers(model))
-                return StatusCode(422, "Player pool is outdated! Refresh the page.");
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "Player pool is outdated! Refresh the page.");
 
             _lineupService.SubmitLineup(model);
 
@@ -81,7 +81,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet("recent/{userId}")]
         public ActionResult<List<UserLeaderboardRecordDto>> GetRecentLineups([FromRoute] string userId, [FromQuery] int start = 0, [FromQuery] int count = 5)
         {
-            if (!userId.Equals(CommonFunctions.GetUserIdFromClaims(User)))
+            if (!userId.Equals(CommonFunctions.Instance.GetUserIdFromClaims(User)))
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "Unauthorized access to resource.");
             }

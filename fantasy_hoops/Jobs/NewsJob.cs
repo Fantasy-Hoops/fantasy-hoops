@@ -22,14 +22,14 @@ namespace fantasy_hoops.Jobs
         private void ExtractPreviews()
         {
             string today = Today();
-            JArray tGames = CommonFunctions.GetGames(today);
+            JArray tGames = CommonFunctions.Instance.GetGames(today);
             GetPreviews(today, tGames);
         }
 
         private void ExtractRecaps()
         {
             string yesterday = Yesterday();
-            JArray yGames = CommonFunctions.GetGames(yesterday);
+            JArray yGames = CommonFunctions.Instance.GetGames(yesterday);
             GetRecaps(yesterday, yGames);
         }
 
@@ -43,8 +43,8 @@ namespace fantasy_hoops.Jobs
                 JObject previewJson;
                 try
                 {
-                    HttpWebResponse previewResponse = CommonFunctions.GetResponse(preview);
-                    string apiPreviewResponse = CommonFunctions.ResponseToString(previewResponse);
+                    HttpWebResponse previewResponse = CommonFunctions.Instance.GetResponse(preview);
+                    string apiPreviewResponse = CommonFunctions.Instance.ResponseToString(previewResponse);
                     previewJson = JObject.Parse(apiPreviewResponse);
                 }
 
@@ -78,8 +78,8 @@ namespace fantasy_hoops.Jobs
                 JObject recapJson;
                 try
                 {
-                    HttpWebResponse recapResponse = CommonFunctions.GetResponse(recap);
-                    string apiRecapResponse = CommonFunctions.ResponseToString(recapResponse);
+                    HttpWebResponse recapResponse = CommonFunctions.Instance.GetResponse(recap);
+                    string apiRecapResponse = CommonFunctions.Instance.ResponseToString(recapResponse);
                     recapJson = JObject.Parse(apiRecapResponse);
                 }
                 catch

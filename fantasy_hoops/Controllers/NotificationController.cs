@@ -32,7 +32,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet("{id}")]
         public IActionResult GetUserNotifications(string id, int start = 0, int count = 0)
         {
-            if (!id.Equals(CommonFunctions.GetUserIdFromClaims(User)))
+            if (!id.Equals(CommonFunctions.Instance.GetUserIdFromClaims(User)))
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "Unauthorized access to resource.");
             }
@@ -48,7 +48,7 @@ namespace fantasy_hoops.Controllers
         [HttpPost("read")]
         public IActionResult ToggleNotification([FromBody]NotificationViewModel model)
         {
-            if (!model.ReceiverID.Equals(CommonFunctions.GetUserIdFromClaims(User)))
+            if (!model.ReceiverID.Equals(CommonFunctions.Instance.GetUserIdFromClaims(User)))
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "Unauthorized access to resource.");
             }
@@ -61,7 +61,7 @@ namespace fantasy_hoops.Controllers
         [HttpPost("readall/{id}")]
         public IActionResult ReadAllNotifications(string id)
         {
-            if (!id.Equals(CommonFunctions.GetUserIdFromClaims(User)))
+            if (!id.Equals(CommonFunctions.Instance.GetUserIdFromClaims(User)))
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "Unauthorized access to resource.");
             }

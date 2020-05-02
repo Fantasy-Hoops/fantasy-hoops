@@ -34,7 +34,7 @@ namespace fantasy_hoops.Services
         public int GetPrice(Player p)
         {
             if (!_repository.AnyPlayerStatsExists(p))
-                return CommonFunctions.PRICE_FLOOR;
+                return CommonFunctions.Instance.PRICE_FLOOR;
 
             double GSavg = _repository.LastFiveAverage(p);
             return (int) ((p.FPPG + GSavg) * 7 / 5);

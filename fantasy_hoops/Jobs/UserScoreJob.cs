@@ -21,7 +21,7 @@ namespace fantasy_hoops.Jobs
 {
     public class UserScoreJob : IJob
     {
-        private static readonly Stack<GameScorePushNotificationModel> _usersPlayed =
+        private readonly Stack<GameScorePushNotificationModel> _usersPlayed =
             new Stack<GameScorePushNotificationModel>();
 
         private readonly GameContext _context;
@@ -34,7 +34,8 @@ namespace fantasy_hoops.Jobs
             _context = new GameContext();
             _pushService = pushService;
             _tournamentsRepository = new TournamentsRepository();
-            _tournamentsService = new TournamentsService(_tournamentsRepository);
+            _tournamentsService = new TournamentsService(_tournamentsRepository, new NotificationRepository(),
+                new LeaderboardRepository(), new UserRepository(), _pushService);
         }
 
         private async Task SendPushNotifications()
@@ -108,7 +109,7 @@ namespace fantasy_hoops.Jobs
             SendPushNotifications().Wait();
 
             Task.Run(() => new BestLineupsJob().Execute());
-            Task.Run(() => new AchievementsJob(_pushService, null, null).ExecuteAllAchievements());
+            Task.Run(() => new AchievementsJob(_pushService).Execute());
         }
 
         public void UpdateActiveTournamentsScores(List<UserLineup> allLineups)
@@ -150,7 +151,7 @@ namespace fantasy_hoops.Jobs
                     {
                         continue;
                     }
-                    
+
                     _tournamentsService.UpdateStandings(tournamentDetails, contest);
                     if ((Tournament.TournamentType) dbTournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
                     {

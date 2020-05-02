@@ -55,7 +55,7 @@ namespace fantasy_hoops.Jobs
         private void SavePhoto(string localFile, string urlFile)
         {
             byte[] content;
-            WebResponse response = CommonFunctions.GetResponse(urlFile);
+            WebResponse response = CommonFunctions.Instance.GetResponse(urlFile);
             if (response == null)
                 return;
             Stream stream = response.GetResponseStream();

@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using fantasy_hoops.Models.ViewModels;
 
@@ -20,5 +21,6 @@ namespace fantasy_hoops.Services.Interfaces
         bool ClearAvatar(AvatarViewModel model);
         Task<bool> DeleteProfile(ClaimsPrincipal user);
 
+        Task<bool> UpdateUserRoles(List<UpdateUserRolesViewModel> userRoles);
     }
 }

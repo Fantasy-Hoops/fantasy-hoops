@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using fantasy_hoops.Models;
@@ -48,7 +49,7 @@ namespace fantasy_hoops.Controllers
             if(!emailExists)
             {
                 await _userService.GoogleRegister(User);
-                _achievementsService.AssignAchievements(CommonFunctions.GetUsernameFromEmail(email));
+                _achievementsService.AssignAchievements(CommonFunctions.Instance.GetUsernameFromEmail(email));
             }
 
             bool success = await _userService.GoogleLogin(User);
@@ -222,6 +223,25 @@ namespace fantasy_hoops.Controllers
             }
 
             return Ok("Profile deleted successfully.");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("roles")]
+        public async Task<IActionResult> UpdateUserRoles([FromBody] List<UpdateUserRolesViewModel> model)
+        {
+            if (! await _userService.UpdateUserRoles(model))
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "Failed updating users roles.");
+            }
+            
+            return Ok("User roles updated successfully.");
+        }
+
+        [Authorize]
+        [HttpGet("token")]
+        public async Task<string> RequestUpdatedToken()
+        {
+            return await _userService.RequestTokenById(CommonFunctions.Instance.GetUserIdFromClaims(User));
         }
     }
 }

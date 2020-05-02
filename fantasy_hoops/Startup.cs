@@ -79,6 +79,13 @@ namespace fantasy_hoops
                     Title = "FH API",
                     Description = "Fantasy Hoops API"
                 });
+                
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header
+                });
             });
 #endif
             services.AddDbContext<GameContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -237,7 +244,7 @@ namespace fantasy_hoops
             //initializing custom roles 
             var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var UserManager = serviceProvider.GetRequiredService<UserManager<User>>();
-            string[] roleNames = { "Admin" };
+            string[] roleNames = { "Admin", "Creator" };
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)

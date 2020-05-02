@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core;
+using Castle.Core.Internal;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Models.ViewModels;
-using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 
@@ -22,13 +22,15 @@ namespace fantasy_hoops.Services
         private readonly IUserRepository _userRepository;
         private readonly IPushService _pushService;
 
-        public TournamentsService(ITournamentsRepository tournamentsRepository)
+        public TournamentsService(ITournamentsRepository tournamentsRepository,
+            INotificationRepository notificationRepository, ILeaderboardRepository leaderboardRepository,
+            IUserRepository userRepository, IPushService pushService)
         {
             _tournamentsRepository = tournamentsRepository;
-            _notificationRepository = new NotificationRepository();
-            _leaderboardRepository = new LeaderboardRepository();
-            _userRepository = new UserRepository();
-            _pushService = new PushService();
+            _notificationRepository = notificationRepository;
+            _leaderboardRepository = leaderboardRepository;
+            _userRepository = userRepository;
+            _pushService = pushService;
         }
 
         public Pair<bool, string> CreateTournament(CreateTournamentViewModel tournamentViewModel)
@@ -49,7 +51,7 @@ namespace fantasy_hoops.Services
             return new Pair<bool, string>(isCreated, inviteUrl);
         }
 
-        private Tournament FromViewModel(CreateTournamentViewModel tournamentModel)
+        public Tournament FromViewModel(CreateTournamentViewModel tournamentModel)
         {
             Tournament.TournamentType tournamentType = (Tournament.TournamentType) tournamentModel.TournamentType;
             Pair<List<Contest>, DateTime> contestsWithEndDate = GenerateContests(tournamentModel);
@@ -83,10 +85,10 @@ namespace fantasy_hoops.Services
                 return null;
             }
 
-            return $"https://{CommonFunctions.DOMAIN}/tournaments/invitations/{tournamentId}";
+            return $"https://{CommonFunctions.Instance.DOMAIN}/tournaments/invitations/{tournamentId}";
         }
 
-        private Pair<List<Contest>, DateTime> GenerateContests(CreateTournamentViewModel model)
+        public Pair<List<Contest>, DateTime> GenerateContests(CreateTournamentViewModel model)
         {
             List<Contest> contests = new List<Contest>();
             List<DateTime> contestStartDates = _tournamentsRepository.GetUpcomingStartDates()
@@ -97,7 +99,7 @@ namespace fantasy_hoops.Services
                 {
                     ContestNumber = i + 1,
                     ContestStart = contestStartDates[i],
-                    ContestEnd = CommonFunctions.LastDayOfWeek(contestStartDates[i]).AddDays(1),
+                    ContestEnd = CommonFunctions.Instance.LastDayOfWeek(contestStartDates[i]).AddDays(1),
                     Matchups = new List<MatchupPair>()
                 });
             }
@@ -105,7 +107,7 @@ namespace fantasy_hoops.Services
             DateTime endDate = contests
                 .Select(contest => contest.ContestEnd)
                 .OrderByDescending(date => date)
-                .LastOrDefault();
+                .FirstOrDefault();
 
             return new Pair<List<Contest>, DateTime>(contests, endDate);
         }
@@ -142,8 +144,6 @@ namespace fantasy_hoops.Services
 
         public User GetTournamentWinner(TournamentDetailsDto tournamentDetails)
         {
-            // TODO
-            // return null;
             TournamentUserDto tournamentWinner = tournamentDetails.Standings
                 .OrderByDescending(user =>
                     (Tournament.TournamentType) tournamentDetails.Type == Tournament.TournamentType.MATCHUPS
@@ -157,7 +157,7 @@ namespace fantasy_hoops.Services
         {
             UserLeaderboardRecordDto contestWinner = _leaderboardRepository.GetUserLeaderboard(0,
                     Int32.MaxValue, LeaderboardType.WEEKLY, null,
-                    CommonFunctions.GetIso8601WeekOfYear(contest.ContestStart),
+                    CommonFunctions.Instance.GetIso8601WeekOfYear(contest.ContestStart),
                     contest.ContestStart.Year)
                 .Where(user => tournamentDetails.Standings
                     .Select(tournamentUser => tournamentUser.UserId)
@@ -256,6 +256,11 @@ namespace fantasy_hoops.Services
 
         public List<Tuple<string, string>>[] GetMatchupsPermutations(List<string> userIds)
         {
+            if (userIds.IsNullOrEmpty() || userIds.Count % 2 == 1)
+            {
+                return null;
+            }
+            
             int tournamentUsersCount = userIds.Count;
             int permutationsCount = tournamentUsersCount * (tournamentUsersCount - 1);
             int distinctContestsCount = permutationsCount / (tournamentUsersCount / 2);
@@ -266,12 +271,12 @@ namespace fantasy_hoops.Services
                 int swappedPairIndex = tournamentUsersCount + i - 1;
                 variations[i] = new List<Tuple<string, string>>();
                 variations[swappedPairIndex] = new List<Tuple<string, string>>();
-                
+
                 string firstUser = userIds[0];
                 string secondUser = userIds[tournamentUsersCount - 1 - i];
                 variations[i].Add(new Tuple<string, string>(firstUser, secondUser));
                 variations[swappedPairIndex].Add(new Tuple<string, string>(secondUser, firstUser));
-                
+
                 for (int j = 1; j < tournamentUsersCount / 2; j++)
                 {
                     firstUser =

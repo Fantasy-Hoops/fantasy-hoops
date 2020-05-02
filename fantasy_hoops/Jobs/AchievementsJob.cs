@@ -7,28 +7,23 @@ using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
-using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
+using FluentScheduler;
 
 namespace fantasy_hoops.Jobs
 {
-    public class AchievementsJob
+    public class AchievementsJob : IJob
     {
         private readonly IPushService _pushService;
-        private readonly IAchievementsService _achievementsService;
-        private readonly IAchievementsRepository _achievementsRepository;
         private readonly DateTime _ectPrevious;
 
-        public AchievementsJob(IPushService pushService, IAchievementsService achievementsService,
-            IAchievementsRepository achievementsRepository)
+        public AchievementsJob(IPushService pushService)
         {
             _pushService = pushService;
-            _achievementsService = achievementsService;
-            _achievementsRepository = achievementsRepository;
             _ectPrevious = CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME);
         }
 
-        public void ExecuteAllAchievements()
+        public void Execute()
         {
             Task.Run(() => ExecuteStreakAchievements());
             Task.Run(() => ExecuteVeteranAchievements());
