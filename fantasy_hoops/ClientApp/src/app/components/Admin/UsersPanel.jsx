@@ -20,8 +20,8 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 const useStyles = makeStyles((theme) => ({
     fab: {
         position: 'fixed',
-        bottom: theme.spacing(2),
-        right: theme.spacing(2),
+        bottom: theme.spacing(3),
+        right: theme.spacing(3),
     }
 }));
 
@@ -42,7 +42,7 @@ const tableHead = (
 );
 
 const renderUserList = (users, formProps) => _.map(users, (user, id) => {
-    const {values, errors, touched, handleChange, setFieldTouched, setFieldValue} = formProps;
+    const {values, setFieldValue} = formProps;
 
     const isUserAdmin = isAdmin(user.roles);
     const isUserCreator = isCreator(user.roles);
@@ -112,7 +112,7 @@ export function UsersPanel(props) {
                 actions.setSubmitting(false);
             }}
             render={(formProps) => {
-                const {values, errors, touched, handleChange, setFieldTouched, setFieldValue, handleSubmit} = formProps;
+                const {values, handleSubmit} = formProps;
                 return (
                     <>
                         <TableContainer component={Paper}>

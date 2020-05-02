@@ -1,7 +1,6 @@
 import React, {useEffect} from "react";
 import {isAdmin} from "../../utils/auth";
 import {Error} from "../Error";
-import SwipeableViews from 'react-swipeable-views';
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import Box from "@material-ui/core/Box";
@@ -15,7 +14,6 @@ import * as userActionCreators from "../../actions/userPool";
 import {UsersPanel} from "./UsersPanel";
 import {BlogPostsPanel} from "./BlogPostsPanel";
 import {JobsPanel} from "./JobsPanel";
-import Typography from "@material-ui/core/Typography";
 
 const mapStateToProps = state => ({
     allUsers: state.userPoolContainerReducer.allUsers,
@@ -51,16 +49,20 @@ function TabPanel(props) {
 
 function a11yProps(index) {
     return {
-        id: `full-width-tab-${index}`,
-        'aria-controls': `full-width-tabpanel-${index}`,
+        id: `tab-${index}`,
+        'aria-controls': `tabpanel-${index}`,
     };
 }
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        width: 500,
+        width: '100%',
+        maxWidth: '50rem',
         margin: '0 auto'
     },
+    tabs: {
+        margin: '0 auto'
+    }
 }));
 
 export function AdminPanel(props) {
@@ -91,34 +93,29 @@ export function AdminPanel(props) {
                 Admin panel
             </h1>
             <AppBar position="static" color="default">
-                <Tabs
+                <Tabs className={classes.tabs}
                     value={value}
                     onChange={handleChange}
                     indicatorColor="primary"
                     textColor="primary"
-                    variant="fullWidth"
-                    aria-label="full width tabs example"
+                    variant="scrollable"
+                    scrollButtons="auto"
                 >
                     <Tab label="Roles" {...a11yProps(0)} />
                     <Tab label="Jobs" {...a11yProps(1)} />
                     <Tab label="Blog posts" {...a11yProps(2)} />
                 </Tabs>
             </AppBar>
-            <SwipeableViews
-                axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                index={value}
-                onChangeIndex={handleChangeIndex}
-            >
-                <TabPanel value={value} index={0} dir={theme.direction}>
-                    <UsersPanel users={props.allUsers}/>
-                </TabPanel>
-                <TabPanel value={value} index={1} dir={theme.direction}>
-                    <JobsPanel/>
-                </TabPanel>
-                <TabPanel value={value} index={2} dir={theme.direction}>
-                    <BlogPostsPanel pendingPosts={props.pendingPosts} approvePost={props.approveBlogPost} removePost={props.removePost}/>
-                </TabPanel>
-            </SwipeableViews>
+            <TabPanel value={value} index={0} dir={theme.direction}>
+                <UsersPanel users={props.allUsers}/>
+            </TabPanel>
+            <TabPanel value={value} index={1} dir={theme.direction}>
+                <JobsPanel/>
+            </TabPanel>
+            <TabPanel value={value} index={2} dir={theme.direction}>
+                <BlogPostsPanel pendingPosts={props.pendingPosts} approvePost={props.approveBlogPost}
+                                removePost={props.removePost}/>
+            </TabPanel>
         </div>
     );
 }
