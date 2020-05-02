@@ -15,11 +15,13 @@ namespace fantasy_hoops.Controllers
     {
         private readonly IBlogService _blogService;
         private readonly IBlogRepository _blogRepository;
+        private readonly IPushService _pushService;
 
-        public BlogController(IBlogService blogService, IBlogRepository blogRepository)
+        public BlogController(IBlogService blogService, IBlogRepository blogRepository, IPushService pushService)
         {
             _blogService = blogService;
             _blogRepository = blogRepository;
+            _pushService = pushService;
         }
 
         [HttpGet]
@@ -97,6 +99,13 @@ namespace fantasy_hoops.Controllers
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity, "Failed approving blog post.");
             }
+
+            BlogPostDto approvedPost = _blogRepository.GetPostById(postId);
+            _pushService.Send(approvedPost.Author.UserId, new PushNotificationViewModel
+            {
+                Title = "Fantasy Hoops Notification",
+                Body = "Your blog post has been approved"
+            });
 
             return Ok("Blog post approved successfully.");
         }

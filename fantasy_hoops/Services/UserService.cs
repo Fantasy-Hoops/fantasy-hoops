@@ -288,7 +288,11 @@ namespace fantasy_hoops.Services
                     if (userRole.UserRoles.Admin.Value)
                     {
                         var result = await _userManager.AddToRoleAsync(user, "Admin");
-                        if (!result.Succeeded)
+                        if (result.Succeeded)
+                        {
+                            _pushService.Send(user.Id, GetRoleUpdatePushNotification("Admin"));
+                        }
+                        else
                         {
                             success = false;
                         }
@@ -308,7 +312,11 @@ namespace fantasy_hoops.Services
                     if (userRole.UserRoles.Creator.Value)
                     {
                         var result = await _userManager.AddToRoleAsync(user, "Creator");
-                        if (!result.Succeeded)
+                        if (result.Succeeded)
+                        {
+                            _pushService.Send(user.Id, GetRoleUpdatePushNotification("Creator"));
+                        }
+                        else
                         {
                             success = false;
                         }
@@ -325,6 +333,15 @@ namespace fantasy_hoops.Services
             }
 
             return success;
+        }
+
+        private PushNotificationViewModel GetRoleUpdatePushNotification(string role)
+        {
+            return new PushNotificationViewModel
+            {
+                Title = "Fantasy Hoops Notification",
+                Body = $"You have been added to role '{role}'"
+            };
         }
     }
 }
