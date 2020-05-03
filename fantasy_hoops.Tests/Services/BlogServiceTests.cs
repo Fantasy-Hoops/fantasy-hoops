@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using fantasy_hoops.Models;
+using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Repositories;
+using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services;
 using fantasy_hoops.Services.Interfaces;
 using fantasy_hoops.Tests.Mocks;
@@ -11,7 +12,7 @@ using NUnit.Framework;
 
 namespace fantasy_hoops.Tests.Services
 {
-    public class AchievementsServiceTests
+    public class BlogServiceTests
     {
         private readonly ContextMock.Builder _contextBuilder = new ContextMock.Builder();
 
@@ -27,31 +28,34 @@ namespace fantasy_hoops.Tests.Services
         }
         
         [Test]
-        public void TestAssignAchievements()
+        public void TestApprovePostSuccess()
         {
             var context = _contextBuilder
-                .SetUsers(new List<User>
-                {
-                    new User
-                    {
-                        Id = "zzz",
-                        UserName = "zUser",
-                        Email = "zzz@test.com"
-                    }
-                })
-                .SetAchievements()
-                .SetUserAchievements()
+                .SetBlogPosts()
                 .Build();
 
-            var userRepositoryMock = new UserRepository(context);
-            var achievementRepository = new AchievementsRepository(context);
-
-            IAchievementsService achievementsService =
-                new AchievementsService(achievementRepository, userRepositoryMock);
-            bool result = achievementsService.AssignAchievements("zUser");
+            IBlogRepository blogRepository = new BlogRepository(context);
+            
+            IBlogService blogService =new BlogService(blogRepository);
+            bool result = blogService.ApprovePost(200);
             
             Assert.IsTrue(result);
-            Assert.AreEqual(2, context.UserAchievements.Count(x => x.UserID.Equals("zzz")));
+            Assert.AreEqual(PostStatus.APPROVED, context.Posts.Find(200).Status);
+        }
+        
+        [Test]
+        public void TestApprovePostFail()
+        {
+            var context = _contextBuilder
+                .SetBlogPosts()
+                .Build();
+
+            IBlogRepository blogRepository = new BlogRepository(context);
+            
+            IBlogService blogService =new BlogService(blogRepository);
+            bool result = blogService.ApprovePost(999);
+            
+            Assert.IsFalse(result);
         }
     }
 }

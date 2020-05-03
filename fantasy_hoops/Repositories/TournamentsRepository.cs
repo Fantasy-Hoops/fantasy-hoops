@@ -18,10 +18,10 @@ namespace fantasy_hoops.Repositories
         private readonly GameContext _context;
         private readonly ILineupRepository _lineupRepository;
 
-        public TournamentsRepository()
+        public TournamentsRepository(GameContext gameContext = null, ILineupRepository lineupRepository = null)
         {
-            _context = new GameContext();
-            _lineupRepository = new LineupRepository();
+            _context = gameContext ?? new GameContext();
+            _lineupRepository = lineupRepository ?? new LineupRepository();
         }
 
         public List<TournamentTypeDto> GetTournamentTypes()
@@ -53,7 +53,7 @@ namespace fantasy_hoops.Repositories
                 .ToList()
                 .GroupBy(game => CommonFunctions.Instance.GetIso8601WeekOfYear(game.Date.Value))
                 .Select(group => group.Min(game => game.Date.Value))
-                .Where(date => date > CommonFunctions.EctNow)
+                .Where(date => date > CommonFunctions.Instance.EtcNow())
                 .OrderBy(date => date)
                 .ToList();
         }
@@ -180,7 +180,7 @@ namespace fantasy_hoops.Repositories
                 .ToList();
             ContestDto nextContest = tournamentDetails.Contests
                 .OrderBy(contest => contest.ContestStart)
-                .FirstOrDefault(contest => contest.ContestStart > CommonFunctions.EctNow);
+                .FirstOrDefault(contest => contest.ContestStart > CommonFunctions.Instance.EtcNow());
 
             if (userId != null)
             {
@@ -308,8 +308,8 @@ namespace fantasy_hoops.Repositories
         {
             return _context.Contests
                 .Where(contest => !contest.IsFinished
-                                  && contest.ContestStart < CommonFunctions.EctNow
-                                  && contest.ContestEnd > CommonFunctions.EctNow)
+                                  && contest.ContestStart < CommonFunctions.Instance.EtcNow()
+                                  && contest.ContestEnd > CommonFunctions.Instance.EtcNow())
                 .Include(contest => contest.Matchups)
                 .Include(contest => contest.Winner)
                 .Select(contest => new ContestDto
@@ -344,6 +344,17 @@ namespace fantasy_hoops.Repositories
                         SecondUserScore = contestPair.SecondUserScore
                     }).ToList()
                 }).ToList();
+        }
+
+        public bool DeleteTournament(Tournament tournament)
+        {
+            if (!DeleteTournamentResources(tournament))
+            {
+                return false;
+            }
+
+            _context.Tournaments.Remove(tournament);
+            return _context.SaveChanges() != 0;
         }
 
         public bool DeleteTournament(string tournamentId)

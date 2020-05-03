@@ -17,7 +17,7 @@ namespace fantasy_hoops.Jobs
         private readonly List<(List<LineupPlayerDto>, double)> _playersList = new List<(List<LineupPlayerDto>, double)>();
         
         private readonly GameContext _context;
-        private readonly DateTime _date = CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date;
+        private readonly DateTime _date = CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date;
 
         public BestLineupsJob()
         {

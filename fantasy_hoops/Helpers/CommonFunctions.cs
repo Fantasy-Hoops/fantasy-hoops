@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using fantasy_hoops.Models.Enums;
@@ -32,12 +33,15 @@ namespace fantasy_hoops.Helpers
 		
 		public string DOMAIN = "fantasyhoops.org";
 		
-		public static DateTime EctNow = UTCToEastern(DateTime.UtcNow);
-		
 		public string LineupPositionsOrder = "PG|SG|SF|PF|C";
 		public int PRICE_FLOOR = 10;
 
-		public static DateTime UTCToEastern(DateTime UTC)
+		public DateTime EtcNow()
+		{
+			return UTCToEastern(DateTime.UtcNow);
+		}
+
+		public DateTime UTCToEastern(DateTime UTC)
 		{
 			TimeZoneInfo eastern = TimeZoneInfo.FindSystemTimeZoneById(Startup.Configuration["TimeZone"]);
 			return TimeZoneInfo.ConvertTimeFromUtc(UTC, eastern);
@@ -175,9 +179,24 @@ namespace fantasy_hoops.Helpers
         
         public string GetUsernameFromEmail(string email)
         {
+	        if (!IsValidEmail(email))
+	        {
+		        return null;
+	        }
 	        int atIndex = email.IndexOf('@');
 	        string username = email.Substring(0, atIndex);
 	        return username;
+        }
+        
+        public bool IsValidEmail(string email)
+        {
+	        try {
+		        var addr = new MailAddress(email);
+		        return addr.Address == email;
+	        }
+	        catch {
+		        return false;
+	        }
         }
 
         public  string GetUserIdFromClaims(ClaimsPrincipal user)
@@ -185,7 +204,7 @@ namespace fantasy_hoops.Helpers
 	        return user.Claims.ToList()[0].Value;
         }
         
-        public  DateTime FirstDayOfWeek(DateTime date)
+        public DateTime FirstDayOfWeek(DateTime date)
         {
 	        switch (date.DayOfWeek)
 	        {
@@ -198,13 +217,13 @@ namespace fantasy_hoops.Helpers
 	        }
         }
 
-        public  DateTime LastDayOfWeek(DateTime date)
+        public DateTime LastDayOfWeek(DateTime date)
         {
 	        DateTime lastDayOfWeekDate = FirstDayOfWeek(date).AddDays(6);
 	        return lastDayOfWeekDate;
         }
 
-        public  LeaderboardType ParseLeaderboardType(string type)
+        public LeaderboardType ParseLeaderboardType(string type)
         {
 	        switch (type)
 	        {

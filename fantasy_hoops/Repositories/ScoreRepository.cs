@@ -9,9 +9,9 @@ namespace fantasy_hoops.Repositories
     {
         private readonly GameContext _context;
 
-        public ScoreRepository()
+        public ScoreRepository(GameContext context = null)
         {
-            _context = new GameContext();
+            _context = context ?? new GameContext();
         }
 
         public bool AnyPlayerStatsExists(Player player)

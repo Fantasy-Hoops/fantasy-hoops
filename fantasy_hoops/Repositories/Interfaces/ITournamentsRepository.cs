@@ -28,6 +28,7 @@ namespace fantasy_hoops.Repositories.Interfaces
         void AddCreatorToTournament(Tournament tournament);
         bool AddUserToTournament(string userId, string tournamentId);
         List<ContestDto> GetAllCurrentContests();
+        bool DeleteTournament(Tournament tournament);
         bool DeleteTournament(string tournamentId);
         List<TournamentDto> GetTournamentInvitations(string userId);
         bool ChangeInvitationStatus(string tournamentId, string userId, RequestStatus status = RequestStatus.NO_REQUEST);

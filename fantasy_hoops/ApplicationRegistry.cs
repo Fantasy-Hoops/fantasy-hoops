@@ -26,7 +26,7 @@ namespace fantasy_hoops
                     .WithName("nextGameJob")
                     .ToRunNow();
             }
-            RuntimeUtils.NEXT_GAME = new DateTime(2020, 04, 20);
+            RuntimeUtils.NEXT_GAME = new DateTime(2020, 06, 20);
             RuntimeUtils.NEXT_GAME_CLIENT = RuntimeUtils.NEXT_GAME;
             RuntimeUtils.PLAYER_POOL_DATE = RuntimeUtils.NEXT_GAME;
 

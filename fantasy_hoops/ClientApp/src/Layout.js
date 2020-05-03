@@ -3,11 +3,20 @@ import Header from "./app/components/Navigation/Header";
 import Container from "@material-ui/core/Container";
 import CoronaAlert from "./app/components/CoronaAlert";
 
+import {makeStyles} from "@material-ui/core/styles";
+
+export const useStyles = makeStyles(theme => ({
+    root: {
+        position: 'relative',
+        padding: '3rem 0',
+        background: '#fafafa'
+    }
+}));
 
 export default (props) => (
     <>
         <Header />
-        <Container maxWidth="md">
+        <Container className={useStyles().root} maxWidth="md">
             <CoronaAlert/>
             {props.children}
         </Container>

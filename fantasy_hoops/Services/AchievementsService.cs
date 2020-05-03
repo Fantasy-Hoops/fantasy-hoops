@@ -13,10 +13,10 @@ namespace fantasy_hoops.Services
         private readonly IUserRepository _userRepository;
         private readonly IAchievementsRepository _achievementsRepository;
 
-        public AchievementsService(IAchievementsRepository achievementsRepository)
+        public AchievementsService(IAchievementsRepository achievementsRepository, IUserRepository userRepository = null)
         {
             _achievementsRepository = achievementsRepository;
-            _userRepository = new UserRepository();
+            _userRepository = userRepository ?? new UserRepository();
         }
         
         public bool AssignAchievements(string userName)

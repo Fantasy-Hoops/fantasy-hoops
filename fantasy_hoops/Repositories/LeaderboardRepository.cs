@@ -55,7 +55,7 @@ namespace fantasy_hoops.Repositories
         public List<UserLeaderboardRecordDto> GetUserLeaderboard(int from, int limit, LeaderboardType type, string date,
             int weekNumber, int year)
         {
-            DateTime previousECT = CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME);
+            DateTime previousECT = CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME);
 
             DateTime dateTime = date.Length == 0
                 ? DateTime.UtcNow < RuntimeUtils.PREVIOUS_LAST_GAME
@@ -109,7 +109,7 @@ namespace fantasy_hoops.Repositories
                                 .Max(lineup => lineup.Date)
                         );
                     int leaderboardYear = year == -1
-                        ? CommonFunctions.UTCToEastern(DateTime.UtcNow).Year
+                        ? CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow).Year
                         : year;
                     return _context.UserLineups
                         .Include(lineup => lineup.User)
@@ -154,7 +154,7 @@ namespace fantasy_hoops.Repositories
         public List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit, LeaderboardType type,
             string date, int weekNumber, int year)
         {
-            DateTime previousECT = CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME);
+            DateTime previousECT = CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME);
 
             DateTime dateTime = date.Length == 0
                 ? DateTime.UtcNow < RuntimeUtils.PREVIOUS_LAST_GAME
@@ -221,7 +221,7 @@ namespace fantasy_hoops.Repositories
                 case LeaderboardType.WEEKLY:
                     int week = weekNumber != -1
                         ? weekNumber
-                        : CommonFunctions.Instance.GetIso8601WeekOfYear(CommonFunctions.UTCToEastern(DateTime.UtcNow));
+                        : CommonFunctions.Instance.GetIso8601WeekOfYear(CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow));
                     int leaderboardYear = year == -1
                         ? DateTime.Now.Year
                         : year;

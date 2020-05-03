@@ -171,7 +171,7 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
-            string gameDate = CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).ToString("yyyyMMdd");
+            string gameDate = CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).ToString("yyyyMMdd");
             JArray games = CommonFunctions.Instance.GetGames(gameDate);
             int countOfActivatedGames = 0;
             bool isAnyGameStarted = false;

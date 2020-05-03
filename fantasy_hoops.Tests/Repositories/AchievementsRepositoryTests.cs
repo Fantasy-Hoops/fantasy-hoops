@@ -47,7 +47,7 @@ namespace fantasy_hoops.Tests.Repositories
             Assert.NotNull(userAchievements);
             Assert.AreEqual(2, userAchievements.Keys.Count);
             Assert.AreEqual(2, userAchievements.Values.Count);
-            Assert.AreEqual(1, userAchievements["xUser"].Count);
+            Assert.AreEqual(2, userAchievements["xUser"].Count);
             Assert.AreEqual("Achievement 1", userAchievements["xUser"][0].Achievement.Title);
             Assert.AreEqual(1, userAchievements["yUser"].Count);
             Assert.AreEqual("Achievement 2", userAchievements["yUser"][0].Achievement.Title);
@@ -65,7 +65,7 @@ namespace fantasy_hoops.Tests.Repositories
             List<UserAchievementDto> userAchievements = achievementsRepository.GetUserAchievements("xxx");
             
             Assert.NotNull(userAchievements);
-            Assert.AreEqual(1, userAchievements.Count);
+            Assert.AreEqual(2, userAchievements.Count);
             Assert.AreEqual("Achievement 1", userAchievements[0].Achievement.Title);
         }
 

@@ -141,7 +141,7 @@ namespace fantasy_hoops.Jobs
                                 .ToRunOnceAt(RuntimeUtils.NEXT_GAME.AddHours(-5)));
 
                     // Once per 2 days
-                    if (CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Day % 2 != 0)
+                    if (CommonFunctions.Instance.UTCToEastern(RuntimeUtils.NEXT_GAME).Day % 2 != 0)
                         JobManager.AddJob(new RostersJob(_pushService),
                             s => s.WithName("rostersJob")
                                 .ToRunOnceAt(RuntimeUtils.NEXT_GAME.AddMinutes(-5)));

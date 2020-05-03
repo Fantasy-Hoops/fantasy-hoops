@@ -11,9 +11,9 @@ namespace fantasy_hoops.Repositories
     {
         private readonly GameContext _context;
 
-        public PushNotificationRepository()
+        public PushNotificationRepository(GameContext gameContext = null)
         {
-            _context = new GameContext();
+            _context = gameContext ?? new GameContext();
         }
 
         public void AddSubscription(PushSubscription subscription)

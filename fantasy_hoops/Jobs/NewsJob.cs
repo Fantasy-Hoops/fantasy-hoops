@@ -150,12 +150,12 @@ namespace fantasy_hoops.Jobs
 
         private string Today()
         {
-            return CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).ToString("yyyyMMdd");
+            return CommonFunctions.Instance.UTCToEastern(RuntimeUtils.NEXT_GAME).ToString("yyyyMMdd");
         }
 
         private string Yesterday()
         {
-            return CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME.AddDays(-1)).ToString("yyyyMMdd");
+            return CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME.AddDays(-1)).ToString("yyyyMMdd");
         }
 
         public void Execute()

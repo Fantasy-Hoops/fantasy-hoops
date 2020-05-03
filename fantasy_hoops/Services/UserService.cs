@@ -25,17 +25,15 @@ namespace fantasy_hoops.Services
         private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
         public UserService(IConfiguration configuration, IPushService pushService, IUserRepository userRepository,
-            UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager)
+            UserManager<User> userManager, SignInManager<User> signInManager)
         {
             Configuration = configuration;
             _pushService = pushService;
             _userRepository = userRepository;
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManager = roleManager;
         }
 
         public async Task<bool> Login(LoginViewModel model)

@@ -927,14 +927,15 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
 .Lineup--sticky {
     width: 100%;
     position: sticky;
-    top: 9.6rem;
     z-index: 10;
+    top: 9.6rem;
     background: linear-gradient(
             to bottom,
             #FAFAFA 93%,
             rgba(255, 255, 255, 0)
     );
     padding-bottom: 2.5rem;
+    margin-top: -3rem;
 }
 
 

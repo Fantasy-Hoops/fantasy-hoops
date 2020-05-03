@@ -20,9 +20,9 @@ namespace fantasy_hoops.Repositories
         private readonly DateTime _date = CommonFunctions.Instance.GetLeaderboardDate(LeaderboardType.WEEKLY);
         private readonly GameContext _context;
 
-        public UserRepository()
+        public UserRepository(GameContext context = null)
         {
-            _context = new GameContext();
+            _context = context ?? new GameContext();
         }
 
         public object GetProfile(string id, int start, int count)

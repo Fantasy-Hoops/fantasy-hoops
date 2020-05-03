@@ -152,7 +152,7 @@ namespace fantasy_hoops.Jobs
         private DateTime GetDateECT(JToken game)
         {
             DateTime dateUTC = DateTime.Parse(game["startTimeUTC"].ToString());
-            return CommonFunctions.UTCToEastern(dateUTC);
+            return CommonFunctions.Instance.UTCToEastern(dateUTC);
         }
     }
 }

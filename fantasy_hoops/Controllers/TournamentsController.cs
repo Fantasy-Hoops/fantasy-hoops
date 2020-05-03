@@ -110,7 +110,7 @@ namespace fantasy_hoops.Controllers
                 return UnprocessableEntity("Tournament title already exists.");
             }
             
-            if (model.StartDate < CommonFunctions.UTCToEastern(DateTime.UtcNow))
+            if (model.StartDate < CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow))
             {
                 return UnprocessableEntity("Illegal Date. Date must be in the future.");
             }

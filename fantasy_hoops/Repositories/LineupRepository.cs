@@ -14,33 +14,34 @@ namespace fantasy_hoops.Repositories
 {
     public class LineupRepository : ILineupRepository
     {
-
         private readonly GameContext _context;
 
-        public LineupRepository()
+        public LineupRepository(GameContext context = null)
         {
-            _context = new GameContext();
+            _context = context ?? new GameContext();
         }
 
         public UserLineup GetLineup(string id)
         {
             return _context.UserLineups
-             .FirstOrDefault(lineup => lineup.UserID.Equals(id) && lineup.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date));
+                .FirstOrDefault(lineup =>
+                    lineup.UserID.Equals(id) &&
+                    lineup.Date.Equals(CommonFunctions.Instance.UTCToEastern(RuntimeUtils.NEXT_GAME).Date));
         }
 
         public void AddLineup(SubmitLineupViewModel model)
         {
             _context.UserLineups.Add(
-                    new UserLineup
-                    {
-                        Date = CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date,
-                        UserID = model.UserID,
-                        PgID = model.PgID,
-                        SgID = model.SgID,
-                        SfID = model.SfID,
-                        PfID = model.PfID,
-                        CID = model.CID
-                    });
+                new UserLineup
+                {
+                    Date = CommonFunctions.Instance.UTCToEastern(RuntimeUtils.NEXT_GAME).Date,
+                    UserID = model.UserID,
+                    PgID = model.PgID,
+                    SgID = model.SgID,
+                    SfID = model.SfID,
+                    PfID = model.PfID,
+                    CID = model.CID
+                });
             _context.SaveChanges();
         }
 
@@ -48,12 +49,13 @@ namespace fantasy_hoops.Repositories
         {
             var userLineup = _context.UserLineups
                 .FirstOrDefault(lineup => lineup.UserID.Equals(model.UserID)
-                                        && lineup.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date));
+                                          && lineup.Date.Equals(CommonFunctions.Instance
+                                              .UTCToEastern(RuntimeUtils.NEXT_GAME).Date));
             if (userLineup == null)
             {
                 return;
             }
-            
+
             userLineup.PgID = model.PgID;
             userLineup.SgID = model.SgID;
             userLineup.SfID = model.SfID;
@@ -66,39 +68,40 @@ namespace fantasy_hoops.Repositories
 
         public int GetLineupPrice(SubmitLineupViewModel model)
         {
-            return _context.Players.Where(pg => pg.PlayerID == model.PgID).Select(p => p.Price)
-                    .Union(_context.Players.Where(sg => sg.PlayerID == model.SgID).Select(p => p.Price))
-                    .Union(_context.Players.Where(sf => sf.PlayerID == model.SfID).Select(p => p.Price))
-                    .Union(_context.Players.Where(pf => pf.PlayerID == model.PfID).Select(p => p.Price))
-                    .Union(_context.Players.Where(c => c.PlayerID == model.CID).Select(p => p.Price))
-                    .Sum();
+            return _context.Players.Where(player => player.PlayerID == model.PgID
+                                                    || player.PlayerID == model.SgID
+                                                    || player.PlayerID == model.SfID
+                                                    || player.PlayerID == model.PfID
+                                                    || player.PlayerID == model.CID)
+                .Select(p => p.Price)
+                .Sum();
         }
 
         public bool ArePricesCorrect(SubmitLineupViewModel model)
         {
             return !(IsPlayerPriceIncorrect(model.PgID, model.PgPrice)
-                    || IsPlayerPriceIncorrect(model.SgID, model.SgPrice)
-                    || IsPlayerPriceIncorrect(model.SfID, model.SfPrice)
-                    || IsPlayerPriceIncorrect(model.PfID, model.PfPrice)
-                    || IsPlayerPriceIncorrect(model.CID, model.CPrice));
+                     || IsPlayerPriceIncorrect(model.SgID, model.SgPrice)
+                     || IsPlayerPriceIncorrect(model.SfID, model.SfPrice)
+                     || IsPlayerPriceIncorrect(model.PfID, model.PfPrice)
+                     || IsPlayerPriceIncorrect(model.CID, model.CPrice));
         }
 
         public bool AreNotPlayingPlayers(SubmitLineupViewModel model)
         {
             return _context.Players
                 .Where(player => player.PlayerID == model.PgID
-                              || player.PlayerID == model.SgID
-                              || player.PlayerID == model.SfID
-                              || player.PlayerID == model.PfID
-                              || player.PlayerID == model.CID)
+                                 || player.PlayerID == model.SgID
+                                 || player.PlayerID == model.SfID
+                                 || player.PlayerID == model.PfID
+                                 || player.PlayerID == model.CID)
                 .Any(player => !player.IsPlaying);
         }
 
         public bool IsUpdating(String userID)
         {
             return _context.UserLineups
-                    .Any(x => x.UserID.Equals(userID)
-                              && x.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date));
+                .Any(x => x.UserID.Equals(userID)
+                          && x.Date.Equals(CommonFunctions.Instance.UTCToEastern(RuntimeUtils.NEXT_GAME).Date));
         }
 
         private bool IsPlayerPriceIncorrect(int playerID, int price)
@@ -109,7 +112,8 @@ namespace fantasy_hoops.Repositories
         public List<string> GetUserSelectedIds()
         {
             return _context.UserLineups
-                .Where(lineup => lineup.Date.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date))
+                .Where(lineup =>
+                    lineup.Date.Date.Equals(CommonFunctions.Instance.UTCToEastern(RuntimeUtils.NEXT_GAME).Date))
                 .Select(lineup => lineup.UserID)
                 .ToList();
         }
@@ -125,39 +129,42 @@ namespace fantasy_hoops.Repositories
         public UserLeaderboardRecordDto GetUserCurrentLineup(string userId)
         {
             return _context.UserLineups
-                    .Where(lineup => lineup.UserID.Equals(userId) && (lineup.Date.Date == CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).Date
-                        || lineup.Date.Date == CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date)
-                    && !lineup.IsCalculated)
-                    .Select(lineup => new UserLeaderboardRecordDto
-                    {
-                        UserId = lineup.UserID,
-                        Username = lineup.User.UserName,
-                        LongDate = lineup.Date.ToString("yyyy-MM-dd"),
-                        ShortDate = lineup.Date.ToString("MMM. dd"),
-                        Date = lineup.Date,
-                        FP = lineup.FP,
-                        Lineup = _context.Players
-                            .Where(player =>
-                                player.PlayerID == lineup.PgID
-                                || player.PlayerID == lineup.SgID
-                                || player.PlayerID == lineup.SfID
-                                || player.PlayerID == lineup.PfID
-                                || player.PlayerID == lineup.CID)
-                            .Select(player => new LineupPlayerDto
-                            {
-                                Player = player,
-                                TeamColor = player.Team.Color,
-                                FP = _context.Stats.Where(stats => stats.Date.Date == lineup.Date.Date
-                                    && stats.PlayerID == player.PlayerID)
+                .Where(lineup =>
+                    lineup.UserID.Equals(userId) && (lineup.Date.Date ==
+                                                     CommonFunctions.Instance.UTCToEastern(RuntimeUtils.NEXT_GAME).Date
+                                                     || lineup.Date.Date == CommonFunctions.Instance
+                                                         .UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date)
+                                                 && !lineup.IsCalculated)
+                .Select(lineup => new UserLeaderboardRecordDto
+                {
+                    UserId = lineup.UserID,
+                    Username = lineup.User.UserName,
+                    LongDate = lineup.Date.ToString("yyyy-MM-dd"),
+                    ShortDate = lineup.Date.ToString("MMM. dd"),
+                    Date = lineup.Date,
+                    FP = lineup.FP,
+                    Lineup = _context.Players
+                        .Where(player =>
+                            player.PlayerID == lineup.PgID
+                            || player.PlayerID == lineup.SgID
+                            || player.PlayerID == lineup.SfID
+                            || player.PlayerID == lineup.PfID
+                            || player.PlayerID == lineup.CID)
+                        .Select(player => new LineupPlayerDto
+                        {
+                            Player = player,
+                            TeamColor = player.Team.Color,
+                            FP = _context.Stats.Where(stats => stats.Date.Date == lineup.Date.Date
+                                                               && stats.PlayerID == player.PlayerID)
                                 .Select(stats => stats.FP).FirstOrDefault(),
-                                Price = player.Price
-                            })
-                            .OrderBy(p => CommonFunctions.Instance.LineupPositionsOrder.IndexOf(p.Player.Position))
-                            .ToList(),
-                        IsLive = lineup.Date.Equals(CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date)
-                                 && !lineup.IsCalculated
-                    })
-                    .FirstOrDefault();
+                            Price = player.Price
+                        })
+                        .OrderBy(p => CommonFunctions.Instance.LineupPositionsOrder.IndexOf(p.Player.Position))
+                        .ToList(),
+                    IsLive = lineup.Date.Equals(CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date)
+                             && !lineup.IsCalculated
+                })
+                .FirstOrDefault();
         }
 
         public List<UserLeaderboardRecordDto> GetRecentLineups(string userId, int start, int count)
@@ -196,7 +203,7 @@ namespace fantasy_hoops.Repositories
                 })
                 .ToList();
         }
-        
+
         public List<BestLineupDto> GetBestLineups(string date, int from, int limit)
         {
             DateTime dateTime;
@@ -208,7 +215,7 @@ namespace fantasy_hoops.Repositories
             {
                 dateTime = _context.BestLineups.Max(lineup => lineup.Date);
             }
-            
+
             return _context.BestLineups
                 .Where(lineup => lineup.Date.Equals(dateTime))
                 .Include(lineup => lineup.Lineup)

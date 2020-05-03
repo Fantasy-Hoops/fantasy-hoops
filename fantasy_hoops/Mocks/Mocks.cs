@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Achievements;
 using fantasy_hoops.Models.Enums;
+using fantasy_hoops.Models.PushNotifications;
+using fantasy_hoops.Models.Tournaments;
 
 namespace fantasy_hoops
 {
@@ -22,6 +24,53 @@ namespace fantasy_hoops
             };
 
             public static readonly DateTime MockedStartDate = new DateTime(2021, 04, 02, 19, 0, 0);
+            
+            public static readonly List<Tournament> MockedTournaments = new List<Tournament>
+            {
+                new Tournament
+                {
+                    Id = "tournament2",
+                    StartDate = new DateTime(2020, 04, 20, 19, 0, 0),
+                },
+                new Tournament
+                {
+                    Id = "tournament3",
+                    StartDate = new DateTime(2020, 05, 04, 19, 0, 0)
+                },
+                new Tournament
+                {
+                    Id = "tournament1",
+                    Title = "Tournament 1 Title",
+                    Description = "Tournament 1 Description",
+                    StartDate = new DateTime(2020, 04, 02, 19, 0, 0),
+                    EndDate = new DateTime(2021, 04, 02, 19, 0, 0),
+                    Creator = Users.MockedUsers[0],
+                    CreatorID = "xxx"
+                }
+            };
+            
+            public static readonly List<Contest> MockedContests = new List<Contest>
+            {
+                new Contest
+                {
+                    Id = 9999,
+                    TournamentId = MockedTournaments[2].Id
+                }
+            };
+            
+            public static readonly List<TournamentUser> MockedTournamentsUsers = new List<TournamentUser>
+            {
+                new TournamentUser
+                {
+                    User = Users.MockedUsers[0],
+                    UserID = Users.MockedUsers[0].Id,
+                    Tournament = MockedTournaments[0],
+                    TournamentID = MockedTournaments[0].Id,
+                    Wins = 15,
+                    Losses = 10,
+                    Points = 100
+                }
+            };
         }
 
         public static class Players
@@ -45,11 +94,51 @@ namespace fantasy_hoops
             {
                 new Player
                 {
-                    PlayerID = 123
+                    Position = "PG",
+                    PlayerID = 123,
+                    NbaID = 123123,
+                    IsPlaying = false,
+                    Price = 60
                 },
                 new Player
                 {
-                    PlayerID = 456
+                    Position = "SG",
+                    PlayerID = 456,
+                    NbaID = 456456,
+                    IsPlaying = false,
+                    Price = 60
+                },
+                new Player
+                {
+                    Position = "SF",
+                    PlayerID = 321,
+                    NbaID = 321321,
+                    IsPlaying = false,
+                    Price = 60
+                },
+                new Player
+                {
+                    Position = "PF",
+                    PlayerID = 654,
+                    NbaID = 654654,
+                    IsPlaying = false,
+                    Price = 60
+                },
+                new Player
+                {
+                    Position = "C",
+                    PlayerID = 789,
+                    NbaID = 789789,
+                    IsPlaying = false,
+                    Price = 60
+                },
+                new Player
+                {
+                    Position = "C",
+                    PlayerID = 987,
+                    NbaID = 987987,
+                    IsPlaying = false,
+                    Price = 60
                 }
             };
         }
@@ -114,7 +203,146 @@ namespace fantasy_hoops
                     Achievement = MockedAchievements[1]
                 }
             };
-            
+        }
+
+        public static class Blog
+        {
+            public static readonly List<Post> MockedPosts = new List<Post>
+            {
+                new Post
+                {
+                    PostID = 0,
+                    Title = "Title 0",
+                    Body = "Body 0",
+                    Status = PostStatus.APPROVED,
+                    AuthorID = Users.MockedUsers[0].Id,
+                    Author = Users.MockedUsers[0]
+                },
+                new Post
+                {
+                    PostID = 200,
+                    Title = "Title 200",
+                    Body = "Body 200",
+                    Status = PostStatus.PENDING,
+                    AuthorID = Users.MockedUsers[1].Id,
+                    Author = Users.MockedUsers[1]
+                }
+            };
+        }
+
+        public static class UserLineups
+        {
+            public static readonly List<UserLineup> MockedUserLineups = new List<UserLineup>
+            {
+                new UserLineup
+                {
+                    ID = 0,
+                    UserID = Users.MockedUsers[0].Id,
+                    User = Users.MockedUsers[0],
+                    Date = new DateTime(2020, 04, 20),
+                    PgID = Players.MockedPlayers[0].PlayerID,
+                    Pg = Players.MockedPlayers[0],
+                    SgID = Players.MockedPlayers[1].PlayerID,
+                    Sg = Players.MockedPlayers[1],
+                    SfID = Players.MockedPlayers[2].PlayerID,
+                    Sf = Players.MockedPlayers[2],
+                    PfID = Players.MockedPlayers[3].PlayerID,
+                    Pf = Players.MockedPlayers[3],
+                    CID = Players.MockedPlayers[4].PlayerID,
+                    C = Players.MockedPlayers[4]
+                },
+                new UserLineup
+                {
+                    ID = 200,
+                    UserID = Users.MockedUsers[1].Id,
+                    User = Users.MockedUsers[1],
+                    Date = new DateTime(2020, 04, 20),
+                    PgID = Players.MockedPlayers[0].PlayerID,
+                    Pg = Players.MockedPlayers[0],
+                    SgID = Players.MockedPlayers[1].PlayerID,
+                    Sg = Players.MockedPlayers[1],
+                    SfID = Players.MockedPlayers[2].PlayerID,
+                    Sf = Players.MockedPlayers[2],
+                    PfID = Players.MockedPlayers[3].PlayerID,
+                    Pf = Players.MockedPlayers[3],
+                    CID = Players.MockedPlayers[5].PlayerID,
+                    C = Players.MockedPlayers[5]
+                }
+            };
+        }
+        
+        public static class Push
+        {
+            public static readonly List<PushSubscription> MockedSubscriptions = new List<PushSubscription>
+            {
+                new PushSubscription
+                {
+                    Auth = "123",
+                    Endpoint = "yyy",
+                    P256Dh = "iii",
+                    UserID = "xxx"
+                },
+                new PushSubscription
+                {
+                    Auth = "456",
+                    Endpoint = "yyy",
+                    P256Dh = "ppp",
+                    UserID = "yyy"
+                }
+            };
+        }
+        
+        public static class Stats
+        {
+            public static readonly List<Models.Stats> MockedStats = new List<Models.Stats>
+            {
+                new Models.Stats
+                {
+                    StatsID = 1991,
+                    PlayerID = 123,
+                    Player = Players.MockedPlayers[0],
+                    GS = 20,
+                    Score = "120-110"
+                },
+                new Models.Stats
+                {
+                    StatsID = 2882,
+                    PlayerID = 123,
+                    Player = Players.MockedPlayers[0],
+                    GS = 40,
+                    Score = "120-110"
+                },
+                new Models.Stats
+                {
+                    StatsID = 3773,
+                    PlayerID = 123,
+                    Player = Players.MockedPlayers[0],
+                    GS = 30,
+                    Score = "120-110"
+                },
+            };
+        }
+        
+        public static class Games
+        {
+            public static List<Game> MockedGames = new List<Game>
+            {
+                new Game
+                {
+                    Id = 1001,
+                    Date = new DateTime(2020, 05, 05)
+                },
+                new Game
+                {
+                    Id = 1991,
+                    Date = new DateTime(2020, 05, 06)
+                },
+                new Game
+                {
+                    Id = 1881,
+                    Date = new DateTime(2020, 05, 07)
+                }
+            };
         }
     }
 }

@@ -15,9 +15,9 @@ namespace fantasy_hoops.Repositories
     {
         private readonly GameContext _context;
 
-        public BlogRepository()
+        public BlogRepository(GameContext context = null)
         {
-            _context = new GameContext();
+            _context = context ?? new GameContext();
         }
 
         public List<BlogPostDto> GetApprovedPosts()
@@ -96,8 +96,8 @@ namespace fantasy_hoops.Repositories
                     Title = model.Title,
                     Body = model.Body,
                     AuthorID = model.AuthorID,
-                    CreatedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow),
-                    ModifiedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow),
+                    CreatedAt = CommonFunctions.Instance.EtcNow(),
+                    ModifiedAt = CommonFunctions.Instance.EtcNow(),
                     Status = model.Status
                 });
             return _context.SaveChanges() != 0;
@@ -106,13 +106,17 @@ namespace fantasy_hoops.Repositories
         public bool UpdatePost(SubmitPostViewModel model)
         {
             Post editablePost = _context.Posts.Find(model.Id);
+            if (editablePost == null)
+            {
+                return false;
+            }
             if (editablePost.Title.Equals(model.Title) && editablePost.Body.Equals(model.Body))
             {
                 return true;
             }
-            editablePost.Title = model.Title;
-            editablePost.Body = model.Body;
-            editablePost.ModifiedAt = CommonFunctions.EctNow;
+            editablePost.Title = model.Title ?? editablePost.Title;
+            editablePost.Body = model.Body ?? editablePost.Body;
+            editablePost.ModifiedAt = CommonFunctions.Instance.EtcNow();
             return _context.SaveChanges() != 0;
         }
 
@@ -147,7 +151,7 @@ namespace fantasy_hoops.Repositories
             }
 
             post.Status = PostStatus.APPROVED;
-            post.ModifiedAt = CommonFunctions.UTCToEastern(DateTime.UtcNow);
+            post.ModifiedAt = CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow);
             return _context.SaveChanges() != 0;
         }
     }

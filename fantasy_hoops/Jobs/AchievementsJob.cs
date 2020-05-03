@@ -20,7 +20,7 @@ namespace fantasy_hoops.Jobs
         public AchievementsJob(IPushService pushService)
         {
             _pushService = pushService;
-            _ectPrevious = CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME);
+            _ectPrevious = CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME);
         }
 
         public void Execute()
@@ -108,7 +108,7 @@ namespace fantasy_hoops.Jobs
 
             var winnerTuple = context.UserLineups
                 .Where(lineup => lineup.Date >= _ectPrevious.AddDays(-6).Date
-                                 && lineup.Date <= CommonFunctions.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date)
+                                 && lineup.Date <= CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date)
                 .ToList()
                 .GroupBy(lineup => lineup.UserID)
                 .Select(lineup => (lineup.Max(x => x.UserID), lineup.Sum(x => x.FP)))

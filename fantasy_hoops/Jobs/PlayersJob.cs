@@ -62,7 +62,7 @@ namespace fantasy_hoops.Jobs
 
 		private string GetDate()
 		{
-			return CommonFunctions.UTCToEastern(RuntimeUtils.NEXT_GAME).ToString("yyyyMMdd");
+			return CommonFunctions.Instance.UTCToEastern(RuntimeUtils.NEXT_GAME).ToString("yyyyMMdd");
 		}
 
 		private double FPPG(Player p)
