@@ -3,16 +3,6 @@ const domain = true
     ? 'https://fantasyhoops.org'
     : 'https://localhost:44389';
 
-// describe('FantasyHoops tournaments page tests', () => {
-//     beforeAll(() =>  {
-//         browser.waitForAngularEnabled(false);
-//         browser.get(`${domain}/achievements`);
-//
-//         const achievements = element(by.css('.Achievements'));
-//         browser.wait(EC.presenceOf(achievements), 10000);
-//     });
-// });
-
 describe('FantasyHoops login page tests', () => {
     beforeAll(() => {
         browser.waitForAngularEnabled(false);

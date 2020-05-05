@@ -120,14 +120,10 @@ export function BlogContainer(props) {
                 <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.BLOG}/>
             </Helmet>
-            <div className="container">
-                <div className="row pt-5">
-                    <div className="col-12 col-lg-9 mx-auto">
-                        {blogForm}
-                        <BlogPosts user={user} {...props} handleRemove={handleConfirmOpen}
-                                   handleEdit={handleEditPostOpen}/>
-                    </div>
-                </div>
+            <div className="col-12 col-lg-9 mx-auto">
+                {blogForm}
+                <BlogPosts user={user} {...props} handleRemove={handleConfirmOpen}
+                           handleEdit={handleEditPostOpen}/>
             </div>
             <ConfirmDialog
                 open={confirmOpen}

@@ -49,7 +49,7 @@ export const isAdmin = (userRoles) => {
         return userRoles.map(role => role.toLowerCase()).indexOf('admin') > -1;
     }
     
-    if (_.isEmpty(roles())) {
+    if (!isAuth() || _.isEmpty(roles())) {
         return false;
     }
     
@@ -61,7 +61,7 @@ export const isCreator = (userRoles) => {
         return userRoles.map(role => role.toLowerCase()).indexOf('creator') > -1;
     }
 
-    if (_.isEmpty(roles())) {
+    if (!isAuth() || _.isEmpty(roles())) {
         return false;
     }
     
