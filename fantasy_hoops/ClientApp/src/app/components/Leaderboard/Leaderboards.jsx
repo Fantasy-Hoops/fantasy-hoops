@@ -72,7 +72,7 @@ function Leaderboards(props) {
         }
 
         async function handleGetTopSeasonPerformers() {
-            await getSeasonLineupsLeaderboard({limit: 3, year: moment().year()})
+            await getSeasonLineupsLeaderboard({limit: 3})
                 .then(response => setTopSeasonLineups(response.data))
                 .catch(err => console.error(err.message))
         }

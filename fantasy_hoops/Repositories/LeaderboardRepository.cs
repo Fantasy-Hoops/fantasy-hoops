@@ -271,7 +271,6 @@ namespace fantasy_hoops.Repositories
             DateTime seasonEnd = DateTime.MaxValue;
             if (year != -1)
             {
-                year = DateTime.Now < new DateTime(DateTime.Now.Year, 10, 1) ? year - 1 : year;
                 seasonStart = new DateTime(year, 10, 1);
                 seasonEnd = new DateTime(year + 1, 7, 1);
             }
@@ -287,7 +286,7 @@ namespace fantasy_hoops.Repositories
                     Username = lineup.User.UserName,
                     AvatarUrl = lineup.User.AvatarURL,
                     LongDate = lineup.Date.ToString("yyyy-MM-dd"),
-                    ShortDate = lineup.Date.ToString("MMM. dd"),
+                    ShortDate = lineup.Date.ToString($"MMM. dd{(year == -1 ? ", yyy" : "")}"),
                     Date = lineup.Date,
                     FP = lineup.FP,
                     Lineup = _context.Players
@@ -336,7 +335,7 @@ namespace fantasy_hoops.Repositories
                     AbbrName = p.Player.AbbrName,
                     FP = p.FP,
                     LongDate = p.Date.ToString("yyyy-MM-dd"),
-                    ShortDate = p.Date.ToString("MMM. dd")
+                    ShortDate = p.Date.ToString($"MMM. dd{(year == -1 ? ", yyy" : "")}")
                 })
                 .Skip(from)
                 .Take(limit)

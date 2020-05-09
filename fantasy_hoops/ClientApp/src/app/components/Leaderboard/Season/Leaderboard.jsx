@@ -6,7 +6,6 @@ import UserCard from '../Users/Card';
 import {Card as PlayerCard} from '../Players/Card';
 import leaderboardLogo from '../../../../content/icons/1021175-winning/svg/006-winner-5.svg';
 import EmptyJordan from '../../EmptyJordan';
-import {PlayerModal} from '../../PlayerModal/PlayerModal';
 import {
     getSeasonLineupsLeaderboard,
     getSeasonPlayersLeaderboard,
@@ -14,7 +13,6 @@ import {
 } from '../../../utils/networkFunctions';
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../../../utils/helpers";
-import {Container} from "@material-ui/core";
 import PlayerDialog from "../../PlayerModal/PlayerDialog";
 
 const {$} = window;
