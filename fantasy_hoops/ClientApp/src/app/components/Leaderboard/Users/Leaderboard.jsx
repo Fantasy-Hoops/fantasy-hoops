@@ -239,14 +239,14 @@ function Leaderboard(props) {
                 <meta name="robots" content="index,follow"/>
                 <link rel="canonical" href={Canonicals.USERS_LEADERBOARD}/>
             </Helmet>
-            <div className="text-center">
+            <article className="PageIntro--centered">
                 <img
                     src={leaderboardLogo}
                     alt="Leaderboard Logo"
                     width="60rem"
                 />
-                <h1>Top Users</h1>
-            </div>
+                <h1 className="PageTitle">Top Users</h1>
+            </article>
             <div className="row justify-content-center">
                 <div className="col-xs">
                     <div style={{transform: 'scale(0.7, 0.7)'}}>

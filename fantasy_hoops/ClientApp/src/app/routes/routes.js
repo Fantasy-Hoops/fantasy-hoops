@@ -15,7 +15,7 @@ export default {
   LEADERBOARD_PLAYERS: '/leaderboard/players',
   LEADERBOARD_SEASON: '/leaderboard/season',
   LEADERBOARD_SELECTED: '/leaderboard/selected/players',
-  LEADERBOARD_BEST_LINEUP: '/leaderboard/best-lineup',
+  LEADERBOARD_BEST_LINEUPS: '/leaderboard/best-lineups',
   ACHIEVEMENTS: '/achievements',
   TOURNAMENTS: '/tournaments',
   TOURNAMENTS_CREATE: '/tournaments/create',

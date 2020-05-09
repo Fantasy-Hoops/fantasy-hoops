@@ -223,15 +223,16 @@ function Leaderboards(props) {
                 <article className="Content--left">
                     <h2 className="Content__Title">{Intro.BEST_LINEUPS_TITLE}</h2>
                     <p className="Content__Subtitle">{Intro.BEST_LINEUPS_SUBTITLE}</p>
-                    <Button
-                        className={`${classes.button} ${classes.buttonLeft}`}
-                        variant="contained"
-                        color="secondary"
-                        // component={Link}
-                        // to={Routes.LEADERBOARD_BEST_LINEUP}
-                    >
-                        {Intro.BEST_LINEUPS_BUTTON_TITLE}
-                    </Button>
+                    <Link
+                        to={Routes.LEADERBOARD_BEST_LINEUPS}>
+                        <Button
+                            className={`${classes.button} ${classes.buttonLeft}`}
+                            variant="contained"
+                            color="secondary"
+                        >
+                            {Intro.BEST_LINEUPS_BUTTON_TITLE}
+                        </Button>
+                    </Link>
                 </article>
                 <article className="Content--right">
                     {bestLineups

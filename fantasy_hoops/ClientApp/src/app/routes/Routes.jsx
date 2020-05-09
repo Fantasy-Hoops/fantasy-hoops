@@ -26,6 +26,7 @@ import {TournamentDetails} from "../components/Tournaments/TournamentDetails/Tou
 import {TournamentInvitations} from "../components/Tournaments/TournamentInvitations";
 import {TournamentInvitation} from "../components/Tournaments/TournamentInvitation";
 import AdminPanel from "../components/Admin/AdminPanel";
+import {BestLineupsLeaderboard} from "../components/Leaderboard/BestLineups/BestLineupsLeaderboard";
 
 export default () => (
     <Switch>
@@ -40,6 +41,7 @@ export default () => (
         <Route exact path={Routes.LEADERBOARD_PLAYERS} component={PlayerLeaderboard}/>
         <Route exact path={Routes.LEADERBOARD_SELECTED} component={SelectedLeaderboard}/>
         <PrivateRoute exact path={Routes.LEADERBOARD_SEASON} component={SeasonLeaderboard}/>
+        <Route exact path={Routes.LEADERBOARD_BEST_LINEUPS} component={BestLineupsLeaderboard}/>
         <PrivateRoute path={Routes.USER_POOL} component={UserPool}/>
         <PrivateRoute path={Routes.ALL_NOTIFICATIONS} component={AllNotificationsPage}/>
         <PrivateRoute path={Routes.LINEUP_HISTORY} component={LineupHistory}/>

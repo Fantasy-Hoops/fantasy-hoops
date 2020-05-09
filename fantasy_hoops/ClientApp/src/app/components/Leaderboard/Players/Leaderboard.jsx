@@ -167,14 +167,14 @@ export default class Leaderboard extends Component {
                     <meta name="robots" content="index,follow"/>
                     <link rel="canonical" href={Canonicals.PLAYERS_LEADERBOARD}/>
                 </Helmet>
-                <div className="text-center">
+                <article className="PageIntro--centered">
                     <img
                         src={leaderboardLogo}
                         alt="Leaderboard Logo"
                         width="60rem"
                     />
-                    <h1>Top NBA Players</h1>
-                </div>
+                    <h1 className="PageTitle">Top NBA Players</h1>
+                </article>
                 <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
                     <li className="nav-item">
                         <a className="nav-link active tab-no-outline" id="daily-tab" data-toggle="tab" href="#daily"

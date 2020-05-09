@@ -17,6 +17,7 @@ export const Canonicals = {
     PLAYERS_LEADERBOARD: `${url}/leaderboard/players`,
     SEASON_LEADERBOARD: `${url}/leaderboard/season`,
     SELECTED_PLAYERS_LEADERBOARD: `${url}/leaderboard/selected/players`,
+    BEST_LINEUPS_LEADERBOARD: `${url}/leaderboard/best-lineups`,
     BLOG: `${url}/blog`,
     USERS: `${url}/users`,
     PROFILE: `${url}/profile`,

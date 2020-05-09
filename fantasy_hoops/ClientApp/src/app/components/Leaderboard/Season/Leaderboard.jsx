@@ -185,14 +185,14 @@ export class Leaderboard extends PureComponent {
                     <meta name="robots" content="index,follow"/>
                     <link rel="canonical" href={Canonicals.SEASON_LEADERBOARD}/>
                 </Helmet>
-                <div className="text-center pb-1">
+                <article className="PageIntro--centered">
                     <img
                         src={leaderboardLogo}
                         alt="Leaderboard Logo"
                         width="60rem"
                     />
-                    <h1>Top 10 Season Performances</h1>
-                </div>
+                    <h1 className="PageTitle">Top 10 Season Performances</h1>
+                </article>
                 <ul className="nav nav-pills justify-content-center mx-auto" id="myTab" role="tablist">
                     <li className="nav-item">
                         <a className="nav-link active tab-no-outline" id="lineups-tab" data-toggle="tab"

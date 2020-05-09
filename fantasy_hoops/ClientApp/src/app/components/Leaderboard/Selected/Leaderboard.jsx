@@ -137,14 +137,14 @@ export default class Leaderboard extends Component {
                     <meta name="robots" content="index,follow"/>
                     <link rel="canonical" href={Canonicals.SELECTED_PLAYERS_LEADERBOARD}/>
                 </Helmet>
-                <div className="text-center">
+                <article className="PageIntro--centered">
                     <img
                         src={leaderboardLogo}
                         alt="Leaderboard Logo"
                         width="60rem"
                     />
-                    <h1>Most selected NBA Players</h1>
-                </div>
+                    <h1 className="PageTitle">Most selected NBA Players</h1>
+                </article>
                 <div className="tab-content" id="myTabContent">
                     <div className="pt-4 pb-1 tab-pane show active animated bounceInUp" id="daily" role="tabpanel">
                         {!loader
