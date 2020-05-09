@@ -835,7 +835,6 @@ input:checked + .UserLeaderboard__FriendsOnly--slider:before {
     max-width: 45rem;
     min-width: 29rem;
     height: 9rem;
-    margin: 0 auto;
 }
 
 .UserScoreCard__body {

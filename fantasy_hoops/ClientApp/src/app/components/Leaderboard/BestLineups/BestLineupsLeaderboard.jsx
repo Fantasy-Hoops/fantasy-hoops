@@ -80,6 +80,7 @@ export function BestLineupsLeaderboard(props) {
     const parseBestLineupsCards = (bestLineups) => bestLineups.map(
         (lineup, index) => (
             <UserScore
+                className="mx-auto"
                 key={index}
                 activity={lineup}
                 showModal={showModal}
