@@ -139,6 +139,30 @@ namespace fantasy_hoops.Controllers
         }
 
         [Authorize]
+        [HttpPut("{tournamentId}")]
+        public IActionResult UpdateTournament([FromBody] CreateTournamentViewModel model, [FromRoute] string tournamentId)
+        {
+            Tournament tournament = _tournamentsRepository.GetTournamentById(tournamentId);
+            if (tournament == null)
+            {
+                return NotFound("Tournament doesn't exist.");
+            }
+            
+            string userIdFromClaims = CommonFunctions.Instance.GetUserIdFromClaims(User);
+            if (!tournament.CreatorID.Equals(userIdFromClaims))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+            }
+
+            if (!_tournamentsRepository.UpdateTournament(tournament, model))
+            {
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, "Failed updating tournament.");
+            }
+
+            return Ok("Tournament updated successfully.");
+        }
+
+        [Authorize]
         [HttpDelete("{tournamentId}")]
         public IActionResult DeleteTournament([FromRoute] string tournamentId)
         {

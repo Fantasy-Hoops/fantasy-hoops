@@ -9,6 +9,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import {Avatar} from "@material-ui/core";
 import {useStyles} from "./StandingsStyle";
+import BlockIcon from '@material-ui/icons/Block';
 
 import defaultPhoto from '../../../../content/images/default.png';
 
@@ -43,8 +44,8 @@ const matchupsColumns = [
     }
 ];
 
-function createData(pos, username, avatarUrl, w, l, points) {
-    return {pos, username, avatarUrl, w, l, points};
+function createData(pos, username, avatarUrl, w, l, points, isEliminated) {
+    return {pos, username, avatarUrl, w, l, points, isEliminated};
 }
 
 export default function Standings(props) {
@@ -53,7 +54,7 @@ export default function Standings(props) {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const {tournament} = props;
     const standings = tournament.standings;
-    const rows = standings.map(user => createData(user.position, user.username, user.avatarUrl, user.w, user.l, user.points));
+    const rows = standings.map(user => createData(user.position, user.username, user.avatarUrl, user.w, user.l, user.points, user.isEliminated));
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -87,7 +88,8 @@ export default function Standings(props) {
                     <TableBody>
                         {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                             return (
-                                <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                <TableRow hover role="checkbox" tabIndex={-1} key={index}
+                                          className={row.isEliminated ? classes.userEliminated : ''}>
                                     {columns.map((column, index) => {
                                         const value = row[column.id];
                                         const columnValue = column.format && typeof value === 'number'
@@ -98,7 +100,9 @@ export default function Standings(props) {
                                         return (
                                             <TableCell className={classes.cell} key={column.id} align={column.align}>
                                                 {
-                                                    index === 1
+                                                    index === 0
+                                                        ? row.isEliminated ? <BlockIcon className={classes.blockIcon} /> : columnValue
+                                                        : index === 1
                                                         ? (
                                                             <span className={classes.flexRow}>
                                                                 <Avatar

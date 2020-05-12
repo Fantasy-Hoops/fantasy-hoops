@@ -114,6 +114,7 @@ export function TournamentDetails(props) {
                 </div>
                 <h5 className="PageSubtitle">{tournament.description}</h5>
             </article>
+            {tournament.winner && <div>User {tournament.winner.userName} has won the tournament!</div>}
             {renderDashboard()}
             {tournament.isCreator
             && <TournamentSettings tournamentId={tournamentId} tournament={tournament} isSettingsOpen={isSettingsOpen}

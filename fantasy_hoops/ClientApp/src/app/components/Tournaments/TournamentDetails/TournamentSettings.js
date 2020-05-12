@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {withStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -9,18 +9,21 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import SaveIcon from '@material-ui/icons/Save';
 
 import './TournamentSettings.css';
-import {InputLabel} from "@material-ui/core";
 import {ConfirmDialog} from "../../Inputs/ConfirmDialog";
-import {deleteTournament} from "../../../utils/networkFunctions";
+import {deleteTournament, updateTournament} from "../../../utils/networkFunctions";
 import FormLabel from "@material-ui/core/FormLabel";
-import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
 import CopyToClipboard from "../../Inputs/CopyToClipboard";
 import Routes from "../../../routes/routes";
-import {useHistory} from "react-router";
 import {TournamentStatus} from "../../../utils/helpers";
+import {Formik} from "formik";
+import _ from "lodash";
+import {TextField} from "@material-ui/core";
+import FullscreenLoader from "../../FullscreenLoader";
+import {useSnackbar} from "notistack";
 
 const styles = (theme) => ({
     root: {
@@ -65,6 +68,8 @@ const DialogActions = withStyles((theme) => ({
 export function TournamentSettings(props) {
     const {tournamentId, tournament, isSettingsOpen, handleSettingsClose} = props;
     const [confirmOpen, setConfirmOpen] = React.useState(false);
+    const [loader, setLoader] = useState(false);
+    const {enqueueSnackbar} = useSnackbar();
 
     const handleConfirmOpen = () => {
         setConfirmOpen(true);
@@ -95,6 +100,76 @@ export function TournamentSettings(props) {
                             <Divider className="TournamentSettings__Divider"/>
                         </>
                     )}
+                    <FormLabel component="legend">Change tournament info</FormLabel>
+                    <Formik
+                        initialValues={{
+                            tournamentTitle: tournament.title,
+                            tournamentDescription: tournament.description
+                        }}
+                        onSubmit={(values, actions) => {
+                            setLoader(true);
+                            handleSettingsClose();
+                            updateTournament({
+                                tournamentTitle: values.tournamentTitle,
+                                tournamentDescription: values.tournamentDescription
+                            }, tournamentId)
+                                .then(response => {
+                                    enqueueSnackbar(response.data, {variant: 'success'});
+                                    window.location.reload();
+                                    setLoader(false);
+                                })
+                                .catch(error => {
+                                    enqueueSnackbar(error.message, {variant: 'error'});
+                                    setLoader(false);
+                                })
+                        }}
+                        render={(formProps) => {
+                            const {values, errors, handleSubmit, handleChange, setFieldTouched, touched} = formProps;
+                            const change = (name, e) => {
+                                e.persist();
+                                handleChange(e);
+                                setFieldTouched(name, true, false);
+                            };
+                            return (
+                                <>
+                                    <TextField
+                                        margin="normal"
+                                        fullWidth
+                                        required
+                                        id="tournamentTitle"
+                                        label="Title"
+                                        name="tournamentTitle"
+                                        value={values.tournamentTitle}
+                                        onChange={change.bind(null, "tournamentTitle")}
+                                        error={touched.tournamentTitle && !_.isEmpty(errors.tournamentTitle)}
+                                        helperText={touched.tournamentTitle ? errors.tournamentTitle : ''}
+                                    />
+                                    <br/>
+                                    <TextField
+                                        margin="normal"
+                                        fullWidth
+                                        multiline
+                                        required
+                                        id="tournamentDescription"
+                                        label="Description"
+                                        name="tournamentDescription"
+                                        value={values.tournamentDescription}
+                                        onChange={change.bind(null, "tournamentDescription")}
+                                        error={touched.tournamentDescription && !_.isEmpty(errors.tournamentDescription)}
+                                        helperText={touched.tournamentDescription ? errors.tournamentDescription : ''}
+                                    />
+                                    <Button
+                                        onClick={handleSubmit}
+                                        variant="text"
+                                        startIcon={<SaveIcon/>}
+                                    >
+                                        Update
+                                    </Button>
+                                </>
+                            );
+                        }}
+                    />
+                    <Divider className="TournamentSettings__Divider"/>
                     <FormLabel component="legend">Delete tournament</FormLabel>
                     <Button
                         onClick={handleConfirmOpen}
@@ -120,6 +195,7 @@ export function TournamentSettings(props) {
                 callbackFunction={handleDeleteTournament}
                 locationChange={Routes.TOURNAMENTS}
             />
+            {loader && <FullscreenLoader />}
         </>
     );
 }

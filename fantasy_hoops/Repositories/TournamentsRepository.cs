@@ -8,6 +8,7 @@ using fantasy_hoops.Models;
 using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Models.Notifications;
 using fantasy_hoops.Models.Tournaments;
+using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -158,13 +159,14 @@ namespace fantasy_hoops.Repositories
                     AvatarUrl = tournamentUser.User.AvatarURL,
                     W = tournamentUser.Wins,
                     L = tournamentUser.Losses,
-                    Points = tournamentUser.Points
-                }).OrderByDescending(tournamentUser => (Tournament.TournamentType)tournament.Type == Tournament.TournamentType.MATCHUPS
-                    ? tournamentUser.W -tournamentUser.L
-                    : tournamentUser.Points)
+                    Points = tournamentUser.Points,
+                    IsEliminated = tournamentUser.IsEliminated
+                }).OrderByDescending(tournamentUser =>
+                    (Tournament.TournamentType) tournament.Type == Tournament.TournamentType.MATCHUPS
+                        ? tournamentUser.W - tournamentUser.L
+                        : tournamentUser.Points)
                 .ToList()
                 .Select((tournamentUser, index) => new KeyValuePair<int, TournamentUserDto>(index, tournamentUser))
-                
                 .Select(record => new TournamentUserDto
                 {
                     TournamentId = record.Value.TournamentId,
@@ -174,13 +176,11 @@ namespace fantasy_hoops.Repositories
                     AvatarUrl = record.Value.AvatarUrl,
                     W = record.Value.W,
                     L = record.Value.L,
-                    Points = record.Value.Points
+                    Points = record.Value.Points,
+                    IsEliminated = record.Value.IsEliminated
                 })
                 .OrderBy(tournamentUser => tournamentUser.Position)
                 .ToList();
-            ContestDto nextContest = tournamentDetails.Contests
-                .OrderBy(contest => contest.ContestStart)
-                .FirstOrDefault(contest => contest.ContestStart > CommonFunctions.Instance.EtcNow());
 
             if (userId != null)
             {
@@ -256,7 +256,7 @@ namespace fantasy_hoops.Repositories
         public bool CreateTournament(Tournament tournament)
         {
             _context.Tournaments.Add(tournament);
-            
+
             return _context.SaveChanges() > 0;
         }
 
@@ -421,7 +421,7 @@ namespace fantasy_hoops.Repositories
             {
                 return null;
             }
-            
+
             dbTournamentUser.IsEliminated = true;
             _context.SaveChanges();
             return _context.Users.Find(dbTournamentUser.UserID);
@@ -444,6 +444,31 @@ namespace fantasy_hoops.Repositories
             tournamentUser.Points = points;
 
             _context.SaveChanges();
+        }
+
+        public void RemoveUserMatchup(string userId, int contestId)
+        {
+            MatchupPair matchupToRemove = _context.TournamentMatchups
+                .FirstOrDefault(matchup => matchup.ContestId == contestId && matchup.FirstUserID.Equals(userId)
+                                                                          && matchup.SecondUserID.Equals(userId));
+            if (matchupToRemove == null)
+            {
+                return;
+            }
+            _context.TournamentMatchups.Remove(matchupToRemove);
+            _context.SaveChanges();
+        }
+
+        public bool UpdateTournament(Tournament tournament, CreateTournamentViewModel model)
+        {
+            if (model.TournamentTitle != null && model.TournamentDescription != null)
+            {
+                tournament.Title = model.TournamentTitle;
+                tournament.Description = model.TournamentDescription;
+                return _context.SaveChanges() != 0;
+            }
+
+            return false;
         }
 
         private bool DeleteTournamentResources(Tournament tournamentToDelete)
@@ -506,7 +531,7 @@ namespace fantasy_hoops.Repositories
             {
                 return false;
             }
-            
+
             _context.TournamentUsers.Add(new TournamentUser
             {
                 UserID = userId,

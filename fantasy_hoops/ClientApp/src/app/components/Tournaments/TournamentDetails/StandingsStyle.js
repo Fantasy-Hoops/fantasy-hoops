@@ -3,7 +3,8 @@ import {makeStyles} from "@material-ui/core/styles";
 export const useStyles = makeStyles(theme => ({
     root: {
         width: '100%',
-        height: 'calc(100% - 7rem)'
+        height: 'calc(100% - 8rem)',
+        overflow: 'hidden'
     },
     container: {
         height: 'calc(100% - 7rem)',
@@ -32,5 +33,11 @@ export const useStyles = makeStyles(theme => ({
     },
     cell: {
         maxWidth: '16rem'
+    },
+    userEliminated: {
+        background: 'lightgrey'
+    },
+    blockIcon: {
+        color: 'red'
     }
 }));

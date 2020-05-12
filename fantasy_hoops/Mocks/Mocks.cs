@@ -14,12 +14,12 @@ namespace fantasy_hoops
         {
             public static readonly List<DateTime> StartDates = new List<DateTime>
             {
-                new DateTime(2020, 04, 20, 19, 0, 0),
-                new DateTime(2020, 04, 27, 19, 0, 0),
-                new DateTime(2020, 05, 04, 19, 0, 0),
-                new DateTime(2020, 05, 11, 19, 0, 0),
-                new DateTime(2020, 05, 18, 19, 0, 0),
-                new DateTime(2020, 05, 25, 19, 0, 0),
+                new DateTime(2020, 06, 15, 19, 0, 0),
+                new DateTime(2020, 06, 22, 19, 0, 0),
+                new DateTime(2020, 06, 29, 19, 0, 0),
+                new DateTime(2020, 07, 06, 19, 0, 0),
+                new DateTime(2020, 07, 13, 19, 0, 0),
+                new DateTime(2020, 07, 20, 19, 0, 0),
                 new DateTime(2021, 04, 02, 19, 0, 0)
             };
 

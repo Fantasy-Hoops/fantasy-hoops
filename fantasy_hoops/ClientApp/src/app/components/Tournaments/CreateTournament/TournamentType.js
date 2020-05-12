@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import MaterialSelect from "../../Inputs/MaterialSelect";
-import {getTournamentStartDates, getTournamentTypes} from "../../../utils/networkFunctions";
 import moment from "moment";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -19,6 +18,7 @@ import TableCell from "@material-ui/core/TableCell";
 import _ from "lodash";
 import {TextField} from "@material-ui/core";
 import {TOURNAMENT_DATE_FORMAT} from "../../../utils/helpers";
+import BlockIcon from '@material-ui/icons/Block';
 
 export default function TournamentType(props) {
     const classes = useStyles();
@@ -82,14 +82,18 @@ export default function TournamentType(props) {
 
     const handleDroppedContestsChange = (name, e) => {
         const {values} = formProps;
-        toggleScheduledDates(leftDates, values.contests);
+        toggleScheduledDates(leftDates, values.contests, e.target.value);
         change(name, e);
     };
 
-    const toggleScheduledDates = (dates, contestsCount) => {
+    const toggleScheduledDates = (dates, contestsCount, droppedContests) => {
         const scheduledDates = dates.slice(0, contestsCount).map((date, index) => (
             <TableRow key={index} className={classes.tableRow}>
-                <TableCell>{moment(date.value).format(TOURNAMENT_DATE_FORMAT)}</TableCell>
+                <TableCell>
+                    <div className={classes.scheduleEntry}>{moment(date.value).format(TOURNAMENT_DATE_FORMAT)}</div>
+                    {index + 1 > contestsCount - droppedContests && contestsCount > 1
+                        ? <BlockIcon className={classes.blockIcon}/> : null}
+                </TableCell>
             </TableRow>
         ));
         if (contestsCount === 1) {

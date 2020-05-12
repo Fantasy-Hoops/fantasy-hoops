@@ -15,6 +15,7 @@ import {useStyles} from "./TournamentsPageStyle";
 import Link from "react-router-dom/Link";
 import Routes from "../../routes/routes";
 import FullscreenLoader from "../FullscreenLoader";
+import Button from "@material-ui/core/Button";
 
 /**
  * @return {null}
@@ -61,6 +62,11 @@ export default function TournamentsPage() {
                         </Fab>
                     </Link>
                 </div>
+                <Link to={Routes.TOURNAMENT_INVITATIONS}>
+                    <Button>
+                        Invitations
+                    </Button>
+                </Link>
             </article>
             {!_.isEmpty(userTournaments.created) && (
                 <div className="Tournaments__Created">

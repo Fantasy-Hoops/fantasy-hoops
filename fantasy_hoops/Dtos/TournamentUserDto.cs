@@ -7,5 +7,7 @@ namespace fantasy_hoops.Dtos
         public int W { get; set; }
         public int L { get; set; }
         public int Points { get; set; }
+        
+        public bool IsEliminated { get; set; }
     }
 }

@@ -33,9 +33,19 @@ export function TournamentInvitations(props) {
 
         handleGetTournament();
     }, []);
-    
-    if (!loader && _.isEmpty(tournamentInvitations)) {
-        return <EmptyJordan message="You have no tournament invitations."/>;
+
+    const renderInvitations = () => {
+        if (!loader && _.isEmpty(tournamentInvitations)) {
+            return <EmptyJordan message="You have no tournament invitations."/>;
+        }
+        return (
+            <>
+                {tournamentInvitations.map((tournament, index) => (
+                    <TournamentListCard key={index} tournament={tournament} isInvitation clickable/>
+                ))}
+                {loader && <FullscreenLoader/>}
+            </>
+        )
     }
 
     return (
@@ -48,10 +58,7 @@ export function TournamentInvitations(props) {
             <article className="PageIntro">
                 <h1 className="PageTitle">{TournamentsInvitations.TITLE}</h1>
             </article>
-            {tournamentInvitations.map((tournament, index) => (
-                <TournamentListCard key={index} tournament={tournament} isInvitation clickable />
-            ))}
-            {loader && <FullscreenLoader/>}
+            {renderInvitations()}
         </>
     );
 }

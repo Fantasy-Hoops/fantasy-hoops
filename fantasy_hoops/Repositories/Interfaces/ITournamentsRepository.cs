@@ -4,6 +4,7 @@ using fantasy_hoops.Dtos;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Models.Tournaments;
+using fantasy_hoops.Models.ViewModels;
 
 namespace fantasy_hoops.Repositories.Interfaces
 {
@@ -34,5 +35,7 @@ namespace fantasy_hoops.Repositories.Interfaces
         bool ChangeInvitationStatus(string tournamentId, string userId, RequestStatus status = RequestStatus.NO_REQUEST);
         User SetTournamentUserEliminated(TournamentUserDto tournamentUser);
         void UpdateTournamentUserStats(TournamentUser tournamentUser, int wins, int losses, int points);
+        void RemoveUserMatchup(string userId, int contestId);
+        bool UpdateTournament(Tournament tournament, CreateTournamentViewModel model);
     }
 }

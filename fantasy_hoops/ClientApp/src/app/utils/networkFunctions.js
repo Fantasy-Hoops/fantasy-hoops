@@ -135,6 +135,7 @@ export const deleteTournament = tournamentId => axios.delete(`${tournamentsApiUr
 export const getTournamentInvitations = () => axios.get(`${tournamentsApiUrlBase}/invitations`);
 export const acceptTournamentInvitation = tournamentId => axios.post(`${tournamentsApiUrlBase}/invitations/accept`, tournamentId);
 export const declineTournamentInvitation = tournamentId => axios.post(`${tournamentsApiUrlBase}/invitations/decline`, tournamentId);
+export const updateTournament = (tournament, tournamentId) => axios.put(`${tournamentsApiUrlBase}/${tournamentId}`, tournament);
 
 // Jobs
 export const triggerJob = endpoint => axios.get(`${jobsApiUrlBase}/${endpoint}`);
