@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Castle.Core;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Helpers;
+using fantasy_hoops.Jobs;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories;
@@ -219,6 +220,52 @@ namespace fantasy_hoops.Controllers
             }
 
             return Ok("Invitation declined.");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("start-tournament/{tournamentId}")]
+        public IActionResult StartTournament([FromRoute] string tournamentId)
+        {
+            Tournament tournament = _tournamentsRepository.GetTournamentById(tournamentId);
+            if (tournament == null)
+            {
+                return NotFound("Tournament not found.");
+            }
+            
+            TournamentsJob tournamentsJob = new TournamentsJob();
+            if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
+            {
+                tournamentsJob.StartOneForAllTournament(tournament);
+            }
+            else
+            {
+                tournamentsJob.StartMatchupsTournament(tournament);
+            }
+            
+            return Ok("Tournament started.");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("simulate-tournament/{tournamentId}")]
+        public IActionResult SimulateTournament([FromRoute] string tournamentId)
+        {
+            Tournament tournament = _tournamentsRepository.GetTournamentById(tournamentId);
+            if (tournament == null)
+            {
+                return NotFound("Tournament not found.");
+            }
+            
+            TournamentsJob tournamentsJob = new TournamentsJob();
+            if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
+            {
+                tournamentsJob.SimulateOneForAllTournament(tournament);
+            }
+            else
+            {
+                tournamentsJob.SimulateMatchupsTournament(tournament);
+            }
+            
+            return Ok("Tournament simulated.");
         }
     }
 }

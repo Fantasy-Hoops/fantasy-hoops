@@ -25,7 +25,8 @@ namespace fantasy_hoops.Jobs
             _runtimeDate = runtimeDate;
             _context = new GameContext();
             _tournamentsRepository = new TournamentsRepository();
-            _tournamentsService = new TournamentsService(_tournamentsRepository, new NotificationRepository(), new LeaderboardRepository(), new UserRepository(), new PushService());
+            _tournamentsService = new TournamentsService(_tournamentsRepository, new NotificationRepository(),
+                new LeaderboardRepository(), new UserRepository(), new PushService());
         }
 
         public void Execute()
@@ -70,12 +71,10 @@ namespace fantasy_hoops.Jobs
                 {
                     StartOneForAllTournament(tournament);
                 }
-
-                _context.SaveChanges();
             }
         }
 
-        private void StartMatchupsTournament(Tournament tournament)
+        public void StartMatchupsTournament(Tournament tournament)
         {
             List<string> tournamentUsers = _tournamentsRepository.GetTournamentUsersIds(tournament.Id);
             List<Tuple<string, string>>[] matchupsPermutations =
@@ -110,13 +109,15 @@ namespace fantasy_hoops.Jobs
                         });
                     }
                 }
+
                 i = i + 1 >= matchupsPermutations.Length ? 0 : i + 1;
             }
 
             _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.ACTIVE;
+            _context.SaveChanges();
         }
 
-        private void StartOneForAllTournament(Tournament tournament)
+        public void StartOneForAllTournament(Tournament tournament)
         {
             List<string> tournamentUsers = _tournamentsRepository.GetTournamentUsersIds(tournament.Id);
             foreach (var contest in _context.Contests.Where(x => x.TournamentId.Equals(tournament.Id)).ToList())
@@ -131,6 +132,56 @@ namespace fantasy_hoops.Jobs
             }
 
             _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.ACTIVE;
+            _context.SaveChanges();
+        }
+
+        public void SimulateOneForAllTournament(Tournament tournament)
+        {
+        }
+
+        public void SimulateMatchupsTournament(Tournament tournament)
+        {
+            foreach (var contest in _context.Contests
+                .Where(contest => contest.TournamentId.Equals(tournament.Id)).ToList())
+            {
+                foreach (var matchupPair in _context.TournamentMatchups
+                    .Where(matchup => matchup.ContestId == contest.Id).ToList())
+                {
+                    matchupPair.FirstUserScore = GetRandomNumber(900.0, 1200.0);
+                    matchupPair.SecondUserScore = GetRandomNumber(900.0, 1200.0);
+                    TournamentUser firstUser = _context.TournamentUsers
+                        .FirstOrDefault(tuser => tuser.TournamentID.Equals(tournament.Id)
+                                                 && tuser.UserID.Equals(matchupPair.FirstUserID));
+                    TournamentUser secondUser = _context.TournamentUsers
+                        .FirstOrDefault(tuser => tuser.TournamentID.Equals(tournament.Id)
+                                                 && tuser.UserID.Equals(matchupPair.FirstUserID));
+                    if (firstUser != null && secondUser != null
+                                          && matchupPair.FirstUserScore > matchupPair.SecondUserScore)
+                    {
+                        firstUser.Wins += 1;
+                        secondUser.Losses += 1;
+                    } else if (firstUser != null && secondUser != null)
+                    {
+                        firstUser.Losses += 1;
+                        secondUser.Wins += 1;
+                    }
+                }
+                contest.IsFinished = true;
+            }
+
+            TournamentUser winnerTUser = _context.TournamentUsers
+                .OrderByDescending(tuser => tuser.Wins - tuser.Losses)
+                .FirstOrDefault();
+            tournament.Winner = _context.Users.FirstOrDefault(user => user.Id.Equals(winnerTUser.UserID));
+            tournament.Status = TournamentStatus.FINISHED;
+
+            _context.SaveChanges();
+        }
+
+        private double GetRandomNumber(double minimum, double maximum)
+        {
+            Random random = new Random();
+            return Math.Round(random.NextDouble() * (maximum - minimum) + minimum, 1);
         }
     }
 }

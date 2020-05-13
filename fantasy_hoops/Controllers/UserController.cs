@@ -229,11 +229,7 @@ namespace fantasy_hoops.Controllers
         [HttpPut("roles")]
         public async Task<IActionResult> UpdateUserRoles([FromBody] List<UpdateUserRolesViewModel> model)
         {
-            if (! await _userService.UpdateUserRoles(model))
-            {
-                return StatusCode(StatusCodes.Status422UnprocessableEntity, "Failed updating users roles.");
-            }
-            
+            await _userService.UpdateUserRoles(model);
             return Ok("User roles updated successfully.");
         }
 

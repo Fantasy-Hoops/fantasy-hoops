@@ -64,6 +64,10 @@ export const ContestState = {
 };
 
 export function getContestState(contest) {
+    if (contest.isFinished) {
+        return ContestState.FINISHED;
+    }
+    
     const isStarted = moment(contest.contestStart).isBefore();
     const isFinished = !moment(contest.contestEnd).isAfter();
     

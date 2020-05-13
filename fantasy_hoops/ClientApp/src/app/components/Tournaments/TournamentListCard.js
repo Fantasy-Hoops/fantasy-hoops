@@ -47,7 +47,9 @@ export default function TournamentListCard(props) {
     function getTournamentCardBadge(tournament) {
         switch (tournament.status) {
             case TournamentStatus.ACTIVE:
-                return <><Badge classes={{root: classes.badgeActive, badge: classes.badge}} badgeContent={""}/> Active</>;
+                return moment(tournament.endDate).isAfter()
+                    ? <><Badge classes={{root: classes.badgeActive, badge: classes.badge}} badgeContent={""}/> Active</>
+                    : null;
             case TournamentStatus.CANCELLED:
                 return <><Badge classes={{root: classes.badgeCancelled, badge: classes.badge}} badgeContent={""}/> Cancelled</>;
             default:

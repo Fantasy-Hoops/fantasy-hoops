@@ -13,7 +13,7 @@ import SaveIcon from '@material-ui/icons/Save';
 
 import './TournamentSettings.css';
 import {ConfirmDialog} from "../../Inputs/ConfirmDialog";
-import {deleteTournament, updateTournament} from "../../../utils/networkFunctions";
+import {deleteTournament, simulateTournament, startTournament, updateTournament} from "../../../utils/networkFunctions";
 import FormLabel from "@material-ui/core/FormLabel";
 import Divider from "@material-ui/core/Divider";
 import CopyToClipboard from "../../Inputs/CopyToClipboard";
@@ -24,6 +24,7 @@ import _ from "lodash";
 import {TextField} from "@material-ui/core";
 import FullscreenLoader from "../../FullscreenLoader";
 import {useSnackbar} from "notistack";
+import {isAdmin} from "../../../utils/auth";
 
 const styles = (theme) => ({
     root: {
@@ -83,6 +84,36 @@ export function TournamentSettings(props) {
         handleSettingsClose();
         return deleteTournament(tournamentId);
     };
+
+    const handleStartTournament = () => {
+        handleSettingsClose();
+        setLoader(true);
+        startTournament(tournamentId)
+            .then(response => {
+                enqueueSnackbar(response.data, {variant: 'success'});
+                window.location.reload();
+                setLoader(false);
+            })
+            .catch(error => {
+                enqueueSnackbar(error.message, {variant: 'error'});
+                setLoader(false);
+            });
+    }
+
+    const handleSimulateTournament = () => {
+        handleSettingsClose();
+        setLoader(true);
+        simulateTournament(tournamentId)
+            .then(response => {
+                enqueueSnackbar(response.data, {variant: 'success'});
+                window.location.reload();
+                setLoader(false);
+            })
+            .catch(error => {
+                enqueueSnackbar(error.message, {variant: 'error'});
+                setLoader(false);
+            });
+    }
 
     return (
         <>
@@ -179,6 +210,31 @@ export function TournamentSettings(props) {
                     >
                         Delete
                     </Button>
+                    {isAdmin() && tournament.status === TournamentStatus.CREATED && (
+                        <>
+                            <Divider className="TournamentSettings__Divider"/>
+                            <FormLabel component="legend">Start Tournament</FormLabel>
+                            <Button
+                                onClick={handleStartTournament}
+                                variant="text"
+                            >
+                                Start
+                            </Button>
+                        </>
+                    )}
+                    {isAdmin() && tournament.status === TournamentStatus.ACTIVE && (
+                        <>
+                            <Divider className="TournamentSettings__Divider"/>
+                            <FormLabel component="legend">Simulate Tournament</FormLabel>
+                            <Button
+                                onClick={handleSimulateTournament}
+                                variant="text"
+                            >
+                                Simulate
+                            </Button>
+                        </>
+                    )}
+
                 </DialogContent>
                 <DialogActions>
                     <Button autoFocus onClick={handleSettingsClose} color="primary">
@@ -195,7 +251,7 @@ export function TournamentSettings(props) {
                 callbackFunction={handleDeleteTournament}
                 locationChange={Routes.TOURNAMENTS}
             />
-            {loader && <FullscreenLoader />}
+            {loader && <FullscreenLoader/>}
         </>
     );
 }
