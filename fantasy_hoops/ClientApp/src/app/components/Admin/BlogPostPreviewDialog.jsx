@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import markdown from 'markdown';
 
 import './BlogPostPreviewDialog.css';
+import PostCard from "../Blog/PostCard";
 
 export function BlogPostPreviewDialog(props) {
     const {post, open, handleClose} = props;
@@ -14,17 +15,19 @@ export function BlogPostPreviewDialog(props) {
     if (!post) {
         return null;
     }
-    
+
     return (
         <Dialog
+            maxWidth="lg"
             className="BlogPostPreviewDialog"
             open={open}
             onClose={handleClose}
             aria-labelledby="blog-post-preview-dialog-title"
             aria-describedby="blog-post-preview-dialog-description"
         >
-            <DialogTitle id="blog-post-preview-dialog-title">{post.title}</DialogTitle>
-            <DialogContent dangerouslySetInnerHTML={{__html: markdown.parse(post.body)}}>
+            <DialogTitle id="blog-post-preview-dialog-title">Preview Blog Post</DialogTitle>
+            <DialogContent>
+                <PostCard post={post} noEdit/>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} color="primary">

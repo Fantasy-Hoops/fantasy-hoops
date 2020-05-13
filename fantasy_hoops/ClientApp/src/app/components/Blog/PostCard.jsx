@@ -11,7 +11,7 @@ import {isAdmin} from "../../utils/auth";
 
 
 function PostCard(props) {
-    const {user, post, handleEdit} = props;
+    const {user, post, handleEdit, noEdit} = props;
     
     function handleRemove(post) {
         const {handleRemove} = props;
@@ -38,7 +38,7 @@ function PostCard(props) {
                                  alt="Loader"/>}
                 />
                 <span className="PostCard__AuthorName">{post.author.username}</span>
-                {isAdmin() ? <PostCardMenu handleRemove={handleRemove} handleEdit={handleEdit} {...props} /> : null}
+                {!noEdit && isAdmin() ? <PostCardMenu handleRemove={handleRemove} handleEdit={handleEdit} {...props} /> : null}
             </div>
             <div
                 className="PostCard__Body"

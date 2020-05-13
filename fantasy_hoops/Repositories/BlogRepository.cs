@@ -4,6 +4,7 @@ using fantasy_hoops.Models;
 using fantasy_hoops.Models.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using fantasy_hoops.Dtos;
 using fantasy_hoops.Models.Enums;
@@ -72,6 +73,8 @@ namespace fantasy_hoops.Repositories
                 return null;
             }
 
+            User author = _context.Users.Find(post.AuthorID);
+
             return new BlogPostDto
             {
                 Id = post.PostID,
@@ -79,9 +82,9 @@ namespace fantasy_hoops.Repositories
                 Body = post.Body,
                 Author = new UserDto
                 {
-                    UserId = post.Author.Id,
-                    AvatarUrl = post.Author.AvatarURL,
-                    Username = post.Author.UserName
+                    UserId = author.Id,
+                    AvatarUrl = author.AvatarURL,
+                    Username = author.UserName
                 },
                 CreatedAt = post.CreatedAt,
                 ModifiedAt = post.ModifiedAt
