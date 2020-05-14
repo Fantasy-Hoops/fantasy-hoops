@@ -83,6 +83,7 @@ namespace fantasy_hoops.Jobs
             if (matchupsPermutations.IsNullOrEmpty())
             {
                 _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.CANCELLED;
+                _context.SaveChanges();
                 return;
             }
 
