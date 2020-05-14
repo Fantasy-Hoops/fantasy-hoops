@@ -139,8 +139,9 @@ namespace fantasy_hoops.Jobs
         {
         }
 
-        public void SimulateMatchupsTournament(Tournament tournament)
+        public void SimulateMatchupsTournament(Tournament t)
         {
+            Tournament tournament = _context.Tournaments.Find(t.Id);
             foreach (var contest in _context.Contests
                 .Where(contest => contest.TournamentId.Equals(tournament.Id)).ToList())
             {
@@ -154,13 +155,17 @@ namespace fantasy_hoops.Jobs
                                                  && tuser.UserID.Equals(matchupPair.FirstUserID));
                     TournamentUser secondUser = _context.TournamentUsers
                         .FirstOrDefault(tuser => tuser.TournamentID.Equals(tournament.Id)
-                                                 && tuser.UserID.Equals(matchupPair.FirstUserID));
-                    if (firstUser != null && secondUser != null
-                                          && matchupPair.FirstUserScore > matchupPair.SecondUserScore)
+                                                 && tuser.UserID.Equals(matchupPair.SecondUserID));
+                    if (firstUser == null || secondUser == null)
+                    {
+                        continue;
+                    }
+                                                 
+                    if (matchupPair.FirstUserScore > matchupPair.SecondUserScore)
                     {
                         firstUser.Wins += 1;
                         secondUser.Losses += 1;
-                    } else if (firstUser != null && secondUser != null)
+                    } else if (matchupPair.SecondUserScore > matchupPair.FirstUserScore)
                     {
                         firstUser.Losses += 1;
                         secondUser.Wins += 1;
@@ -170,8 +175,10 @@ namespace fantasy_hoops.Jobs
             }
 
             TournamentUser winnerTUser = _context.TournamentUsers
+                .Where(tuser => tuser.TournamentID.Equals(tournament.Id))
                 .OrderByDescending(tuser => tuser.Wins - tuser.Losses)
                 .FirstOrDefault();
+            
             tournament.Winner = _context.Users.FirstOrDefault(user => user.Id.Equals(winnerTUser.UserID));
             tournament.Status = TournamentStatus.FINISHED;
 

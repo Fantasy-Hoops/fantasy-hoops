@@ -51,7 +51,6 @@ export class Notifications extends Component {
               </span>
             </span>
                     );
-
                     return (
                         <NotificationCard
                             key={shortid()}
@@ -77,7 +76,7 @@ export class Notifications extends Component {
                             key={shortid()}
                             notification={notification}
                             title={notification.friendUsername}
-                            imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendAvatarURL}.png`, defaultPhoto]}
+                            imageSrc={[`${process.env.REACT_APP_IMAGES_SERVER_NAME}/content/images/avatars/${notification.friendAvatarUrl}.png`, defaultPhoto]}
                             text={text}
                             imageClass="NotificationCard__Image Avatar--round"
                             link={link}

@@ -91,7 +91,7 @@ export function TournamentDetails(props) {
                 return null;
         }
     }
-
+    
     return (
         <>
             <Helmet>
@@ -114,7 +114,7 @@ export function TournamentDetails(props) {
                 </div>
                 <h5 className="PageSubtitle">{tournament.description}</h5>
             </article>
-            {tournament.winner && <div>User {tournament.winner.userName} has won the tournament!</div>}
+            {tournament.winner && <Alert severity="success">User {tournament.winner.username} has won the tournament!</Alert>}
             {renderDashboard()}
             {tournament.isCreator
             && <TournamentSettings tournamentId={tournamentId} tournament={tournament} isSettingsOpen={isSettingsOpen}

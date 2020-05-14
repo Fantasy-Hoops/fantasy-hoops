@@ -191,6 +191,15 @@ namespace fantasy_hoops.Repositories
                     IsUserInvited(userId, tournamentId) && IsUserInTournament(userId, tournamentId);
             }
 
+            tournamentDetails.Winner = _context.Users
+                .Select(user => new UserDto
+                {
+                    UserId = user.Id,
+                    Username = user.UserName,
+                    AvatarUrl = user.AvatarURL
+                })
+                .FirstOrDefault(user => user.UserId.Equals(tournament.WinnerID));
+
             return tournamentDetails;
         }
 

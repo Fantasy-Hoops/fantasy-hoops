@@ -21,5 +21,6 @@ namespace fantasy_hoops.Dtos
         public List<TournamentUserDto> Standings { get; set; }
         public UserLeaderboardRecordDto CurrentLineup { get; set; }
         public bool AcceptedInvite { get; set; }
+        public UserDto Winner { get; set; }
     }
 }

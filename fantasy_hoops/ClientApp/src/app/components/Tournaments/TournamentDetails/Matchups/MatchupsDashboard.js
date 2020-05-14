@@ -23,7 +23,7 @@ import {TabPanel} from "../TabPanel";
 const user = parse();
 
 function parseContest(tournament, contest) {
-    if (tournament.status !== TournamentStatus.ACTIVE) {
+    if (tournament.status === TournamentStatus.CREATED) {
         return <TournamentNotStarted contest={contest}/>
     }
 
@@ -44,7 +44,7 @@ function getPastContest(contest, matchup) {
     if (_.isEmpty(matchup)) {
         return null;
     }
-    
+
     const winner = matchup.firstUserScore > matchup.secondUserScore
         ? matchup.firstUser.username
         : matchup.secondUser.username;
@@ -125,6 +125,8 @@ export default function MatchupsDashboard(props) {
         setScheduleOpen(false);
     };
 
+    const isActiveOrFinished = tournament.status !== TournamentStatus.ACTIVE || tournament.status !== TournamentStatus.FINISHED;
+
     return (
         <>
             <div className="MatchupsDashboard__Layout">
@@ -133,8 +135,12 @@ export default function MatchupsDashboard(props) {
                 </div>
                 <div className="MatchupsDashboard__ContentContainer MatchupsDashboard__Schedule">
                     <Button className={classes.scheduleButton} variant="contained" color="primary" fullWidth
-                            onClick={handleScheduleOpen} disabled={tournament.status !== TournamentStatus.ACTIVE}>
-                        Schedule
+                            onClick={handleScheduleOpen} disabled={!isActiveOrFinished}>
+                        {
+                            tournament.status == TournamentStatus.FINISHED
+                                ? 'Results'
+                                : 'Schedule'
+                        }
                     </Button>
                 </div>
                 <div className="MatchupsDashboard__ContentContainer MatchupsDashboard__Contest">
@@ -155,7 +161,7 @@ export default function MatchupsDashboard(props) {
                     <Standings tournament={tournament}/>
                 </div>
             </div>
-            {tournament.status === TournamentStatus.ACTIVE &&
+            {isActiveOrFinished &&
             <Schedule contests={tournament.contests} handleScheduleOpen={handleScheduleOpen}
                       handleScheduleClose={handleScheduleClose} open={scheduleOpen}/>}
         </>
