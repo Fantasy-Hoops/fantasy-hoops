@@ -43,3 +43,14 @@ export const newTournamentValidation = Yup.object().shape({
                     .required('Number of entrants is required');
         })
 });
+
+export const updateTournamentValidation = Yup.object().shape({
+    tournamentTitle: Yup.string()
+        .min(5, "Tournament title must be at least 5 characters long")
+        .max(20, "Tournament title must be less than 20 characters long")
+        .required('Tournament title is required'),
+    tournamentDescription: Yup.string()
+        .min(5, "Tournament description must be at least 5 characters long")
+        .max(50, "Tournament description must be less than 50 characters long")
+        .required('Tournament description is required')
+});

@@ -21,5 +21,6 @@ namespace fantasy_hoops.Services.Interfaces
         List<Tuple<string, string>>[] GetMatchupsPermutations(List<string> userIds);
         Tournament FromViewModel(CreateTournamentViewModel tournamentModel);
         Pair<List<Contest>, DateTime> GenerateContests(CreateTournamentViewModel model);
+        ContestDto GetContestDto(Contest contest);
     }
 }

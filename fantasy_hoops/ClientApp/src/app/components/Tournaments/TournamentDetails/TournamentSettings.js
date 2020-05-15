@@ -25,6 +25,7 @@ import {TextField} from "@material-ui/core";
 import FullscreenLoader from "../../FullscreenLoader";
 import {useSnackbar} from "notistack";
 import {isAdmin} from "../../../utils/auth";
+import {updateTournamentValidation} from "../../../utils/validation";
 
 const styles = (theme) => ({
     root: {
@@ -133,6 +134,7 @@ export function TournamentSettings(props) {
                     )}
                     <FormLabel component="legend">Change tournament info</FormLabel>
                     <Formik
+                        validationSchema={updateTournamentValidation}
                         initialValues={{
                             tournamentTitle: tournament.title,
                             tournamentDescription: tournament.description

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Castle.Core.Internal;
 using fantasy_hoops.Database;
+using fantasy_hoops.Dtos;
 using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Models.Tournaments;
 using fantasy_hoops.Repositories;
@@ -136,8 +137,40 @@ namespace fantasy_hoops.Jobs
             _context.SaveChanges();
         }
 
-        public void SimulateOneForAllTournament(Tournament tournament)
+        public void SimulateOneForAllTournament(Tournament t)
         {
+            Tournament tournament = _context.Tournaments.Find(t.Id);
+            foreach (var contest in _context.Contests
+                .Where(contest => contest.TournamentId.Equals(tournament.Id)).ToList())
+            {
+                Tuple<String, double> contestWinnerIdAndScore = Tuple.Create("", double.MinValue);
+                foreach (var matchupPair in _context.TournamentMatchups
+                    .Where(matchup => matchup.ContestId == contest.Id).ToList())
+                {
+                    double userScore = GetRandomNumber(900.0, 1200.0);
+                    if (userScore > contestWinnerIdAndScore.Item2)
+                    {
+                        contestWinnerIdAndScore = Tuple.Create(matchupPair.FirstUserID, userScore);
+                    }
+                    matchupPair.FirstUserScore = userScore;
+                    matchupPair.SecondUserScore = userScore;
+                    _context.SaveChanges();
+                }
+
+                TournamentDetailsDto tournamentDetails = _tournamentsRepository.GetTournamentDetails(t.Id);
+                ContestDto contestDto = _tournamentsService.GetContestDto(contest);
+                _tournamentsService.UpdateStandings(tournamentDetails, contestDto);
+                contest.DroppedUserId =
+                    _tournamentsService.EliminateUser(tournament, tournamentDetails, contestDto)?.Id;
+                contest.Winner = _context.Users.Find(contestWinnerIdAndScore.Item1);
+                contest.IsFinished = true;
+                _context.SaveChanges();
+            }
+            // TournamentDetailsDto finishedTournamentDetails = _tournamentsRepository.GetTournamentDetails(t.Id);
+            tournament.Status = TournamentStatus.FINISHED;
+            _context.SaveChanges();
+            // tournament.Winner = _tournamentsService.GetTournamentWinner(finishedTournamentDetails);
+            // _context.SaveChanges();
         }
 
         public void SimulateMatchupsTournament(Tournament t)
@@ -161,17 +194,19 @@ namespace fantasy_hoops.Jobs
                     {
                         continue;
                     }
-                                                 
+
                     if (matchupPair.FirstUserScore > matchupPair.SecondUserScore)
                     {
                         firstUser.Wins += 1;
                         secondUser.Losses += 1;
-                    } else if (matchupPair.SecondUserScore > matchupPair.FirstUserScore)
+                    }
+                    else if (matchupPair.SecondUserScore > matchupPair.FirstUserScore)
                     {
                         firstUser.Losses += 1;
                         secondUser.Wins += 1;
                     }
                 }
+
                 contest.IsFinished = true;
             }
 
@@ -179,7 +214,7 @@ namespace fantasy_hoops.Jobs
                 .Where(tuser => tuser.TournamentID.Equals(tournament.Id))
                 .OrderByDescending(tuser => tuser.Wins - tuser.Losses)
                 .FirstOrDefault();
-            
+
             tournament.Winner = _context.Users.FirstOrDefault(user => user.Id.Equals(winnerTUser.UserID));
             tournament.Status = TournamentStatus.FINISHED;
 

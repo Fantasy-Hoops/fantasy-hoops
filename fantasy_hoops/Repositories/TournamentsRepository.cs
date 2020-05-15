@@ -480,6 +480,13 @@ namespace fantasy_hoops.Repositories
             return false;
         }
 
+        public List<MatchupPair> GetContestMatchups(int contestId)
+        {
+            return _context.TournamentMatchups
+                .Where(matchup => matchup.ContestId == contestId)
+                .ToList();
+        }
+
         private bool DeleteTournamentResources(Tournament tournamentToDelete)
         {
             List<MatchupPair> matchupsToDelete = _context.TournamentMatchups

@@ -112,6 +112,42 @@ namespace fantasy_hoops.Services
             return new Pair<List<Contest>, DateTime>(contests, endDate);
         }
 
+        public ContestDto GetContestDto(Contest contest)
+        {
+            return new ContestDto
+            {
+                Id = contest.Id,
+                TournamentId = contest.TournamentId,
+                ContestNumber = contest.ContestNumber,
+                ContestStart = contest.ContestStart,
+                ContestEnd = contest.ContestEnd,
+                IsFinished = contest.IsFinished,
+                Matchups = _tournamentsRepository.GetContestMatchups(contest.Id)
+                .Select(contestPair =>
+                {
+                    User firstUser = _userRepository.GetUserById(contestPair.FirstUserID);
+                    User secondUser = _userRepository.GetUserById(contestPair.SecondUserID);
+                    return new MatchupPairDto
+                    {
+                        FirstUser = new TournamentUserDto
+                        {
+                            UserId = firstUser.Id,
+                            Username = firstUser.UserName,
+                            AvatarUrl = firstUser.AvatarURL
+                        },
+                        FirstUserScore = contestPair.FirstUserScore,
+                        SecondUser = new TournamentUserDto
+                        {
+                            UserId = secondUser.Id,
+                            Username = secondUser.UserName,
+                            AvatarUrl = secondUser.AvatarURL
+                        },
+                        SecondUserScore = contestPair.SecondUserScore
+                    };
+                }).ToList()
+            };
+        }
+
         private void SendInvitations(Tournament tournament, List<string> invitedUsersIds)
         {
             invitedUsersIds.ForEach(invitedUserId =>
@@ -214,7 +250,7 @@ namespace fantasy_hoops.Services
                 for (int i = orderedContestUsers.Count - 1; i >= 0; i--)
                 {
                     TournamentUser tournamentUser = _tournamentsRepository
-                        .GetTournamentUser(tournamentDetails.Id, orderedContestUsers[i].FirstUser.UserId);
+                        .GetTournamentUser(tournamentDetails.Id, orderedContestUsers[orderedContestUsers.Count - 1 - i].FirstUser.UserId);
                     _tournamentsRepository.UpdateTournamentUserStats(tournamentUser, tournamentUser.Wins,
                         tournamentUser.Losses, tournamentUser.Points + i);
                 }

@@ -37,5 +37,6 @@ namespace fantasy_hoops.Repositories.Interfaces
         void UpdateTournamentUserStats(TournamentUser tournamentUser, int wins, int losses, int points);
         void RemoveUserMatchup(string userId, int contestId);
         bool UpdateTournament(Tournament tournament, CreateTournamentViewModel model);
+        List<MatchupPair> GetContestMatchups(int contestId);
     }
 }
