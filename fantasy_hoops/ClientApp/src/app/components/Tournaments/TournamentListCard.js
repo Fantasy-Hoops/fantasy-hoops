@@ -43,7 +43,7 @@ export default function TournamentListCard(props) {
 
         return null;
     }
-    
+
     function getTournamentCardBadge(tournament) {
         switch (tournament.status) {
             case TournamentStatus.ACTIVE:
@@ -51,11 +51,40 @@ export default function TournamentListCard(props) {
                     ? <><Badge classes={{root: classes.badgeActive, badge: classes.badge}} badgeContent={""}/> Active</>
                     : null;
             case TournamentStatus.CANCELLED:
-                return <><Badge classes={{root: classes.badgeCancelled, badge: classes.badge}} badgeContent={""}/> Cancelled</>;
+                return <><Badge classes={{root: classes.badgeCancelled, badge: classes.badge}}
+                                badgeContent={""}/> Cancelled</>;
             default:
                 return null;
 
         }
+    }
+
+    function getTournamentDatesInfo() {
+        if (tournament.status === TournamentStatus.FINISHED) {
+            return (
+                <>
+                    <Typography className={classes.heading} variant="subtitle2" gutterBottom>
+                        Tournament finished
+                    </Typography>
+                    <Typography className={classes.heading} variant="subtitle2" gutterBottom>
+                        Winner: {tournament.winner && tournament.winner.username}
+                    </Typography>
+                </>
+            );
+        }
+        
+        return (
+            <>
+                <Typography className={classes.heading} variant="subtitle2" gutterBottom>
+                    {`${moment(tournament.startDate).isBefore() ? 'Started' : 'Starts'}
+                    ${moment(tournament.startDate).format(TOURNAMENT_DATE_FORMAT)}`}
+                </Typography>
+                <Typography className={classes.heading} variant="subtitle2" gutterBottom>
+                    {`${moment(tournament.endDate).isBefore() ? 'Ended' : 'Ends'}
+                    ${moment(tournament.endDate).format(TOURNAMENT_DATE_FORMAT)}`}
+                </Typography>
+            </>
+        );
     }
 
     return (
@@ -76,14 +105,7 @@ export default function TournamentListCard(props) {
                 <Typography className={classes.heading} variant="subtitle2" gutterBottom>
                     {getTournamentCardBadge(tournament)}
                 </Typography>
-                <Typography className={classes.heading} variant="subtitle2" gutterBottom>
-                    {`${moment(tournament.startDate).isBefore() ? 'Started' : 'Starts'}
-                    ${moment(tournament.startDate).format(TOURNAMENT_DATE_FORMAT)}`}
-                </Typography>
-                <Typography className={classes.heading} variant="subtitle2" gutterBottom>
-                    {`${moment(tournament.endDate).isBefore() ? 'Ended' : 'Ends'}
-                    ${moment(tournament.endDate).format(TOURNAMENT_DATE_FORMAT)}`}
-                </Typography>
+                {getTournamentDatesInfo()}
             </CardContent>}
             <Avatar
                 className={classes.avatar}

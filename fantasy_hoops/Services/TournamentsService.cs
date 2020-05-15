@@ -230,7 +230,7 @@ namespace fantasy_hoops.Services
                 int droppedUserIndex = currentContestNumber - firstDroppedContest;
                 TournamentUserDto eliminatedUser = tournamentStandings[droppedUserIndex];
                 tournamentDetails.Contests
-                    .Where(contestDto => contestDto.ContestStart >= contest.ContestStart)
+                    .Where(contestDto => contestDto.ContestStart > contest.ContestStart)
                     .ToList()
                     .ForEach(contestDto => _tournamentsRepository.RemoveUserMatchup(eliminatedUser.UserId, contestDto.Id));
                 return _tournamentsRepository.SetTournamentUserEliminated(eliminatedUser);

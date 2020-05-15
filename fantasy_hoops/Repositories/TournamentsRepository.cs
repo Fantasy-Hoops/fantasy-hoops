@@ -111,6 +111,7 @@ namespace fantasy_hoops.Repositories
                 .Include(contest => contest.Winner)
                 .Select(contest => new ContestDto
                 {
+                    Id = contest.Id,
                     TournamentId = tournamentId,
                     ContestNumber = contest.ContestNumber,
                     ContestStart = contest.ContestStart,
@@ -229,7 +230,18 @@ namespace fantasy_hoops.Repositories
                         ImageURL = tournament.ImageURL,
                         Entrants = tournament.Entrants,
                         Contests = tournament.Contests,
-                        DroppedContests = tournament.DroppedContests
+                        DroppedContests = tournament.DroppedContests,
+                        Winner = tournament.WinnerID != null
+                            ? _context.Users
+                                .Where(user => user.Id.Equals(tournament.WinnerID))
+                                .Select(user => new UserDto
+                                {
+                                    UserId = user.Id,
+                                    Username = user.UserName,
+                                    AvatarUrl = user.AvatarURL
+                                })
+                                .FirstOrDefault()
+                            : null
                     })
                     .ToList();
             List<TournamentDto> joinedTournaments =
@@ -251,7 +263,18 @@ namespace fantasy_hoops.Repositories
                         ImageURL = tournament.ImageURL,
                         Entrants = tournament.Entrants,
                         Contests = tournament.Contests,
-                        DroppedContests = tournament.DroppedContests
+                        DroppedContests = tournament.DroppedContests,
+                        Winner = tournament.WinnerID != null
+                            ? _context.Users
+                                .Where(user => user.Id.Equals(tournament.WinnerID))
+                                .Select(user => new UserDto
+                                {
+                                    UserId = user.Id,
+                                    Username = user.UserName,
+                                    AvatarUrl = user.AvatarURL
+                                })
+                                .FirstOrDefault()
+                            : null
                     })
                     .ToList();
 
@@ -397,7 +420,18 @@ namespace fantasy_hoops.Repositories
                     ImageURL = tournament.ImageURL,
                     Entrants = tournament.Entrants,
                     Contests = tournament.Contests,
-                    DroppedContests = tournament.DroppedContests
+                    DroppedContests = tournament.DroppedContests,
+                    Winner = tournament.WinnerID != null
+                        ? _context.Users
+                            .Where(user => user.Id.Equals(tournament.WinnerID))
+                            .Select(user => new UserDto
+                            {
+                                UserId = user.Id,
+                                Username = user.UserName,
+                                AvatarUrl = user.AvatarURL
+                            })
+                            .FirstOrDefault()
+                        : null
                 })
                 .ToList();
         }

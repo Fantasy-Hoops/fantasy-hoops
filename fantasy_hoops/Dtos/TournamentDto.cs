@@ -19,5 +19,7 @@ namespace fantasy_hoops.Dtos
         public int Entrants { get; set; }
         public List<Contest> Contests { get; set; }
         public int DroppedContests { get; set; }
+        
+        public UserDto Winner { get; set; }
     }
 }

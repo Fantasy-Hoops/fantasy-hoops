@@ -125,7 +125,7 @@ export default function MatchupsDashboard(props) {
         setScheduleOpen(false);
     };
 
-    const isActiveOrFinished = tournament.status !== TournamentStatus.ACTIVE || tournament.status !== TournamentStatus.FINISHED;
+    const isActiveOrFinished = tournament.status === TournamentStatus.ACTIVE || tournament.status === TournamentStatus.FINISHED;
 
     return (
         <>

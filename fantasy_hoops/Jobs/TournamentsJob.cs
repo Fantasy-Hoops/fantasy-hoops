@@ -139,6 +139,7 @@ namespace fantasy_hoops.Jobs
 
         public void SimulateOneForAllTournament(Tournament t)
         {
+            Stack<String> droppedUsersIds = new Stack<string>();
             Tournament tournament = _context.Tournaments.Find(t.Id);
             foreach (var contest in _context.Contests
                 .Where(contest => contest.TournamentId.Equals(tournament.Id)).ToList())
@@ -147,6 +148,12 @@ namespace fantasy_hoops.Jobs
                 foreach (var matchupPair in _context.TournamentMatchups
                     .Where(matchup => matchup.ContestId == contest.Id).ToList())
                 {
+                    if (droppedUsersIds.Contains(matchupPair.FirstUserID) ||
+                        droppedUsersIds.Contains(matchupPair.SecondUserID))
+                    {
+                        continue;
+                    }
+                    
                     double userScore = GetRandomNumber(900.0, 1200.0);
                     if (userScore > contestWinnerIdAndScore.Item2)
                     {
@@ -160,17 +167,21 @@ namespace fantasy_hoops.Jobs
                 TournamentDetailsDto tournamentDetails = _tournamentsRepository.GetTournamentDetails(t.Id);
                 ContestDto contestDto = _tournamentsService.GetContestDto(contest);
                 _tournamentsService.UpdateStandings(tournamentDetails, contestDto);
-                contest.DroppedUserId =
-                    _tournamentsService.EliminateUser(tournament, tournamentDetails, contestDto)?.Id;
+                string droppedUserId = _tournamentsService.EliminateUser(tournament, tournamentDetails, contestDto)?.Id;
+                contest.DroppedUserId = droppedUserId;
+                droppedUsersIds.Push(droppedUserId);
                 contest.Winner = _context.Users.Find(contestWinnerIdAndScore.Item1);
                 contest.IsFinished = true;
                 _context.SaveChanges();
             }
-            // TournamentDetailsDto finishedTournamentDetails = _tournamentsRepository.GetTournamentDetails(t.Id);
             tournament.Status = TournamentStatus.FINISHED;
             _context.SaveChanges();
-            // tournament.Winner = _tournamentsService.GetTournamentWinner(finishedTournamentDetails);
-            // _context.SaveChanges();
+            TournamentUser tournamentUser = _context.TournamentUsers
+                .Where(tuser => tuser.TournamentID.Equals(tournament.Id))
+                .OrderByDescending(tuser => tuser.Points)
+                .FirstOrDefault();
+            tournament.Winner = _context.Users.Find(tournamentUser.UserID);
+            _context.SaveChanges();
         }
 
         public void SimulateMatchupsTournament(Tournament t)
