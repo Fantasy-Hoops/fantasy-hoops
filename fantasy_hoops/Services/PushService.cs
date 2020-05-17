@@ -31,6 +31,7 @@ namespace fantasy_hoops.Services
             _pushNotificationRepository = new PushNotificationRepository();
             _userRepository = new UserRepository();
             _lineupRepository = new LineupRepository();
+            _client = new WebPushClient();
         }
 
         public PushService(IPushNotificationRepository pushNotificationRepository, IUserRepository userRepository, ILineupRepository lineupRepository)
