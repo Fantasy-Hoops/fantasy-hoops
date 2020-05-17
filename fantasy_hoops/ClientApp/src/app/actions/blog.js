@@ -11,7 +11,9 @@ export const loadPosts = () => async (dispatch) => {
 };
 
 export const savePost = post => async (dispatch) => {
-    const response = await submitPost(post);
+    const response = await submitPost(post)
+        .then(response => response)
+        .catch(error => error.response);
     dispatch({type: Blog.SUBMIT_POST});
     if (response.status === 200) {
         setTimeout(() => getPosts().then((res) => {

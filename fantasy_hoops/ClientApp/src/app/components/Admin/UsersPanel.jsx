@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const tableHead = (
-    <TableHead style={{background: 'black'}}>
-        <TableRow>
+    <TableHead style={{background: 'black', display: 'block'}}>
+        <TableRow style={{display: 'table', width: '100%', tableLayout: 'fixed'}}>
             <TableCell style={{color: 'white'}}>
                 Username
             </TableCell>
@@ -58,7 +58,7 @@ const renderUserList = (users, formProps) => _.map(users, (user, id) => {
     };
 
     return (
-        <TableRow key={id}>
+        <TableRow key={id} style={{display: 'table', width: '100%', tableLayout: 'fixed'}}>
             <TableCell>
                 {user.userName}
             </TableCell>
@@ -118,7 +118,7 @@ export function UsersPanel(props) {
                         <TableContainer component={Paper}>
                             <Table>
                                 {tableHead}
-                                <TableBody>
+                                <TableBody style={{display: 'block', maxHeight: '70vh', overflowY: 'scroll'}}>
                                     {renderUserList(props.users, formProps)}
                                 </TableBody>
                             </Table>

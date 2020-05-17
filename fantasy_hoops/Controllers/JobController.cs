@@ -27,29 +27,12 @@ namespace fantasy_hoops.Controllers
         [HttpGet("news")]
         public IActionResult StartJobs()
         {
-            bool previewStarted = false, recapStarted = false;
-            try
-            {
-                if (JobManager.GetSchedule(NewsType.PREVIEW.GetDisplayName()) == null)
-                {
-                    previewStarted = true;
-                    JobManager.AddJob(new NewsJob(NewsType.PREVIEW),
-                        s => s.WithName(NewsType.PREVIEW.GetDisplayName())
-                            .ToRunNow());
-                }
-
-                if (JobManager.GetSchedule(NewsType.RECAP.GetDisplayName()) == null)
-                {
-                    recapStarted = true;
-                    JobManager.AddJob(new NewsJob(NewsType.RECAP),
-                        s => s.WithName(NewsType.RECAP.GetDisplayName())
-                            .ToRunNow());
-                }
-            }
-            catch
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
+            JobManager.AddJob(new NewsJob(NewsType.PREVIEW),
+                s => s.WithName(NewsType.PREVIEW.GetDisplayName())
+                    .ToRunNow());
+            JobManager.AddJob(new NewsJob(NewsType.RECAP),
+                s => s.WithName(NewsType.RECAP.GetDisplayName())
+                    .ToRunNow());
 
             return Ok("News job started.");
         }

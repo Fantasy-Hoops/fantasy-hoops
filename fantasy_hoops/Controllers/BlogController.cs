@@ -1,12 +1,16 @@
 ﻿using fantasy_hoops.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using fantasy_hoops.Dtos;
+using fantasy_hoops.Helpers;
+using fantasy_hoops.Models;
 using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace fantasy_hoops.Controllers
 {
@@ -16,12 +20,15 @@ namespace fantasy_hoops.Controllers
         private readonly IBlogService _blogService;
         private readonly IBlogRepository _blogRepository;
         private readonly IPushService _pushService;
+        private readonly UserManager<User> _userManager;
 
-        public BlogController(IBlogService blogService, IBlogRepository blogRepository, IPushService pushService)
+        public BlogController(IBlogService blogService, IBlogRepository blogRepository, IPushService pushService,
+            UserManager<User> userManager)
         {
             _blogService = blogService;
             _blogRepository = blogRepository;
             _pushService = pushService;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -35,7 +42,7 @@ namespace fantasy_hoops.Controllers
         {
             return _blogRepository.GetUnapprovedPosts();
         }
-        
+
         [HttpGet("{id}")]
         public BlogPostDto GetPostById(int id)
         {
@@ -44,14 +51,21 @@ namespace fantasy_hoops.Controllers
 
         [Authorize(Roles = "Admin,Creator")]
         [HttpPost]
-        public IActionResult SubmitPost([FromBody]SubmitPostViewModel model)
+        public async Task<IActionResult> SubmitPost([FromBody] SubmitPostViewModel model)
         {
+            User author = await _userManager.FindByIdAsync(CommonFunctions.Instance.GetUserIdFromClaims(User));
+            bool isCreator = await _userManager.IsInRoleAsync(author, "Creator");
+            if (!isCreator)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+            }
+
             bool isAdmin = User.IsInRole("Admin");
             if (isAdmin)
             {
                 model.Status = PostStatus.APPROVED;
             }
-            
+
             if (!_blogRepository.AddPost(model))
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity, "Failed creating post.");
@@ -63,7 +77,7 @@ namespace fantasy_hoops.Controllers
         }
 
         [HttpDelete]
-        public IActionResult DeletePost([FromQuery]int id)
+        public IActionResult DeletePost([FromQuery] int id)
         {
             if (!_blogRepository.PostExists(id))
                 return StatusCode(StatusCodes.Status404NotFound, "Post not found.");
@@ -72,13 +86,13 @@ namespace fantasy_hoops.Controllers
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity, "Failed deleting post.");
             }
-            
+
             return Ok("Deleted successfully.");
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPut]
-        public IActionResult EditPost([FromBody]SubmitPostViewModel model)
+        public IActionResult EditPost([FromBody] SubmitPostViewModel model)
         {
             if (!_blogRepository.PostExists(model.Id))
                 return StatusCode(StatusCodes.Status404NotFound, "Post not found.");
@@ -87,7 +101,7 @@ namespace fantasy_hoops.Controllers
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity, "Failed updating post.");
             }
-            
+
             return Ok("Deleted successfully.");
         }
 

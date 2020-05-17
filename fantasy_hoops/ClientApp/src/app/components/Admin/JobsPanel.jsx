@@ -31,7 +31,7 @@ const JOBS = [
     },
     {
         title: "LeagueScheduleJob",
-        endpoint: "best-lineup"
+        endpoint: "league-schedule"
     },
 ];
 
