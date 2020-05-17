@@ -654,5 +654,95 @@ namespace fantasy_hoops.Jobs
 
             return int.Parse(player.Number) == 0;
         }
+
+        public void ExecuteContestWinnerAchievement(User contestWinner)
+        {
+            GameContext context = new GameContext();
+            Achievement achievement = context.Achievements
+                .FirstOrDefault(a => a.Title.Equals("Contester"));
+
+            if (achievement == null)
+            {
+                return;
+            }
+            
+            UserAchievement userAchievement = context.UserAchievements
+                .Include(ua => ua.Achievement)
+                .FirstOrDefault(ua => ua.Achievement.Title.Equals("Contester")
+                                      && ua.UserID.Equals(contestWinner.Id));
+            
+            if (userAchievement == null)
+            {
+                userAchievement = new UserAchievement
+                {
+                    UserID = contestWinner.Id,
+                    AchievementID = achievement.Id,
+                    Progress = 1,
+                    LevelUpGoal = 1,
+                    IsAchieved = true
+                };
+                context.UserAchievements.Add(userAchievement);
+            }
+            else
+            {
+                if (userAchievement.IsAchieved)
+                {
+                    return;
+                }
+
+                userAchievement.IsAchieved = true;
+                userAchievement.Progress = userAchievement.LevelUpGoal;
+            }
+            _pushService.SendAchievementUnlockedNotification(Tuple.Create(
+                userAchievement.UserID, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
+            ));
+
+            context.SaveChanges();
+        }
+
+        public void ExecuteTournamentWinnerAchievement(User tournamentWinner)
+        {
+            GameContext context = new GameContext();
+            Achievement achievement = context.Achievements
+                .FirstOrDefault(a => a.Title.Equals("Master"));
+
+            if (achievement == null)
+            {
+                return;
+            }
+            
+            UserAchievement userAchievement = context.UserAchievements
+                .Include(ua => ua.Achievement)
+                .FirstOrDefault(ua => ua.Achievement.Title.Equals("Master")
+                                      && ua.UserID.Equals(tournamentWinner.Id));
+            
+            if (userAchievement == null)
+            {
+                userAchievement = new UserAchievement
+                {
+                    UserID = tournamentWinner.Id,
+                    AchievementID = achievement.Id,
+                    Progress = 1,
+                    LevelUpGoal = 1,
+                    IsAchieved = true
+                };
+                context.UserAchievements.Add(userAchievement);
+            }
+            else
+            {
+                if (userAchievement.IsAchieved)
+                {
+                    return;
+                }
+
+                userAchievement.IsAchieved = true;
+                userAchievement.Progress = userAchievement.LevelUpGoal;
+            }
+            _pushService.SendAchievementUnlockedNotification(Tuple.Create(
+                userAchievement.UserID, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
+            ));
+
+            context.SaveChanges();
+        }
     }
 }

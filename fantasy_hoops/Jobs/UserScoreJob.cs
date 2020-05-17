@@ -161,6 +161,7 @@ namespace fantasy_hoops.Jobs
 
                     dbContest.Winner = _tournamentsService.GetContestWinner(tournamentDetails, contest);
                     dbContest.IsFinished = true;
+                    new AchievementsJob(new PushService()).ExecuteContestWinnerAchievement(dbContest.Winner);
                 }
 
                 if (isTournamentFinished)
@@ -170,6 +171,7 @@ namespace fantasy_hoops.Jobs
                 }
 
                 _context.SaveChanges();
+                new AchievementsJob(new PushService()).ExecuteTournamentWinnerAchievement(dbTournament.Winner);
             }
         }
     }

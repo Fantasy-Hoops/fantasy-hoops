@@ -173,6 +173,7 @@ namespace fantasy_hoops.Jobs
                 contest.Winner = _context.Users.Find(contestWinnerIdAndScore.Item1);
                 contest.IsFinished = true;
                 _context.SaveChanges();
+                new AchievementsJob(new PushService()).ExecuteContestWinnerAchievement(contest.Winner);
             }
             tournament.Status = TournamentStatus.FINISHED;
             _context.SaveChanges();
@@ -182,6 +183,7 @@ namespace fantasy_hoops.Jobs
                 .FirstOrDefault();
             tournament.Winner = _context.Users.Find(tournamentUser.UserID);
             _context.SaveChanges();
+            new AchievementsJob(new PushService()).ExecuteTournamentWinnerAchievement(tournament.Winner);
         }
 
         public void SimulateMatchupsTournament(Tournament t)
@@ -230,6 +232,7 @@ namespace fantasy_hoops.Jobs
             tournament.Status = TournamentStatus.FINISHED;
 
             _context.SaveChanges();
+            new AchievementsJob(new PushService()).ExecuteTournamentWinnerAchievement(tournament.Winner);
         }
 
         private double GetRandomNumber(double minimum, double maximum)
