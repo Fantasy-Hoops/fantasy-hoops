@@ -56,9 +56,12 @@ export function TournamentInvitation(props) {
         setLoader(true);
         declineTournamentInvitation({tournamentId})
             .then(response => {
-                setLoader(false)
+                enqueueSnackbar(response.data, {variant: "success"});
+                window.location.replace('/tournaments/invitations');
+                setLoader(false);
             }).catch(error => {
             enqueueSnackbar(error.message, {variant: "error"});
+            window.location.reload('/tournaments/invitations');
             setLoader(false);
         });
     }

@@ -69,7 +69,8 @@ namespace fantasy_hoops.Controllers
 
         [Authorize]
         [HttpGet("{tournamentId}/details")]
-        public ActionResult<TournamentDetailsDto> GetTournamentDetails([FromRoute] string tournamentId, bool checkForFriends)
+        public ActionResult<TournamentDetailsDto> GetTournamentDetails([FromRoute] string tournamentId,
+            bool checkForFriends)
         {
             if (!_tournamentsRepository.TournamentExists(tournamentId))
             {
@@ -83,7 +84,12 @@ namespace fantasy_hoops.Controllers
                 return StatusCode(StatusCodes.Status302Found, "You already joined this tournament.");
             }
 
-            TournamentDetailsDto tournamentDetails = _tournamentsRepository.GetTournamentDetails(userId, tournamentId);
+            TournamentDetailsDto tournamentDetails = _tournamentsRepository.GetTournamentDetails(userId, tournamentId, checkForFriends);
+            if (tournamentDetails == null)
+            {
+                return StatusCode(StatusCodes.Status302Found, "You declined to join this tournament.");
+            }
+            
             if (checkForFriends)
             {
                 bool friendCheckStatus = userId.Equals(tournamentDetails.Creator.UserId) ||
@@ -91,9 +97,9 @@ namespace fantasy_hoops.Controllers
 
                 return friendCheckStatus
                     ? Ok(tournamentDetails)
-                    : StatusCode(StatusCodes.Status403Forbidden, "You are not friends with the tournament creator."); 
+                    : StatusCode(StatusCodes.Status403Forbidden, "You are not friends with the tournament creator.");
             }
-            
+
             if (!isUserInTournament && !_tournamentsRepository.IsUserInvited(userId, tournamentId))
             {
                 return Unauthorized("Unauthorized attempt to reach the tournament.");
@@ -110,7 +116,7 @@ namespace fantasy_hoops.Controllers
             {
                 return UnprocessableEntity("Tournament title already exists.");
             }
-            
+
             if (model.StartDate < CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow))
             {
                 return UnprocessableEntity("Illegal Date. Date must be in the future.");
@@ -124,6 +130,12 @@ namespace fantasy_hoops.Controllers
             if (string.IsNullOrEmpty(model.TournamentIcon))
             {
                 return UnprocessableEntity("No tournament icon selected.");
+            }
+
+            if ((Tournament.TournamentType) model.TournamentType == Tournament.TournamentType.MATCHUPS
+                && model.Entrants % 2 != 0)
+            {
+                return UnprocessableEntity("For Matchups tournament number of entrants must be even.");
             }
 
             Pair<bool, string> result = _tournamentsService.CreateTournament(model);
@@ -141,14 +153,15 @@ namespace fantasy_hoops.Controllers
 
         [Authorize]
         [HttpPut("{tournamentId}")]
-        public IActionResult UpdateTournament([FromBody] CreateTournamentViewModel model, [FromRoute] string tournamentId)
+        public IActionResult UpdateTournament([FromBody] CreateTournamentViewModel model,
+            [FromRoute] string tournamentId)
         {
             Tournament tournament = _tournamentsRepository.GetTournamentById(tournamentId);
             if (tournament == null)
             {
                 return NotFound("Tournament doesn't exist.");
             }
-            
+
             string userIdFromClaims = CommonFunctions.Instance.GetUserIdFromClaims(User);
             if (!tournament.CreatorID.Equals(userIdFromClaims))
             {
@@ -191,7 +204,7 @@ namespace fantasy_hoops.Controllers
 
         [Authorize]
         [HttpGet("invitations")]
-        public List<TournamentDto> GetTournamentDetails()
+        public List<TournamentDto> GetTournamentInvitations()
         {
             string userId = CommonFunctions.Instance.GetUserIdFromClaims(User);
             return _tournamentsRepository.GetTournamentInvitations(userId);
@@ -206,6 +219,7 @@ namespace fantasy_hoops.Controllers
             {
                 return StatusCode(StatusCodes.Status422UnprocessableEntity, "Tournament is full");
             }
+
             return Ok("Successfully joined the tournament.");
         }
 
@@ -231,7 +245,7 @@ namespace fantasy_hoops.Controllers
             {
                 return NotFound("Tournament not found.");
             }
-            
+
             TournamentsJob tournamentsJob = new TournamentsJob();
             if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
             {
@@ -241,7 +255,7 @@ namespace fantasy_hoops.Controllers
             {
                 tournamentsJob.StartMatchupsTournament(tournament);
             }
-            
+
             return Ok("Tournament started.");
         }
 
@@ -254,7 +268,7 @@ namespace fantasy_hoops.Controllers
             {
                 return NotFound("Tournament not found.");
             }
-            
+
             TournamentsJob tournamentsJob = new TournamentsJob();
             if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.ONE_FOR_ALL)
             {
@@ -264,7 +278,7 @@ namespace fantasy_hoops.Controllers
             {
                 tournamentsJob.SimulateMatchupsTournament(tournament);
             }
-            
+
             return Ok("Tournament simulated.");
         }
     }

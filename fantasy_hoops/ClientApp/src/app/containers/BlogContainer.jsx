@@ -20,11 +20,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators(actionCreators, dispatch);
 
-const Intro = {
-    TITLE: "",
-    SUBTITLE: ""
-};
-
 const user = parse();
 
 export function BlogContainer(props) {
@@ -66,7 +61,7 @@ export function BlogContainer(props) {
 
     function handleCreatePost(values) {
         const {savePost} = props;
-        $('#blogForm').toggle();
+        $('#blog-form-button').click();
         savePost({title: values.postTitle, body: values.postBody, authorID: parse().id})
             .then(response => {
                 if (response.isSuccess) {
@@ -95,7 +90,7 @@ export function BlogContainer(props) {
         blogForm = isCreator() && (
             <>
                 <p>
-                    <button className="btn btn-primary" type="button" data-toggle="collapse"
+                    <button id="blog-form-button" className="btn btn-primary" type="button" data-toggle="collapse"
                             data-target="#blogForm" aria-expanded="false" aria-controls="blogForm">
 						<span>
 							<i className="fas fa-pencil-alt"/>

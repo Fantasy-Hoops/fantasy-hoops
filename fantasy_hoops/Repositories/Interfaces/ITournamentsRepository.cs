@@ -15,7 +15,7 @@ namespace fantasy_hoops.Repositories.Interfaces
         List<DateTime> GetUpcomingStartDates();
         Tournament GetTournamentById(string tournamentId);
         TournamentDetailsDto GetTournamentDetails(string tournamentId);
-        TournamentDetailsDto GetTournamentDetails(string userId, string tournamentId);
+        TournamentDetailsDto GetTournamentDetails(string userId, string tournamentId, bool isInvitation = false);
         List<TournamentDetailsDto> GetAllTournamentsDetails();
         Dictionary<string, List<TournamentDto>> GetUserTournaments(string userId);
         bool CreateTournament(Tournament tournament);

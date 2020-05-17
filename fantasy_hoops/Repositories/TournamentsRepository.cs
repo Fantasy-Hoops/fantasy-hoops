@@ -79,11 +79,19 @@ namespace fantasy_hoops.Repositories
 
         public TournamentDetailsDto GetTournamentDetails(string tournamentId)
         {
-            return GetTournamentDetails(null, tournamentId);
+            return GetTournamentDetails(null, tournamentId, false);
         }
 
-        public TournamentDetailsDto GetTournamentDetails(string userId, string tournamentId)
+        public TournamentDetailsDto GetTournamentDetails(string userId, string tournamentId, bool isInvitation)
         {
+            bool isInvitePending = _context.TournamentInvites
+                .Any(invite => invite.InvitedUserID.Equals(userId)
+                                          && invite.TournamentID.Equals(tournamentId)
+                                          && invite.Status == RequestStatus.PENDING);
+            if (isInvitation && !isInvitePending)
+            {
+                return null;
+            }
             TournamentDetailsDto tournamentDetails = new TournamentDetailsDto();
 
             Tournament tournament = GetTournamentById(tournamentId);
@@ -209,7 +217,7 @@ namespace fantasy_hoops.Repositories
         {
             return _context.Tournaments
                 .ToList()
-                .Select(tournament => GetTournamentDetails(tournament.CreatorID, tournament.Id))
+                .Select(tournament => GetTournamentDetails(tournament.CreatorID, tournament.Id, false))
                 .ToList();
         }
 
@@ -499,6 +507,7 @@ namespace fantasy_hoops.Repositories
             {
                 return;
             }
+
             _context.TournamentMatchups.Remove(matchupToRemove);
             _context.SaveChanges();
         }

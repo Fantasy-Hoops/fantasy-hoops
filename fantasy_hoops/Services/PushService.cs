@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using fantasy_hoops.Models.PushNotifications;
 using fantasy_hoops.Models.ViewModels;
+using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
 using Newtonsoft.Json;
@@ -27,6 +28,9 @@ namespace fantasy_hoops.Services
             var vapidPrivateKey = Startup.Configuration["Vapid:PrivateKey"];
             CheckOrGenerateVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
             _vapidDetails = new VapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
+            _pushNotificationRepository = new PushNotificationRepository();
+            _userRepository = new UserRepository();
+            _lineupRepository = new LineupRepository();
         }
 
         public PushService(IPushNotificationRepository pushNotificationRepository, IUserRepository userRepository, ILineupRepository lineupRepository)
