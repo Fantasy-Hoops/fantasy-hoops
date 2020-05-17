@@ -63,7 +63,7 @@ export default function TournamentsPage() {
                     </Link>
                 </div>
                 <Link to={Routes.TOURNAMENT_INVITATIONS}>
-                    <Button>
+                    <Button variant="contained" color="primary">
                         Invitations
                     </Button>
                 </Link>

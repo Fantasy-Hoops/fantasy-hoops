@@ -678,24 +678,25 @@ namespace fantasy_hoops.Jobs
                     UserID = contestWinner.Id,
                     AchievementID = achievement.Id,
                     Progress = 1,
-                    LevelUpGoal = 1,
-                    IsAchieved = true
+                    LevelUpGoal = 5
                 };
                 context.UserAchievements.Add(userAchievement);
             }
             else
             {
-                if (userAchievement.IsAchieved)
-                {
-                    return;
-                }
+                userAchievement.Progress += 1;
 
-                userAchievement.IsAchieved = true;
-                userAchievement.Progress = userAchievement.LevelUpGoal;
+                // Level Up
+                if (userAchievement.Progress.CompareTo(userAchievement.LevelUpGoal) >= 0)
+                {
+                    userAchievement.Level++;
+                    userAchievement.LevelUpGoal *= 2;
+
+                    _pushService.SendAchievementLevelUpNotification(Tuple.Create(
+                        contestWinner.Id, userAchievement.Achievement.Title, userAchievement.Level
+                    ));
+                }
             }
-            _pushService.SendAchievementUnlockedNotification(Tuple.Create(
-                userAchievement.UserID, userAchievement.Achievement.Title, userAchievement.Achievement.CompletedMessage
-            ));
 
             context.SaveChanges();
         }

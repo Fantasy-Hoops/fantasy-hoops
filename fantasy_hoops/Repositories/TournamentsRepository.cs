@@ -166,6 +166,7 @@ namespace fantasy_hoops.Repositories
                     (Tournament.TournamentType) tournament.Type == Tournament.TournamentType.MATCHUPS
                         ? tournamentUser.W - tournamentUser.L
                         : tournamentUser.Points)
+                .ThenBy(tournamentUser => tournamentUser.IsEliminated)
                 .ToList()
                 .Select((tournamentUser, index) => new KeyValuePair<int, TournamentUserDto>(index, tournamentUser))
                 .Select(record => new TournamentUserDto
