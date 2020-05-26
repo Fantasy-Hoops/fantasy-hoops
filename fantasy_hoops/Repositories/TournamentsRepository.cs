@@ -84,11 +84,11 @@ namespace fantasy_hoops.Repositories
 
         public TournamentDetailsDto GetTournamentDetails(string userId, string tournamentId, bool isInvitation)
         {
-            bool isInvitePending = _context.TournamentInvites
+            bool isInviteDeclined = _context.TournamentInvites
                 .Any(invite => invite.InvitedUserID.Equals(userId)
                                           && invite.TournamentID.Equals(tournamentId)
-                                          && invite.Status == RequestStatus.PENDING);
-            if (isInvitation && !isInvitePending)
+                                          && invite.Status == RequestStatus.DECLINED);
+            if (isInvitation && isInviteDeclined)
             {
                 return null;
             }

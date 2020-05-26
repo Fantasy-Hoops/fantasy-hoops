@@ -223,6 +223,7 @@ namespace fantasy_hoops.Jobs
                 contest.IsFinished = true;
             }
 
+            _context.SaveChanges();
             TournamentUser winnerTUser = _context.TournamentUsers
                 .Where(tuser => tuser.TournamentID.Equals(tournament.Id))
                 .OrderByDescending(tuser => tuser.Wins - tuser.Losses)
