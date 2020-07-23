@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Data.Entity;
+using System.Linq;
 using fantasy_hoops.Database;
 using fantasy_hoops.Models;
 using fantasy_hoops.Repositories.Interfaces;
@@ -16,12 +17,12 @@ namespace fantasy_hoops.Repositories
 
         public bool AnyPlayerStatsExists(Player player)
         {
-            return _context.Stats.Any(stats => stats.Player.NbaID == player.NbaID);
+            return new GameContext().Stats.Any(stats => stats.Player.NbaID == player.NbaID);
         }
 
         public double LastFiveAverage(Player player)
         {
-            return _context.Stats
+            return new GameContext().Stats
                 .Where(x => x.Player.NbaID == player.NbaID
                             && !x.Score.ToLower().Contains("live"))
                 .OrderByDescending(s => s.Date)
