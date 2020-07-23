@@ -18,9 +18,7 @@ namespace fantasy_hoops.Repositories
         public IQueryable<Object> GetActivePlayers()
         {
             return _context.Players
-                .Where(player => bool.Parse(Startup.Configuration["UseMock"])
-                    ? Mocks.Players.PlayerPool.Contains(player.PlayerID)
-                    : player.IsPlaying && !player.IsInGLeague)
+                .Where(player => player.IsPlaying && !player.IsInGLeague)
                 .Select(player => new
                 {
                     playerId = player.PlayerID,
@@ -50,11 +48,6 @@ namespace fantasy_hoops.Repositories
             if (player.Team == null)
             {
                 return false;
-            }
-            
-            if (bool.Parse(Startup.Configuration["UseMock"]))
-            {
-                return Mocks.Players.PlayerPool.Contains(player.PlayerID);
             }
 
             return player.IsPlaying && !player.IsInGLeague;

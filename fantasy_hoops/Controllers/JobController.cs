@@ -64,7 +64,7 @@ namespace fantasy_hoops.Controllers
         [HttpGet("league-schedule")]
         public IActionResult StartLeagueSchedule()
         {
-            Task.Run(() => new ScheduleJob().Execute());
+            // Task.Run(() => new ScheduleJob().Execute());
 
             return Ok("League schedule job started.");
         }

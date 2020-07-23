@@ -43,11 +43,6 @@ namespace fantasy_hoops.Repositories
 
         public List<DateTime> GetUpcomingStartDates()
         {
-            if (bool.Parse(Startup.Configuration["UseMock"]))
-            {
-                return Mocks.Tournaments.StartDates;
-            }
-
             return _context.Games
                 .AsEnumerable()
                 .Where(game => game.Date.HasValue && game.Date.Value.DayOfWeek != DayOfWeek.Sunday)
@@ -61,11 +56,6 @@ namespace fantasy_hoops.Repositories
 
         public DateTime GetLastEndDate()
         {
-            if (bool.Parse(Startup.Configuration["UseMock"]))
-            {
-                return Mocks.Tournaments.StartDates.Max();
-            }
-
             return _context.Games
                 .Where(game => game.Date.HasValue)
                 .Max(tournament => tournament.Date.Value);

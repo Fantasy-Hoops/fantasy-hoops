@@ -20,12 +20,9 @@ namespace fantasy_hoops
 
             Task.Run(() => RostersJob.UpdateTeamColors(new GameContext()));
 
-            if (!bool.Parse(Startup.Configuration["CoronaSuspended"]))
-            {
-                Schedule(new NextGameJob(scoreService, pushService, false))
-                    .WithName("nextGameJob")
-                    .ToRunNow();
-            }
+            Schedule(new NextGameJob(scoreService, pushService, false))
+                .WithName("nextGameJob")
+                .ToRunNow();
             RuntimeUtils.NEXT_GAME = new DateTime(2020, 06, 20);
             RuntimeUtils.NEXT_GAME_CLIENT = RuntimeUtils.NEXT_GAME;
             RuntimeUtils.PLAYER_POOL_DATE = RuntimeUtils.NEXT_GAME;
