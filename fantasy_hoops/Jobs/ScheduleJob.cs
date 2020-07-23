@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -79,17 +80,13 @@ namespace fantasy_hoops.Jobs
                     HomeTeamID = hTeamId,
                     AwayTeamID = vTeamId,
                     HomeScore = homeScore,
-                    AwayScore = awayScore
+                    AwayScore = awayScore,
+                    SeasonId = season.Id
                 };
 
                 if (!_context.Games.Any(dbGame => dbGame.Reference.Equals(reference)))
                 {
                     _context.Games.Add(newGame);
-                }
-
-                if (!season.Games.Any(seasonGame => seasonGame.Reference.Equals(newGame.Reference)))
-                {
-                    season.Games.Add(newGame);
                 }
             }
             _context.SaveChanges();
@@ -108,7 +105,7 @@ namespace fantasy_hoops.Jobs
 
         private Season UpdateSeason(JArray scheduledGames)
         {
-            Season dbSeason = _context.Seasons.FirstOrDefault(season => season.Year == int.Parse(_seasonYear));
+            Season dbSeason = _context.Seasons.Include(season => season.Games).FirstOrDefault(season => season.Year == int.Parse(_seasonYear));
             IEnumerable<DateTime> gamesDates = scheduledGames.AsEnumerable().Select(GetDateECT).ToList();
             DateTime startDate = gamesDates.Min();
             DateTime endDate = gamesDates.Max();
@@ -145,8 +142,9 @@ namespace fantasy_hoops.Jobs
                 dbSeason.AllStarBreakGames = allStarBreakGames;
                 dbSeason.PlayoffGames = playoffGames;
             }
-            
-            return _context.SaveChanges() != 0 ? dbSeason : null;
+
+            _context.SaveChanges();
+            return dbSeason;
         }
 
         private DateTime GetDateECT(JToken game)

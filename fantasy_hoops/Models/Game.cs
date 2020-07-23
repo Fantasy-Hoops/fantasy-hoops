@@ -18,10 +18,14 @@ namespace fantasy_hoops.Models
         public int HomeScore { get; set; }
         public int AwayTeamID { get; set; }
         public int AwayScore { get; set; }
+        public string SeasonId { get; set; }
 
         [ForeignKey("HomeTeamID")]
         public virtual Team HomeTeam { get; set; }
         [ForeignKey("AwayTeamID")]
         public virtual Team AwayTeam { get; set; }
+        
+        [ForeignKey("SeasonId")]
+        public virtual Season Season { get; set; }
     }
 }

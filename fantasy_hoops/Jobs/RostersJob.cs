@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -194,8 +195,8 @@ namespace fantasy_hoops.Jobs
         {
             List<JToken> teams = GetTeams();
             System.Threading.Thread.Sleep(1000);
-            var dbPlayers = _context.Players;
-            var dbTeams = _context.Teams;
+            var dbPlayers = _context.Players.ToList();
+            var dbTeams = _context.Teams.ToList();
             foreach (var team in teams)
             {
                 int teamNbaId = (int)team["reference"];
@@ -231,6 +232,7 @@ namespace fantasy_hoops.Jobs
                 {
                     if (player["reference"] == null)
                         continue;
+                    Debug.WriteLine(player);
                     int playerNbaId = (int)player["reference"];
                     bool gLeagueStatus = player["status"].ToString().Equals("D-LEAGUE") ? true : false;
                     if (dbPlayers.Any(p => p.NbaID == playerNbaId))
@@ -278,7 +280,7 @@ namespace fantasy_hoops.Jobs
                                 AbbrName = abbrName,
                                 Position = (string)player["primary_position"],
                                 NbaID = (int)player["reference"],
-                                Number = player["jersey_number"].ToString(),
+                                Number = player["jersey_number"] != null ? player["jersey_number"].ToString() : "0",
                                 Price = CommonFunctions.Instance.PRICE_FLOOR,
                                 FPPG = 0.0,
                                 PTS = 0.0,
