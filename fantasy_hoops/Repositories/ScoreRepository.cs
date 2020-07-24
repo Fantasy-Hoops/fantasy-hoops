@@ -22,12 +22,18 @@ namespace fantasy_hoops.Repositories
 
         public double LastFiveAverage(Player player)
         {
-            return new GameContext().Stats
+            var playerStats = new GameContext().Stats
                 .Where(x => x.Player.NbaID == player.NbaID
-                            && !x.Score.ToLower().Contains("live"))
+                            && !x.Score.ToLower().Contains("live")).ToList();
+            if (playerStats.Count == 0)
+            {
+                return 0.0d;
+            }
+            
+            return playerStats
                 .OrderByDescending(s => s.Date)
-                .Take(5)
                 .Select(s => s.GS)
+                .Take(5)
                 .Average();
         }
     }
