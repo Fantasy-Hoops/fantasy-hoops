@@ -188,10 +188,6 @@ namespace fantasy_hoops.Jobs
             {
                 Task.Run(() => new StatsJob(_scoreService, _pushService).Execute());
             }
-            
-            JobManager.AddJob(new UserScoreJob(_pushService),
-                    s => s.WithName("uScore")
-                .ToRunNow());
         }
     }
 }

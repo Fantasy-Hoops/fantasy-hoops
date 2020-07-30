@@ -62,7 +62,7 @@ namespace fantasy_hoops.Jobs
             var allLineups = _context.UserLineups
                 .Include(lineup => lineup.User)
                 .Where(lineup => lineup.Date.Equals(CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date)
-                                 )
+                                 && !lineup.IsCalculated)
                 .Include(lineup => lineup.User)
                 .ToList();
 
