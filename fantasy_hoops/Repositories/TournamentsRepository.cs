@@ -49,7 +49,7 @@ namespace fantasy_hoops.Repositories
                 .ToList()
                 .GroupBy(game => CommonFunctions.Instance.GetIso8601WeekOfYear(game.Date.Value))
                 .Select(group => group.Min(game => game.Date.Value))
-                .Where(date => date > CommonFunctions.Instance.EtcNow())
+                .Where(date => date > CommonFunctions.Instance.EtcNow().AddDays(-1))
                 .OrderBy(date => date)
                 .ToList();
         }

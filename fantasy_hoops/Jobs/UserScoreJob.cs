@@ -61,8 +61,8 @@ namespace fantasy_hoops.Jobs
 
             var allLineups = _context.UserLineups
                 .Include(lineup => lineup.User)
-                .Where(lineup => lineup.Date.Equals(CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date) &&
-                                 !lineup.IsCalculated)
+                .Where(lineup => lineup.Date.Equals(CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date)
+                                 )
                 .Include(lineup => lineup.User)
                 .ToList();
 
@@ -70,8 +70,8 @@ namespace fantasy_hoops.Jobs
                 return;
 
             _context.Users
-                .AsEnumerable()
-                .Except(allLineups.Select(lineup => lineup.User).AsEnumerable())
+                .ToList()
+                .Except(allLineups.Select(lineup => lineup.User).ToList())
                 .ToList()
                 .ForEach(user => user.Streak = 0);
 
