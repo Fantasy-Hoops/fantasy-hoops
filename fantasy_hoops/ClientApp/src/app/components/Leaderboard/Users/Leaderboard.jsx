@@ -43,7 +43,8 @@ function Leaderboard(props) {
         monthly: [],
         dailyFriends: [],
         weeklyFriends: [],
-        monthlyFriends: []
+        monthlyFriends: [],
+        fromDate: []
     });
     const [loader, setLoader] = useState(true);
     const [loadMoreLoader, setLoadMoreLoader] = useState(false);
@@ -62,6 +63,7 @@ function Leaderboard(props) {
     const dailyUsers = createUsers(friendsOnly ? leaderboard.dailyFriends : leaderboard.daily, true);
     const weeklyUsers = createUsers(friendsOnly ? leaderboard.weeklyFriends : leaderboard.weekly);
     const monthlyUsers = createUsers(friendsOnly ? leaderboard.monthlyFriends : leaderboard.monthly);
+    const fromDateUsers = createUsers(leaderboard.fromDate);
     const seeMoreButton = seeMoreBtn(activeType);
 
     useEffect(() => {
@@ -84,15 +86,15 @@ function Leaderboard(props) {
             setDate(date);
             return;
         }
-
+        
         setLoader(true);
-        setLeaderboard(prevState => ({ ...prevState, daily: [], dailyFriends: [] }));
+        setLeaderboard(prevState => ({ ...prevState, daily: [], dailyFriends: [], fromDate: [] }));
         const dateFormat = moment(date).format('YYYYMMDD');
-        const type = friendsOnly ? 'dailyFriends' : 'daily';
+        const type = friendsOnly ? `${activeTab}Friends` : activeTab;
 
         const users = !friendsOnly
-            ? await getUsersLeaderboard({ type: 'daily', date: dateFormat })
-            : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: 'daily', date: dateFormat });
+            ? await getUsersLeaderboard({ type: activeTab, date: dateFormat })
+            : await getUserFriendsOnlyLeaderboard(loggedInUser.id, { type: activeTab, date: dateFormat });
 
         showButton[type] = users.data.length === LOAD_COUNT;
         setLeaderboard(prevState => ({ ...prevState, [type]: users.data }));
@@ -273,6 +275,10 @@ function Leaderboard(props) {
                     <a className="nav-link tab-no-outline" id="monthly-tab" data-toggle="tab" href="#monthly"
                        role="tab" onClick={switchTab}>Monthly</a>
                 </li>
+                <li className="nav-item">
+                    <a className="nav-link tab-no-outline" id="fromDate-tab" data-toggle="tab" href="#fromDate"
+                       role="tab" onClick={switchTab}>From Date</a>
+                </li>
             </ul>
             <div className="tab-content" id="myTabContent">
                 <div className="pt-4 pb-1 tab-pane animated bounceInUp show active" id="daily" role="tabpanel">
@@ -331,6 +337,32 @@ function Leaderboard(props) {
                     {!loader
                         ? monthlyUsers.length > 0
                             ? monthlyUsers
+                            : <EmptyJordan message="Such empty..."/>
+                        : <div className="Loader"/>}
+                    <div className="text-center">
+                        {seeMoreBtn()}
+                    </div>
+                </div>
+                <div className="pt-4 pb-1 tab-pane animated bounceInUp" id="fromDate" role="tabpanel">
+                    {!loader
+                        ? (
+                            <div className="DatePicker">
+                                <CustomDatePicker
+                                    autoOk
+                                    type={DatePickerTypes.DAY}
+                                    label={"Select date"}
+                                    styles={datePickerStyles}
+                                    selectedDate={date}
+                                    minDate={minDate}
+                                    maxDate={maxDate}
+                                    onDateChange={onDateChange}
+                                />
+                            </div>
+                        )
+                        : null}
+                    {!loader
+                        ? fromDateUsers.length > 0
+                            ? fromDateUsers
                             : <EmptyJordan message="Such empty..."/>
                         : <div className="Loader"/>}
                     <div className="text-center">

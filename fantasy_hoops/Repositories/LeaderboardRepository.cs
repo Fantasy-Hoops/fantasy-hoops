@@ -146,6 +146,23 @@ namespace fantasy_hoops.Repositories
                         .Skip(from)
                         .Take(limit)
                         .ToList();
+                case LeaderboardType.FROM_DATE:
+                    return _context.UserLineups
+                        .Include(lineup => lineup.User)
+                        .AsEnumerable()
+                        .Where(lineup => lineup.IsCalculated && lineup.Date >= dateTime)
+                        .GroupBy(lineup => lineup.UserID)
+                        .Select(lineup => new UserLeaderboardRecordDto
+                        {
+                            UserId = lineup.Max(p => p.UserID),
+                            Username = lineup.Max(p => p.User.UserName),
+                            AvatarUrl = lineup.Max(p => p.User.AvatarURL),
+                            FP = Math.Round(lineup.Sum(res => res.FP), 1)
+                        })
+                        .OrderByDescending(lineup => lineup.FP)
+                        .Skip(from)
+                        .Take(limit)
+                        .ToList(); 
                 default:
                     return new List<UserLeaderboardRecordDto>();
             }

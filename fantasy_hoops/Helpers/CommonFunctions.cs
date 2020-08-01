@@ -233,6 +233,8 @@ namespace fantasy_hoops.Helpers
 			        return LeaderboardType.WEEKLY;
 		        case "monthly":
 			        return LeaderboardType.MONTHLY;
+		        case "fromDate":
+			        return LeaderboardType.FROM_DATE;
 		        default:
 			        return LeaderboardType.WEEKLY;
 	        }
