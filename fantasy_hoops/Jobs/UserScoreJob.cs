@@ -108,8 +108,12 @@ namespace fantasy_hoops.Jobs
             UpdateActiveTournamentsScores(allLineups);
             SendPushNotifications().Wait();
 
-            Task.Run(() => new BestLineupsJob().Execute());
-            Task.Run(() => new AchievementsJob(_pushService).Execute());
+            JobManager.AddJob(new BestLineupsJob(),
+                s => s.WithName("bestLineupsJob")
+                    .ToRunNow());
+            JobManager.AddJob(new AchievementsJob(_pushService),
+                s => s.WithName("achievementsJob")
+                    .ToRunNow());
         }
 
         public void UpdateActiveTournamentsScores(List<UserLineup> allLineups)
