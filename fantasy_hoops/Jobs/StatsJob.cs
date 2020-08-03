@@ -86,7 +86,7 @@ namespace fantasy_hoops.Jobs
             int playerPrice = _scoreService.GetPrice(statsPlayer);
 
             var dbStats = _context.Stats.FirstOrDefault(stats =>
-                stats.Date.Equals(date) && stats.PlayerID == statsPlayer.PlayerID);
+                stats.Date.Date.Equals(date.Date) && stats.PlayerID == statsPlayer.PlayerID);
 
             if (dbStats == null)
             {
