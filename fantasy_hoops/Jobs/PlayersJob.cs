@@ -84,15 +84,15 @@ namespace fantasy_hoops.Jobs
 
 		private void SetNextOpponent(JToken game)
 		{
-			Team hTeam = _context.Teams.Where(team => team.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
-			Team vTeam = _context.Teams.Where(team => team.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
+			Team hTeam = _context.Teams.FirstOrDefault(team => team.NbaID == (int)game["hTeam"]["teamId"]);
+			Team vTeam = _context.Teams.FirstOrDefault(team => team.NbaID == (int)game["vTeam"]["teamId"]);
 
 			if (vTeam != null && hTeam != null)
 			{
 				hTeam.NextOpponentID = vTeam.TeamID;
 				vTeam.NextOpponentID = hTeam.TeamID;
-				hTeam.NextOppFormatted = string.Format("vs {0}", game["vTeam"]["triCode"]);
-				vTeam.NextOppFormatted = string.Format("@ {0}", game["hTeam"]["triCode"]);
+				hTeam.NextOppFormatted = $"vs {game["vTeam"]["triCode"]}";
+				vTeam.NextOppFormatted = $"@ {game["hTeam"]["triCode"]}";
 			}
 		}
 
@@ -101,44 +101,44 @@ namespace fantasy_hoops.Jobs
 	        _context.Players.ForEachAsync(p => p.IsPlaying = false).Wait();
             string date = GetDate();
             JArray games = CommonFunctions.Instance.GetGames(date);
+            List<int> nextGamePlayerIds = new List<int>();
             foreach (var game in games)
             {
                 SetNextOpponent(game);
                 var hTeamPlayers = _context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
                 var vTeamPlayers = _context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
-
-                List<int> nextGamePlayerIds = hTeamPlayers.Union(vTeamPlayers).Select(p => p.PlayerID).ToList();
-                foreach (var player in _context.Players)
-                {
-                    JObject p = GetPlayer(player.NbaID);
-                    if (p == null)
-                    {
-                        player.Price = CommonFunctions.Instance.PRICE_FLOOR;
-                        continue;
-                    }
+                nextGamePlayerIds.AddRange(hTeamPlayers.Union(vTeamPlayers).Select(p => p.PlayerID).ToList());
+            }
+            foreach (var player in _context.Players)
+            {
+	            JObject p = GetPlayer(player.NbaID);
+	            if (p == null)
+	            {
+		            player.Price = CommonFunctions.Instance.PRICE_FLOOR;
+		            continue;
+	            }
                     
-                    int gamesPlayed = 0;
-                    JToken stats = null;
-                    if (!(p["pl"]["ca"] == null || p["pl"]["ca"]["sa"] == null))
-                    {
-                        stats = p["pl"]["ca"]["sa"].Last;
-                        gamesPlayed = (int)stats["gp"];
-                    }
-                    player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
-                    player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
-                    player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
-                    player.STL = gamesPlayed <= 0 ? 0 : (double)stats["stl"];
-                    player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["blk"];
-                    player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["tov"];
-                    player.GP = gamesPlayed;
-                    player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
-                    if (_updatePrice)
-                    {
-	                    player.PreviousPrice = player.Price;
-	                    player.Price = gamesPlayed <= 0 ? CommonFunctions.Instance.PRICE_FLOOR : Price(player);
-                    }
-                    player.IsPlaying = nextGamePlayerIds.Contains(player.PlayerID) && IsActive(player);
-                }
+	            int gamesPlayed = 0;
+	            JToken stats = null;
+	            if (!(p["pl"]["ca"] == null || p["pl"]["ca"]["sa"] == null))
+	            {
+		            stats = p["pl"]["ca"]["sa"].Last;
+		            gamesPlayed = (int)stats["gp"];
+	            }
+	            player.PTS = gamesPlayed <= 0 ? 0 : (double)stats["pts"];
+	            player.REB = gamesPlayed <= 0 ? 0 : (double)stats["reb"];
+	            player.AST = gamesPlayed <= 0 ? 0 : (double)stats["ast"];
+	            player.STL = gamesPlayed <= 0 ? 0 : (double)stats["stl"];
+	            player.BLK = gamesPlayed <= 0 ? 0 : (double)stats["blk"];
+	            player.TOV = gamesPlayed <= 0 ? 0 : (double)stats["tov"];
+	            player.GP = gamesPlayed;
+	            player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
+	            if (_updatePrice)
+	            {
+		            player.PreviousPrice = player.Price;
+		            player.Price = gamesPlayed <= 0 ? CommonFunctions.Instance.PRICE_FLOOR : Price(player);
+	            }
+	            player.IsPlaying = nextGamePlayerIds.Contains(player.PlayerID) && IsActive(player);
             }
             _context.SaveChanges();
 
