@@ -46,7 +46,7 @@ namespace fantasy_hoops.Jobs
             {
                 if(player.Injury == null)
                 {
-                    player.Injury = _context.Injuries.Where(inj => inj.InjuryID == player.InjuryID).FirstOrDefault();
+                    player.Injury = new GameContext().Injuries.Where(inj => inj.InjuryID == player.InjuryID).FirstOrDefault();
                 }
 
                 if ((player.Injury.Date.HasValue && player.Injury.Date.Value.AddDays(5) < RuntimeUtils.NEXT_GAME)
@@ -83,8 +83,8 @@ namespace fantasy_hoops.Jobs
 
 		private void SetNextOpponent(JToken game)
 		{
-			Team hTeam = _context.Teams.Where(team => team.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
-			Team vTeam = _context.Teams.Where(team => team.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
+			Team hTeam = new GameContext().Teams.Where(team => team.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
+			Team vTeam = new GameContext().Teams.Where(team => team.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
 
 			if (vTeam != null && hTeam != null)
 			{
@@ -97,14 +97,15 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
-            _context.Players.ForEachAsync(p => p.IsPlaying = false).Wait();
+	        GameContext context = new GameContext();
+            context.Players.ForEachAsync(p => p.IsPlaying = false).Wait();
             string date = GetDate();
             JArray games = CommonFunctions.Instance.GetGames(date);
             foreach (var game in games)
             {
                 SetNextOpponent(game);
-                var hTeamPlayers = _context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
-                var vTeamPlayers = _context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
+                var hTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
+                var vTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
 
                 foreach (var player in hTeamPlayers.Union(vTeamPlayers))
                 {
@@ -136,7 +137,7 @@ namespace fantasy_hoops.Jobs
                     player.IsPlaying = IsPlaying(player);
                 }
             }
-            _context.SaveChanges();
+            context.SaveChanges();
 
             RuntimeUtils.NEXT_GAME_CLIENT = RuntimeUtils.NEXT_GAME;
             RuntimeUtils.PLAYER_POOL_DATE = RuntimeUtils.NEXT_GAME;

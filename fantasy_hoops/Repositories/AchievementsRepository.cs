@@ -21,7 +21,7 @@ namespace fantasy_hoops.Repositories
         
         public List<AchievementDto> GetExistingAchievements()
         {
-            return _context.Achievements
+            return new GameContext().Achievements
                 .Select(achievement => new AchievementDto
                 {
                     Id = achievement.Id,
@@ -38,7 +38,7 @@ namespace fantasy_hoops.Repositories
 
         public Dictionary<String, List<UserAchievementDto>> GetAllUserAchievements()
         {
-            return _context.UserAchievements
+            return new GameContext().UserAchievements
                 .Include(achievement => achievement.Achievement)
                 .Include(achievement => achievement.User)
                 .Select(achievement => new UserAchievementDto
@@ -68,7 +68,7 @@ namespace fantasy_hoops.Repositories
 
         public List<UserAchievementDto> GetUserAchievements(string userId)
         {
-            return _context.UserAchievements
+            return new GameContext().UserAchievements
                 .Include(achievement => achievement.Achievement)
                 .Include(achievement => achievement.User)
                 .Where(achievement => achievement.UserID.Equals(userId))
@@ -98,19 +98,20 @@ namespace fantasy_hoops.Repositories
 
         public bool AchievementExists(Achievement achievement)
         {
-            return _context.Achievements.Any(a => a.Title.Equals(achievement.Title)
+            return new GameContext().Achievements.Any(a => a.Title.Equals(achievement.Title)
                                                   && a.Type == achievement.Type);
         }
 
         public bool SaveAchievement(Achievement achievement)
         {
+            GameContext context = new GameContext();
             if (AchievementExists(achievement))
             {
                 return false;
             }
             
-            _context.Achievements.Add(achievement);
-            int entitiesWritten = _context.SaveChanges();
+            context.Achievements.Add(achievement);
+            int entitiesWritten = context.SaveChanges();
             return entitiesWritten > 0;
         }
         
@@ -122,15 +123,16 @@ namespace fantasy_hoops.Repositories
 
         public bool UserAchievementExists(string userId, Achievement achievement)
         {
-            return _context.UserAchievements.Any(ua => ua.UserID == userId
+            return new GameContext().UserAchievements.Any(ua => ua.UserID == userId
                                                        && ua.Achievement.Title.Equals(achievement.Title)
                                                        && ua.Achievement.Type == achievement.Type);
         }
 
         public bool AddUserAchievement(UserAchievement userAchievement)
         {
-            _context.UserAchievements.Add(userAchievement);
-            return _context.SaveChanges() != 0;
+            GameContext context = new GameContext();
+            context.UserAchievements.Add(userAchievement);
+            return context.SaveChanges() != 0;
         }
     }
 }

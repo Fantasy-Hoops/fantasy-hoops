@@ -23,7 +23,7 @@ namespace fantasy_hoops.Repositories
 
         public List<BlogPostDto> GetApprovedPosts()
         {
-            return _context.Posts
+            return new GameContext().Posts
                 .Where(post => post.Status == PostStatus.APPROVED)
                 .Select(post => new BlogPostDto
                 {
@@ -45,7 +45,7 @@ namespace fantasy_hoops.Repositories
 
         public List<BlogPostDto> GetUnapprovedPosts()
         {
-            return _context.Posts
+            return new GameContext().Posts
                 .Where(post => post.Status != PostStatus.APPROVED)
                 .Select(post => new BlogPostDto
                 {
@@ -67,13 +67,14 @@ namespace fantasy_hoops.Repositories
 
         public BlogPostDto GetPostById(int postId)
         {
-            Post post = _context.Posts.Find(postId);
+            GameContext context = new GameContext();
+            Post post = context.Posts.Find(postId);
             if (post == null)
             {
                 return null;
             }
 
-            User author = _context.Users.Find(post.AuthorID);
+            User author = context.Users.Find(post.AuthorID);
 
             return new BlogPostDto
             {
@@ -93,7 +94,8 @@ namespace fantasy_hoops.Repositories
 
         public bool AddPost(SubmitPostViewModel model)
         {
-            _context.Posts.Add(
+            GameContext context = new GameContext();
+            context.Posts.Add(
                 new Post
                 {
                     Title = model.Title,
@@ -103,12 +105,13 @@ namespace fantasy_hoops.Repositories
                     ModifiedAt = CommonFunctions.Instance.EtcNow(),
                     Status = model.Status
                 });
-            return _context.SaveChanges() != 0;
+            return context.SaveChanges() != 0;
         }
 
         public bool UpdatePost(SubmitPostViewModel model)
         {
-            Post editablePost = _context.Posts.Find(model.Id);
+            GameContext context = new GameContext();
+            Post editablePost = context.Posts.Find(model.Id);
             if (editablePost == null)
             {
                 return false;
@@ -120,29 +123,31 @@ namespace fantasy_hoops.Repositories
             editablePost.Title = model.Title ?? editablePost.Title;
             editablePost.Body = model.Body ?? editablePost.Body;
             editablePost.ModifiedAt = CommonFunctions.Instance.EtcNow();
-            return _context.SaveChanges() != 0;
+            return context.SaveChanges() != 0;
         }
 
         public bool PostExists(int id)
         {
-            return _context.Posts.Any(post => post.PostID == id);
+            return new GameContext().Posts.Any(post => post.PostID == id);
         }
 
         public bool DeletePost(int id)
         {
-            Post postToDelete = _context.Posts.Find(id);
+            GameContext context = new GameContext();
+            Post postToDelete = context.Posts.Find(id);
             if (postToDelete == null)
             {
                 return false;
             }
 
-            _context.Posts.Remove(postToDelete);
-            return _context.SaveChanges() != 0;
+            context.Posts.Remove(postToDelete);
+            return context.SaveChanges() != 0;
         }
 
         public bool ChangePostStatus(int postId, PostStatus status)
         {
-            Post post = _context.Posts.Find(postId);
+            GameContext context = new GameContext();
+            Post post = context.Posts.Find(postId);
             if (post == null)
             {
                 return false;
@@ -155,7 +160,7 @@ namespace fantasy_hoops.Repositories
 
             post.Status = PostStatus.APPROVED;
             post.ModifiedAt = CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow);
-            return _context.SaveChanges() != 0;
+            return context.SaveChanges() != 0;
         }
     }
 }

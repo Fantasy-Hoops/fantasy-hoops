@@ -17,7 +17,7 @@ namespace fantasy_hoops.Repositories
 
         public IQueryable<Object> GetActivePlayers()
         {
-            return _context.Players
+            return new GameContext().Players
                 .Where(player => player.IsPlaying && !player.IsInGLeague)
                 .Select(player => new
                 {
@@ -55,7 +55,7 @@ namespace fantasy_hoops.Repositories
 
         public IQueryable<Object> GetPlayer(int id)
         {
-            return _context.Players.Where(player => player.NbaID == id)
+            return new GameContext().Players.Where(player => player.NbaID == id)
                 .Select(player => new
                 {
                     player.PlayerID,

@@ -43,7 +43,7 @@ namespace fantasy_hoops.Repositories
 
         public List<DateTime> GetUpcomingStartDates()
         {
-            return _context.Games
+            return new GameContext().Games
                 .AsEnumerable()
                 .Where(game => game.Date.HasValue && game.Date.Value.DayOfWeek != DayOfWeek.Sunday)
                 .ToList()
@@ -56,14 +56,14 @@ namespace fantasy_hoops.Repositories
 
         public DateTime GetLastEndDate()
         {
-            return _context.Games
+            return new GameContext().Games
                 .Where(game => game.Date.HasValue)
                 .Max(tournament => tournament.Date.Value);
         }
 
         public Tournament GetTournamentById(string tournamentId)
         {
-            return _context.Tournaments
+            return new GameContext().Tournaments
                 .FirstOrDefault(tournament => tournament.Id.Equals(tournamentId));
         }
 
@@ -74,7 +74,8 @@ namespace fantasy_hoops.Repositories
 
         public TournamentDetailsDto GetTournamentDetails(string userId, string tournamentId, bool isInvitation)
         {
-            bool isInvitePending = _context.TournamentInvites
+            GameContext context = new GameContext();
+            bool isInvitePending = context.TournamentInvites
                 .Any(invite => invite.InvitedUserID.Equals(userId)
                                           && invite.TournamentID.Equals(tournamentId)
                                           && invite.Status == RequestStatus.PENDING);
@@ -85,7 +86,7 @@ namespace fantasy_hoops.Repositories
             TournamentDetailsDto tournamentDetails = new TournamentDetailsDto();
 
             Tournament tournament = GetTournamentById(tournamentId);
-            UserDto tournamentCreator = _context.Users
+            UserDto tournamentCreator = context.Users
                 .Where(user => user.Id.Equals(tournament.CreatorID))
                 .Select(user => new UserDto
                 {
@@ -103,7 +104,7 @@ namespace fantasy_hoops.Repositories
             tournamentDetails.ImageURL = tournament.ImageURL;
             tournamentDetails.Title = tournament.Title;
             tournamentDetails.Description = tournament.Description;
-            tournamentDetails.Contests = _context.Contests
+            tournamentDetails.Contests = context.Contests
                 .Where(contest => contest.TournamentId.Equals(tournamentId))
                 .Include(contest => contest.Matchups)
                 .Include(contest => contest.Winner)
@@ -147,7 +148,7 @@ namespace fantasy_hoops.Repositories
                 })
                 .OrderBy(contest => contest.ContestStart)
                 .ToList();
-            tournamentDetails.Standings = _context.TournamentUsers
+            tournamentDetails.Standings = context.TournamentUsers
                 .Where(tournamentUser => tournamentUser.TournamentID.Equals(tournamentId))
                 .Include(tournamentUser => tournamentUser.User)
                 .Select(tournamentUser => new TournamentUserDto
@@ -185,13 +186,13 @@ namespace fantasy_hoops.Repositories
             if (userId != null)
             {
                 tournamentDetails.IsCreator =
-                    _context.Tournaments.Any(t => t.CreatorID.Equals(userId) && t.Id.Equals(tournament.Id));
+                    context.Tournaments.Any(t => t.CreatorID.Equals(userId) && t.Id.Equals(tournament.Id));
                 tournamentDetails.CurrentLineup = _lineupRepository.GetUserCurrentLineup(userId);
                 tournamentDetails.AcceptedInvite =
                     IsUserInvited(userId, tournamentId) && IsUserInTournament(userId, tournamentId);
             }
 
-            tournamentDetails.Winner = _context.Users
+            tournamentDetails.Winner = context.Users
                 .Select(user => new UserDto
                 {
                     UserId = user.Id,
@@ -205,7 +206,7 @@ namespace fantasy_hoops.Repositories
 
         public List<TournamentDetailsDto> GetAllTournamentsDetails()
         {
-            return _context.Tournaments
+            return new GameContext().Tournaments
                 .ToList()
                 .Select(tournament => GetTournamentDetails(tournament.CreatorID, tournament.Id, false))
                 .ToList();
@@ -213,8 +214,9 @@ namespace fantasy_hoops.Repositories
 
         public Dictionary<string, List<TournamentDto>> GetUserTournaments(string userId)
         {
+            GameContext context = new GameContext();
             List<TournamentDto> createdTournaments =
-                _context.Tournaments
+                context.Tournaments
                     .Where(tournament => tournament.CreatorID.Equals(userId))
                     .Select(tournament => new TournamentDto
                     {
@@ -231,7 +233,7 @@ namespace fantasy_hoops.Repositories
                         Contests = tournament.Contests,
                         DroppedContests = tournament.DroppedContests,
                         Winner = tournament.WinnerID != null
-                            ? _context.Users
+                            ? context.Users
                                 .Where(user => user.Id.Equals(tournament.WinnerID))
                                 .Select(user => new UserDto
                                 {
@@ -244,7 +246,7 @@ namespace fantasy_hoops.Repositories
                     })
                     .ToList();
             List<TournamentDto> joinedTournaments =
-                _context.TournamentUsers
+                context.TournamentUsers
                     .Include(tournamentUser => tournamentUser.Tournament)
                     .Where(tournamentUser => tournamentUser.UserID.Equals(userId)
                                              && !tournamentUser.Tournament.CreatorID.Equals(userId))
@@ -264,7 +266,7 @@ namespace fantasy_hoops.Repositories
                         Contests = tournament.Contests,
                         DroppedContests = tournament.DroppedContests,
                         Winner = tournament.WinnerID != null
-                            ? _context.Users
+                            ? context.Users
                                 .Where(user => user.Id.Equals(tournament.WinnerID))
                                 .Select(user => new UserDto
                                 {
@@ -286,9 +288,10 @@ namespace fantasy_hoops.Repositories
 
         public bool CreateTournament(Tournament tournament)
         {
-            _context.Tournaments.Add(tournament);
+            GameContext context = new GameContext();
+           context.Tournaments.Add(tournament);
 
-            return _context.SaveChanges() > 0;
+            return context.SaveChanges() > 0;
         }
 
         public bool TournamentExists(Tournament tournament)
@@ -298,12 +301,12 @@ namespace fantasy_hoops.Repositories
 
         public bool TournamentExists(string id)
         {
-            return _context.Tournaments.Any(tournament => tournament.Id.Equals(id));
+            return new GameContext().Tournaments.Any(tournament => tournament.Id.Equals(id));
         }
 
         public bool TournamentNameExists(string name)
         {
-            return _context.Tournaments.Any(tournament => tournament.Title.ToUpper().Equals(name.ToUpper()));
+            return new GameContext().Tournaments.Any(tournament => tournament.Title.ToUpper().Equals(name.ToUpper()));
         }
 
         public bool IsUserInTournament(User user, string tournamentId)
@@ -323,21 +326,21 @@ namespace fantasy_hoops.Repositories
 
         public List<Tournament> GetTournamentsForStartDate(DateTime startDate)
         {
-            return _context.Tournaments
+            return new GameContext().Tournaments
                 .Where(tournament => tournament.StartDate.Date == startDate.Date)
                 .ToList();
         }
 
         public List<Contest> GetTournamentContests(string tournamentId)
         {
-            return _context.Contests
+            return new GameContext().Contests
                 .Where(contest => contest.TournamentId.Equals(tournamentId))
                 .ToList();
         }
 
         public List<ContestDto> GetAllCurrentContests()
         {
-            return _context.Contests
+            return new GameContext().Contests
                 .Where(contest => !contest.IsFinished
                                   && contest.ContestStart < CommonFunctions.Instance.EtcNow()
                                   && contest.ContestEnd > CommonFunctions.Instance.EtcNow())
@@ -384,8 +387,9 @@ namespace fantasy_hoops.Repositories
                 return false;
             }
 
-            _context.Tournaments.Remove(tournament);
-            return _context.SaveChanges() != 0;
+            GameContext context = new GameContext();
+            context.Tournaments.Remove(tournament);
+            return context.SaveChanges() != 0;
         }
 
         public bool DeleteTournament(string tournamentId)
@@ -396,13 +400,15 @@ namespace fantasy_hoops.Repositories
                 return false;
             }
 
-            _context.Tournaments.Remove(tournamentToDelete);
-            return _context.SaveChanges() != 0;
+            GameContext context = new GameContext();
+            context.Tournaments.Remove(tournamentToDelete);
+            return context.SaveChanges() != 0;
         }
 
         public List<TournamentDto> GetTournamentInvitations(string userId)
         {
-            return _context.TournamentInvites
+            GameContext context = new GameContext();
+            return context.TournamentInvites
                 .Include(invite => invite.Tournament)
                 .Where(invite => invite.Status == RequestStatus.PENDING && invite.InvitedUserID.Equals(userId))
                 .Select(invite => invite.Tournament)
@@ -421,7 +427,7 @@ namespace fantasy_hoops.Repositories
                     Contests = tournament.Contests,
                     DroppedContests = tournament.DroppedContests,
                     Winner = tournament.WinnerID != null
-                        ? _context.Users
+                        ? context.Users
                             .Where(user => user.Id.Equals(tournament.WinnerID))
                             .Select(user => new UserDto
                             {
@@ -438,26 +444,28 @@ namespace fantasy_hoops.Repositories
         public bool ChangeInvitationStatus(string tournamentId, string userId,
             RequestStatus status = RequestStatus.NO_REQUEST)
         {
-            TournamentInvite invitation = _context.TournamentInvites
+            GameContext context = new GameContext();
+            TournamentInvite invitation = context.TournamentInvites
                 .FirstOrDefault(invite =>
                     invite.TournamentID.Equals(tournamentId) && invite.InvitedUserID.Equals(userId));
             if (invitation == null)
             {
-                _context.TournamentInvites.Add(new TournamentInvite
+                context.TournamentInvites.Add(new TournamentInvite
                 {
                     InvitedUserID = userId,
                     TournamentID = tournamentId,
                     Status = status
                 });
-                return _context.SaveChanges() != 0;
+                return context.SaveChanges() != 0;
             }
 
             invitation.Status = status;
-            return _context.SaveChanges() != 0;
+            return context.SaveChanges() != 0;
         }
 
         public User SetTournamentUserEliminated(TournamentUserDto tournamentUser)
         {
+            GameContext context = new GameContext();
             TournamentUser dbTournamentUser = GetTournamentUser(tournamentUser.TournamentId, tournamentUser.UserId);
             if (dbTournamentUser == null)
             {
@@ -465,13 +473,13 @@ namespace fantasy_hoops.Repositories
             }
 
             dbTournamentUser.IsEliminated = true;
-            _context.SaveChanges();
-            return _context.Users.Find(dbTournamentUser.UserID);
+            context.SaveChanges();
+            return context.Users.Find(dbTournamentUser.UserID);
         }
 
         public Contest GetContestById(int contestId)
         {
-            return _context.Contests.Find(contestId);
+            return new GameContext().Contests.Find(contestId);
         }
 
         public void UpdateTournamentUserStats(TournamentUser tournamentUser, int wins, int losses, int points)
@@ -490,7 +498,8 @@ namespace fantasy_hoops.Repositories
 
         public void RemoveUserMatchup(string userId, int contestId)
         {
-            MatchupPair matchupToRemove = _context.TournamentMatchups
+            GameContext context = new GameContext();
+            MatchupPair matchupToRemove = context.TournamentMatchups
                 .FirstOrDefault(matchup => matchup.ContestId == contestId && matchup.FirstUserID.Equals(userId)
                                                                           && matchup.SecondUserID.Equals(userId));
             if (matchupToRemove == null)
@@ -498,8 +507,8 @@ namespace fantasy_hoops.Repositories
                 return;
             }
 
-            _context.TournamentMatchups.Remove(matchupToRemove);
-            _context.SaveChanges();
+            context.TournamentMatchups.Remove(matchupToRemove);
+            context.SaveChanges();
         }
 
         public bool UpdateTournament(Tournament tournament, CreateTournamentViewModel model)
@@ -516,37 +525,38 @@ namespace fantasy_hoops.Repositories
 
         public List<MatchupPair> GetContestMatchups(int contestId)
         {
-            return _context.TournamentMatchups
+            return new GameContext().TournamentMatchups
                 .Where(matchup => matchup.ContestId == contestId)
                 .ToList();
         }
 
         private bool DeleteTournamentResources(Tournament tournamentToDelete)
         {
-            List<MatchupPair> matchupsToDelete = _context.TournamentMatchups
+            GameContext context = new GameContext();
+            List<MatchupPair> matchupsToDelete = context.TournamentMatchups
                 .Where(matchup => tournamentToDelete.Id.Equals(matchup.TournamentID)).ToList();
-            List<Contest> contestsToDelete = _context.Contests
+            List<Contest> contestsToDelete = context.Contests
                 .Where(contest => tournamentToDelete.Id.Equals(contest.TournamentId)).ToList();
-            List<TournamentInvite> invitesToDelete = _context.TournamentInvites
+            List<TournamentInvite> invitesToDelete = context.TournamentInvites
                 .Where(invite => tournamentToDelete.Id.Equals(invite.TournamentID)).ToList();
-            List<RequestNotification> requestNotificationsToDelete = _context.RequestNotifications
+            List<RequestNotification> requestNotificationsToDelete = context.RequestNotifications
                 .Where(notification => tournamentToDelete.Id.Equals(notification.TournamentId)).ToList();
-            List<TournamentUser> tournamentUsersToDelete = _context.TournamentUsers
+            List<TournamentUser> tournamentUsersToDelete = context.TournamentUsers
                 .Where(tournamentUser => tournamentToDelete.Id.Equals(tournamentUser.TournamentID)).ToList();
 
 
-            _context.TournamentMatchups.RemoveRange(matchupsToDelete);
-            _context.Contests.RemoveRange(contestsToDelete);
-            _context.TournamentInvites.RemoveRange(invitesToDelete);
-            _context.Notifications.RemoveRange(requestNotificationsToDelete);
-            _context.TournamentUsers.RemoveRange(tournamentUsersToDelete);
+            context.TournamentMatchups.RemoveRange(matchupsToDelete);
+            context.Contests.RemoveRange(contestsToDelete);
+            context.TournamentInvites.RemoveRange(invitesToDelete);
+            context.Notifications.RemoveRange(requestNotificationsToDelete);
+            context.TournamentUsers.RemoveRange(tournamentUsersToDelete);
 
-            return _context.SaveChanges() != 0;
+            return context.SaveChanges() != 0;
         }
 
         public List<String> GetTournamentUsersIds(string tournamentId)
         {
-            return _context.TournamentUsers
+            return new GameContext().TournamentUsers
                 .Include(tournamentUser => tournamentUser.User)
                 .Where(tournamentUser => tournamentUser.TournamentID.Equals(tournamentId))
                 .Select(tournamentUser => tournamentUser.UserID)
@@ -555,47 +565,49 @@ namespace fantasy_hoops.Repositories
 
         public TournamentUser GetTournamentUser(string tournamentId, string userId)
         {
-            return _context.TournamentUsers.Find(tournamentId, userId);
+            return new GameContext().TournamentUsers.Find(tournamentId, userId);
         }
 
         public void AddCreatorToTournament(Tournament tournament)
         {
-            if (!_context.TournamentUsers.Any(tournamentUser => tournamentUser.UserID.Equals(tournament.CreatorID)
+            GameContext context = new GameContext();
+            if (!context.TournamentUsers.Any(tournamentUser => tournamentUser.UserID.Equals(tournament.CreatorID)
                                                                 && tournamentUser.TournamentID.Equals(tournament.Id)))
             {
-                _context.TournamentUsers.Add(new TournamentUser
+                context.TournamentUsers.Add(new TournamentUser
                 {
                     UserID = tournament.CreatorID,
                     TournamentID = tournament.Id
                 });
-                _context.SaveChanges();
+                context.SaveChanges();
             }
         }
 
         public bool AddUserToTournament(string userId, string tournamentId)
         {
-            Tournament tournament = _context.Tournaments.Find(tournamentId);
+            GameContext context = new GameContext();
+            Tournament tournament = context.Tournaments.Find(tournamentId);
             int tournamentUsersCount =
-                _context.TournamentUsers.Count(tournamentUser => tournamentUser.TournamentID.Equals(tournamentId));
+                context.TournamentUsers.Count(tournamentUser => tournamentUser.TournamentID.Equals(tournamentId));
             if (tournament.Entrants == tournamentUsersCount)
             {
                 return false;
             }
 
-            _context.TournamentUsers.Add(new TournamentUser
+            context.TournamentUsers.Add(new TournamentUser
             {
                 UserID = userId,
                 TournamentID = tournamentId
             });
-            return _context.SaveChanges() != 0;
+            return context.SaveChanges() != 0;
         }
 
         public bool IsUserInTournament(string userId, string tournamentId)
         {
-            bool isTournamentPlayer = _context.TournamentUsers
+            bool isTournamentPlayer = new GameContext().TournamentUsers
                 .Any(tournamentUser => tournamentUser.TournamentID.Equals(tournamentId)
                                        && tournamentUser.UserID.Equals(userId));
-            bool isCreator = _context.Tournaments.Any(tournament => tournament.Id.Equals(tournamentId)
+            bool isCreator = new GameContext().Tournaments.Any(tournament => tournament.Id.Equals(tournamentId)
                                                                     && tournament.CreatorID.Equals(userId));
 
             return isTournamentPlayer || isCreator;
@@ -603,7 +615,7 @@ namespace fantasy_hoops.Repositories
 
         public bool IsUserInvited(string userId, string tournamentId)
         {
-            return _context.TournamentInvites.Any(invite =>
+            return new GameContext().TournamentInvites.Any(invite =>
                 invite.TournamentID.Equals(tournamentId) && invite.InvitedUserID.Equals(userId));
         }
     }

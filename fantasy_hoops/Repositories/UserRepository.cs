@@ -28,7 +28,7 @@ namespace fantasy_hoops.Repositories
         public object GetProfile(string id, int start, int count)
         {
             int position = GetPosition(id);
-            return _context.Users
+            return new GameContext().Users
                 .Where(user => user.Id.Equals(id))
                 .Include(user => user.FavoriteTeam)
                 .Include(user => user.UserLineups)
@@ -57,26 +57,27 @@ namespace fantasy_hoops.Repositories
 
         public User GetUserById(string id)
         {
-            return _context.Users.Find(id);
+            return new GameContext().Users.Find(id);
         }
 
         public User GetUserByName(string username)
         {
-            return _context.Users
+            return new GameContext().Users
                 .FirstOrDefault(x => x.UserName.ToLower().Equals(username.ToLower()));
         }
 
         public User GetUserByEmail(string email)
         {
-            return _context.Users
+            return new GameContext().Users
                 .FirstOrDefault(user => user.Email.ToLower().Equals(email.ToLower()));
         }
 
         public IQueryable<object> Roles(string id)
         {
-            return _context.UserRoles
+            GameContext context = new GameContext();
+            return context.UserRoles
                 .Where(userRole => userRole.UserId.Equals(id))
-                .Join(_context.Roles,
+                .Join(context.Roles,
                     userRole => userRole.RoleId,
                     role => role.Id,
                     (userRole, role) => role.NormalizedName);
@@ -84,37 +85,39 @@ namespace fantasy_hoops.Repositories
 
         public bool IsAdmin(string userId)
         {
-            string adminRoleId = _context.Roles
+            GameContext context = new GameContext();
+            string adminRoleId = context.Roles
                 .Where(role => role.NormalizedName.Equals("Admin"))
                 .Select(role => role.Id)
                 .FirstOrDefault();
 
-            return _context.UserRoles
+            return context.UserRoles
                 .Where(userRole => userRole.UserId.Equals(userId))
                 .Any(role => role.RoleId.Equals(adminRoleId));
         }
 
         public IQueryable<Object> GetFriends(string id)
         {
-            var friends = _context.FriendRequests
+            GameContext context = new GameContext();
+            var friends = context.FriendRequests
                 .Where(x => x.ReceiverID.Equals(id) && x.Status.Equals(RequestStatus.ACCEPTED))
                 .Select(x => new
                 {
                     id = x.SenderID,
                     x.Sender.UserName,
-                    Color = _context.Teams
+                    Color = context.Teams
                         .Where(t => t.TeamID == x.Sender.FavoriteTeamId)
                         .Select(t => t.Color)
                         .FirstOrDefault(),
                     x.Sender.AvatarURL
                 })
-                .Union(_context.FriendRequests
+                .Union(context.FriendRequests
                     .Where(x => x.SenderID.Equals(id) && x.Status.Equals(RequestStatus.ACCEPTED))
                     .Select(x => new
                     {
                         id = x.ReceiverID,
                         x.Receiver.UserName,
-                        Color = _context.Teams
+                        Color = context.Teams
                             .Where(t => t.TeamID == x.Receiver.FavoriteTeamId)
                             .Select(t => t.Color)
                             .FirstOrDefault(),
@@ -126,17 +129,19 @@ namespace fantasy_hoops.Repositories
 
         public IQueryable<Object> GetTeam(string id)
         {
-            return _context.Users
+            GameContext context = new GameContext();
+            return context.Users
                 .Where(usr => usr.Id.Equals(id))
                 .Select(x => new
                 {
-                    team = _context.Teams.FirstOrDefault(team => team.TeamID == x.FavoriteTeamId)
+                    team = context.Teams.FirstOrDefault(team => team.TeamID == x.FavoriteTeamId)
                 });
         }
 
         public IQueryable<Object> GetUserPool()
         {
-            return _context.Users
+            GameContext context = new GameContext();
+            return context.Users
                 .Include(user => user.FavoriteTeam)
                 .Select(user => new
                 {
@@ -146,9 +151,9 @@ namespace fantasy_hoops.Repositories
                         ? DEFAULT_COLOR
                         : user.FavoriteTeam.Color,
                     user.AvatarURL,
-                    roles = _context.UserRoles
+                    roles = context.UserRoles
                         .Where(userRole => userRole.UserId.Equals(user.Id))
-                        .Select(userRole => _context.Roles.FirstOrDefault(role => role.Id.Equals(userRole.RoleId)).Name)
+                        .Select(userRole => context.Roles.FirstOrDefault(role => role.Id.Equals(userRole.RoleId)).Name)
                         .ToList()
                 })
                 .OrderBy(user => user.UserName);
@@ -156,7 +161,7 @@ namespace fantasy_hoops.Repositories
 
         public List<UserDto> GetAllUsers()
         {
-            return _context.Users
+            return new GameContext().Users
                 .Select(user => new UserDto
                 {
                     UserId = user.Id,
@@ -168,62 +173,63 @@ namespace fantasy_hoops.Repositories
 
         public bool UserExists(string username)
         {
-            return _context.Users
+            return new GameContext().Users
                 .Any(x => x.UserName.ToLower().Equals(username.ToLower()));
         }
 
         public bool EmailExists(string email)
         {
-            return _context.Users
+            return new GameContext().Users
                 .Any(x => x.Email.ToLower().Equals(email.ToLower()));
         }
 
         public bool IsDuplicateUserName(string id, string username)
         {
-            return _context.Users.Any(x => x.UserName.ToLower().Equals(username.ToLower()) && !x.Id.Equals(id));
+            return new GameContext().Users.Any(x => x.UserName.ToLower().Equals(username.ToLower()) && !x.Id.Equals(id));
         }
 
         public bool IsDuplicateEmail(string id, string email)
         {
-            return _context.Users.Any(x => x.Email.ToLower().Equals(email.ToLower()) && !x.Id.Equals(id));
+            return new GameContext().Users.Any(x => x.Email.ToLower().Equals(email.ToLower()) && !x.Id.Equals(id));
         }
 
         public string GetAdminRoleId()
         {
-            return _context.Roles.FirstOrDefault(role => role.Name.Equals("Admin"))?.Id;
+            return new GameContext().Roles.FirstOrDefault(role => role.Name.Equals("Admin"))?.Id;
         }
 
         public List<IdentityUserRole<string>> GetAdmins(string adminRoleId)
         {
-            return _context.UserRoles.Where(userRole => userRole.RoleId.Equals(adminRoleId)).ToList();
+            return new GameContext().UserRoles.Where(userRole => userRole.RoleId.Equals(adminRoleId)).ToList();
         }
 
         public void DeleteUserResources(User userToDelete)
         {
-            var friendRequests = _context.FriendRequests
+            GameContext context = new GameContext();
+            var friendRequests = context.FriendRequests
                 .Where(request =>
                     request.ReceiverID.Equals(userToDelete.Id) || request.SenderID.Equals(userToDelete.Id))
                 .ToList();
-            _context.FriendRequests.RemoveRange(friendRequests);
-            var notifications = _context.Notifications
+            context.FriendRequests.RemoveRange(friendRequests);
+            var notifications = context.Notifications
                 .Where(notification => notification.ReceiverID.Equals(userToDelete.Id))
                 .ToList();
-            _context.Notifications.RemoveRange(notifications);
-            var frNotifications = _context.RequestNotifications
+            context.Notifications.RemoveRange(notifications);
+            var frNotifications = context.RequestNotifications
                 .Where(notification => notification.SenderID.Equals(userToDelete.Id))
                 .ToList();
-            _context.RequestNotifications.RemoveRange(frNotifications);
-            var lineups = _context.UserLineups
+            context.RequestNotifications.RemoveRange(frNotifications);
+            var lineups = context.UserLineups
                 .Where(lineup => lineup.UserID.Equals(userToDelete.Id))
                 .ToList();
-            _context.UserLineups.RemoveRange(lineups);
+            context.UserLineups.RemoveRange(lineups);
 
-            _context.SaveChanges();
+            context.SaveChanges();
         }
 
         private int GetPosition(string id)
         {
-            return _context.UserLineups
+            return new GameContext().UserLineups
                 .Where(lineup => lineup.Date >= _date)
                 .AsEnumerable()
                 .GroupBy(lineup => lineup.UserID)

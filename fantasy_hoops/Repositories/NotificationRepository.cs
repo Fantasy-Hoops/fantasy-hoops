@@ -27,7 +27,8 @@ namespace fantasy_hoops.Repositories
 
         public List<NotificationDto> GetAllNotifications()
         {
-            return _context.Notifications.OfType<GameScoreNotification>()
+            GameContext context = new GameContext();
+            return context.Notifications.OfType<GameScoreNotification>()
                 .Select(notification => new NotificationDto
                 {
                     NotificationID = notification.NotificationID,
@@ -36,7 +37,7 @@ namespace fantasy_hoops.Repositories
                     ReadStatus = notification.ReadStatus,
                     Score = notification.Score
                 }).ToList()
-                .Union(_context.Notifications
+                .Union(context.Notifications
                     .OfType<InjuryNotification>()
                     .Include(notification => notification.Player)
                     .ThenInclude(player => player.Team)
@@ -54,7 +55,7 @@ namespace fantasy_hoops.Repositories
                         InjuryStatus = notification.InjuryStatus,
                         InjuryDescription = notification.InjuryDescription
                     })).ToList()
-                .Union(_context.Notifications
+                .Union(context.Notifications
                     .OfType<RequestNotification>()
                     .Include(notification => notification.Sender)
                     .Select(notification => new NotificationDto
@@ -73,9 +74,10 @@ namespace fantasy_hoops.Repositories
 
         public List<NotificationDto> GetNotifications(string userID, int start, int count)
         {
+            GameContext context = new GameContext();
             if (count == 0)
-                count = _context.Notifications.Count(y => y.ReceiverID.Equals(userID));
-            return _context.Notifications.OfType<GameScoreNotification>()
+                count = context.Notifications.Count(y => y.ReceiverID.Equals(userID));
+            return context.Notifications.OfType<GameScoreNotification>()
                 .Select(notification => new NotificationDto
                 {
                     NotificationID = notification.NotificationID,
@@ -84,7 +86,7 @@ namespace fantasy_hoops.Repositories
                     ReadStatus = notification.ReadStatus,
                     Score = notification.Score
                 }).ToList()
-                .Union(_context.Notifications
+                .Union(context.Notifications
                     .OfType<InjuryNotification>()
                     .Include(notification => notification.Player)
                     .ThenInclude(player => player.Team)
@@ -102,7 +104,7 @@ namespace fantasy_hoops.Repositories
                         InjuryStatus = notification.InjuryStatus,
                         InjuryDescription = notification.InjuryDescription
                     })).ToList()
-                .Union(_context.Notifications
+                .Union(context.Notifications
                     .OfType<RequestNotification>()
                     .Include(notification => notification.Sender)
                     .Select(notification => new NotificationDto
@@ -126,7 +128,7 @@ namespace fantasy_hoops.Repositories
 
         public void AddTournamentRequestNotification(Tournament tournament, string receiverId, string senderId)
         {
-            string senderUsername = _context.Users.Find(senderId).UserName;
+            string senderUsername = new GameContext().Users.Find(senderId).UserName;
             string message = $"User {senderUsername} invited you to join the tournament: {tournament.Title}";
             if (AddRequestNotification(RequestNotification.Type.TOURNAMENT, receiverId, senderId, message, tournament.Id))
             {
@@ -150,24 +152,27 @@ namespace fantasy_hoops.Repositories
                 TournamentId = tournamentId
             };
 
-            _context.RequestNotifications.Add(notification);
-            return _context.SaveChanges() > 0;
+            GameContext context = new GameContext();
+            context.RequestNotifications.Add(notification);
+            return context.SaveChanges() > 0;
         }
 
         public void RemoveFriendRequestNotification(string userID, string friendID)
         {
-            var notifications = _context.RequestNotifications
+            GameContext context = new GameContext();
+            var notifications = context.RequestNotifications
                 .Where(x => x.ReceiverID.Equals(userID) && x.SenderID.Equals(friendID)).ToList();
 
             if (notifications != null)
-                _context.RequestNotifications.RemoveRange(notifications);
+                context.RequestNotifications.RemoveRange(notifications);
 
-            _context.SaveChanges();
+            context.SaveChanges();
         }
 
         public void ReadNotification(NotificationViewModel model)
         {
-            Notification notification = _context.Notifications
+            GameContext context = new GameContext();
+            Notification notification = context.Notifications
                 .FirstOrDefault(x => x.NotificationID == model.NotificationID && x.ReceiverID.Equals(model.ReceiverID));
 
             if (notification == null)
@@ -176,17 +181,18 @@ namespace fantasy_hoops.Repositories
             }
 
             notification.ReadStatus = true;
-            _context.SaveChanges();
+            context.SaveChanges();
         }
 
         public void ReadAllNotifications(string userID)
         {
-            _context.Notifications
+            GameContext context = new GameContext();
+            context.Notifications
                 .Where(x => x.ReceiverID.Equals(userID) && x.ReadStatus == false)
                 .ToList()
                 .ForEach(n => n.ReadStatus = true);
 
-            _context.SaveChanges();
+            context.SaveChanges();
         }
     }
 }

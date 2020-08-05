@@ -16,11 +16,12 @@ namespace fantasy_hoops.Repositories
 
         public IQueryable<Object> GetInjuries()
         {
-            var injuries = _context.Injuries
+            GameContext context = new GameContext();
+            var injuries = context.Injuries
                 .Where(injury => injury.Date > DateTime.UtcNow.AddDays(-3));
             injuries = injuries.Count() > 10
                 ? injuries
-                : _context.Injuries
+                : context.Injuries
                     .OrderByDescending(injury => injury.Date)
                     .Take(30);
             

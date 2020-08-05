@@ -19,6 +19,7 @@ namespace fantasy_hoops.Repositories
 
         public void CreateRequest(string senderID, string receiverID, RequestStatus status)
         {
+            GameContext context = new GameContext();
             var request = new FriendRequest
             {
                 SenderID = senderID,
@@ -26,13 +27,14 @@ namespace fantasy_hoops.Repositories
                 Date = DateTime.UtcNow,
                 Status = status
             };
-            _context.FriendRequests.Add(request);
-            _context.SaveChanges();
+            context.FriendRequests.Add(request);
+            context.SaveChanges();
         }
 
         public IQueryable<Object> GetRequests(string id)
         {
-            return _context.FriendRequests
+            GameContext context = new GameContext();
+            return context.FriendRequests
                 .Where(x => x.SenderID.Equals(id) && x.Status.Equals(RequestStatus.PENDING))
                 .Select(x => new
                 {
@@ -41,7 +43,7 @@ namespace fantasy_hoops.Repositories
                     x.Receiver.AvatarURL,
                     Status = RequestType.Outcoming
                 })
-                .Union(_context.FriendRequests
+                .Union(context.FriendRequests
                     .Where(x => x.ReceiverID.Equals(id) && x.Status.Equals(RequestStatus.PENDING))
                     .Select(x => new
                     {
@@ -55,7 +57,7 @@ namespace fantasy_hoops.Repositories
 
         public IQueryable<Object> GetPendingRequests(string id)
         {            
-            return _context.FriendRequests
+            return new GameContext().FriendRequests
                 .Where(x => x.ReceiverID.Equals(id) && x.Status.Equals(RequestStatus.PENDING))
                 .Select(x => new
                 {
@@ -67,7 +69,7 @@ namespace fantasy_hoops.Repositories
 
         public FriendRequest GetRequest(string senderID, string receiverID)
         {
-            return _context.FriendRequests
+            return new GameContext().FriendRequests
                  .Where(x => x.SenderID.Equals(senderID) && x.ReceiverID.Equals(receiverID))
                  .FirstOrDefault();
         }
@@ -100,7 +102,7 @@ namespace fantasy_hoops.Repositories
 
         public bool AreUsersFriends(string firstUserId, string secondUserId)
         {
-            return _context.FriendRequests
+            return new GameContext().FriendRequests
                 .Where(request => request.SenderID.Equals(firstUserId) && request.ReceiverID.Equals(secondUserId)
                                   || request.SenderID.Equals(secondUserId) && request.ReceiverID.Equals(firstUserId))
                 .Any(request => request.Status == RequestStatus.ACCEPTED);

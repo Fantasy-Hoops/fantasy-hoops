@@ -21,7 +21,7 @@ namespace fantasy_hoops.Repositories
 
         public Dictionary<String, List<NewsDto>> GetNews(int start, int count)
         {
-            return _context.News
+            return new GameContext().News
                 .OrderByDescending(news => news.Date)
                 .Skip(start)
                 .Take(count)
@@ -48,7 +48,7 @@ namespace fantasy_hoops.Repositories
 
         public List<NewsDto> GetPreviews(int start, int count)
         {
-            return _context.News
+            return new GameContext().News
                 .Where(news => news.Type == NewsType.PREVIEW)
                 .OrderByDescending(news => news.Date)
                 .Skip(start)
@@ -75,7 +75,7 @@ namespace fantasy_hoops.Repositories
 
         public List<NewsDto> GetRecaps(int start, int count)
         {
-            return _context.News
+            return new GameContext().News
                 .Where(news => news.Type == NewsType.RECAP)
                 .OrderByDescending(news => news.Date)
                 .Skip(start)

@@ -41,7 +41,8 @@ namespace fantasy_hoops.Jobs
 
         private void AddToDatabase(JToken injury, DateTime? dateModified)
         {
-            Player injuryPlayer = _context.Players.FirstOrDefault(x => x.NbaID == (int) injury["PrimarySourceKey"]);
+            GameContext context = new GameContext();
+            Player injuryPlayer = context.Players.FirstOrDefault(x => x.NbaID == (int) injury["PrimarySourceKey"]);
 
             if (injuryPlayer == null)
                 return;
@@ -58,7 +59,7 @@ namespace fantasy_hoops.Jobs
                 PlayerID = injuryPlayer.PlayerID
             };
 
-            var dbInjury = _context.Injuries
+            var dbInjury = context.Injuries
                 .FirstOrDefault(inj => inj.Player.NbaID == (int) injury["PrimarySourceKey"]);
 
             string statusBefore = dbInjury?.Status;
@@ -67,7 +68,7 @@ namespace fantasy_hoops.Jobs
 
             if (dbInjury == null)
             {
-                _context.Injuries.Add(injuryObj);
+                context.Injuries.Add(injuryObj);
             }
             else
             {
@@ -81,8 +82,8 @@ namespace fantasy_hoops.Jobs
                 dbInjury.PlayerID = injuryPlayer.PlayerID;
             }
 
-            _context.Injuries.Update(dbInjury);
-            _context.SaveChanges();
+            context.Injuries.Update(dbInjury);
+            context.SaveChanges();
 
             if (statusAfter != null && (statusAfter.Equals("Active") && !injuryPlayer.IsPlaying))
             {
@@ -98,7 +99,8 @@ namespace fantasy_hoops.Jobs
 
         private void UpdateNotifications(Injury injury, string statusBefore, string statusAfter)
         {
-            foreach (var lineup in _context.UserLineups
+            GameContext context = new GameContext();
+            foreach (var lineup in context.UserLineups
                 .Where(x => x.Date.Equals(CommonFunctions.Instance.UTCToEastern(RuntimeUtils.NEXT_GAME).Date)
                             && (x.PgID == injury.PlayerID
                                 || x.SgID == injury.PlayerID
@@ -124,10 +126,10 @@ namespace fantasy_hoops.Jobs
                     InjuryDescription = injury.InjuryTitle
                 };
 
-                if (!_context.InjuryNotifications
+                if (!context.InjuryNotifications
                     .Any(x => x.InjuryStatus.Equals(inj.InjuryStatus) && x.PlayerID == inj.PlayerID))
-                    _context.InjuryNotifications.Add(inj);
-                _context.SaveChanges();
+                    context.InjuryNotifications.Add(inj);
+                context.SaveChanges();
             }
         }
 
@@ -150,6 +152,7 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
+            GameContext context = new GameContext();
             int seasonYear = int.Parse(CommonFunctions.Instance.GetSeasonYear());
             IEnumerable<JToken> injuries = GetInjuries()
                 .Where(inj => inj.Value<string>("ModifiedDate") == null
@@ -170,7 +173,7 @@ namespace fantasy_hoops.Jobs
                         : dateModified;
                 }
 
-                if (_context.Injuries
+                if (context.Injuries
                     .Where(inj => inj.Player.NbaID == nbaId)
                     .Any(inj => inj.Status.Equals((string) injury["PlayerStatus"])
                                 && dateModified.Equals(inj.Date)))
@@ -186,7 +189,7 @@ namespace fantasy_hoops.Jobs
                 }
             }
 
-            _context.SaveChanges();
+            context.SaveChanges();
             Task.Run(() => SendPushNotifications()).Wait();
         }
     }

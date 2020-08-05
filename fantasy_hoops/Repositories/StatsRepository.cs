@@ -20,7 +20,8 @@ namespace fantasy_hoops.Repositories
 
         public List<StatsDto> GetStats()
         {
-            return _context.Players
+            GameContext context = new GameContext();
+            return context.Players
                 .Include(player => player.Team)
                 .Select(player => new StatsDto
                 {
@@ -54,7 +55,7 @@ namespace fantasy_hoops.Repositories
                         {
                             StatsID = stats.StatsID,
                             Date = stats.Date,
-                            Opponent = _context.Teams.Select(opponent => new OpponentDto
+                            Opponent = context.Teams.Select(opponent => new OpponentDto
                                 {
                                     NbaID = opponent.NbaID,
                                     Abbreviation = opponent.Abbreviation
@@ -91,14 +92,15 @@ namespace fantasy_hoops.Repositories
 
         public List<StatsDto> GetStats(int id, int start, int count)
         {
-            double maxPoints = _context.Players.Max(player => player.PTS),
-                   maxAssists = _context.Players.Max(player => player.AST),
-                   maxTurnovers = _context.Players.Max(player => player.TOV),
-                   maxRebounds = _context.Players.Max(player => player.REB),
-                   maxBlocks = _context.Players.Max(player => player.BLK),
-                   maxSteals = _context.Players.Max(player => player.STL);
+            GameContext context = new GameContext();
+            double maxPoints = context.Players.Max(player => player.PTS),
+                   maxAssists = context.Players.Max(player => player.AST),
+                   maxTurnovers = context.Players.Max(player => player.TOV),
+                   maxRebounds = context.Players.Max(player => player.REB),
+                   maxBlocks = context.Players.Max(player => player.BLK),
+                   maxSteals = context.Players.Max(player => player.STL);
 
-            return _context.Players
+            return context.Players
                 .Where(player => player.NbaID == id)
                 .Include(player => player.Team)
                 .Select(player => new StatsDto
@@ -145,7 +147,7 @@ namespace fantasy_hoops.Repositories
                     {
                         StatsID = stats.StatsID,
                         Date = stats.Date,
-                        Opponent = _context.Teams.Select(opponent => new OpponentDto
+                        Opponent = context.Teams.Select(opponent => new OpponentDto
                         {
                             NbaID = opponent.NbaID,
                             Abbreviation = opponent.Abbreviation
