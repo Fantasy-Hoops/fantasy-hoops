@@ -108,7 +108,7 @@ namespace fantasy_hoops.Services
             {
                 try
                 {
-                    _client.SendNotification(subscription.ToWebPushSubscription(), JsonConvert.SerializeObject(notification), _vapidDetails);
+                    await _client.SendNotificationAsync(subscription.ToWebPushSubscription(), JsonConvert.SerializeObject(notification), _vapidDetails);
                 }
                 catch (WebPushException e)
                 {
@@ -132,7 +132,9 @@ namespace fantasy_hoops.Services
         {
             string adminRoleID = _userRepository.GetAdminRoleId();
             foreach (var admin in _userRepository.GetAdmins(adminRoleID))
+            {
                 await Send(admin.UserId, notification);
+            }
         }
 
         public void SendNudgeNotifications()

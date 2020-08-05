@@ -118,12 +118,13 @@ namespace fantasy_hoops.Jobs
 
         public void UpdateActiveTournamentsScores(List<UserLineup> allLineups)
         {
+            GameContext context = new GameContext();
             List<ContestDto> currentContests = _tournamentsRepository.GetAllCurrentContests();
             foreach (var contest in currentContests)
             {
                 TournamentDetailsDto tournamentDetails =
                     _tournamentsRepository.GetTournamentDetails(contest.TournamentId);
-                Tournament dbTournament = _context.Tournaments.Find(contest.TournamentId);
+                Tournament dbTournament = context.Tournaments.Find(contest.TournamentId);
 
                 bool isContestFinished = contest.ContestEnd.DayOfWeek == DateTime.UtcNow.DayOfWeek;
                 bool isTournamentFinished = contest.ContestEnd.Date == dbTournament.EndDate.Date;
@@ -135,7 +136,7 @@ namespace fantasy_hoops.Jobs
                     double? secondUserScore =
                         allLineups.FirstOrDefault(lineup => lineup.UserID.Equals(matchup.SecondUser.UserId))?.FP;
 
-                    MatchupPair matchupPair = _context.TournamentMatchups
+                    MatchupPair matchupPair = context.TournamentMatchups
                         .Find(dbTournament.Id, matchup.FirstUser.UserId, matchup.SecondUser.UserId);
                     if (matchupPair == null)
                     {
@@ -144,13 +145,13 @@ namespace fantasy_hoops.Jobs
 
                     matchupPair.FirstUserScore += firstUserScore ?? 0.0;
                     matchupPair.SecondUserScore += secondUserScore ?? 0.0;
-                    _context.SaveChanges();
+                    context.SaveChanges();
                 }
 
 
                 if (isContestFinished)
                 {
-                    Contest dbContest = _context.Contests.Find(contest.Id);
+                    Contest dbContest = context.Contests.Find(contest.Id);
                     if (dbContest == null)
                     {
                         continue;
@@ -174,7 +175,7 @@ namespace fantasy_hoops.Jobs
                     dbTournament.Winner = _tournamentsService.GetTournamentWinner(tournamentDetails);
                 }
 
-                _context.SaveChanges();
+                context.SaveChanges();
                 new AchievementsJob(new PushService()).ExecuteTournamentWinnerAchievement(dbTournament.Winner);
             }
         }

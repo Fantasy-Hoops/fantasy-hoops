@@ -18,36 +18,38 @@ namespace fantasy_hoops.Repositories
 
         public void AddSubscription(PushSubscription subscription)
         {
-            _context.PushSubscriptions.Add(subscription);
-            _context.SaveChanges();
+            GameContext gameContext = new GameContext();
+            gameContext.PushSubscriptions.Add(subscription);
+            gameContext.SaveChanges();
         }
 
         public IEnumerable<PushSubscription> GetAllSubscriptions()
         {
-            return _context.PushSubscriptions.ToList();
+            return new GameContext().PushSubscriptions.ToList();
         }
 
         public PushSubscription GetByP256Dh(string p256dh)
         {
-            return _context.PushSubscriptions.Find(p256dh);
+            return new GameContext().PushSubscriptions.Find(p256dh);
         }
 
         public IEnumerable<PushSubscription> GetUserSubscriptions(string userId)
         {
-            return _context.PushSubscriptions
+            return new GameContext().PushSubscriptions
                 .Where(sub => sub.UserID.Equals(userId))
                 .ToList();
         }
 
         public void RemoveSubscription(PushSubscription subscription)
         {
-            _context.PushSubscriptions.Remove(subscription);
-            _context.SaveChanges();
+            GameContext context = new GameContext();
+            context.PushSubscriptions.Remove(subscription);
+            context.SaveChanges();
         }
 
         public bool SubscriptionExists(PushSubscription subscription)
         {
-            return _context.PushSubscriptions.Any(s => s.P256Dh == subscription.P256Dh);
+            return new GameContext().PushSubscriptions.Any(s => s.P256Dh == subscription.P256Dh);
         }
     }
 }

@@ -193,10 +193,11 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
+            GameContext context = new GameContext();
             List<JToken> teams = GetTeams();
             System.Threading.Thread.Sleep(1000);
-            var dbPlayers = _context.Players.ToList();
-            var dbTeams = _context.Teams.ToList();
+            var dbPlayers = context.Players.ToList();
+            var dbTeams = context.Teams.ToList();
             foreach (var team in teams)
             {
                 int teamNbaId = (int)team["reference"];
@@ -218,7 +219,7 @@ namespace fantasy_hoops.Jobs
                 Team dbTeam = dbTeams.FirstOrDefault(t => t.NbaID == teamNbaId);
                 List<JToken> roster = GetRoster((string)team["id"]);
                 System.Threading.Thread.Sleep(1000);
-                _context.Players
+                context.Players
                     .Where(p => p.TeamID == dbTeam.TeamID)
                     .ToList()
                     .ForEach(player =>
@@ -241,7 +242,7 @@ namespace fantasy_hoops.Jobs
                         if (dbPlayer.Team == null)
                         {
                             dbPlayer.Team = dbTeam;
-                            _context.SaveChanges();
+                            context.SaveChanges();
                         }
 
                         // UPDATE EXISTING
@@ -314,7 +315,7 @@ namespace fantasy_hoops.Jobs
                     }
                 }
             }
-            _context.SaveChanges();
+            context.SaveChanges();
         }
     }
 }
