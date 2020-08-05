@@ -37,7 +37,6 @@ namespace fantasy_hoops.Jobs
         
         public void Execute()
         {
-            GameContext context = new GameContext();
             JArray scheduledGames = GetLeagueSchedule(_seasonYear)["league"]["standard"] as JArray;
             if (scheduledGames == null)
             {
@@ -50,11 +49,11 @@ namespace fantasy_hoops.Jobs
             {
                 string hTeamReference = game["hTeam"]["teamId"].ToString();
                 string vTeamReference = game["vTeam"]["teamId"].ToString();
-                int hTeamId = context.Teams
+                int hTeamId = _context.Teams
                     .Where(team => team.NbaID == int.Parse(hTeamReference))
                     .Select(team => team.TeamID)
                     .FirstOrDefault();
-                int vTeamId = context.Teams
+                int vTeamId = _context.Teams
                     .Where(team => team.NbaID == int.Parse(vTeamReference))
                     .Select(team => team.TeamID)
                     .FirstOrDefault();
@@ -85,12 +84,12 @@ namespace fantasy_hoops.Jobs
                     SeasonId = season.Id
                 };
 
-                if (!context.Games.Any(dbGame => dbGame.Reference.Equals(reference)))
+                if (!_context.Games.Any(dbGame => dbGame.Reference.Equals(reference)))
                 {
-                    context.Games.Add(newGame);
+                    _context.Games.Add(newGame);
                 }
             }
-            context.SaveChanges();
+            _context.SaveChanges();
         }
         
         private JObject GetLeagueSchedule(string year)
@@ -106,8 +105,7 @@ namespace fantasy_hoops.Jobs
 
         private Season UpdateSeason(JArray scheduledGames)
         {
-            GameContext context = new GameContext();
-            Season dbSeason = context.Seasons.Include(season => season.Games).FirstOrDefault(season => season.Year == int.Parse(_seasonYear));
+            Season dbSeason = _context.Seasons.Include(season => season.Games).FirstOrDefault(season => season.Year == int.Parse(_seasonYear));
             IEnumerable<DateTime> gamesDates = scheduledGames.AsEnumerable().Select(GetDateECT).ToList();
             DateTime startDate = gamesDates.Min();
             DateTime endDate = gamesDates.Max();
@@ -134,7 +132,7 @@ namespace fantasy_hoops.Jobs
                     PlayoffGames = playoffGames,
                     Games = new List<Game>()
                 };
-                context.Seasons.Add(dbSeason);
+                _context.Seasons.Add(dbSeason);
             }
             else
             {
@@ -145,7 +143,7 @@ namespace fantasy_hoops.Jobs
                 dbSeason.PlayoffGames = playoffGames;
             }
 
-            context.SaveChanges();
+            _context.SaveChanges();
             return dbSeason;
         }
 

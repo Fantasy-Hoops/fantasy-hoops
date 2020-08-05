@@ -26,8 +26,7 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
-            GameContext context = new GameContext();
-            context.Database.SetCommandTimeout(0);
+            _context.Database.SetCommandTimeout(0);
             var previousGameStats = GetPreviousGameStats();
             var lineupsCombinations = CrossProductFunctions.CrossProduct(previousGameStats);
             using var lineupsEnumerator = lineupsCombinations.GetEnumerator();
@@ -78,13 +77,13 @@ namespace fantasy_hoops.Jobs
                 })
                 .ToList().ForEach(lineup =>
                 {
-                    bool bestLineupExists = context.BestLineups
+                    bool bestLineupExists = _context.BestLineups
                         .Any(x => Math.Round(x.TotalFP, 1).Equals(Math.Round(lineup.FP, 1))
                                              && x.LineupPrice == lineup.TotalPrice
                                              && x.Date.Equals(_date));
                     if (!bestLineupExists)
                     {
-                        context.BestLineups.Add(new BestLineup
+                        _context.BestLineups.Add(new BestLineup
                         {
                             Date = _date,
                             Lineup = lineup.Players.ToList(),
@@ -94,7 +93,7 @@ namespace fantasy_hoops.Jobs
                     }
                 });
 
-            context.SaveChanges();
+            _context.SaveChanges();
         }
 
         private IDictionary<string, List<LineupPlayerDto>> GetPreviousGameStats()
@@ -108,7 +107,7 @@ namespace fantasy_hoops.Jobs
                 {
                     Player = stats.Player,
                     FP = stats.FP,
-                    Price = stats.Price
+                    Price = stats.Player.PreviousPrice
                 })
                 .ToList();
             return allStats.GroupBy(stats => stats.Player.Position)

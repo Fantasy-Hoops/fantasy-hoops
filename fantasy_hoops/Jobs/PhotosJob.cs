@@ -27,7 +27,7 @@ namespace fantasy_hoops.Jobs
             if (!Directory.Exists(logosDir))
                 Directory.CreateDirectory(logosDir);
 
-            foreach (var team in new GameContext().Teams)
+            foreach (var team in _context.Teams)
             {
                 string teamAbbr = team.Abbreviation;
                 string remoteFileUrl =
@@ -42,7 +42,7 @@ namespace fantasy_hoops.Jobs
             if (!Directory.Exists(photosDir))
                 Directory.CreateDirectory(photosDir);
 
-            foreach (var player in new GameContext().Players)
+            foreach (var player in _context.Players)
             {
                 int personId = player.NbaID;
                 string remoteFileUrl =
@@ -99,11 +99,10 @@ namespace fantasy_hoops.Jobs
 
         private async Task DeleteNotifications()
         {
-            GameContext context = new GameContext();
-            await context.Notifications
+            await _context.Notifications
                 .Where(n => n.DateCreated < DateTime.Today.ToUniversalTime().AddDays(-7))
-                .ForEachAsync(notification => context.Notifications.Remove(notification));
-            await context.SaveChangesAsync();
+                .ForEachAsync(notification => _context.Notifications.Remove(notification));
+            await _context.SaveChangesAsync();
         }
 
         public void Execute()

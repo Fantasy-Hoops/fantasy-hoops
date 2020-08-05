@@ -193,11 +193,10 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
-            GameContext context = new GameContext();
             List<JToken> teams = GetTeams();
             System.Threading.Thread.Sleep(1000);
-            var dbPlayers = context.Players.ToList();
-            var dbTeams = context.Teams.ToList();
+            var dbPlayers = _context.Players.ToList();
+            var dbTeams = _context.Teams.ToList();
             foreach (var team in teams)
             {
                 int teamNbaId = (int)team["reference"];
@@ -219,7 +218,7 @@ namespace fantasy_hoops.Jobs
                 Team dbTeam = dbTeams.FirstOrDefault(t => t.NbaID == teamNbaId);
                 List<JToken> roster = GetRoster((string)team["id"]);
                 System.Threading.Thread.Sleep(1000);
-                context.Players
+                _context.Players
                     .Where(p => p.TeamID == dbTeam.TeamID)
                     .ToList()
                     .ForEach(player =>
@@ -242,7 +241,7 @@ namespace fantasy_hoops.Jobs
                         if (dbPlayer.Team == null)
                         {
                             dbPlayer.Team = dbTeam;
-                            context.SaveChanges();
+                            _context.SaveChanges();
                         }
 
                         // UPDATE EXISTING
@@ -283,6 +282,7 @@ namespace fantasy_hoops.Jobs
                                 NbaID = (int)player["reference"],
                                 Number = player["jersey_number"] != null ? player["jersey_number"].ToString() : "0",
                                 Price = CommonFunctions.Instance.PRICE_FLOOR,
+                                PreviousPrice = CommonFunctions.Instance.PRICE_FLOOR,
                                 FPPG = 0.0,
                                 PTS = 0.0,
                                 REB = 0.0,
@@ -315,7 +315,7 @@ namespace fantasy_hoops.Jobs
                     }
                 }
             }
-            context.SaveChanges();
+            _context.SaveChanges();
         }
     }
 }

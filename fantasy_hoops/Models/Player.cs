@@ -24,6 +24,7 @@ namespace fantasy_hoops.Models
         public double TOV { get; set; }
         public double FPPG { get; set; }
         public int Price { get; set; }
+        public int PreviousPrice { get; set; }
         public int TeamID { get; set; }
         public bool IsPlaying { get; set; }
         public bool IsInGLeague { get; set; }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using fantasy_hoops.Database;
@@ -35,7 +36,7 @@ namespace fantasy_hoops.Jobs
 			return json;
 		}
 
-		private bool IsPlaying(Player player)
+		private bool IsActive(Player player)
 		{
             if(player.IsInGLeague || player.Position.Equals("NA"))
             {
@@ -46,7 +47,7 @@ namespace fantasy_hoops.Jobs
             {
                 if(player.Injury == null)
                 {
-                    player.Injury = new GameContext().Injuries.Where(inj => inj.InjuryID == player.InjuryID).FirstOrDefault();
+                    player.Injury = _context.Injuries.Where(inj => inj.InjuryID == player.InjuryID).FirstOrDefault();
                 }
 
                 if ((player.Injury.Date.HasValue && player.Injury.Date.Value.AddDays(5) < RuntimeUtils.NEXT_GAME)
@@ -83,8 +84,8 @@ namespace fantasy_hoops.Jobs
 
 		private void SetNextOpponent(JToken game)
 		{
-			Team hTeam = new GameContext().Teams.Where(team => team.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
-			Team vTeam = new GameContext().Teams.Where(team => team.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
+			Team hTeam = _context.Teams.Where(team => team.NbaID == (int)game["hTeam"]["teamId"]).FirstOrDefault();
+			Team vTeam = _context.Teams.Where(team => team.NbaID == (int)game["vTeam"]["teamId"]).FirstOrDefault();
 
 			if (vTeam != null && hTeam != null)
 			{
@@ -97,17 +98,17 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
-	        GameContext context = new GameContext();
-            context.Players.ForEachAsync(p => p.IsPlaying = false).Wait();
+	        _context.Players.ForEachAsync(p => p.IsPlaying = false).Wait();
             string date = GetDate();
             JArray games = CommonFunctions.Instance.GetGames(date);
             foreach (var game in games)
             {
                 SetNextOpponent(game);
-                var hTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
-                var vTeamPlayers = context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
+                var hTeamPlayers = _context.Players.Where(p => p.Team.NbaID == (int)game["hTeam"]["teamId"]).ToList();
+                var vTeamPlayers = _context.Players.Where(p => p.Team.NbaID == (int)game["vTeam"]["teamId"]).ToList();
 
-                foreach (var player in hTeamPlayers.Union(vTeamPlayers))
+                List<int> nextGamePlayerIds = hTeamPlayers.Union(vTeamPlayers).Select(p => p.PlayerID).ToList();
+                foreach (var player in _context.Players)
                 {
                     JObject p = GetPlayer(player.NbaID);
                     if (p == null)
@@ -115,6 +116,7 @@ namespace fantasy_hoops.Jobs
                         player.Price = CommonFunctions.Instance.PRICE_FLOOR;
                         continue;
                     }
+                    
                     int gamesPlayed = 0;
                     JToken stats = null;
                     if (!(p["pl"]["ca"] == null || p["pl"]["ca"]["sa"] == null))
@@ -132,20 +134,13 @@ namespace fantasy_hoops.Jobs
                     player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
                     if (_updatePrice)
                     {
-	                    Stats latestStatLine = _context.Stats
-		                    .Where(s => s.PlayerID == player.PlayerID)
-		                    .OrderByDescending(s => s.Date)
-		                    .FirstOrDefault();
-	                    if (latestStatLine != null)
-	                    {
-		                    latestStatLine.Price = player.Price;
-	                    }
+	                    player.PreviousPrice = player.Price;
 	                    player.Price = gamesPlayed <= 0 ? CommonFunctions.Instance.PRICE_FLOOR : Price(player);
                     }
-                    player.IsPlaying = IsPlaying(player);
+                    player.IsPlaying = nextGamePlayerIds.Contains(player.PlayerID) && IsActive(player);
                 }
             }
-            context.SaveChanges();
+            _context.SaveChanges();
 
             RuntimeUtils.NEXT_GAME_CLIENT = RuntimeUtils.NEXT_GAME;
             RuntimeUtils.PLAYER_POOL_DATE = RuntimeUtils.NEXT_GAME;

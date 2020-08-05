@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
@@ -47,7 +46,7 @@ namespace fantasy_hoops.Jobs
             return true;
         }
 
-        private void AddToDatabase(GameContext context, JToken player, Game game, DateTime date, int oppId, string score)
+        private void AddToDatabase(JToken player, Game game, DateTime date, int oppId, string score)
         {
             Stats statsObj = new Stats
             {
@@ -76,16 +75,16 @@ namespace fantasy_hoops.Jobs
                 PTS = (int) player["points"]
             };
 
-            var statsPlayer = context.Players
+            var statsPlayer = _context.Players
                 .FirstOrDefault(x => x.NbaID == (int) player["personId"]);
 
             if (statsPlayer == null)
                 return;
 
             statsObj.Player = statsPlayer;
-            int playerPrice = _scoreService.GetPrice(statsPlayer);
+            int playerPrice = statsPlayer.PreviousPrice;
 
-            var dbStats = context.Stats.FirstOrDefault(stats =>
+            var dbStats = _context.Stats.FirstOrDefault(stats =>
                 stats.Date.Date.Equals(date.Date) && stats.PlayerID == statsPlayer.PlayerID);
 
             if (dbStats == null)
@@ -99,7 +98,7 @@ namespace fantasy_hoops.Jobs
 
                 statsObj.Price = playerPrice;
 
-                context.Stats.Add(statsObj);
+                _context.Stats.Add(statsObj);
             }
             else
             {
@@ -135,16 +134,16 @@ namespace fantasy_hoops.Jobs
             }
         }
 
-        private Game GetGame(GameContext context, DateTime date, int homeTeamId, int awayTeamId, int homeScore, int awayScore)
+        private Game GetGame(DateTime date, int homeTeamId, int awayTeamId, int homeScore, int awayScore)
         {
-            Team homeTeam = new GameContext().Teams.FirstOrDefault(team => team.NbaID == homeTeamId);
+            Team homeTeam = _context.Teams.FirstOrDefault(team => team.NbaID == homeTeamId);
             if (homeTeam == null)
                 homeTeam = _teamRepository.GetUnknownTeam();
-            Team awayTeam = new GameContext().Teams.FirstOrDefault(team => team.NbaID == awayTeamId);
+            Team awayTeam = _context.Teams.FirstOrDefault(team => team.NbaID == awayTeamId);
             if (awayTeam == null)
                 awayTeam = _teamRepository.GetUnknownTeam();
 
-            Game gameObj = new GameContext().Games.FirstOrDefault(game => game.Date.Equals(date)
+            Game gameObj = _context.Games.FirstOrDefault(game => game.Date.Equals(date)
                                                                  && game.HomeTeam.Equals(homeTeam)
                                                                  && game.AwayTeam.Equals(awayTeam));
             
@@ -163,7 +162,7 @@ namespace fantasy_hoops.Jobs
                     AwayTeam = awayTeam,
                     AwayScore = awayScore
                 };
-                context.Games.Add(gameObj);
+                _context.Games.Add(gameObj);
             }
 
             return gameObj;
@@ -195,14 +194,13 @@ namespace fantasy_hoops.Jobs
                 var players = boxscore["stats"]["activePlayers"];
                 int homeScore = (int) boxscore["basicGameData"]["hTeam"]["score"];
                 int awayScore = (int) boxscore["basicGameData"]["vTeam"]["score"];
-                GameContext context = new GameContext();
-                Game gameObj = GetGame(context, date, hTeam, vTeam, homeScore, awayScore);
+                Game gameObj = GetGame(date, hTeam, vTeam, homeScore, awayScore);
 
                 foreach (var player in (JArray) players)
                 {
                     int oppId;
 
-                    if (!context.Players.Any())
+                    if (!_context.Players.Any())
                         continue;
                     string score;
                     string liveToken = (int) game["statusNum"] != 3 ? ";LIVE" : "";
@@ -221,10 +219,10 @@ namespace fantasy_hoops.Jobs
 
                     if ((string) player["min"] == null || ((string) player["min"]).Length == 0)
                         continue;
-                    AddToDatabase(context, player, gameObj, date, oppId, score);
+                    AddToDatabase(player, gameObj, date, oppId, score);
                 }
 
-                context.SaveChanges();
+                _context.SaveChanges();
             }
 
             if (!isAnyGameStarted)
@@ -244,10 +242,9 @@ namespace fantasy_hoops.Jobs
             }
             else
             {
-                GameContext context = new GameContext();
-                context.Stats
-                    .RemoveRange(context.Stats.Where(stat => stat.Score.Contains("LIVE")));
-                context.SaveChanges();
+                _context.Stats
+                    .RemoveRange(_context.Stats.Where(stat => stat.Score.Contains("LIVE")));
+                _context.SaveChanges();
 
                 JobManager.AddJob(new UserScoreJob(_pushService),
                     s => s.WithName("userScore")

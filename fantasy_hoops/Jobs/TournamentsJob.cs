@@ -42,7 +42,6 @@ namespace fantasy_hoops.Jobs
 
         private void StartNewTournaments()
         {
-            GameContext context = new GameContext();
             List<Tournament> tournamentsToStart = _tournamentsRepository.GetTournamentsForStartDate(_runtimeDate);
             foreach (Tournament tournament in tournamentsToStart)
             {
@@ -55,7 +54,7 @@ namespace fantasy_hoops.Jobs
                 if (tournament.DroppedContests >= joinedUsersCount)
                 {
                     tournament.DroppedContests = joinedUsersCount - 1;
-                    context.SaveChanges();
+                    _context.SaveChanges();
                 }
 
                 if ((Tournament.TournamentType) tournament.Type == Tournament.TournamentType.MATCHUPS)
@@ -78,19 +77,18 @@ namespace fantasy_hoops.Jobs
 
         public void StartMatchupsTournament(Tournament tournament)
         {
-            GameContext context = new GameContext();
             List<string> tournamentUsers = _tournamentsRepository.GetTournamentUsersIds(tournament.Id);
             List<Tuple<string, string>>[] matchupsPermutations =
                 _tournamentsService.GetMatchupsPermutations(tournamentUsers);
 
             if (matchupsPermutations.IsNullOrEmpty())
             {
-                context.Tournaments.Find(tournament.Id).Status = TournamentStatus.CANCELLED;
-                context.SaveChanges();
+                _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.CANCELLED;
+                _context.SaveChanges();
                 return;
             }
 
-            var tournamentContests = context.Contests
+            var tournamentContests = _context.Contests
                 .Where(x => x.TournamentId.Equals(tournament.Id))
                 .OrderBy(contest => contest.ContestStart)
                 .ToList();
@@ -100,7 +98,7 @@ namespace fantasy_hoops.Jobs
                 contest.Matchups = new List<MatchupPair>();
                 foreach (Tuple<string, string> usersPair in matchupsPermutations[i])
                 {
-                    MatchupPair dbMatchupPair = context.TournamentMatchups
+                    MatchupPair dbMatchupPair = _context.TournamentMatchups
                         .Find(tournament.Id, usersPair.Item1, usersPair.Item2, contest.Id);
                     if (dbMatchupPair == null)
                     {
@@ -117,15 +115,14 @@ namespace fantasy_hoops.Jobs
                 i = i + 1 >= matchupsPermutations.Length ? 0 : i + 1;
             }
 
-            context.Tournaments.Find(tournament.Id).Status = TournamentStatus.ACTIVE;
-            context.SaveChanges();
+            _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.ACTIVE;
+            _context.SaveChanges();
         }
 
         public void StartOneForAllTournament(Tournament tournament)
         {
-            GameContext context = new GameContext();
             List<string> tournamentUsers = _tournamentsRepository.GetTournamentUsersIds(tournament.Id);
-            foreach (var contest in context.Contests.Where(x => x.TournamentId.Equals(tournament.Id)).ToList())
+            foreach (var contest in _context.Contests.Where(x => x.TournamentId.Equals(tournament.Id)).ToList())
             {
                 contest.Matchups = tournamentUsers.Select(tournamentUser => new MatchupPair
                 {
@@ -136,8 +133,8 @@ namespace fantasy_hoops.Jobs
                 }).ToList();
             }
 
-            context.Tournaments.Find(tournament.Id).Status = TournamentStatus.ACTIVE;
-           _context.SaveChanges();
+            _context.Tournaments.Find(tournament.Id).Status = TournamentStatus.ACTIVE;
+            _context.SaveChanges();
         }
 
         public void SimulateOneForAllTournament(Tournament t)

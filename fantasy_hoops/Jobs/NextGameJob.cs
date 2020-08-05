@@ -37,9 +37,8 @@ namespace fantasy_hoops.Jobs
 
         private async Task SetPlayersNotPlaying()
         {
-            GameContext context = new GameContext();
-            await context.Players.ForEachAsync(p => p.IsPlaying = false);
-            await context.SaveChangesAsync();
+            await _context.Players.ForEachAsync(p => p.IsPlaying = false);
+            await _context.SaveChangesAsync();
         }
 
         private string GetDate()
