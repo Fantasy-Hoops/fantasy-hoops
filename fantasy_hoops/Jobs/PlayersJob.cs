@@ -132,6 +132,14 @@ namespace fantasy_hoops.Jobs
                     player.FPPG = gamesPlayed <= 0 ? 0 : FPPG(player);
                     if (_updatePrice)
                     {
+	                    Stats latestStatLine = _context.Stats
+		                    .Where(s => s.PlayerID == player.PlayerID)
+		                    .OrderByDescending(s => s.Date)
+		                    .FirstOrDefault();
+	                    if (latestStatLine != null)
+	                    {
+		                    latestStatLine.Price = player.Price;
+	                    }
 	                    player.Price = gamesPlayed <= 0 ? CommonFunctions.Instance.PRICE_FLOOR : Price(player);
                     }
                     player.IsPlaying = IsPlaying(player);
