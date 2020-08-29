@@ -127,7 +127,7 @@ namespace fantasy_hoops.Jobs
                 JobManager.AddJob(new NextGameJob(_scoreService, _pushService),
                     s => s.WithName(RuntimeUtils.NEXT_GAME.ToLongDateString())
                         .ToRunOnceAt(RuntimeUtils.NEXT_GAME));
-                
+
                 JobManager.AddJob(new TournamentsJob(RuntimeUtils.PREVIOUS_GAME),
                     s => s.WithName("TournamentsJob").ToRunNow());
 
@@ -186,7 +186,9 @@ namespace fantasy_hoops.Jobs
 
             if (bool.Parse(Startup.Configuration["IsProduction"] ?? "false"))
             {
-                Task.Run(() => new StatsJob(_scoreService, _pushService).Execute());
+                JobManager.AddJob(new StatsJob(_scoreService, _pushService),
+                    s => s.WithName("statsJob")
+                        .ToRunNow());
             }
         }
     }

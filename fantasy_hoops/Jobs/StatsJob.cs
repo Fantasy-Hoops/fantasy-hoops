@@ -146,7 +146,7 @@ namespace fantasy_hoops.Jobs
             Game gameObj = _context.Games.FirstOrDefault(game => game.Date.Equals(date)
                                                                  && game.HomeTeam.Equals(homeTeam)
                                                                  && game.AwayTeam.Equals(awayTeam));
-            
+
             if (gameObj != null)
             {
                 gameObj.HomeScore = homeScore;
@@ -170,6 +170,12 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
+            Schedule statsSchedule = JobManager.GetSchedule("statsJob");
+            if (statsSchedule != null && statsSchedule.NextRun > DateTime.UtcNow)
+            {
+                return;
+            }
+
             string gameDate = CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).ToString("yyyyMMdd");
             JArray games = CommonFunctions.Instance.GetGames(gameDate);
             int countOfActivatedGames = 0;
@@ -228,7 +234,7 @@ namespace fantasy_hoops.Jobs
             if (!isAnyGameStarted)
             {
                 JobManager.AddJob(new StatsJob(_scoreService, _pushService),
-                    s => s.WithName("statsSeed")
+                    s => s.WithName("statsJob")
                         .ToRunOnceIn(5).Minutes());
                 return;
             }
@@ -237,7 +243,7 @@ namespace fantasy_hoops.Jobs
             {
                 int minutesDelay = countOfActivatedGames == 0 ? 10 : 3;
                 JobManager.AddJob(new StatsJob(_scoreService, _pushService),
-                    s => s.WithName("statsSeed")
+                    s => s.WithName("statsJob")
                         .ToRunOnceIn(minutesDelay).Minutes());
             }
             else
@@ -249,9 +255,9 @@ namespace fantasy_hoops.Jobs
                 JobManager.AddJob(new UserScoreJob(_pushService),
                     s => s.WithName("userScore")
                         .ToRunNow());
-                
+
                 JobManager.AddJob(new StatsJob(_scoreService, _pushService),
-                    s => s.WithName("statsSeed")
+                    s => s.WithName("statsJob")
                         .ToRunOnceAt(RuntimeUtils.NEXT_GAME.AddMinutes(5)));
             }
         }
