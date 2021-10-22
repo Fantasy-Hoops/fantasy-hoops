@@ -31,12 +31,6 @@ namespace fantasy_hoops
                 .ToRunNow()
                 .AndEvery(10)
                 .Minutes();
-            
-            Schedule(new PhotosJob())
-                .WithName("photosJob")
-                .ToRunEvery(1)
-                .Days()
-                .At(00, 04);
         }
     }
 }

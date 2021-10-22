@@ -20,8 +20,12 @@ using fantasy_hoops.Repositories;
 using FluentScheduler;
 using System.Collections.Generic;
 using fantasy_hoops.Auth;
+using fantasy_hoops.Jobs;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
+using Hangfire;
+using Hangfire.SqlServer;
+using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
@@ -32,7 +36,7 @@ namespace fantasy_hoops
     {
         public IWebHostEnvironment HostingEnvironment;
         public static IConfiguration Configuration { get; set; }
-        
+
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
@@ -79,31 +83,46 @@ namespace fantasy_hoops
                     Title = "FH API",
                     Description = "Fantasy Hoops API"
                 });
-                
+
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Description =
+                        "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
                     In = ParameterLocation.Header
                 });
             });
 #endif
-            services.AddDbContext<GameContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<GameContext>(o =>
+                o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             ConfigureAuth(services);
 
             // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
-            
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
+
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
             services.AddDataProtection()
                 .SetDefaultKeyLifetime(TimeSpan.FromDays(14));
+            
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true
+                }));
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
         }
 
         public void AddScopes(IServiceCollection services)
@@ -139,19 +158,21 @@ namespace fantasy_hoops
         private void ConfigureAuth(IServiceCollection services)
         {
             services.AddIdentity<User, IdentityRole>(config =>
-            {
-                config.Password.RequireDigit = false;
-                config.Password.RequireLowercase = false;
-                config.Password.RequireUppercase = false;
-                config.Password.RequireNonAlphanumeric = false;
-                config.Password.RequiredLength = 8;
-                config.SignIn.RequireConfirmedEmail = false;
-            })
-           .AddEntityFrameworkStores<GameContext>()
-           .AddDefaultTokenProviders();
+                {
+                    config.Password.RequireDigit = false;
+                    config.Password.RequireLowercase = false;
+                    config.Password.RequireUppercase = false;
+                    config.Password.RequireNonAlphanumeric = false;
+                    config.Password.RequiredLength = 8;
+                    config.SignIn.RequireConfirmedEmail = false;
+                })
+                .AddEntityFrameworkStores<GameContext>()
+                .AddDefaultTokenProviders();
 
-            List<string> issuers = new List<string>() { Configuration["CustomAuth:Issuer"], Configuration["Google:Issuer"] };
-            List<string> audiences = new List<string>() { Configuration["CustomAuth:Audience"], Configuration["Google:Audience"] };
+            List<string> issuers = new List<string>()
+                {Configuration["CustomAuth:Issuer"], Configuration["Google:Issuer"]};
+            List<string> audiences = new List<string>()
+                {Configuration["CustomAuth:Audience"], Configuration["Google:Audience"]};
 
             services
                 .AddAuthentication(options =>
@@ -173,7 +194,9 @@ namespace fantasy_hoops
                         ValidAudiences = audiences,
 
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["CustomAuth:IssuerSigningKey"])),
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(
+                                Encoding.UTF8.GetBytes(Configuration["CustomAuth:IssuerSigningKey"])),
 
                         RequireExpirationTime = true,
                         ValidateLifetime = true,
@@ -185,7 +208,8 @@ namespace fantasy_hoops
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IBackgroundJobClient backgroundJobs, IWebHostEnvironment env,
+            IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -202,12 +226,23 @@ namespace fantasy_hoops
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
-
+            
             app.UseRouting();
-
             app.UseSpaStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+            app.UseHangfireDashboard("/jobs",
+                new DashboardOptions {Authorization = new[]
+                    {
+                        new HangfireCustomBasicAuthenticationFilter
+                        {
+                            User=Configuration["Hangfire:User"],
+                            Pass=Configuration["Hangfire:Password"]
+                        }
+                    }});
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -232,6 +267,7 @@ namespace fantasy_hoops
 
                 var scoreService = serviceScope.ServiceProvider.GetService<IScoreService>();
                 var pushService = serviceScope.ServiceProvider.GetService<IPushService>();
+                ConfigureJobs();
                 JobManager.UseUtcTime();
                 JobManager.Initialize(new ApplicationRegistry(context, scoreService, pushService));
             }
@@ -239,12 +275,21 @@ namespace fantasy_hoops
             Task.Run(() => CreateRoles(serviceProvider)).Wait();
         }
 
+        private void ConfigureJobs()
+        {
+            if (!bool.Parse(Configuration["Jobs:IsEnabled"]))
+            {
+                return;
+            }
+            RecurringJob.AddOrUpdate("photos", () => new PhotosJob().Execute(), "4 0 * * *");
+        }
+
         private async Task CreateRoles(IServiceProvider serviceProvider)
         {
             //initializing custom roles 
             var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var UserManager = serviceProvider.GetRequiredService<UserManager<User>>();
-            string[] roleNames = { "Admin", "Creator" };
+            string[] roleNames = {"Admin", "Creator"};
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)

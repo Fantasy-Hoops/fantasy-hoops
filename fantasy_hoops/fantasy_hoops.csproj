@@ -17,12 +17,18 @@
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Content Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+    <Content Update="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="dotenv.net" Version="1.0.6" />
     <PackageReference Include="EntityFramework" Version="6.4.0" />
     <PackageReference Include="FluentScheduler" Version="5.3.0" />
     <PackageReference Include="Google.Apis.Auth" Version="1.43.0" />
+    <PackageReference Include="Hangfire" Version="1.8.0-beta3" />
+    <PackageReference Include="Hangfire.Dashboard.Authorization" Version="3.0.0" />
+    <PackageReference Include="Hangfire.Dashboard.Basic.Authentication" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.AzureKeyVault" Version="3.1.1" />
