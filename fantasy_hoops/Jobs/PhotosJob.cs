@@ -5,12 +5,11 @@ using System.Net;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
-using FluentScheduler;
 using Microsoft.EntityFrameworkCore;
 
 namespace fantasy_hoops.Jobs
 {
-    public class PhotosJob : IJob
+    public class PhotosJob : ICronJob
     {
         private readonly GameContext _context;
 
