@@ -16,7 +16,7 @@ using Newtonsoft.Json.Linq;
 
 namespace fantasy_hoops.Jobs
 {
-    public class RostersJob : IJob
+    public class RostersJob : ICronJob
     {
         private readonly GameContext _context;
         private readonly IPushService _pushService;

@@ -267,21 +267,22 @@ namespace fantasy_hoops
 
                 var scoreService = serviceScope.ServiceProvider.GetService<IScoreService>();
                 var pushService = serviceScope.ServiceProvider.GetService<IPushService>();
-                ConfigureJobs();
+                ConfigureJobs(pushService);
                 JobManager.UseUtcTime();
-                JobManager.Initialize(new ApplicationRegistry(context, scoreService, pushService));
+                JobManager.Initialize(new ApplicationRegistry(scoreService, pushService));
             }
 
             Task.Run(() => CreateRoles(serviceProvider)).Wait();
         }
 
-        private void ConfigureJobs()
+        private void ConfigureJobs(IPushService pushService)
         {
             if (!bool.Parse(Configuration["Jobs:IsEnabled"]))
             {
                 return;
             }
             RecurringJob.AddOrUpdate("photos", () => new PhotosJob().Execute(), "4 0 * * *");
+            RecurringJob.AddOrUpdate("roster", () => new RostersJob(pushService).Execute(), "0 12 * * */2");
         }
 
         private async Task CreateRoles(IServiceProvider serviceProvider)

@@ -11,13 +11,8 @@ namespace fantasy_hoops
 {
     public class ApplicationRegistry : Registry
     {
-        public ApplicationRegistry(GameContext context, IScoreService scoreService, IPushService pushService)
+        public ApplicationRegistry(IScoreService scoreService, IPushService pushService)
         {
-            if (context.Teams.Count() < 30)
-                Schedule(new RostersJob(pushService))
-                    .WithName("rosterJob")
-                    .ToRunNow();
-
             Task.Run(() => RostersJob.UpdateTeamColors(new GameContext()));
             
             Schedule(new NextGameJob(scoreService, pushService, false))
