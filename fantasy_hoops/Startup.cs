@@ -127,6 +127,7 @@ namespace fantasy_hoops
 
         public void AddScopes(IServiceCollection services)
         {
+            services.AddScoped<GameContext>();
             // Services
             services.AddScoped<IBlogService, BlogService>();
             services.AddScoped<IFriendService, FriendService>();
@@ -267,7 +268,7 @@ namespace fantasy_hoops
 
                 var scoreService = serviceScope.ServiceProvider.GetService<IScoreService>();
                 var pushService = serviceScope.ServiceProvider.GetService<IPushService>();
-                ConfigureJobs(pushService);
+                ConfigureJobs(context, pushService);
                 JobManager.UseUtcTime();
                 JobManager.Initialize(new ApplicationRegistry(scoreService, pushService));
             }
@@ -275,14 +276,14 @@ namespace fantasy_hoops
             Task.Run(() => CreateRoles(serviceProvider)).Wait();
         }
 
-        private void ConfigureJobs(IPushService pushService)
+        private void ConfigureJobs(GameContext context, IPushService pushService)
         {
             if (!bool.Parse(Configuration["Jobs:IsEnabled"]))
             {
                 return;
             }
             RecurringJob.AddOrUpdate("photos", () => new PhotosJob().Execute(), "4 0 * * *");
-            RecurringJob.AddOrUpdate("roster", () => new RostersJob(pushService).Execute(), "0 12 * * */2");
+            RecurringJob.AddOrUpdate("roster", () => new RostersJob(context, pushService).Execute(), "0 12 * * */2");
         }
 
         private async Task CreateRoles(IServiceProvider serviceProvider)

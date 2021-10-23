@@ -13,8 +13,6 @@ namespace fantasy_hoops
     {
         public ApplicationRegistry(IScoreService scoreService, IPushService pushService)
         {
-            Task.Run(() => RostersJob.UpdateTeamColors(new GameContext()));
-            
             Schedule(new NextGameJob(scoreService, pushService, false))
                 .WithName("nextGameJob")
                 .ToRunNow();
