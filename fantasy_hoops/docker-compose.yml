@@ -1,14 +1,14 @@
 version: '3'
 services:
     nginx:
-        container_name: fantasy-hoops-nginx
-        image: fantasy-hoops-nginx
+        container_name: kd
+        image: naidze/fh
         restart: always
         build:
             context: ./
             dockerfile: ./Dockerfile
         environment:
-         - VIRTUAL_HOST=fantasyhoops.org # Environment variable needed for nginx proxy
+         - VIRTUAL_HOST=fantasyhoops.org,www.fantasyhoops.org # Environment variable needed for nginx proxy
          - LETSENCRYPT_HOST=fantasyhoops.org # Environment variables needed for Let's Encrypt companion
          - LETSENCRYPT_EMAIL=admin@fantasyhoops.org
         expose:

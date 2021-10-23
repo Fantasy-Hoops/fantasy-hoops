@@ -1,7 +1,7 @@
 version: '3' # Version of the Docker Compose file format
 services:
     nginx-proxy:
-        image: jwilder/nginx-proxy:alpine
+        image: jwilder/nginx-proxy
         restart: "always" # Always restart container
         ports:
          - "80:80" # Port mappings in format host:container
