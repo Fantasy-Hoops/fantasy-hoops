@@ -22,7 +22,7 @@ import PlayerDialog from "../../PlayerModal/PlayerDialog";
 
 const LEADERBOARD_SUPPORT_START_DATE = '2020-02-22';
 
-export function BestLineupsLeaderboard(props) {
+export default function BestLineupsLeaderboard() {
     const {enqueueSnackbar} = useSnackbar();
     const minDate = new Date(LEADERBOARD_SUPPORT_START_DATE);
     const [maxDate, setMaxDate] = useState(null);
