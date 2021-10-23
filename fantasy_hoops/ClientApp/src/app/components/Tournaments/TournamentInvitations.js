@@ -9,8 +9,7 @@ import {TournamentsInvitations, TournamentsMain} from "./utils";
 import {Canonicals, Meta} from "../../utils/helpers";
 import EmptyJordan from "../EmptyJordan";
 
-export function TournamentInvitations(props) {
-    const tournamentId = getLastLocationSlug(props.location.pathname);
+export default function TournamentInvitations() {
     const [tournamentInvitations, setTournamentInvitations] = useState([]);
     const [invitationExists, setInvitationExists] = useState(false);
     const [errorResponse, setErrorResponse] = useState({});

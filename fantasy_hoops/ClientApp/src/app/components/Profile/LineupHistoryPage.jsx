@@ -2,19 +2,17 @@ import React, {Component} from 'react';
 import shortid from 'shortid';
 import _ from 'lodash';
 import {UserScore} from './UserScore';
-import {PlayerModal} from '../PlayerModal/PlayerModal';
 import {parse} from '../../utils/auth';
 import {getPlayerStats, getRecentLineups} from '../../utils/networkFunctions';
 import {Helmet} from "react-helmet";
 import {Canonicals, Meta} from "../../utils/helpers";
-import Container from "@material-ui/core/Container";
 import PlayerDialog from "../PlayerModal/PlayerDialog";
 
 const {$} = window;
 const user = parse();
 const LOAD_COUNT = 5;
 
-export class LineupHistory extends Component {
+export default class LineupHistory extends Component {
     constructor(props) {
         super(props);
         this.loadMore = this.loadMore.bind(this);

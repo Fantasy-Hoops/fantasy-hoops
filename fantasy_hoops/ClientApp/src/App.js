@@ -1,5 +1,5 @@
 import {ThemeProvider} from "@material-ui/styles";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {theme} from "./Theme";
 import Layout from "./Layout";
 import Routes from "./app/routes/Routes.jsx";
@@ -13,7 +13,6 @@ import Snackbar from "./Snackbar";
 import {getUpdatedToken} from "./app/utils/networkFunctions";
 
 export default () => {
-    const [isTokenUpdated, setIsTokenUpdated] = useState(false);
     useEffect(() => {
         if (!localStorage.getItem('accessToken')) {
             return;

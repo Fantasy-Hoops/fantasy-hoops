@@ -1,59 +1,110 @@
 import React from 'react';
-import {PrivateRoute} from '../components/Authentication/PrivateRoute';
-import {Lineup} from '../components/Lineup/Lineup';
-import InjuriesFeed from '../containers/InjuriesFeedContainer';
-import {Registration} from '../components/Authentication/Registration';
-import {UserProfile} from '../components/Profile/UserProfile';
-import LoginPage from '../components/Authentication/LoginPage';
-import NewsFeed from '../containers/NewsFeedContainer';
-import UserLeaderboard from '../components/Leaderboard/Users/Leaderboard';
-import PlayerLeaderboard from '../components/Leaderboard/Players/Leaderboard';
-import SelectedLeaderboard from '../components/Leaderboard/Selected/Leaderboard';
-import {Leaderboard as SeasonLeaderboard} from '../components/Leaderboard/Season/Leaderboard';
-import UserPool from '../containers/UserPoolContainer';
-import Main from '../components/Main';
-import {AllNotificationsPage} from '../components/Notifications/AllNotificationsPage';
-import {LineupHistory} from '../components/Profile/LineupHistoryPage';
-import Blog from '../containers/BlogContainer';
+import PrivateRoute, {ClassBasedPrivateRoute} from '../components/Authentication/PrivateRoute';
 import Routes from './routes.js';
 import {Error} from '../components/Error';
-import Leaderboards from "../components/Leaderboard/Leaderboards";
 import {Switch, Route} from "react-router-dom";
-import Achievements from "../components/Achievements/AchievementsPage";
-import TournamentsPage from "../components/Tournaments/TournamentsPage";
-import CreateTournament from "../components/Tournaments/CreateTournament/CreateTournament";
-import {TournamentDetails} from "../components/Tournaments/TournamentDetails/TournamentDetails";
-import {TournamentInvitations} from "../components/Tournaments/TournamentInvitations";
-import {TournamentInvitation} from "../components/Tournaments/TournamentInvitation";
-import AdminPanel from "../components/Admin/AdminPanel";
-import {BestLineupsLeaderboard} from "../components/Leaderboard/BestLineups/BestLineupsLeaderboard";
 
-export default () => (
-    <Switch>
-        <Route exact path={Routes.MAIN} component={Main}/>
-        <Route exact path={Routes.LOGIN} component={LoginPage}/>
-        <Route exact path={Routes.REGISTER} component={Registration}/>
-        <PrivateRoute path={`${Routes.PROFILE}/:name?/:edit?`} component={UserProfile}/>
-        <PrivateRoute path={Routes.LINEUP} component={Lineup}/>
-        <Route path={Routes.INJURIES} component={InjuriesFeed}/>
-        <Route path={Routes.NEWS} component={NewsFeed}/>
-        <PrivateRoute exact path={Routes.LEADERBOARD_USERS} component={UserLeaderboard}/>
-        <Route exact path={Routes.LEADERBOARD_PLAYERS} component={PlayerLeaderboard}/>
-        <Route exact path={Routes.LEADERBOARD_SELECTED} component={SelectedLeaderboard}/>
-        <PrivateRoute exact path={Routes.LEADERBOARD_SEASON} component={SeasonLeaderboard}/>
-        <Route exact path={Routes.LEADERBOARD_BEST_LINEUPS} component={BestLineupsLeaderboard}/>
-        <PrivateRoute path={Routes.USER_POOL} component={UserPool}/>
-        <PrivateRoute path={Routes.ALL_NOTIFICATIONS} component={AllNotificationsPage}/>
-        <PrivateRoute path={Routes.LINEUP_HISTORY} component={LineupHistory}/>
-        <Route exact path={Routes.BLOG} component={Blog}/>
-        <Route exact path={Routes.LEADERBOARDS} component={Leaderboards}/>
-        <Route exact path={Routes.ACHIEVEMENTS} component={Achievements}/>
-        <PrivateRoute exact path={Routes.TOURNAMENTS} component={TournamentsPage}/>
-        <PrivateRoute exact path={Routes.TOURNAMENTS_CREATE} component={CreateTournament}/>
-        <PrivateRoute exact path={`${Routes.TOURNAMENTS_SUMMARY}/:id`} component={TournamentDetails}/>
-        <PrivateRoute exact path={Routes.TOURNAMENT_INVITATIONS} component={TournamentInvitations}/>
-        <PrivateRoute exact path={`${Routes.TOURNAMENT_INVITATIONS}/:id`} component={TournamentInvitation}/>
-        <PrivateRoute exact path={Routes.ADMIN} component={AdminPanel}/>
-        <Route render={() => <Error status={404} message="Page not found"/>}/>
-    </Switch>
-);
+const Main = React.lazy(() => import('../components/Main'));
+const Login = React.lazy(() => import('../components/Authentication/LoginPage'));
+const Register = React.lazy(() => import('../components/Authentication/Registration'));
+const UserProfile = React.lazy(() => import('../components/Profile/UserProfile'));
+const Lineup = React.lazy(() => import('../components/Lineup/Lineup'));
+const InjuriesFeed = React.lazy(() => import('../containers/InjuriesFeedContainer'));
+const NewsFeed = React.lazy(() => import('../containers/NewsFeedContainer'));
+const UserLeaderboard = React.lazy(() => import('../components/Leaderboard/Users/Leaderboard'));
+const PlayerLeaderboard = React.lazy(() => import('../components/Leaderboard/Players/Leaderboard'));
+const SelectedLeaderboard = React.lazy(() => import('../components/Leaderboard/Selected/Leaderboard'));
+const SeasonLeaderboard = React.lazy(() => import('../components/Leaderboard/Season/Leaderboard'));
+const BestLineupsLeaderboard = React.lazy(() => import('../components/Leaderboard/BestLineups/BestLineupsLeaderboard'));
+const UserPool = React.lazy(() => import('../containers/UserPoolContainer'));
+const AllNotificationsPage = React.lazy(() => import('../components/Notifications/AllNotificationsPage'));
+const LineupHistory = React.lazy(() => import('../components/Profile/LineupHistoryPage'));
+const Blog = React.lazy(() => import('../containers/BlogContainer'));
+const Leaderboards = React.lazy(() => import('../components/Leaderboard/Leaderboards'));
+const Achievements = React.lazy(() => import('../components/Achievements/AchievementsPage'));
+const TournamentsPage = React.lazy(() => import('../components/Tournaments/TournamentsPage'));
+const CreateTournament = React.lazy(() => import('../components/Tournaments/CreateTournament/CreateTournament'));
+const TournamentDetails = React.lazy(() => import('../components/Tournaments/TournamentDetails/TournamentDetails'));
+const TournamentInvitations = React.lazy(() => import('../components/Tournaments/TournamentInvitations'));
+const TournamentInvitation = React.lazy(() => import('../components/Tournaments/TournamentInvitation'));
+const AdminPanel = React.lazy(() => import('../components/Admin/AdminPanel'));
+
+export default function AppRoutes() {
+    return (
+        <React.Suspense fallback={<div>loading...</div>}>
+            <Switch>
+                <Route exact path={Routes.MAIN}>
+                    <Main/>
+                </Route>
+                <Route exact path={Routes.LOGIN}>
+                    <Login/>
+                </Route>
+                <Route exact path={Routes.REGISTER}>
+                    <Register/>
+                </Route>
+                <ClassBasedPrivateRoute path={`${Routes.PROFILE}/:name?/:edit?`} component={UserProfile}/>
+                <PrivateRoute path={Routes.LINEUP}>
+                    <Lineup/>
+                </PrivateRoute>
+                <Route path={Routes.INJURIES}>
+                    <InjuriesFeed/>
+                </Route>
+                <Route path={Routes.NEWS}>
+                    <NewsFeed/>
+                </Route>
+                <PrivateRoute exact path={Routes.LEADERBOARD_USERS}>
+                    <UserLeaderboard/>
+                </PrivateRoute>
+                <Route exact path={Routes.LEADERBOARD_PLAYERS}>
+                    <PlayerLeaderboard/>
+                </Route>
+                <Route exact path={Routes.LEADERBOARD_SELECTED}>
+                    <SelectedLeaderboard/>
+                </Route>
+                <PrivateRoute exact path={Routes.LEADERBOARD_SEASON}>
+                    <SeasonLeaderboard/>
+                </PrivateRoute>
+                <Route exact path={Routes.LEADERBOARD_BEST_LINEUPS}>
+                    <BestLineupsLeaderboard/>
+                </Route>
+                <PrivateRoute path={Routes.USER_POOL}>
+                    <UserPool/>
+                </PrivateRoute>
+                <PrivateRoute path={Routes.ALL_NOTIFICATIONS}>
+                    <AllNotificationsPage/>
+                </PrivateRoute>
+                <PrivateRoute path={Routes.LINEUP_HISTORY}>
+                    <LineupHistory/>
+                </PrivateRoute>
+                <Route exact path={Routes.BLOG}>
+                    <Blog/>
+                </Route>
+                <Route exact path={Routes.LEADERBOARDS}>
+                    <Leaderboards/>
+                </Route>
+                <Route exact path={Routes.ACHIEVEMENTS}>
+                    <Achievements/>
+                </Route>
+                <PrivateRoute exact path={Routes.TOURNAMENTS}>
+                    <TournamentsPage/>
+                </PrivateRoute>
+                <PrivateRoute exact path={Routes.TOURNAMENTS_CREATE}>
+                    <CreateTournament />
+                </PrivateRoute>
+                <PrivateRoute exact path={`${Routes.TOURNAMENTS_SUMMARY}/:id`}>
+                    <TournamentDetails />
+                </PrivateRoute>
+                <PrivateRoute exact path={Routes.TOURNAMENT_INVITATIONS}>
+                    <TournamentInvitations />
+                </PrivateRoute>
+                <PrivateRoute exact path={`${Routes.TOURNAMENT_INVITATIONS}/:id`}>
+                    <TournamentInvitation />
+                </PrivateRoute>
+                <PrivateRoute exact path={Routes.ADMIN}>
+                    <AdminPanel />
+                </PrivateRoute>
+                <Route render={() => <Error status={404} message="Page not found"/>}/>
+            </Switch>
+        </React.Suspense>
+    );
+}
