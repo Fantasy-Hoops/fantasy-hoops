@@ -23,9 +23,6 @@ using fantasy_hoops.Auth;
 using fantasy_hoops.Jobs;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
-using Hangfire;
-using Hangfire.SqlServer;
-using HangfireBasicAuthenticationFilter;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
@@ -107,22 +104,6 @@ namespace fantasy_hoops
 
             services.AddDataProtection()
                 .SetDefaultKeyLifetime(TimeSpan.FromDays(14));
-            
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(Configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
-                {
-                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                    QueuePollInterval = TimeSpan.Zero,
-                    UseRecommendedIsolationLevel = true,
-                    DisableGlobalLocks = true
-                }));
-
-            // Add the processing server as IHostedService
-            services.AddHangfireServer();
         }
 
         public void AddScopes(IServiceCollection services)
@@ -208,7 +189,7 @@ namespace fantasy_hoops
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IBackgroundJobClient backgroundJobs, IWebHostEnvironment env,
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
             IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
@@ -231,17 +212,6 @@ namespace fantasy_hoops
             app.UseSpaStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
-            
-            var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
-            app.UseHangfireDashboard("/jobs",
-                new DashboardOptions {Authorization = new[]
-                    {
-                        new HangfireCustomBasicAuthenticationFilter
-                        {
-                            User=Configuration["Hangfire:User"],
-                            Pass=Configuration["Hangfire:Password"]
-                        }
-                    }});
 
             app.UseEndpoints(endpoints =>
             {
@@ -267,21 +237,11 @@ namespace fantasy_hoops
 
                 var scoreService = serviceScope.ServiceProvider.GetService<IScoreService>();
                 var pushService = serviceScope.ServiceProvider.GetService<IPushService>();
-                ConfigureJobs();
                 JobManager.UseUtcTime();
                 JobManager.Initialize(new ApplicationRegistry(context, scoreService, pushService));
             }
 
             Task.Run(() => CreateRoles(serviceProvider)).Wait();
-        }
-
-        private void ConfigureJobs()
-        {
-            if (!bool.Parse(Configuration["Jobs:IsEnabled"]))
-            {
-                return;
-            }
-            RecurringJob.AddOrUpdate("photos", () => new PhotosJob().Execute(), "4 0 * * *");
         }
 
         private async Task CreateRoles(IServiceProvider serviceProvider)

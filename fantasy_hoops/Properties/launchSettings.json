@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "ASP.NETCoreWebApplication": {
+    "app": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "https://localhost:44389;http://localhost:44388",
