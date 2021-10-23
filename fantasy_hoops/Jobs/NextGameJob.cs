@@ -140,12 +140,6 @@ namespace fantasy_hoops.Jobs
                             s => s.WithName("nudgeNotifications")
                                 .ToRunOnceAt(RuntimeUtils.NEXT_GAME.AddHours(-5)));
 
-                    // Once per 2 days
-                    if (CommonFunctions.Instance.UTCToEastern(RuntimeUtils.NEXT_GAME).Day % 2 != 0)
-                        JobManager.AddJob(new RostersJob(_pushService),
-                            s => s.WithName("rostersJob")
-                                .ToRunOnceAt(RuntimeUtils.NEXT_GAME.AddMinutes(-5)));
-
                     // 10 hours after previous last game if project ran before that time
                     // 10 hours after next last game if project ran after that time
                     DateTime previewsRuntime = RuntimeUtils.PREVIOUS_LAST_GAME.AddHours(10);
