@@ -228,12 +228,12 @@ namespace fantasy_hoops
                 app.UseHsts();
             }
             
+            app.UseResponseCompression();
             app.UseRouting();
             app.UseSpaStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
             
-            var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
             app.UseHangfireDashboard("/jobs",
                 new DashboardOptions {Authorization = new[]
                     {
