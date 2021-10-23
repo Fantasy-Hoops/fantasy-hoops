@@ -32,7 +32,6 @@
     "react": "^16.4.0",
     "react-autosize-textarea": "^6.0.0",
     "react-avatar-edit": "^0.8.3",
-    "react-bootstrap": "^0.31.5",
     "react-chartjs-2": "^2.7.4",
     "react-content-loader": "^5.0.1",
     "react-countdown": "^2.2.1",
