@@ -14,7 +14,7 @@ namespace fantasy_hoops.Jobs
 {
     public class BestLineupsJob : IJob
     {
-        private readonly List<(List<LineupPlayerDto>, double)> _playersList = new List<(List<LineupPlayerDto>, double)>();
+        private readonly List<(List<LineupPlayerDto>, double)> _playersList = new();
         
         private readonly GameContext _context;
         private readonly DateTime _date = CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME).Date;
@@ -39,48 +39,46 @@ namespace fantasy_hoops.Jobs
                 }
 
                 int lineupPrice = currentLineup.Sum(player => player.Price);
-                
                 if (lineupPrice > LineupService.MAX_PRICE)
                 {
                     continue;
                 }
                 
-                double lineupFP = currentLineup.Sum(player => player.FP);
-
+                double lineupFp = currentLineup.Sum(player => player.FP);
                 if (_playersList.Count < 10)
                 {
-                    _playersList.Add((currentLineup, lineupFP));
+                    _playersList.Add((currentLineup, lineupFp));
                     continue;
                 }
 
-                double minFP = _playersList.Min(x => x.Item2);
-                if (lineupFP > minFP)
+                double minFp = _playersList.Min(playerFp => playerFp.Item2);
+                if (lineupFp > minFp)
                 {
-                    int indexOfMin = _playersList.Select(x => x.Item2).IndexOf(minFP);
+                    int indexOfMin = _playersList.Select(playerFp => playerFp.Item2).ToList().IndexOf(minFp);
                     _playersList.RemoveAt(indexOfMin);
-                    _playersList.Add((currentLineup, lineupFP));
+                    _playersList.Add((currentLineup, lineupFp));
                 }
             } while (lineupsEnumerator.MoveNext());
             
             _playersList.OrderBy(lineup => lineup.Item2)
-                .Select(x => x.Item1)
+                .Select(playerFp => playerFp.Item1)
                 .Select(lineup => new
                 {
-                    Players = lineup.Select(l => new PlayersBestLineups
+                    Players = lineup.Select(lineupPlayer => new PlayersBestLineups
                     {
-                        PlayerID = l.Player.PlayerID,
-                        FP = l.FP,
-                        Price = l.Price
+                        PlayerID = lineupPlayer.Player.PlayerID,
+                        FP = lineupPlayer.FP,
+                        Price = lineupPlayer.Price
                     }),
-                    FP = lineup.Sum(l => l.FP),
+                    FP = lineup.Sum(lineupPlayer => lineupPlayer.FP),
                     TotalPrice = lineup.Sum(players => players.Price)
                 })
                 .ToList().ForEach(lineup =>
                 {
                     bool bestLineupExists = _context.BestLineups
-                        .Any(x => Math.Round(x.TotalFP, 1).Equals(Math.Round(lineup.FP, 1))
-                                             && x.LineupPrice == lineup.TotalPrice
-                                             && x.Date.Equals(_date));
+                        .Any(bestLineup => Math.Round(bestLineup.TotalFP, 1).Equals(Math.Round(lineup.FP, 1))
+                                             && bestLineup.LineupPrice == lineup.TotalPrice
+                                             && bestLineup.Date.Equals(_date));
                     if (!bestLineupExists)
                     {
                         _context.BestLineups.Add(new BestLineup

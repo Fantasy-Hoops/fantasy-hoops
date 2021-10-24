@@ -135,7 +135,8 @@ namespace fantasy_hoops.Repositories
                     return context.UserLineups
                         .Include(lineup => lineup.User)
                         .AsEnumerable()
-                        .Where(lineup => lineup.IsCalculated && lineup.Date >= CommonFunctions.Instance.GetLeaderboardDate(type))
+                        .Where(lineup =>
+                            lineup.IsCalculated && lineup.Date >= CommonFunctions.Instance.GetLeaderboardDate(type))
                         .GroupBy(lineup => lineup.UserID)
                         .Select(lineup => new UserLeaderboardRecordDto
                         {
@@ -164,13 +165,14 @@ namespace fantasy_hoops.Repositories
                         .OrderByDescending(lineup => lineup.FP)
                         .Skip(from)
                         .Take(limit)
-                        .ToList(); 
+                        .ToList();
                 default:
                     return new List<UserLeaderboardRecordDto>();
             }
         }
 
-        public List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit, LeaderboardType type,
+        public List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit,
+            LeaderboardType type,
             string date, int weekNumber, int year)
         {
             GameContext context = new GameContext();
@@ -241,7 +243,8 @@ namespace fantasy_hoops.Repositories
                 case LeaderboardType.WEEKLY:
                     int week = weekNumber != -1
                         ? weekNumber
-                        : CommonFunctions.Instance.GetIso8601WeekOfYear(CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow));
+                        : CommonFunctions.Instance.GetIso8601WeekOfYear(
+                            CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow));
                     int leaderboardYear = year == -1
                         ? DateTime.Now.Year
                         : year;
@@ -272,10 +275,14 @@ namespace fantasy_hoops.Repositories
                             Username = user.UserName,
                             AvatarUrl = user.AvatarURL,
                             FP = Math.Round(user.UserLineups
-                                .Where(lineup => lineup.Date >= CommonFunctions.Instance.GetLeaderboardDate(type) && lineup.IsCalculated)
+                                .Where(lineup =>
+                                    lineup.Date >= CommonFunctions.Instance.GetLeaderboardDate(type) &&
+                                    lineup.IsCalculated)
                                 .Select(lineup => lineup.FP).Sum(), 1),
                             GamesPlayed = user.UserLineups
-                                .Count(lineup => lineup.Date >= CommonFunctions.Instance.GetLeaderboardDate(type) && lineup.IsCalculated)
+                                .Count(lineup =>
+                                    lineup.Date >= CommonFunctions.Instance.GetLeaderboardDate(type) &&
+                                    lineup.IsCalculated)
                         })
                         .Where(user => user.GamesPlayed > 0)
                         .OrderByDescending(lineup => lineup.FP)
@@ -301,6 +308,17 @@ namespace fantasy_hoops.Repositories
                 .OrderByDescending(lineup => lineup.FP)
                 .Take(10)
                 .Include(lineup => lineup.User)
+                .Include(lineup => lineup.Pg).ThenInclude(player => player.Team)
+                .Include(lineup => lineup.Pg).ThenInclude(player => player.Stats)
+                .Include(lineup => lineup.Sg).ThenInclude(player => player.Team)
+                .Include(lineup => lineup.Sg).ThenInclude(player => player.Stats)
+                .Include(lineup => lineup.Sf).ThenInclude(player => player.Team)
+                .Include(lineup => lineup.Sf).ThenInclude(player => player.Stats)
+                .Include(lineup => lineup.Pf).ThenInclude(player => player.Team)
+                .Include(lineup => lineup.Pf).ThenInclude(player => player.Stats)
+                .Include(lineup => lineup.C).ThenInclude(player => player.Team)
+                .Include(lineup => lineup.C).ThenInclude(player => player.Stats)
+                .AsEnumerable()
                 .Select(lineup => new UserLeaderboardRecordDto
                 {
                     UserId = lineup.UserID,
@@ -310,28 +328,20 @@ namespace fantasy_hoops.Repositories
                     ShortDate = lineup.Date.ToString($"MMM. dd{(year == -1 ? ", yyy" : "")}"),
                     Date = lineup.Date,
                     FP = lineup.FP,
-                    Lineup = context.Players
-                        .Include(player => player.Team)
-                        .Include(player => player.Stats)
-                        .Where(player =>
-                            player.PlayerID == lineup.PgID
-                            || player.PlayerID == lineup.SgID
-                            || player.PlayerID == lineup.SfID
-                            || player.PlayerID == lineup.PfID
-                            || player.PlayerID == lineup.CID)
+                    Lineup = new List<Player> {lineup.Pg, lineup.Sg, lineup.Sf, lineup.Pf, lineup.C}
                         .Select(player => new LineupPlayerDto
                         {
                             Player = player,
                             TeamColor = player.Team.Color,
-                            FP = player.Stats.FirstOrDefault(stats => stats.Date.Equals(lineup.Date)).FP,
+                            FP = player.Stats.Where(stats => stats.Date.Equals(lineup.Date))
+                                .Select(stats => stats.FP)
+                                .FirstOrDefault(),
                             Price = player.Price
                         })
-                        .OrderBy(p => CommonFunctions.Instance.LineupPositionsOrder.IndexOf(p.Player.Position))
+                        .OrderBy(lineupPlayer =>
+                            CommonFunctions.Instance.LineupPositionsOrder.IndexOf(lineupPlayer.Player.Position, StringComparison.Ordinal))
                         .ToList()
-                })
-                .Skip(from)
-                .Take(limit)
-                .ToList();
+                }).Skip(from).Take(limit).ToList();
         }
 
         public List<PlayerLeaderboardRecordDto> GetSeasonPlayers(int from, int limit, int year)
