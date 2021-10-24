@@ -14,6 +14,8 @@ namespace fantasy_hoops.Repositories
 {
     public class LeaderboardRepository : ILeaderboardRepository
     {
+        private const int NoData = -1;
+        
         private readonly GameContext _context;
 
         public LeaderboardRepository()
@@ -56,23 +58,18 @@ namespace fantasy_hoops.Repositories
         public List<UserLeaderboardRecordDto> GetUserLeaderboard(int from, int limit, LeaderboardType type, string date,
             int weekNumber, int year)
         {
-            GameContext context = new GameContext();
-            DateTime previousECT = CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME);
-
+            DateTime previousEct = CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME);
             DateTime dateTime = date.Length == 0
                 ? DateTime.UtcNow < RuntimeUtils.PREVIOUS_LAST_GAME
-                    ? previousECT.AddDays(-1)
-                    : previousECT
+                    ? previousEct.AddDays(-1)
+                    : previousEct
                 : DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
+            
+            var userLineups = GetUserLineupsBaseQuery(type, dateTime, year, weekNumber);
             switch (type)
             {
                 case LeaderboardType.DAILY:
-                    var dailyStats = context.Stats.Where(stats => stats.Date.Equals(dateTime.Date));
-                    return context.UserLineups
-                        .Where(lineup => lineup.IsCalculated && lineup.Date.Equals(dateTime.Date))
-                        .OrderByDescending(lineup => lineup.FP)
-                        .Include(lineup => lineup.User)
-                        .Select(lineup => new UserLeaderboardRecordDto
+                    return userLineups.Select(lineup => new UserLeaderboardRecordDto
                         {
                             UserId = lineup.UserID,
                             Username = lineup.User.UserName,
@@ -81,86 +78,33 @@ namespace fantasy_hoops.Repositories
                             ShortDate = lineup.Date.ToString("MMM. dd"),
                             Date = lineup.Date,
                             FP = lineup.FP,
-                            Lineup = context.Players
-                                .Include(player => player.Team)
-                                .Where(player =>
-                                    player.PlayerID == lineup.PgID
-                                    || player.PlayerID == lineup.SgID
-                                    || player.PlayerID == lineup.SfID
-                                    || player.PlayerID == lineup.PfID
-                                    || player.PlayerID == lineup.CID)
+                            Lineup = new List<Player> {lineup.Pg, lineup.Sg, lineup.Sf, lineup.Pf, lineup.C}
                                 .Select(player => new LineupPlayerDto
                                 {
                                     Player = player,
                                     TeamColor = player.Team.Color,
-                                    FP = dailyStats.FirstOrDefault(stats => stats.PlayerID == player.PlayerID).FP,
+                                    FP = player.Stats.Where(stats => stats.Date.Equals(dateTime.Date))
+                                        .Select(stats => stats.FP)
+                                        .FirstOrDefault(),
                                     Price = player.Price
-                                })
-                                .OrderBy(p => CommonFunctions.Instance.LineupPositionsOrder.IndexOf(p.Player.Position))
+                                }).OrderBy(lineupPlayer =>
+                                    CommonFunctions.Instance.LineupPositionsOrder.IndexOf(lineupPlayer.Player.Position,
+                                        StringComparison.Ordinal))
                                 .ToList()
                         })
                         .Skip(from)
                         .Take(limit)
                         .ToList();
                 case LeaderboardType.WEEKLY:
-                    int week = weekNumber != -1
-                        ? weekNumber
-                        : CommonFunctions.Instance.GetIso8601WeekOfYear(
-                            context.UserLineups
-                                .Where(lineup => lineup.IsCalculated)
-                                .Max(lineup => lineup.Date)
-                        );
-                    int leaderboardYear = year == -1
-                        ? CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow).Year
-                        : year;
-                    return context.UserLineups
-                        .Include(lineup => lineup.User)
-                        .AsEnumerable()
-                        .Where(lineup => lineup.IsCalculated
-                                         && CommonFunctions.Instance.GetIso8601WeekOfYear(lineup.Date) == week
-                                         && lineup.Date.Year == leaderboardYear)
-                        .GroupBy(lineup => lineup.UserID)
-                        .Select(lineup => new UserLeaderboardRecordDto
-                        {
-                            UserId = lineup.Max(p => p.UserID),
-                            Username = lineup.Max(p => p.User.UserName),
-                            AvatarUrl = lineup.Max(p => p.User.AvatarURL),
-                            FP = Math.Round(lineup.Sum(res => res.FP), 1)
-                        })
-                        .OrderByDescending(lineup => lineup.FP)
-                        .Skip(from)
-                        .Take(limit)
-                        .ToList();
                 case LeaderboardType.MONTHLY:
-                    return context.UserLineups
-                        .Include(lineup => lineup.User)
-                        .AsEnumerable()
-                        .Where(lineup =>
-                            lineup.IsCalculated && lineup.Date >= CommonFunctions.Instance.GetLeaderboardDate(type))
-                        .GroupBy(lineup => lineup.UserID)
-                        .Select(lineup => new UserLeaderboardRecordDto
-                        {
-                            UserId = lineup.Max(p => p.UserID),
-                            Username = lineup.Max(p => p.User.UserName),
-                            AvatarUrl = lineup.Max(p => p.User.AvatarURL),
-                            FP = Math.Round(lineup.Sum(res => res.FP), 1)
-                        })
-                        .OrderByDescending(lineup => lineup.FP)
-                        .Skip(from)
-                        .Take(limit)
-                        .ToList();
                 case LeaderboardType.FROM_DATE:
-                    return context.UserLineups
-                        .Include(lineup => lineup.User)
-                        .AsEnumerable()
-                        .Where(lineup => lineup.IsCalculated && lineup.Date >= dateTime)
-                        .GroupBy(lineup => lineup.UserID)
+                    return userLineups.GroupBy(lineup => lineup.UserID)
                         .Select(lineup => new UserLeaderboardRecordDto
                         {
-                            UserId = lineup.Max(p => p.UserID),
-                            Username = lineup.Max(p => p.User.UserName),
-                            AvatarUrl = lineup.Max(p => p.User.AvatarURL),
-                            FP = Math.Round(lineup.Sum(res => res.FP), 1)
+                            UserId = lineup.Max(userLineup => userLineup.UserID),
+                            Username = lineup.Max(userLineup => userLineup.User.UserName),
+                            AvatarUrl = lineup.Max(userLineup => userLineup.User.AvatarURL),
+                            FP = Math.Round(lineup.Sum(userLineup => userLineup.FP), 1)
                         })
                         .OrderByDescending(lineup => lineup.FP)
                         .Skip(from)
@@ -171,6 +115,44 @@ namespace fantasy_hoops.Repositories
             }
         }
 
+        private List<UserLineup> GetUserLineupsBaseQuery(LeaderboardType type, DateTime dateTime, int year, int weekNumber)
+        {
+            int leaderboardYear = year == NoData
+                ? CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow).Year
+                : year;
+            int week = weekNumber == NoData
+                ? CommonFunctions.Instance.GetIso8601WeekOfYear(
+                    _context.UserLineups.Where(lineup => lineup.IsCalculated).Max(lineup => lineup.Date)
+                )
+                : weekNumber;
+            DateTime firstDayOfWeek =
+                CommonFunctions.Instance.FirstDateOfWeek(leaderboardYear, week, CultureInfo.CurrentCulture);
+            DateTime lastDayOfWeek =
+                CommonFunctions.Instance.LastDayOfWeek(leaderboardYear, week, CultureInfo.CurrentCulture);
+            return _context.UserLineups
+                .Include(lineup => lineup.User)
+                .Include(lineup => lineup.Pg).ThenInclude(player => player.Team)
+                .Include(lineup => lineup.Pg).ThenInclude(player => player.Stats)
+                .Include(lineup => lineup.Sg).ThenInclude(player => player.Team)
+                .Include(lineup => lineup.Sg).ThenInclude(player => player.Stats)
+                .Include(lineup => lineup.Sf).ThenInclude(player => player.Team)
+                .Include(lineup => lineup.Sf).ThenInclude(player => player.Stats)
+                .Include(lineup => lineup.Pf).ThenInclude(player => player.Team)
+                .Include(lineup => lineup.Pf).ThenInclude(player => player.Stats)
+                .Include(lineup => lineup.C).ThenInclude(player => player.Team)
+                .Include(lineup => lineup.C).ThenInclude(player => player.Stats)
+                .Where(lineup => lineup.IsCalculated)
+                .Where(lineup => type != LeaderboardType.DAILY || lineup.Date.Equals(dateTime.Date))
+                .Where(lineup =>
+                    type != LeaderboardType.WEEKLY || lineup.Date >= firstDayOfWeek && lineup.Date <= lastDayOfWeek)
+                .Where(lineup =>
+                    type != LeaderboardType.MONTHLY || lineup.Date >= CommonFunctions.Instance.GetLeaderboardDate(type))
+                .Where(lineup => type != LeaderboardType.FROM_DATE || lineup.Date >= dateTime)
+                .OrderByDescending(lineup => lineup.FP)
+                .ToList();
+        }
+
+        // TODO update to use refactored user leaderboard query base
         public List<UserLeaderboardRecordDto> GetFriendsLeaderboard(string id, int from, int limit,
             LeaderboardType type,
             string date, int weekNumber, int year)
@@ -232,7 +214,8 @@ namespace fantasy_hoops.Repositories
                                     FP = dailyStats.FirstOrDefault(stats => stats.PlayerID == player.PlayerID).FP,
                                     Price = player.Price
                                 })
-                                .OrderBy(p => CommonFunctions.Instance.LineupPositionsOrder.IndexOf(p.Player.Position))
+                                .OrderBy(p =>
+                                    CommonFunctions.Instance.LineupPositionsOrder.IndexOf(p.Player.Position))
                                 .ToList()
                         })
                         .Where(x => x.Lineup.Any())
@@ -241,13 +224,11 @@ namespace fantasy_hoops.Repositories
                         .Take(limit)
                         .ToList();
                 case LeaderboardType.WEEKLY:
-                    int week = weekNumber != -1
-                        ? weekNumber
-                        : CommonFunctions.Instance.GetIso8601WeekOfYear(
-                            CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow));
-                    int leaderboardYear = year == -1
-                        ? DateTime.Now.Year
-                        : year;
+                    int week = weekNumber == NoData
+                        ? CommonFunctions.Instance.GetIso8601WeekOfYear(
+                            CommonFunctions.Instance.UTCToEastern(DateTime.UtcNow))
+                        : weekNumber;
+                    int leaderboardYear = year == NoData ? DateTime.Now.Year : year;
                     return friendsOnly
                         .SelectMany(user => user.UserLineups)
                         .Include(lineup => lineup.User)
@@ -297,7 +278,7 @@ namespace fantasy_hoops.Repositories
             GameContext context = new GameContext();
             DateTime seasonStart = DateTime.MinValue;
             DateTime seasonEnd = DateTime.MaxValue;
-            if (year != -1)
+            if (year != NoData)
             {
                 seasonStart = new DateTime(year, 10, 1);
                 seasonEnd = new DateTime(year + 1, 7, 1);
@@ -325,7 +306,7 @@ namespace fantasy_hoops.Repositories
                     Username = lineup.User.UserName,
                     AvatarUrl = lineup.User.AvatarURL,
                     LongDate = lineup.Date.ToString("yyyy-MM-dd"),
-                    ShortDate = lineup.Date.ToString($"MMM. dd{(year == -1 ? ", yyy" : "")}"),
+                    ShortDate = lineup.Date.ToString($"MMM. dd{(year == NoData ? ", yyy" : "")}"),
                     Date = lineup.Date,
                     FP = lineup.FP,
                     Lineup = new List<Player> {lineup.Pg, lineup.Sg, lineup.Sf, lineup.Pf, lineup.C}
@@ -339,7 +320,8 @@ namespace fantasy_hoops.Repositories
                             Price = player.Price
                         })
                         .OrderBy(lineupPlayer =>
-                            CommonFunctions.Instance.LineupPositionsOrder.IndexOf(lineupPlayer.Player.Position, StringComparison.Ordinal))
+                            CommonFunctions.Instance.LineupPositionsOrder.IndexOf(lineupPlayer.Player.Position,
+                                StringComparison.Ordinal))
                         .ToList()
                 }).Skip(from).Take(limit).ToList();
         }
@@ -348,7 +330,7 @@ namespace fantasy_hoops.Repositories
         {
             DateTime seasonStart = DateTime.MinValue;
             DateTime seasonEnd = DateTime.MaxValue;
-            if (year != -1)
+            if (year != NoData)
             {
                 seasonStart = new DateTime(year, 10, 1);
                 seasonEnd = new DateTime(year + 1, 7, 1);
@@ -366,7 +348,7 @@ namespace fantasy_hoops.Repositories
                     AbbrName = p.Player.AbbrName,
                     FP = p.FP,
                     LongDate = p.Date.ToString("yyyy-MM-dd"),
-                    ShortDate = p.Date.ToString($"MMM. dd{(year == -1 ? ", yyy" : "")}")
+                    ShortDate = p.Date.ToString($"MMM. dd{(year == NoData ? ", yyy" : "")}")
                 })
                 .Skip(from)
                 .Take(limit)
