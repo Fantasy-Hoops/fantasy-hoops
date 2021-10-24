@@ -29,6 +29,10 @@ namespace fantasy_hoops.Helpers
 			internal static readonly CommonFunctions instance = new CommonFunctions();
 		}
 
+		private const int DaysInWeek = 7;
+		private const int WeeksInYear = 52;
+		private const int MagicDaysOffset = 3;
+
 		private int? seasonYear;
 		
 		public string DOMAIN = "fantasyhoops.org";
@@ -123,7 +127,7 @@ namespace fantasy_hoops.Helpers
 			{
 				case LeaderboardType.WEEKLY:
 					dayOffset = dayOfWeek == 1
-						? 7
+						? DaysInWeek
 						: dayOfWeek == 0 ? 6 : dayOfWeek - 1;
 					return easternDate.AddDays(-dayOffset).Date;
 				case LeaderboardType.MONTHLY:
@@ -161,13 +165,31 @@ namespace fantasy_hoops.Helpers
 			// be the same week# as whatever Thursday, Friday or Saturday are,
 			// and we always get those right
 			DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
-			if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
+			if (day is >= DayOfWeek.Monday and <= DayOfWeek.Wednesday)
 			{
-				time = time.AddDays(3);
+				time = time.AddDays(MagicDaysOffset);
 			}
 
 			// Return the week of our adjusted day
 			return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+		}
+		
+		public DateTime FirstDateOfWeek(int year, int weekOfYear, System.Globalization.CultureInfo cultureInfo)
+		{
+			DateTime jan1 = new DateTime(year, 1, 1);
+			int daysOffset = (int)cultureInfo.DateTimeFormat.FirstDayOfWeek - (int)jan1.DayOfWeek;
+			DateTime firstWeekDay = jan1.AddDays(daysOffset);
+			int firstWeek = cultureInfo.Calendar.GetWeekOfYear(jan1, cultureInfo.DateTimeFormat.CalendarWeekRule, cultureInfo.DateTimeFormat.FirstDayOfWeek);
+			if (firstWeek is <= 1 or >= WeeksInYear && daysOffset >= -MagicDaysOffset)
+			{
+				weekOfYear -= 1;
+			}
+			return firstWeekDay.AddDays(weekOfYear * DaysInWeek);
+		}
+		
+		public DateTime LastDayOfWeek(int year, int weekOfYear, CultureInfo cultureInfo)
+		{
+			return FirstDateOfWeek(year, weekOfYear, cultureInfo).AddDays(DaysInWeek - 1);
 		}
         
         public async Task<string> GetImageAsBase64Url(string url)
