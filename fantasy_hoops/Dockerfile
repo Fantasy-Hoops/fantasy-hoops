@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-focal AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0-focal-amd64 AS build 
 WORKDIR /app
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x |  bash -
@@ -10,7 +10,7 @@ RUN dotnet restore
 COPY . ./
 RUN dotnet publish -c Release -o out
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 COPY --from=build /app/out .
 
