@@ -38,9 +38,9 @@ function DesktopAppBar(props) {
             <div className={classes.logo}>
                 <Link id="NavbarLogo" className="navbar-brand btn-no-outline"
                       to={Routes.MAIN}>
-                    <img className="Navbar__Icon" src={require('../../../content/images/logo.png')} width="25"
+                    <img className="Navbar__Icon" src={require('../../../content/logo/fh_ball.svg')} width="25"
                          height="25" alt="FH"/>
-                    <img className="Navbar__Title ml-2 mt-2" src={require('../../../content/images/title.png')}
+                    <img className="Navbar__Title ml-2 mt-2" src={require('../../../content/logo/fh_text.svg')}
                          height="25" alt="Fantasy Hoops"/>
                 </Link>
             </div>
