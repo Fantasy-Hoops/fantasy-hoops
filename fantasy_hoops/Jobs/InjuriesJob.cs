@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
@@ -11,29 +9,26 @@ using fantasy_hoops.Models.Notifications;
 using fantasy_hoops.Models.PushNotifications;
 using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Services.Interfaces;
-using FluentScheduler;
 using Newtonsoft.Json.Linq;
 
 namespace fantasy_hoops.Jobs
 {
-    public class InjuriesJob : IJob
+    public class InjuriesJob : ICronJob
     {
         private readonly GameContext _context;
         private readonly IPushService _pushService;
 
-        private readonly Stack<InjuryPushNotificationViewModel> _lineupsAffected =
-            new Stack<InjuryPushNotificationViewModel>();
+        private readonly Stack<InjuryPushNotificationViewModel> _lineupsAffected = new();
 
-        public InjuriesJob(IPushService pushService)
+        public InjuriesJob(GameContext gameContext, IPushService pushService)
         {
-            _context = new GameContext();
+            _context = gameContext;
             _pushService = pushService;
         }
 
         private static JArray GetInjuries()
         {
-            HttpWebResponse webResponse =
-                CommonFunctions.Instance.GetResponse("https://www.fantasylabs.com/api/players/news/2/");
+            var webResponse = CommonFunctions.Instance.GetResponse("https://www.fantasylabs.com/api/players/news/2/");
             string myResponse = CommonFunctions.Instance.ResponseToString(webResponse);
             JArray injuries = JArray.Parse(myResponse);
             return injuries;
@@ -64,7 +59,6 @@ namespace fantasy_hoops.Jobs
             string statusBefore = dbInjury?.Status;
             string statusAfter = injuryObj.Status;
 
-
             if (dbInjury == null)
             {
                 _context.Injuries.Add(injuryObj);
@@ -79,12 +73,12 @@ namespace fantasy_hoops.Jobs
                 dbInjury.Link = injuryObj.Link;
                 dbInjury.Player = injuryPlayer;
                 dbInjury.PlayerID = injuryPlayer.PlayerID;
+                _context.Injuries.Update(dbInjury);
             }
 
-            _context.Injuries.Update(dbInjury);
             _context.SaveChanges();
 
-            if (statusAfter != null && (statusAfter.Equals("Active") && !injuryPlayer.IsPlaying))
+            if (statusAfter is "Active" && !injuryPlayer.IsPlaying)
             {
                 if (injuryPlayer.Team.Players.Any(p => p.IsPlaying))
                 {
@@ -187,7 +181,7 @@ namespace fantasy_hoops.Jobs
             }
 
             _context.SaveChanges();
-            Task.Run(() => SendPushNotifications()).Wait();
+            Task.Run(SendPushNotifications).Wait();
         }
     }
 }

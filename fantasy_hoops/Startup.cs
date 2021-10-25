@@ -282,8 +282,10 @@ namespace fantasy_hoops
             {
                 return;
             }
+            
             RecurringJob.AddOrUpdate("photos", () => new PhotosJob().Execute(), "4 0 * * *");
             RecurringJob.AddOrUpdate("roster", () => new RostersJob(context, pushService).Execute(), "0 12 * * */2");
+            RecurringJob.AddOrUpdate("injuries", () => new InjuriesJob(context, pushService).Execute(), "*/10 * * * *");
         }
 
         private async Task CreateRoles(IServiceProvider serviceProvider)

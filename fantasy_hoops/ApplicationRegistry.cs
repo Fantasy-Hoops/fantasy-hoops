@@ -18,12 +18,6 @@ namespace fantasy_hoops
                 .ToRunNow();
             RuntimeUtils.NEXT_GAME_CLIENT = RuntimeUtils.NEXT_GAME;
             RuntimeUtils.PLAYER_POOL_DATE = RuntimeUtils.NEXT_GAME;
-            
-            Schedule(new InjuriesJob(pushService))
-                .WithName("injuriesJob")
-                .ToRunNow()
-                .AndEvery(10)
-                .Minutes();
         }
     }
 }
