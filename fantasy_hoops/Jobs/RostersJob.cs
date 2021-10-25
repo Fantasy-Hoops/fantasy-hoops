@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
+using System.Threading;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
@@ -12,7 +9,6 @@ using fantasy_hoops.Models.ViewModels;
 using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services.Interfaces;
-using FluentScheduler;
 using Newtonsoft.Json.Linq;
 
 namespace fantasy_hoops.Jobs
@@ -36,19 +32,16 @@ namespace fantasy_hoops.Jobs
 
         public void Execute()
         {
-            List<JToken> teams = GetTeams();
-            if (teams.Count == 0)
-            {
-                return;
-            }
+            var teams = GetTeams();
+            if (teams.Count == 0) return;
 
-            System.Threading.Thread.Sleep(1000);
+            Thread.Sleep(1000);
             var dbTeams = _context.Teams.ToList();
 
             foreach (var team in teams)
             {
-                int teamNbaId = (int) team["reference"];
-                Team dbTeam = dbTeams.Find(t => t.NbaID == teamNbaId);
+                var teamNbaId = (int) team["reference"];
+                var dbTeam = dbTeams.Find(t => t.NbaID == teamNbaId);
                 if (dbTeam == null)
                 {
                     dbTeam = createDbTeam(team, teamNbaId);
@@ -56,49 +49,41 @@ namespace fantasy_hoops.Jobs
                     _context.SaveChanges();
                 }
 
-                Team unknownTeam = _teamRepository.GetUnknownTeam();
-                List<JToken> teamPlayers = GetTeamPlayers((string) team["id"]);
-                System.Threading.Thread.Sleep(1000);
+                var unknownTeam = _teamRepository.GetUnknownTeam();
+                var teamPlayers = GetTeamPlayers((string) team["id"]);
+                Thread.Sleep(1000);
 
                 // Update inactive players with no team
-                List<int> teamPlayersIds = teamPlayers.Select(r => (int) r["reference"]).ToList();
-                foreach (var player in _context.Players.Where(player => player.TeamID == dbTeam.TeamID && !teamPlayersIds.Contains(player.NbaID)))
-                {
+                var teamPlayersIds = teamPlayers.Select(r => (int) r["reference"]).ToList();
+                foreach (var player in _context.Players.Where(player =>
+                    player.TeamID == dbTeam.TeamID && !teamPlayersIds.Contains(player.NbaID)))
                     player.TeamID = unknownTeam.TeamID;
-                }
-                
+
                 foreach (var player in teamPlayers)
                 {
-                    int playerNbaId = (int) player["reference"];
-                    bool isInGLeague = player["status"] != null && player["status"].ToString().Equals("D-LEAGUE");
-                    Player dbPlayer = _context.Players.FirstOrDefault(p => p.NbaID == playerNbaId);
+                    var playerNbaId = (int) player["reference"];
+                    var isInGLeague = player["status"] != null && player["status"].ToString().Equals("D-LEAGUE");
+                    var dbPlayer = _context.Players.FirstOrDefault(p => p.NbaID == playerNbaId);
                     if (dbPlayer == null)
                     {
                         dbPlayer = CreateDbPlayer(player, dbTeam.TeamID, isInGLeague);
-                        if (dbPlayer == null)
-                        {
-                            continue;
-                        }
+                        if (dbPlayer == null) continue;
 
                         _context.Players.Add(dbPlayer);
                         if (player["primary_position"] != null &&
                             "na".Equals(player["primary_position"].ToString().ToLower()))
-                        {
                             _pushService.SendAdminNotification(
                                 new PushNotificationViewModel(
                                     "Fantasy Hoops Notification",
                                     $"Player '{dbPlayer.FullName}' with position {dbPlayer.Position} was added to database.")
                             );
-                        }
+
                         continue;
                     }
 
-                    if (player["jersey_number"] != null)
-                    {
-                        dbPlayer.Number = player["jersey_number"].ToString();
-                    }
+                    if (player["jersey_number"] != null) dbPlayer.Number = player["jersey_number"].ToString();
 
-                    dbPlayer.TeamID =  dbTeam.TeamID;
+                    dbPlayer.TeamID = dbTeam.TeamID;
                     dbPlayer.IsInGLeague = isInGLeague;
                 }
 
@@ -108,12 +93,9 @@ namespace fantasy_hoops.Jobs
 
         private Player CreateDbPlayer(JToken player, int teamId, bool isInGLeague)
         {
-            if (player["reference"] == null)
-            {
-                return null;
-            }
+            if (player["reference"] == null) return null;
 
-            string abbrName = player["first_name"] != null && player["first_name"].ToString().Length > 1
+            var abbrName = player["first_name"] != null && player["first_name"].ToString().Length > 1
                 ? $"{player["first_name"].ToString()[0]}. {player["last_name"]}"
                 : player["last_name"].ToString();
 
@@ -155,12 +137,12 @@ namespace fantasy_hoops.Jobs
         private List<JToken> GetTeams()
         {
             HttpWebResponse webResponse;
-            string teamsUrl = "http://api.sportradar.us/nba/trial/v7/en/seasons/" +
-                              CommonFunctions.Instance.GetSeasonYear()
-                              + "/REG/rankings.json?api_key=" + Startup.Configuration["Sportradar:ApiKey"];
+            var teamsUrl = "http://api.sportradar.us/nba/trial/v7/en/seasons/" +
+                           CommonFunctions.Instance.GetSeasonYear()
+                           + "/REG/rankings.json?api_key=" + Startup.Configuration["Sportradar:ApiKey"];
             try
             {
-                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(teamsUrl);
+                var request = (HttpWebRequest) WebRequest.Create(teamsUrl);
                 request.Method = "GET";
                 request.KeepAlive = true;
                 request.ContentType = "application/json";
@@ -168,7 +150,7 @@ namespace fantasy_hoops.Jobs
             }
             catch (WebException e)
             {
-                PushNotificationViewModel expiredNotification =
+                var expiredNotification =
                     new PushNotificationViewModel("Fantasy Hoops Admin Notification",
                         "Sportradar API Key has expired! Please change the API Key to new one. " +
                         "Error message: " + e.Message);
@@ -176,21 +158,19 @@ namespace fantasy_hoops.Jobs
                 return new List<JToken>();
             }
 
-            string expiration = webResponse.GetResponseHeader("Expires");
-            int callsLeft = ApiPlanQuota -
+            var expiration = webResponse.GetResponseHeader("Expires");
+            var callsLeft = ApiPlanQuota -
                             (int.Parse(webResponse.GetResponseHeader("X-Plan-Quota-Current")) + NbaTeamsCount);
-            PushNotificationViewModel notification =
+            var notification =
                 new PushNotificationViewModel("Fantasy Hoops Admin Notification",
                     $"Sportradar API calls left: {callsLeft}. Expires: {expiration}");
             _pushService.SendAdminNotification(notification);
 
-            string responseString = CommonFunctions.Instance.ResponseToString(webResponse);
-            List<JToken> teams = new List<JToken>();
-            JObject json = JObject.Parse(responseString);
+            var responseString = CommonFunctions.Instance.ResponseToString(webResponse);
+            var teams = new List<JToken>();
+            var json = JObject.Parse(responseString);
             if (json["conferences"] == null || json["conferences"] == null || json["conferences"] == null)
-            {
                 return new List<JToken>();
-            }
 
             json["conferences"].ToList().ForEach(conf =>
             {
@@ -204,18 +184,15 @@ namespace fantasy_hoops.Jobs
 
         private List<JToken> GetTeamPlayers(string teamId)
         {
-            string rosterUrl = "http://api.sportradar.us/nba/trial/v7/en/teams/" + teamId + "/profile.json?api_key=" +
-                               Startup.Configuration["Sportradar:ApiKey"];
-            HttpWebResponse webResponse = CommonFunctions.Instance.GetResponse(rosterUrl);
+            var rosterUrl = "http://api.sportradar.us/nba/trial/v7/en/teams/" + teamId + "/profile.json?api_key=" +
+                            Startup.Configuration["Sportradar:ApiKey"];
+            var webResponse = CommonFunctions.Instance.GetResponse(rosterUrl);
             if (webResponse == null)
                 return new List<JToken>();
-            string responseString = CommonFunctions.Instance.ResponseToString(webResponse);
+            var responseString = CommonFunctions.Instance.ResponseToString(webResponse);
 
-            JObject json = JObject.Parse(responseString);
-            if (json["players"] == null)
-            {
-                return new List<JToken>();
-            }
+            var json = JObject.Parse(responseString);
+            if (json["players"] == null) return new List<JToken>();
 
             return json["players"].Where(player => player["reference"] != null).ToList();
         }
