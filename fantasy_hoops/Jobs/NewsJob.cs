@@ -1,107 +1,70 @@
 using System;
 using System.Linq;
-using System.Net;
 using fantasy_hoops.Database;
 using fantasy_hoops.Helpers;
 using fantasy_hoops.Models;
 using fantasy_hoops.Models.Enums;
-using FluentScheduler;
 using Newtonsoft.Json.Linq;
 
 namespace fantasy_hoops.Jobs
 {
-    public class NewsJob : IJob
+    public class NewsJob : ICronJob
     {
-        private readonly NewsType _newsType;
-
-        public NewsJob(NewsType newsType)
-        {
-            _newsType = newsType;
-        }
-
-        private void ExtractPreviews()
+        private void ExtractPreviews(NewsType newsType)
         {
             string today = Today();
-            JArray tGames = CommonFunctions.Instance.GetGames(today);
-            GetPreviews(today, tGames);
+            var todayGames = CommonFunctions.Instance.GetGames(today);
+            GetNews(today, todayGames, newsType);
         }
 
-        private void ExtractRecaps()
+        private void ExtractRecaps(NewsType newsType)
         {
             string yesterday = Yesterday();
-            JArray yGames = CommonFunctions.Instance.GetGames(yesterday);
-            GetRecaps(yesterday, yGames);
+            var yesterdayGames = CommonFunctions.Instance.GetGames(yesterday);
+            GetNews(yesterday, yesterdayGames, newsType);
         }
 
-        private void GetPreviews(string date, JArray games)
+        private void GetNews(string dateString, JArray games, NewsType newsType)
         {
-            JArray previews = new JArray();
-            foreach (var jToken in games)
+            var news = new JArray();
+            foreach (var token in games)
             {
-                var game = (JObject) jToken;
-                string preview = "http://data.nba.net/10s/prod/v1/" + date + "/" + game["gameId"] + "_preview_article.json";
-                JObject previewJson;
-                try
-                {
-                    HttpWebResponse previewResponse = CommonFunctions.Instance.GetResponse(preview);
-                    string apiPreviewResponse = CommonFunctions.Instance.ResponseToString(previewResponse);
-                    previewJson = JObject.Parse(apiPreviewResponse);
-                }
+                var game = (JObject) token;
+                var homeTeamId = game["hTeam"]["teamId"];
+                var visitingTeaMid = game["vTeam"]["teamId"];
+                
+                string article = "http://data.nba.net/10s/prod/v1/" + dateString + "/" + game["gameId"]
+                                 + "_" + GetNewsApiEndpoint(newsType) + ".json";
 
-                catch
-                {
-                    continue;
-                }
+                var previewResponse = CommonFunctions.Instance.GetResponse(article);
+                var apiPreviewResponse = CommonFunctions.Instance.ResponseToString(previewResponse);
+                var articleJson = JObject.Parse(apiPreviewResponse);
 
-                if (previewJson != null)
-                {
-                    previewJson.Add("hTeamID", game["hTeam"]["teamId"]);
-                    previewJson.Add("vTeamID", game["vTeam"]["teamId"]);
-                    previews.Add(previewJson);
-                }
+                articleJson.Add("hTeamID", homeTeamId);
+                articleJson.Add("vTeamID", visitingTeaMid);
+                news.Add(articleJson);
             }
-
-            foreach (var jToken in previews)
+            
+            foreach (var jToken in news)
             {
                 var previewObj = (JObject) jToken;
                 AddToDatabase(previewObj, NewsType.PREVIEW);
             }
         }
 
-        private void GetRecaps(string date, JArray games)
+        private string GetNewsApiEndpoint(NewsType newsType)
         {
-            JArray news = new JArray();
-            foreach (var jToken in games)
+            switch (newsType)
             {
-                var game = (JObject) jToken;
-                string recap = "http://data.nba.net/10s/prod/v1/" + date + "/" + game["gameId"] + "_recap_article.json";
-                JObject recapJson;
-                try
-                {
-                    HttpWebResponse recapResponse = CommonFunctions.Instance.GetResponse(recap);
-                    string apiRecapResponse = CommonFunctions.Instance.ResponseToString(recapResponse);
-                    recapJson = JObject.Parse(apiRecapResponse);
-                }
-                catch
-                {
-                    continue;
-                }
-
-                if (recapJson != null)
-                {
-                    recapJson.Add("hTeamID", game["hTeam"]["teamId"]);
-                    recapJson.Add("vTeamID", game["vTeam"]["teamId"]);
-                    news.Add(recapJson);
-                }
-            }
-
-            foreach (var jToken in news)
-            {
-                var newsObj = (JObject) jToken;
-                AddToDatabase(newsObj, NewsType.RECAP);
+                case NewsType.PREVIEW:
+                    return "preview_article";
+                case NewsType.RECAP:
+                    return "recap_article";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(newsType), newsType, "Undefined API endpoint");
             }
         }
-
+        
         private void AddToDatabase(JToken newsObj, NewsType type)
         {
             GameContext context = new GameContext();
@@ -111,12 +74,12 @@ namespace fantasy_hoops.Jobs
             {
                 Type = type,
                 Date = DateTime.Parse(newsObj["pubDateUTC"].ToString()),
-                Title = (string)newsObj["title"],
+                Title = (string) newsObj["title"],
                 hTeamID = hTeam?.TeamID ?? -1,
                 vTeamID = vTeam?.TeamID ?? -1
             };
 
-            JArray paragraphs = (JArray)newsObj["paragraphs"];
+            JArray paragraphs = (JArray) newsObj["paragraphs"];
             bool shouldAdd = !context.News
                 .AsEnumerable()
                 .Any(x => x.hTeamID == nObj.hTeamID
@@ -125,6 +88,7 @@ namespace fantasy_hoops.Jobs
 
             if (!shouldAdd)
                 return;
+            
             context.News.Add(nObj);
             context.SaveChanges();
 
@@ -158,15 +122,16 @@ namespace fantasy_hoops.Jobs
             return CommonFunctions.Instance.UTCToEastern(RuntimeUtils.PREVIOUS_GAME.AddDays(-1)).ToString("yyyyMMdd");
         }
 
-        public void Execute()
+        public void Execute(NewsType newsType)
         {
-            switch (_newsType)
+            
+            switch (newsType)
             {
                 case NewsType.PREVIEW:
-                    ExtractPreviews();
+                    ExtractPreviews(newsType);
                     break;
                 case NewsType.RECAP:
-                    ExtractRecaps();
+                    ExtractRecaps(newsType);
                     break;
             }
         }

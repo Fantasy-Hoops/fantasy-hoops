@@ -10,10 +10,6 @@ import {useSnackbar} from "notistack";
 
 const JOBS = [
     {
-        title: "NewsJob",
-        endpoint: "news"
-    },
-    {
         title: "PlayersJob",
         endpoint: "players"
     },
