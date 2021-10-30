@@ -270,7 +270,7 @@ namespace fantasy_hoops
                 var pushService = serviceScope.ServiceProvider.GetService<IPushService>();
                 ConfigureJobs(context, pushService);
                 JobManager.UseUtcTime();
-                JobManager.Initialize(new ApplicationRegistry(scoreService, pushService));
+                JobManager.Initialize(new ApplicationRegistry(scoreService, pushService, backgroundJobs));
             }
 
             Task.Run(() => CreateRoles(serviceProvider)).Wait();

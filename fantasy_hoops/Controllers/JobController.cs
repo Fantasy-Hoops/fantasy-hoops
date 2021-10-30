@@ -24,19 +24,6 @@ namespace fantasy_hoops.Controllers
             _pushService = pushService;
         }
 
-        [HttpGet("news")]
-        public IActionResult StartJobs()
-        {
-            JobManager.AddJob(new NewsJob(NewsType.PREVIEW),
-                s => s.WithName(NewsType.PREVIEW.GetDisplayName())
-                    .ToRunNow());
-            JobManager.AddJob(new NewsJob(NewsType.RECAP),
-                s => s.WithName(NewsType.RECAP.GetDisplayName())
-                    .ToRunNow());
-
-            return Ok("News job started.");
-        }
-
         [HttpGet("players")]
         public IActionResult StartPlayersJob()
         {

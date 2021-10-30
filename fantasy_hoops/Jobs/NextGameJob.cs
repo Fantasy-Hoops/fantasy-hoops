@@ -7,6 +7,7 @@ using fantasy_hoops.Helpers;
 using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Services.Interfaces;
 using FluentScheduler;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 
@@ -20,13 +21,16 @@ namespace fantasy_hoops.Jobs
         private readonly GameContext _context;
         private readonly IScoreService _scoreService;
         private readonly IPushService _pushService;
+        private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly bool _updatePrice;
 
-        public NextGameJob(IScoreService scoreService, IPushService pushService, bool updatePrice = true)
+        public NextGameJob(IScoreService scoreService, IPushService pushService,
+            IBackgroundJobClient backgroundJobClient, bool updatePrice = true)
         {
             _context = new GameContext();
             _scoreService = scoreService;
             _pushService = pushService;
+            _backgroundJobClient = backgroundJobClient;
             _updatePrice = updatePrice;
         }
 
@@ -124,10 +128,10 @@ namespace fantasy_hoops.Jobs
 
             if (offset < GAME_OFFSET)
             {
-                JobManager.AddJob(new NextGameJob(_scoreService, _pushService),
+                JobManager.AddJob(new NextGameJob(_scoreService, _pushService, _backgroundJobClient),
                     s => s.WithName(RuntimeUtils.NEXT_GAME.ToLongDateString())
                         .ToRunOnceAt(RuntimeUtils.NEXT_GAME));
-
+                
                 JobManager.AddJob(new TournamentsJob(RuntimeUtils.PREVIOUS_GAME),
                     s => s.WithName("TournamentsJob").ToRunNow());
 
@@ -145,19 +149,15 @@ namespace fantasy_hoops.Jobs
                     DateTime previewsRuntime = RuntimeUtils.PREVIOUS_LAST_GAME.AddHours(10);
                     if (DateTime.UtcNow > previewsRuntime)
                         previewsRuntime = RuntimeUtils.NEXT_LAST_GAME.AddHours(10);
-                    JobManager.AddJob(new NewsJob(NewsType.PREVIEW),
-                        s => s.WithName("previews")
-                            .ToRunOnceAt(previewsRuntime));
+                    _backgroundJobClient.Schedule(() => new NewsJob().Execute(NewsType.PREVIEW), previewsRuntime);
 
                     // 5 hours after previous last game if project ran before that time
                     // 5 hours after next last game if project ran after that time
                     DateTime recapsRuntime = RuntimeUtils.PREVIOUS_LAST_GAME.AddHours(5);
                     if (DateTime.UtcNow > recapsRuntime)
                         recapsRuntime = RuntimeUtils.NEXT_LAST_GAME.AddHours(5);
-                    JobManager.AddJob(new NewsJob(NewsType.RECAP),
-                        s => s.WithName("recaps")
-                            .ToRunOnceAt(recapsRuntime));
-
+                    _backgroundJobClient.Schedule(() => new NewsJob().Execute(NewsType.RECAP), recapsRuntime);
+                    
                     JobManager.AddJob(new PlayersJob(_scoreService, _updatePrice),
                         s => s.WithName("playersJob")
                             .ToRunNow());
@@ -170,7 +170,7 @@ namespace fantasy_hoops.Jobs
             }
             else
             {
-                JobManager.AddJob(new NextGameJob(_scoreService, _pushService),
+                JobManager.AddJob(new NextGameJob(_scoreService, _pushService, _backgroundJobClient),
                     s => s.WithName("nextGameJob")
                         .ToRunOnceIn(1)
                         .Hours());
