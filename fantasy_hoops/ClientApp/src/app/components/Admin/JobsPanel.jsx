@@ -22,10 +22,6 @@ const JOBS = [
         endpoint: "best-lineup"
     },
     {
-        title: "CalculateTournamentsJob",
-        endpoint: "calculate-tournaments"
-    },
-    {
         title: "LeagueScheduleJob",
         endpoint: "league-schedule"
     },

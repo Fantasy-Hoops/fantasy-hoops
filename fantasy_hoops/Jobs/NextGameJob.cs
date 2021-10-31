@@ -132,8 +132,7 @@ namespace fantasy_hoops.Jobs
                     s => s.WithName(RuntimeUtils.NEXT_GAME.ToLongDateString())
                         .ToRunOnceAt(RuntimeUtils.NEXT_GAME));
                 
-                JobManager.AddJob(new TournamentsJob(RuntimeUtils.PREVIOUS_GAME),
-                    s => s.WithName("TournamentsJob").ToRunNow());
+                _backgroundJobClient.Enqueue(() => new TournamentsJob(RuntimeUtils.PREVIOUS_GAME).Execute());
 
                 // All actions run only in production
                 if (bool.Parse(Startup.Configuration["IsProduction"] ?? "false"))

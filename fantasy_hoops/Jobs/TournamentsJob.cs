@@ -10,11 +10,10 @@ using fantasy_hoops.Repositories;
 using fantasy_hoops.Repositories.Interfaces;
 using fantasy_hoops.Services;
 using fantasy_hoops.Services.Interfaces;
-using FluentScheduler;
 
 namespace fantasy_hoops.Jobs
 {
-    public class TournamentsJob : IJob
+    public class TournamentsJob : ICronJob
     {
         private readonly DateTime _runtimeDate;
         private readonly GameContext _context;

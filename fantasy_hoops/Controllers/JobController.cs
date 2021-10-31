@@ -2,14 +2,10 @@
 using System.Threading.Tasks;
 using fantasy_hoops.Jobs;
 using fantasy_hoops.Models;
-using fantasy_hoops.Models.Enums;
 using fantasy_hoops.Repositories;
 using fantasy_hoops.Services;
 using fantasy_hoops.Services.Interfaces;
-using FluentScheduler;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Extensions;
 
 namespace fantasy_hoops.Controllers
 {
@@ -54,14 +50,6 @@ namespace fantasy_hoops.Controllers
             Task.Run(() => new ScheduleJob().Execute());
 
             return Ok("League schedule job started.");
-        }
-
-        [HttpGet("start-tournaments")]
-        public IActionResult StartTournaments()
-        {
-            Task.Run(() => new TournamentsJob(Mocks.Tournaments.MockedStartDate).Execute());
-
-            return Ok("Tournaments started.");
         }
 
         [HttpGet("calculate-tournaments")]
