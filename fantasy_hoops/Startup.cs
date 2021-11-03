@@ -105,9 +105,6 @@ namespace fantasy_hoops
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
-            services.AddDataProtection()
-                .SetDefaultKeyLifetime(TimeSpan.FromDays(14));
-            
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
