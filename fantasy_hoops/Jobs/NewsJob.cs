@@ -23,7 +23,7 @@ namespace fantasy_hoops.Jobs
             var yesterdayGames = CommonFunctions.Instance.GetGames(yesterday);
             GetNews(yesterday, yesterdayGames, newsType);
         }
-
+        
         private void GetNews(string dateString, JArray games, NewsType newsType)
         {
             var news = new JArray();
@@ -37,6 +37,9 @@ namespace fantasy_hoops.Jobs
                                  + "_" + GetNewsApiEndpoint(newsType) + ".json";
 
                 var previewResponse = CommonFunctions.Instance.GetResponse(article);
+                // no news for this game exists
+                if (previewResponse == null) continue;
+
                 var apiPreviewResponse = CommonFunctions.Instance.ResponseToString(previewResponse);
                 var articleJson = JObject.Parse(apiPreviewResponse);
 
