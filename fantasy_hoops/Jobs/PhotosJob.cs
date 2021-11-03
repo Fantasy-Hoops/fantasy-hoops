@@ -98,8 +98,9 @@ namespace fantasy_hoops.Jobs
 
         private async Task DeleteNotifications()
         {
+            var weekAgo = DateTime.Today.ToUniversalTime().AddDays(-7);
             await _context.Notifications
-                .Where(n => n.DateCreated < DateTime.Today.ToUniversalTime().AddDays(-7))
+                .Where(n => n.DateCreated < weekAgo)
                 .ForEachAsync(notification => _context.Notifications.Remove(notification));
             await _context.SaveChangesAsync();
         }
