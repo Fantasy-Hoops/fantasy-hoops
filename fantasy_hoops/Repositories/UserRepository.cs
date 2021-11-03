@@ -52,7 +52,7 @@ namespace fantasy_hoops.Repositories
                     userRecord = Math.Round(user.UserLineups.Select(lineup => lineup.FP).Max(), 1),
                     user.AvatarURL
                 })
-                .First();
+                .FirstOrDefault();
         }
 
         public User GetUserById(string id)
