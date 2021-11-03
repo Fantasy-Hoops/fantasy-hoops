@@ -33,7 +33,9 @@ axios.defaults.headers.Authorization = `Bearer ${localStorage.getItem('accessTok
 export const register = data => axios.post(`${userApiUrlBase}/register`, data);
 export const login = data => axios.post(`${userApiUrlBase}/login`, data);
 export const logout = () => {
-  GoogleLogout.prototype.signOut();
+  if (GoogleLogout?.prototype?.signOut) {
+    GoogleLogout.prototype.signOut();
+  }
   fetch(`${userApiUrlBase}/logout`, {
     method: 'GET',
     headers: {
